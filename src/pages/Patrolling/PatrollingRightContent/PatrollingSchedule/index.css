@@ -1,0 +1,362 @@
+.mainLayout {
+  display: flex;
+}
+
+.rightPanel {
+  flex: 1;
+  padding: 10px;
+  background: #000000;
+  margin: -18px;
+}
+.Shedulecontainer {
+  background: #16100f;
+  padding: 10px;
+}
+
+/* TOP BAR */
+
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  background-color: #333;
+
+  border-radius: 8px;
+}
+
+.Datebuttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 16px;
+}
+
+.Datebuttons button {
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.right {
+  margin-left: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.savebuttons button {
+  margin-left: 10px;
+}
+.savebuttons {
+  margin-top: 15px;
+  display: flex;
+}
+
+.shedulesavechangesbtn {
+  background-color: #e44d26;
+
+  padding: 3px;
+  border-radius: 7px;
+  height: 33px;
+  color: white;
+  border-color: #e44d26;
+}
+.btn {
+  background-color: #fbfafa;
+  padding: 3px;
+  border-radius: 7px;
+  height: 33px;
+  color: rgb(8, 0, 0);
+}
+
+/* GRID */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.headerCell {
+  background: #8c8c8e !important;
+
+  color: #ffffff;
+  font-weight: 600;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* ROW */
+
+.rowBlock {
+  margin-bottom: 5px;
+}
+
+.cell {
+  height: 100px; /* fixed clean grid */
+  border: 1px solid #ccc;
+  background: white;
+  padding: 4px;
+}
+
+/* .cellInner {
+  height: 100% !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+
+  background-color: #7a7fc0;
+  border-radius: 6px;
+
+  padding: 6px;
+  gap: 6px;
+
+  position: relative; 
+} */
+
+.cellInner {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  background-color: #e9e5e5;
+  border-radius: 6px;
+  overflow: hidden; /* ✅ prevents overlap */
+  position: relative;
+}
+
+.plus {
+  font-size: 18px;
+  color: #d1d1d1;
+}
+
+/* SAVED */
+
+.savedBox {
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 6px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 12px;
+
+  /* ✅ KEY FIX */
+}
+.timeRow {
+  font-weight: 600;
+  font-size: 12px;
+  color: #1a1a1a;
+}
+
+.positionRow {
+  font-size: 11px;
+  color: #444;
+}
+positionrolediv {
+  display: flex;
+}
+
+.roleRow {
+  font-size: 10px;
+  color: #777;
+}
+
+.small {
+  font-size: 10px;
+}
+
+/* BLOCKED */
+
+.blocked {
+  /* position: absolute;
+  top: 0;
+  left: 0; */
+
+  height: 20px; /* reduce */
+  width: 100%;
+
+  background: rgb(4 4 4 / 25%) !important;
+  font-size: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  /* 
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px; */
+
+  pointer-events: none;
+}
+
+/* NAME */
+
+.nameRow {
+  background: #8c8c8e !important;
+  color: #e5e7eb;
+  padding: 5px;
+  font-size: 12px;
+}
+
+/* POPUP */
+.popupForm {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 850px !important;
+  max-height: 85vh;
+  overflow-y: auto;
+  max-width: 820px;
+
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  z-index: 1000;
+
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+}
+.popupGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.leftCol,
+.rightCol {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.popupForm input,
+.popupForm select {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.popupHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #333;
+}
+
+.closeBtn {
+  cursor: pointer;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form textarea {
+  min-height: 60px;
+  resize: none;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+.form input,
+.form select {
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+.saveBtn {
+  background: #4c5bd4;
+  color: white;
+  padding: 8px 20px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+.descriptionBox {
+  width: 100%;
+  min-height: 90px;
+  max-height: 150px;
+
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #d0d5dd;
+
+  font-size: 13px;
+  font-family: inherit;
+
+  resize: vertical;
+
+  transition:
+    border 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.descriptionBox:focus {
+  outline: none;
+  border-color: #4c5bd4;
+  box-shadow: 0 0 0 2px rgba(76, 91, 212, 0.15);
+}
+
+.charCount {
+  font-size: 11px;
+  color: #888;
+  text-align: right;
+  margin-top: -5px;
+}
+/* MAP SECTION */
+.mapSection {
+  margin-top: 12px;
+  padding: 10px;
+
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  background: #f8fafc;
+}
+
+/* MAP LINK */
+.mapLink {
+  display: inline-block;
+
+  color: #2563eb;
+  text-decoration: none;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  margin-bottom: 8px;
+}
+
+.mapLink:hover {
+  text-decoration: underline;
+}
+
+/* MARKED POINTS */
+.mapPoints {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  font-size: 12px;
+  color: #555;
+}
+
+.popupFooter {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+.actionbuttons {
+  /* color: white; */
+  background-color: #ffffff;
+  border: none;
+  padding: 5px;
+  /* cursor: pointer; */
+  height: 34px;
+  margin-top: 5px;
+  border-radius: 8px;
+}
+/* color: #8c8c8e 
+ color: #e9e5e5 */

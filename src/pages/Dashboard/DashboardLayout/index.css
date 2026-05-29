@@ -1,0 +1,188 @@
+/* GLOBAL FONT IMPROVEMENT */
+body {
+  font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 14px;
+  color: #2c2c2c;
+  line-height: 1.4;
+}
+
+/* SMOOTH TEXT RENDERING */
+* {
+  box-sizing: border-box;
+}
+
+.operationssidebar {
+  font-size: 14px;
+  letter-spacing: 0.2px;
+  background-color: #2e2e2e;
+}
+
+.menuHeader {
+  font-size: 14px;
+  color: #333;
+}
+
+.menuHeader span {
+  font-size: 13px;
+  color: #777;
+}
+.sidebar div {
+  padding: 5px;
+  cursor: pointer;
+}
+
+.menuHeader:hover {
+  background: #5482de;
+}
+
+.icon {
+  font-size: 18px;
+}
+
+.submenu {
+  background: #fafafa;
+
+  padding: 0px;
+}
+
+.submenuItem {
+  padding: 8px 12px;
+  font-size: 13.5px;
+  color: #eae3e3;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+  cursor: pointer;
+}
+
+.submenuItem:hover {
+  background: #e81010 !important;
+  color: white;
+}
+
+.layoutContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* sidebar already exists */
+.mainLayout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.rightContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  /* min-height: 100vh; */
+}
+.submenuItem.active {
+  background: #e81010;
+  color: #bbdcec;
+  font-weight: 600;
+}
+/* TOGGLE HEADER */
+
+.toggleHeader {
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+/* PANEL */
+
+.schedulePanel {
+  font-size: 13.5px;
+  color: #eae3e3;
+  background: #120f0c;
+  padding: 10px;
+}
+
+/* PUBLISH BOX */
+
+.publishBox {
+  background: #e81010;
+  color: white;
+  padding: 10px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* SECTION */
+
+.section {
+  margin-bottom: 10px;
+  color: #eaeaea;
+  background: #02050d;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.section label {
+  font-size: 12px;
+  display: block;
+  margin-bottom: 5px;
+  color: #eaeaea;
+}
+
+.section select {
+  width: 100%;
+  padding: 5px;
+  background: #02040a;
+  color: #eaeaea;
+  border: 1px solid #e81010;
+  border-radius: 3px;
+}
+
+/* BUTTON GROUP */
+
+.btnGroup {
+  display: flex;
+  gap: 5px;
+}
+
+.btnGroup button {
+  flex: 1;
+  padding: 6px;
+  border: 1px solid #e81010;
+  background: #050b1c;
+  color: #eaeaea;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.btnGroup button:hover {
+  background: #5482de;
+  color: white;
+}
+
+.btnGroup button:hover {
+  background: #5482de;
+}
+
+.activeBtn {
+  background: #5482de;
+  color: white;
+}
+
+/* REPORT */
+
+.reportBox {
+  background: white;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.reportBox h4 {
+  margin-bottom: 10px;
+}
+
+.reportRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}

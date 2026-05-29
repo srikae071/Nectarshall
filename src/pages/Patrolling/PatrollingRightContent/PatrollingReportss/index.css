@@ -1,0 +1,259 @@
+/* CONTAINER */
+.reportsContainer {
+  padding: 15px;
+  background: #eff6ff;
+  height: 100vh;
+  overflow: hidden;
+  font-family: "Segoe UI", sans-serif;
+  color: #1f2937;
+}
+
+/* TABS */
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.tabs button {
+  padding: 8px 16px;
+  border: 1px solid #dbeafe;
+  background: #e0e7ff;
+  cursor: pointer;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+
+.tabs button:hover {
+  background: #c7d2fe;
+}
+
+.activeTab {
+  background: #ffffff;
+  border-bottom: 2px solid #2563eb;
+  color: #2563eb;
+}
+
+/* FILTERS */
+.filters {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.filterItem {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+}
+
+.filterItem label {
+  margin-bottom: 4px;
+  color: #1e40af;
+  font-weight: 500;
+}
+
+.filterItem select,
+.filterItem input {
+  padding: 6px;
+  border: 1px solid #dbeafe;
+  border-radius: 4px;
+  min-width: 160px;
+  background: #fff;
+}
+
+/* ACTIONS */
+.actionsRow {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.searchInput {
+  flex: 1;
+  padding: 6px;
+  border: 1px solid #dbeafe;
+  border-radius: 4px;
+}
+
+.addBtn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+
+.addBtn:hover {
+  background: #1e40af;
+}
+
+.actionBtn {
+  background: #e0e7ff;
+  border: 1px solid #c7d2fe;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.actionBtn:hover {
+  background: #c7d2fe;
+}
+
+/* TABLE */
+.tableWrapper {
+  background: white;
+  height: 70%;
+  overflow-y: auto;
+  border: 1px solid #dbeafe;
+  border-radius: 10px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+thead {
+  background: #2563eb;
+  color: white;
+}
+
+th,
+td {
+  padding: 10px;
+  border-bottom: 1px solid #e0e7ff;
+  text-align: left;
+}
+.reportsheading {
+  color: midnightblue;
+}
+
+tbody tr:hover {
+  background: #f1f5ff;
+}
+
+/* WARNING ICON */
+.warning {
+  color: #f59e0b;
+  font-size: 16px;
+}
+
+/* TOGGLE SWITCH */
+.toggle {
+  width: 36px;
+  height: 18px;
+  background: #c7d2fe;
+  border-radius: 20px;
+  position: relative;
+}
+
+.toggle::after {
+  content: "";
+  width: 14px;
+  height: 14px;
+  background: white;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  border-radius: 50%;
+}
+
+/* MAIN LAYOUT */
+.reportsPageLayout {
+  display: flex;
+  height: 100vh;
+}
+
+/* CENTER CONTENT */
+.reportsMain {
+  flex: 1;
+  overflow: hidden;
+}
+.reportsreportshead {
+  background-color: #dbeafe;
+}
+
+/* RIGHT PANEL */
+.reportsSidebar {
+  width: 320px;
+  background: #f1f5ff;
+  border-left: 1px solid #dbeafe;
+  overflow-y: auto;
+}
+
+/* PANEL CONTENT */
+.optionsPanel {
+  padding: 15px;
+  font-size: 13px;
+}
+
+/* TITLE */
+.optionsPanel h4 {
+  margin-bottom: 10px;
+  color: #1e40af;
+}
+
+/* SECTION */
+.optionSection {
+  margin-bottom: 15px;
+}
+
+.optionSection label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* TAG BOX */
+.tagBox {
+  background: #ffffff;
+  border: 1px solid #dbeafe;
+  padding: 6px;
+  margin-bottom: 5px;
+  border-radius: 4px;
+}
+
+/* BUTTON ROW */
+.btnRow {
+  display: flex;
+  gap: 5px;
+}
+
+.btnRow button {
+  flex: 1;
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 5px;
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+.btnRow button:hover {
+  background: #1e40af;
+}
+
+/* DATE BOX */
+.dateBox {
+  background: #ffffff;
+  border: 1px solid #dbeafe;
+  padding: 6px;
+  border-radius: 4px;
+}
+
+/* CHECKBOX LIST */
+.checkboxList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.checkboxList label {
+  font-size: 13px;
+  color: #374151;
+}

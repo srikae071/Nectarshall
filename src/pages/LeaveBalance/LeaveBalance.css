@@ -1,0 +1,201 @@
+/* =========================
+   PAGE
+========================= */
+
+.LeaveBalanceContainer {
+  padding: 24px;
+  min-height: 100vh;
+
+  background: #e9e5e5;
+
+  font-family: "Inter", "Segoe UI", sans-serif;
+
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+/* =========================
+   TITLE
+========================= */
+/* border: 1px solid #000; */
+.LeaveBalanceTitle {
+  font-size: 22px;
+  font-weight: 700;
+
+  color: #111827;
+
+  margin-bottom: 28px;
+}
+
+/* =========================
+   ROW
+========================= */
+
+.LeaveBalanceRow {
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 18px 24px;
+
+  width: 100%;
+}
+
+/* =========================
+   FIELD
+========================= */
+
+.LeaveBalanceField {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  min-width: 0;
+}
+
+/* =========================
+   LABEL
+========================= */
+
+.LeaveBalanceField label {
+  width: 130px;
+
+  flex-shrink: 0;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  color: #374151;
+}
+
+/* =========================
+   INPUTS
+========================= */
+
+.LeaveBalanceInput {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #000;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+/* =========================
+   FOCUS
+========================= */
+
+.LeaveBalanceInput:focus {
+  outline: none;
+
+  border-color: #991b1b;
+
+  box-shadow: 0 0 0 3px rgba(153, 27, 27, 0.12);
+}
+
+/* =========================
+   SELECT
+========================= */
+
+select.LeaveBalanceInput {
+  appearance: none;
+
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3e%3cpath d='M5 7l5 5 5-5' stroke='%236b7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
+
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 15px;
+
+  padding-right: 34px;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.LeaveBalanceActions {
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 12px;
+
+  margin-top: 28px;
+}
+
+.LeaveBalanceSave,
+.LeaveBalanceCancel {
+  min-width: 110px;
+
+  height: 40px;
+
+  border: none;
+  border-radius: 10px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+}
+
+/* SAVE BUTTON */
+
+.LeaveBalanceSave {
+  background: linear-gradient(180deg, #e9e4e4, #f5f2f2);
+
+  color: rgb(10, 10, 10);
+}
+
+.LeaveBalanceSave:hover {
+  transform: translateY(-1px);
+
+  box-shadow: 0 6px 14px rgba(127, 29, 29, 0.22);
+}
+
+/* CANCEL BUTTON */
+
+.LeaveBalanceCancel {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.LeaveBalanceCancel:hover {
+  background: #d1d5db;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 900px) {
+  .LeaveBalanceContainer {
+    padding: 16px;
+  }
+
+  .LeaveBalanceRow {
+    grid-template-columns: 1fr;
+  }
+
+  .LeaveBalanceField {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .LeaveBalanceField label {
+    width: 100%;
+  }
+
+  .LeaveBalanceActions {
+    flex-direction: column;
+  }
+
+  .LeaveBalanceSave,
+  .LeaveBalanceCancel {
+    width: 100%;
+  }
+}

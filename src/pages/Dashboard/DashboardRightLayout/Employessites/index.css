@@ -1,0 +1,189 @@
+.mainLayout {
+  display: flex;
+}
+
+.rightPanel {
+  flex: 1;
+  padding: 10px;
+}
+
+.container {
+  background: #f5f5f5;
+  padding: 10px;
+}
+
+/* TOP BAR */
+
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.Datebuttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.Datebuttons button {
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.right {
+  margin-left: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.savebuttons button {
+  margin-left: 10px;
+}
+.savebuttons {
+  margin-top: 15px;
+  display: flex;
+}
+.savechangesbtn {
+  background-color: #a88c4a;
+
+  padding: 3px;
+  border-radius: 7px;
+  height: 33px;
+  color: white;
+  border-color: #a88c4a;
+}
+.btn {
+  background-color: #fbfafa;
+  padding: 3px;
+  border-radius: 7px;
+  height: 33px;
+  color: rgb(8, 0, 0);
+}
+
+/* GRID */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.headerCell {
+  background: #ddd;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* ROW */
+
+.rowBlock {
+  margin-bottom: 5px;
+}
+
+.cell {
+  height: 80px;
+  border: 1px solid #ccc;
+  position: relative;
+  background: white;
+}
+
+.cellInner {
+  height: 100%;
+  /* display: flex; */
+  align-items: Start;
+  justify-content: center;
+  cursor: pointer;
+  flex-direction: column;
+}
+
+/* PLUS */
+
+.plus {
+  font-size: 20px;
+  color: #999;
+}
+
+/* SAVED */
+
+.savedBox {
+  background: #d4edda;
+  padding: 5px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.small {
+  font-size: 10px;
+}
+
+/* BLOCKED */
+
+.blocked {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(255, 0, 0, 0.2);
+  width: 100%;
+  height: 35%;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+}
+
+/* NAME */
+
+.nameRow {
+  background: #eee;
+  padding: 5px;
+  font-size: 12px;
+}
+
+/* POPUP */
+
+.popupForm {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  width: 200px;
+  z-index: 100;
+}
+
+.popupHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.closeBtn {
+  cursor: pointer;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.saveBtn {
+  margin-top: 10px;
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+}
+.actionbuttons {
+  /* color: white; */
+  background-color: #ffffff;
+  border: none;
+  padding: 5px;
+  /* cursor: pointer; */
+  height: 34px;
+  margin-top: 5px;
+  border-radius: 8px;
+}

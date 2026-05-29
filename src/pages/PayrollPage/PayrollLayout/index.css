@@ -1,0 +1,86 @@
+.hrmssidebar {
+  width: 250px;
+  background: #2e2e2e;
+  border-right: 1px solid #ddd;
+  padding-top: 10px;
+  padding: 0px;
+}
+
+.menuBlock {
+  border-bottom: 1px solid #2e2e2e;
+  padding: 3px;
+  color: #fff3f3;
+}
+
+.hrmsmenuHeader {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 16px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #f1f1f1;
+}
+
+/* .sidebar div {
+  padding: 5px;
+  cursor: pointer;
+} */
+
+.hrmssidebar .hrmsmenuHeader:hover {
+  background-color: #e44d26;
+}
+.icon {
+  font-size: 18px;
+}
+
+.submenu {
+  background: #fafafa;
+  padding: 0px;
+}
+
+.hrmssubmenuItem {
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  /* background-color: brown; */
+  justify-content: space-between;
+  background-color: #2e2e2e;
+}
+.hrmssubmenuItem:hover {
+  background-color: #ed5934;
+  color: #e7f0f4;
+}
+
+.layoutContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.mainLayout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.rightContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  /* min-height: 100vh; */
+}
+
+.hrmssubmenuItem.active {
+  background: #ea4104;
+  color: #f5d2cc;
+}
+.resizer {
+  width: 3px;
+  cursor: col-resize;
+  background-color: #1e1d1d;
+}
+
+.resizer:hover {
+  background: #adb9d3;
+}
