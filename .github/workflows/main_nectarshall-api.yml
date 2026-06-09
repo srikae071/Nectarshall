@@ -52,5 +52,5 @@ jobs:
         with:
           app-name: 'nectarshall-api'
           slot-name: 'Production'
-          package: ./backend
+          package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4E7C9E39DDF74609A147F16F666E7127 }}
