@@ -86,6 +86,10 @@ function App() {
       <Route path="/PatrollingSites" element={<PatrollingSites />} />
       <Route path="/PatrollingReports" element={<PatrollingReports />} />
       <Route path="/PatrollingIncidents" element={<PatrollingIncidents />} />
+      <Route path="/askforit/:id" element={<MainAFI />} />
+      <Route path="/askforit" element={<MainAFI />} />
+      <Route path="/askforhr" element={<AskForHrMainPage />} />
+      <Route path="/askforhr/:id" element={<AskForHrMainPage />} />
     </Routes>
   );
 }

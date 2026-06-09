@@ -1,0 +1,232 @@
+import { useState } from "react";
+import axios from "axios";
+
+import HrmsLeftLayout from "../Hrmsleftlayout";
+
+import "./index.css";
+
+function CreateCase() {
+  const [formData, setFormData] = useState({
+    caseId: "",
+    requesterName: "",
+    department: "",
+    status: "",
+    subStatus: "",
+    category: "",
+    assignmentGroup: "",
+    assignTo: "",
+    impact: "",
+    urgency: "",
+    priority: "",
+    shortDescription: "",
+    description: "",
+  });
+  const subStatusOptions = {
+    Pending: ["Request Information Pending", "Vendor Action Pending"],
+  };
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSave = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/cases/create",
+        formData,
+      );
+
+      alert("Case Saved Successfully");
+
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+      alert("Error Saving Case");
+    }
+  };
+  return (
+    <HrmsLeftLayout>
+      <div className="CreateContainer">
+        <h2 className="CreateTitle">Create New Case</h2>
+
+        {/* ROW 1 */}
+        <div className="CreateRow">
+          <div className="CreateField">
+            <label>Case ID</label>
+            <input
+              name="caseId"
+              value={formData.caseId}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="CreateField">
+            <label>Requester Name</label>
+            <input
+              name="requesterName"
+              value={formData.requesterName}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="CreateField">
+            <label>Department</label>
+            <select
+              name="department"
+              value={formData.department}
+              onChange={handleChange}
+            >
+              <option>IT</option>
+            </select>
+          </div>
+        </div>
+
+        {/* ROW 2 */}
+        <div className="CreateRow">
+          <div className="CreateField">
+            <label>Status</label>
+
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+            >
+              <option value="">Select Status</option>
+              <option value="Open">Open</option>
+              <option value="Work In Progress">Work In Progress</option>
+              <option value="Pending">Pending</option>
+              <option value="Resolved">Resolved</option>
+              <option value="Closed">Closed</option>
+            </select>
+          </div>
+
+          <div className="CreateField">
+            <label>Sub Status</label>
+            <select
+              name="subStatus"
+              value={formData.subStatus}
+              onChange={handleChange}
+              disabled={formData.status !== "Pending"}
+            >
+              <option value="">Select Sub Status</option>
+
+              {subStatusOptions[formData.status]?.map((item, index) => (
+                <option key={index} value={item}>
+                  {item}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="CreateField">
+            <label>Category</label>
+            <select
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+            >
+              <option>Payroll</option>
+            </select>
+          </div>
+        </div>
+
+        {/* ROW 3 */}
+        <div className="CreateRow">
+          <div className="CreateField">
+            <label>Assignment Group</label>
+            <input
+              name="assignmentGroup"
+              value={formData.assignmentGroup}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="CreateField">
+            <label>Assign To</label>
+            <input
+              name="assignTo"
+              value={formData.assignTo}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="CreateField">
+            <label>Impact</label>
+
+            <select
+              name="impact"
+              value={formData.impact}
+              onChange={handleChange}
+            >
+              <option value="">Select</option>
+              <option>High</option>
+              <option>Medium</option>
+              <option>Low</option>
+            </select>
+          </div>
+        </div>
+
+        {/* ROW 4 */}
+        <div className="CreateRow">
+          <div className="CreateField">
+            <label>Urgency</label>
+
+            <select
+              name="urgency"
+              value={formData.urgency}
+              onChange={handleChange}
+            >
+              <option value="">Select</option>
+              <option>High</option>
+              <option>Medium</option>
+              <option>Low</option>
+            </select>
+          </div>
+
+          <div className="CreateField">
+            <label>Priority</label>
+            <input
+              name="priority"
+              value={formData.priority}
+              onChange={handleChange}
+            />
+          </div>
+        </div>
+
+        {/* TEXTAREAS */}
+        <div className="CreateTextareaGroup">
+          <label>Short Description</label>
+          <textarea
+            className="CreateTextarea CreateShortTextarea"
+            name="shortDescription"
+            value={formData.shortDescription}
+            onChange={handleChange}
+          ></textarea>
+        </div>
+
+        <div className="CreateTextareaGroup">
+          <label>Description</label>
+          <textarea
+            className="CreateTextarea CreateDescriptionTextarea"
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+          ></textarea>
+        </div>
+
+        {/* BUTTONS */}
+        <div className="CreateFooter">
+          <button className="CreateBtn" onClick={handleSave}>
+            Save
+          </button>
+          <button className="CreateBtn">Submit</button>
+          <button className="CreateBtn">Cancel</button>
+        </div>
+      </div>
+    </HrmsLeftLayout>
+  );
+}
+
+export default CreateCase;

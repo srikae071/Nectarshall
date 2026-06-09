@@ -1,5 +1,9 @@
+client/node_modules/
+client/dist/
+
+backend/node_modules/
+backend/.env
+
 node_modules/
 dist/
-build/
-*.exe
 .env
