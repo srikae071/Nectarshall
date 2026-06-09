@@ -21,9 +21,8 @@ function AskForHrMainPage() {
     const fetchRequest = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/itrequests/${id}`,
+          `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests/${id}`,
         );
-
         setFormData({
           requester: response.data.requester || "",
           requesterFor: response.data.requesterFor || "",
@@ -60,7 +59,7 @@ function AskForHrMainPage() {
       console.log("Sending:", formData);
 
       const response = await axios.post(
-        "http://localhost:5000/api/itrequests/create",
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests/create",
         {
           ...formData,
           requestType: "HR",

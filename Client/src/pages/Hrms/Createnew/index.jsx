@@ -34,7 +34,7 @@ function CreateCase() {
   const handleSave = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/cases/create",
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/cases/create",
         formData,
       );
 

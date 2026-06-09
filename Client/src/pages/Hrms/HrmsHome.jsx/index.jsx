@@ -15,7 +15,9 @@ function HrmsHome() {
 
   const fetchRequests = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/itrequests");
+      const response = await axios.get(
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests",
+      );
       console.log(response.data);
 
       setData(response.data);
