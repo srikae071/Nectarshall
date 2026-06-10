@@ -29,43 +29,68 @@ function ApprovalTable() {
       console.log(error);
     }
   };
+
+  const deleteLeave = async (id) => {
+    try {
+      await axios.delete(
+        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves/${id}`,
+      );
+
+      fetchLeaves();
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className="approval-container">
       <h2 className="approval-title">Request Approval List</h2>
 
-      <table className="approval-table">
+      <table className="MyTaskTable">
         <thead>
-          <tr>
-            <th>Serial Number</th>
-            <th>Name</th>
-            <th>Approve</th>
-            <th>Delete</th>
-            <th>Comment</th>
+          <tr className="MyTaskTableRow">
+            <th className="MyTaskTableHeader">Serial Number</th>
+            <th className="MyTaskTableHeader">Name</th>
+            <th className="MyTaskTableHeader">Approve</th>
+            <th className="MyTaskTableHeader">Delete</th>
+            <th className="MyTaskTableHeader">Comment</th>
           </tr>
         </thead>
 
         <tbody>
           {data.map((item) => (
-            <tr key={item._id}>
-              <td>{item.leaveNumber}</td>
-              <td>{item.employeeName}</td>
+            <tr className="MyTaskTableRow" key={item._id}>
+              <td className="MyTaskTableCell">{item.leaveNumber}</td>
 
-              <td>
+              <td className="MyTaskTableCell">{item.employeeName}</td>
+
+              <td className="MyTaskTableCell MyTaskCenter">
                 {item.status === "Approved" ? (
-                  "Approved"
+                  <button className="approved-btn">Approved</button>
                 ) : (
-                  <button onClick={() => approveLeave(item._id)}>
+                  <button
+                    className="approve-btn"
+                    onClick={() => approveLeave(item._id)}
+                  >
                     Approve
                   </button>
                 )}
               </td>
 
-              <td>
-                <button>Reject</button>
+              <td className="MyTaskTableCell MyTaskCenter">
+                <button
+                  className="delete-btn"
+                  onClick={() => deleteLeave(item._id)}
+                >
+                  Delete
+                </button>
               </td>
 
-              <td>
-                <input type="text" placeholder="Comment" />
+              <td className="MyTaskTableCell">
+                <input
+                  type="text"
+                  placeholder="Enter comment..."
+                  className="comment-input"
+                />
               </td>
             </tr>
           ))}

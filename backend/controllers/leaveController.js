@@ -31,6 +31,20 @@ exports.getAllLeaves = async (req, res) => {
   }
 };
 
+exports.deleteLeave = async (req, res) => {
+  try {
+    await Leave.findByIdAndDelete(req.params.id);
+
+    res.json({
+      message: "Leave Deleted Successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
 exports.approveLeave = async (req, res) => {
   try {
     const leave = await Leave.findByIdAndUpdate(

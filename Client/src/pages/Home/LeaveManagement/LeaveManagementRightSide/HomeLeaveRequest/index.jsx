@@ -16,7 +16,7 @@ function HomeLeaveRequest() {
       await axios.post(
         "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves/create",
         {
-          // employeeName: "Srikar",
+          employeeName: "Sumith Sir",
           startDate,
           endDate,
           totalLeaves: calculateLeaves(),

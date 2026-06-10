@@ -1,7 +1,7 @@
 .approval-container {
   width: 95%;
   margin: 30px auto;
-  background-color: #ffffff;
+  background: #ffffff;
   padding: 24px;
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
@@ -14,31 +14,71 @@
   font-weight: 600;
 }
 
-.approval-table {
+/* TABLE */
+
+.MyTaskTable {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
 
-.approval-table th {
-  background-color: #f3f4f6;
+/* HEADER */
+
+.MyTaskTableHeader {
+  background: #f3f4f6;
   color: #374151;
   padding: 14px;
-  text-align: left;
   font-weight: 600;
+  border-bottom: 2px solid #e5e7eb;
+  text-align: left;
 }
 
-.approval-table td {
+/* BODY */
+
+.MyTaskTableCell {
   padding: 14px;
   border-bottom: 1px solid #e5e7eb;
+  vertical-align: middle;
 }
 
-.approval-table tr:hover {
-  background-color: #f9fafb;
+.MyTaskTableRow:hover {
+  background: #f9fafb;
 }
+
+/* COLUMN WIDTHS */
+
+.MyTaskTableHeader:nth-child(1),
+.MyTaskTableCell:nth-child(1) {
+  width: 15%;
+}
+
+.MyTaskTableHeader:nth-child(2),
+.MyTaskTableCell:nth-child(2) {
+  width: 25%;
+}
+
+.MyTaskTableHeader:nth-child(3),
+.MyTaskTableCell:nth-child(3) {
+  width: 15%;
+  text-align: center;
+}
+
+.MyTaskTableHeader:nth-child(4),
+.MyTaskTableCell:nth-child(4) {
+  width: 15%;
+  text-align: center;
+}
+
+.MyTaskTableHeader:nth-child(5),
+.MyTaskTableCell:nth-child(5) {
+  width: 30%;
+}
+
+/* BUTTONS */
 
 .approve-btn {
-  background-color: #16a34a;
-  color: white;
+  background: #16a34a;
+  color: #fff;
   border: none;
   padding: 8px 18px;
   border-radius: 6px;
@@ -47,12 +87,22 @@
 }
 
 .approve-btn:hover {
-  background-color: #15803d;
+  background: #15803d;
+}
+
+.approved-btn {
+  background: #bbf7d0;
+  color: #166534;
+  border: 1px solid #86efac;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: default;
 }
 
 .delete-btn {
-  background-color: #dc2626;
-  color: white;
+  background: #dc2626;
+  color: #fff;
   border: none;
   padding: 8px 18px;
   border-radius: 6px;
@@ -61,28 +111,28 @@
 }
 
 .delete-btn:hover {
-  background-color: #b91c1c;
+  background: #b91c1c;
 }
+
+/* COMMENT */
 
 .comment-input {
   width: 100%;
   padding: 8px 12px;
   border: 1px solid #d1d5db;
   border-radius: 6px;
-  background-color: #f3f4f6;
+  background: #fff;
   outline: none;
+  font-size: 13px;
 }
 
 .comment-input:focus {
-  border-color: #6b7280;
-  background-color: #ffffff;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
 }
-.approved-btn {
-  background-color: #22c55e;
-  color: white;
-  border: none;
-  padding: 8px 18px;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: default;
+
+/* CENTER ALIGN */
+
+.MyTaskCenter {
+  text-align: center;
 }
