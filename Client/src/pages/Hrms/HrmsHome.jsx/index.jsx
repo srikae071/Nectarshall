@@ -52,13 +52,7 @@ function HrmsHome() {
                   <tr
                     key={item._id}
                     style={{ cursor: "pointer" }}
-                    onClick={() => {
-                      if (item.incidentNumber?.startsWith("HR")) {
-                        navigate(`/askforhr/${item._id}`);
-                      } else {
-                        navigate(`/askforit/${item._id}`);
-                      }
-                    }}
+                    onClick={() => navigate(`/itsaves/${item._id}`)}
                   >
                     <td>{item.incidentNumber || "N/A"}</td>
                     <td>{item.requester || "N/A"}</td>

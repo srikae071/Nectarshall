@@ -40,6 +40,8 @@ import HomeLeaveRequest from "./pages/Home/LeaveManagement/LeaveManagementRightS
 import HomeLeaveBalance from "./pages/Home/LeaveManagement/LeaveManagementRightSide/HomeLeaveBalance/index.jsx";
 import HomeLeaveCalendar from "./pages/Home/LeaveManagement/LeaveManagementRightSide/HomeLeaveCalender/index.jsx";
 import MyTasks from "./pages/MyTasks/index.jsx";
+import ITSaves from "./pages/Hrms/SavedForms/ITSaves/index.jsx";
+import HRSaves from "./pages/Hrms/SavedForms/HRSaves/index.jsx";
 
 function App() {
   return (
@@ -100,6 +102,8 @@ function App() {
       <Route path="/home-leave-balance" element={<HomeLeaveBalance />} />
       <Route path="/home-leave-calendar" element={<HomeLeaveCalendar />} />
       <Route path="/my-tasks" element={<MyTasks />} />
+      <Route path="/hrms/itsaves" element={<ITSaves />} />
+      <Route path="/hrms/hrsaves" element={<HRSaves />} />
     </Routes>
   );
 }
