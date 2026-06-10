@@ -45,13 +45,30 @@ exports.deleteLeave = async (req, res) => {
   }
 };
 
+// exports.approveLeave = async (req, res) => {
+//   try {
+//     const leave = await Leave.findByIdAndUpdate(
+//       req.params.id,
+//       {
+//         status: "Approved",
+//         comment: req.body.comment,
+//       },
+//       { new: true },
+//     );
+
+//     res.json(leave);
+//   } catch (error) {
+//     res.status(500).json({
+//       message: error.message,
+//     });
+//   }
+// };
 exports.approveLeave = async (req, res) => {
   try {
     const leave = await Leave.findByIdAndUpdate(
       req.params.id,
       {
         status: "Approved",
-        comment: req.body.comment,
       },
       { new: true },
     );

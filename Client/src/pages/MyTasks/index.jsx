@@ -27,6 +27,7 @@ function ApprovalTable() {
 
       fetchLeaves();
     } catch (error) {
+      console.log("ERROR RESPONSE:", error.response?.data);
       console.log(error);
     }
   };
