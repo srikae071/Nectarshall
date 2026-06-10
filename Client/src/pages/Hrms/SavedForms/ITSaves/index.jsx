@@ -1,11 +1,46 @@
-import { useState } from "react";
-// import axios from "axios";
-
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 import HrmsLeftLayout from "../../Hrmsleftlayout";
 
 import "./index.css";
 
 function ItSaves() {
+  const { id } = useParams();
+
+  const [formData, setFormData] = useState({
+    caseId: "",
+    requesterName: "",
+    category: "",
+    urgency: "",
+    shortDescription: "",
+    description: "",
+  });
+
+  useEffect(() => {
+    const fetchRequest = async () => {
+      try {
+        const response = await axios.get(
+          `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests/${id}`,
+        );
+
+        setFormData({
+          caseId: response.data.incidentNumber || "",
+          requesterName: response.data.requester || "",
+          category: response.data.category || "",
+          urgency: response.data.urgency || "",
+          shortDescription: response.data.shortDescription || "",
+          description: response.data.description || "",
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (id) {
+      fetchRequest();
+    }
+  }, [id]);
   return (
     <HrmsLeftLayout>
       <div className="CreateContainer">
@@ -15,12 +50,16 @@ function ItSaves() {
         <div className="CreateRow">
           <div className="CreateField">
             <label>Case ID</label>
-            <input name="caseId" />
+            <input name="caseId" value={formData.caseId} readOnly />
           </div>
 
           <div className="CreateField">
             <label>Requester Name</label>
-            <input name="requesterName" />
+            <input
+              name="requesterName"
+              value={formData.requesterName}
+              readOnly
+            />
           </div>
 
           <div className="CreateField">
@@ -55,8 +94,8 @@ function ItSaves() {
 
           <div className="CreateField">
             <label>Category</label>
-            <select name="category">
-              <option>Payroll</option>
+            <select name="category" value={formData.category} readOnly>
+              <option>{formData.category}</option>
             </select>
           </div>
         </div>
@@ -90,7 +129,7 @@ function ItSaves() {
           <div className="CreateField">
             <label>Urgency</label>
 
-            <select name="urgency">
+            <select name="urgency" value={formData.urgency} readOnly>
               <option value="">Select</option>
               <option>High</option>
               <option>Medium</option>
@@ -110,6 +149,8 @@ function ItSaves() {
           <textarea
             className="CreateTextarea CreateShortTextarea"
             name="shortDescription"
+            value={formData.shortDescription}
+            readOnly
           ></textarea>
         </div>
 
@@ -118,6 +159,8 @@ function ItSaves() {
           <textarea
             className="CreateTextarea CreateDescriptionTextarea"
             name="description"
+            value={formData.description}
+            readOnly
           ></textarea>
         </div>
 

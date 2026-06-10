@@ -102,7 +102,8 @@ function App() {
       <Route path="/home-leave-balance" element={<HomeLeaveBalance />} />
       <Route path="/home-leave-calendar" element={<HomeLeaveCalendar />} />
       <Route path="/my-tasks" element={<MyTasks />} />
-      <Route path="/hrms/itsaves" element={<ITSaves />} />
+      {/* <Route path="/hrms/itsaves" element={<ITSaves />} /> */}
+      <Route path="/hrms/itsaves/:id" element={<ITSaves />} />
       <Route path="/hrms/hrsaves" element={<HRSaves />} />
     </Routes>
   );
