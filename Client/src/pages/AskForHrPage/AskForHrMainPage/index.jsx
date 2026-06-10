@@ -59,7 +59,7 @@ function AskForHrMainPage() {
       console.log("Sending:", formData);
 
       const response = await axios.post(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests/create",
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/hrrequests/create",
         {
           ...formData,
           requestType: "HR",

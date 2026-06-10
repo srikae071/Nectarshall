@@ -44,7 +44,7 @@ function ItSaves() {
   return (
     <HrmsLeftLayout>
       <div className="CreateContainer">
-        <h2 className="CreateTitle">Create New Case</h2>
+        <h2 className="CreateTitle">IT CASE</h2>
 
         {/* ROW 1 */}
         <div className="CreateRow">
