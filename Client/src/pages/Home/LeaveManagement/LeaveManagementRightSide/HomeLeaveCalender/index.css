@@ -1,0 +1,126 @@
+/* MAIN CONTAINER */
+.calendar-container {
+  width: 100%;
+  min-height: 100vh;
+
+  background: #ffffff;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+
+  font-family: Arial, sans-serif;
+
+  box-sizing: border-box;
+}
+
+/* TITLE */
+.calendar-title {
+  background-color: #e9e5e5;
+  padding: 12px 20px;
+  border-bottom: 1px solid #dcdcdc;
+}
+
+.calendar-title h3 {
+  margin: 0;
+  font-size: 18px;
+  text-transform: capitalize;
+}
+
+/* HEADER */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #e5e5e5;
+  padding: 15px 20px;
+}
+
+/* MONTH */
+.calendar-header h2 {
+  margin: 0;
+  font-size: 22px;
+  color: #222;
+  background-color: #e5e5e5;
+}
+
+/* BUTTONS */
+.controls {
+  display: flex;
+  gap: 8px;
+}
+
+.controls button {
+  padding: 7px 14px;
+  background: #4c4c58;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.controls button:hover {
+  background: #333;
+}
+
+/* GRID */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+/* WEEK HEADER */
+.calendar-grid.header div {
+  background: #555;
+  color: white;
+
+  text-align: center;
+  padding: 12px;
+
+  font-weight: bold;
+  border-right: 1px solid #666;
+}
+
+/* DAYS */
+.day,
+.empty {
+  min-height: 110px;
+
+  border: 1px solid #4d0303;
+  padding: 8px;
+  background-color: #e5e5e5;
+  box-sizing: border-box;
+}
+
+/* DAY HOVER */
+.day:hover {
+  background: #f5f5f5;
+  cursor: pointer;
+}
+
+/* ---------------- */
+/* RESPONSIVE */
+/* ---------------- */
+
+@media (max-width: 768px) {
+  .calendar-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    background-color: #e5e5e5;
+  }
+
+  .calendar-header h2 {
+    font-size: 18px;
+  }
+
+  .controls {
+    flex-wrap: wrap;
+  }
+
+  .calendar-grid.header div,
+  .day,
+  .empty {
+    min-height: 70px;
+    font-size: 12px;
+    padding: 5px;
+  }
+}

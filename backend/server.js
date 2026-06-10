@@ -6,7 +6,7 @@ const cors = require("cors");
 const itRequestRoutes = require("./routes/ItHrRequestRoutes");
 
 const caseRoutes = require("./routes/caseRoutes");
-
+const leaveRoutes = require("./routes/leaveRoutes");
 const app = express();
 
 app.use(cors());
@@ -14,6 +14,7 @@ app.use(express.json());
 
 app.use("/api/cases", caseRoutes);
 app.use("/api/itrequests", itRequestRoutes);
+app.use("/api/leaves", leaveRoutes);
 
 // Middleware
 

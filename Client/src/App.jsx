@@ -10,7 +10,7 @@ import MainAFI from "./pages/AskFORITPage/MainAFI";
 import AskForHrMainPage from "./pages/AskForHrPage/AskForHrMainPage";
 import HrmsHome from "../src/pages/Hrms/HrmsHome.jsx";
 import Createnew from "../src/pages/Hrms/Createnew/index.jsx";
-import Open from "../src/pages/Hrms/Open/index.jsx";
+import Open from "./pages/Hrms/Open/index.jsx";
 import Resolved from "../src/pages/Hrms/Resolved/index.jsx";
 import Assingtome from "../src/pages/Hrms/Assigntome/index.jsx";
 import OnboardingCompliance from "../src/pages/Hrms/OnboardingCompliance/indeex.jsx";
@@ -35,6 +35,11 @@ import PatrollingTimesheets from "./pages/Patrolling/PatrollingRightContent/Patr
 import PatrollingSites from "./pages/Patrolling/PatrollingRightContent/PatrollingEmployessites/index.jsx";
 import PatrollingReports from "./pages/Patrolling/PatrollingRightContent/PatrollingReportss/index.jsx";
 import PatrollingIncidents from "./pages/Patrolling/PatrollingRightContent/PatrollingIncidents/index.jsx";
+import HomeLeaveStatus from "./pages/Home/LeaveManagement/LeaveManagementRightSide/HomeLeaveStatus/index.jsx";
+import HomeLeaveRequest from "./pages/Home/LeaveManagement/LeaveManagementRightSide/HomeLeaveRequest/index.jsx";
+import HomeLeaveBalance from "./pages/Home/LeaveManagement/LeaveManagementRightSide/HomeLeaveBalance/index.jsx";
+import HomeLeaveCalendar from "./pages/Home/LeaveManagement/LeaveManagementRightSide/HomeLeaveCalender/index.jsx";
+import MyTasks from "./pages/MyTasks/index.jsx";
 
 function App() {
   return (
@@ -90,6 +95,11 @@ function App() {
       <Route path="/askforit" element={<MainAFI />} />
       <Route path="/askforhr" element={<AskForHrMainPage />} />
       <Route path="/askforhr/:id" element={<AskForHrMainPage />} />
+      <Route path="/home-leave-status" element={<HomeLeaveStatus />} />
+      <Route path="/home-leave-request" element={<HomeLeaveRequest />} />
+      <Route path="/home-leave-balance" element={<HomeLeaveBalance />} />
+      <Route path="/home-leave-calendar" element={<HomeLeaveCalendar />} />
+      <Route path="/my-tasks" element={<MyTasks />} />
     </Routes>
   );
 }

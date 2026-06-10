@@ -1,13 +1,36 @@
 // import { useState } from "react";
-import Hrmsleftlayout from "../../pages/Hrms/Hrmsleftlayout";
-import "./LeaveRequest.css";
+import axios from "axios";
+import LeaveManagementLeftSide from "./../../LeaveManagementLeftSide";
+
+import "./index.css";
 import { useState } from "react";
 
-function LeaveRequest() {
+function HomeLeaveRequest() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [halfDay, setHalfDay] = useState(false);
+  const [description, setDescription] = useState("");
   // const [leaveType, setLeaveType] = useState("Earned Leaves");
+  const handleSave = async () => {
+    try {
+      await axios.post(
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves/create",
+        {
+          // employeeName: "Srikar",
+          startDate,
+          endDate,
+          totalLeaves: calculateLeaves(),
+          halfDay,
+          description,
+        },
+      );
+
+      alert("Leave Request Saved Successfully");
+    } catch (error) {
+      console.log(error);
+      alert("Error Saving Leave Request");
+    }
+  };
   const calculateLeaves = () => {
     if (!startDate || !endDate) return "";
 
@@ -21,7 +44,7 @@ function LeaveRequest() {
     return halfDay ? totalDays / 2 : totalDays;
   };
   return (
-    <Hrmsleftlayout>
+    <LeaveManagementLeftSide>
       <div className="LeaveRequestPage">
         <div className="LeaveRequestContainer">
           <h2 className="LeaveRequestTitle">Leave Request</h2>
@@ -81,12 +104,18 @@ function LeaveRequest() {
           {/* ROW 3 */}
           <div className="LeaveRequestField LeaveRequestFull">
             <label className="leqreason">Description</label>
-            <textarea className="LeaveRequestTextarea"></textarea>
+            <textarea
+              className="LeaveRequestTextarea"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            ></textarea>
           </div>
 
           {/* ACTIONS */}
           <div className="LeaveRequestActions">
-            <button className="LeaveRequestSave">Save</button>
+            <button className="LeaveRequestSave" onClick={handleSave}>
+              Save
+            </button>
             <button className="LeaveRequestCancel">Cancel</button>
           </div>
         </div>
@@ -96,8 +125,8 @@ function LeaveRequest() {
           © Copyright 2023 Enhance Services - All Rights Reserved.
         </div>
       </div>
-    </Hrmsleftlayout>
+    </LeaveManagementLeftSide>
   );
 }
 
-export default LeaveRequest;
+export default HomeLeaveRequest;

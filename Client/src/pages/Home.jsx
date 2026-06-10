@@ -17,7 +17,7 @@ function Home() {
       title: "Leaves Management",
       desc: "Smart Leave Management for Modern Teams",
       img: leaveImg,
-      route: "/leave-request",
+      route: "/Home-leave-request",
     },
     {
       title: "Payrolls",
@@ -91,7 +91,16 @@ function Home() {
           >
             HRMS
           </a>
-          <a>MY TASK</a>
+          <a
+            role="button"
+            tabIndex={0}
+            onClick={() => navigate("/my-tasks")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") navigate("/my-tasks");
+            }}
+          >
+            MY TASK
+          </a>
           <a>MY TICKETS</a>
           <div className="profile">👤</div>
         </div>

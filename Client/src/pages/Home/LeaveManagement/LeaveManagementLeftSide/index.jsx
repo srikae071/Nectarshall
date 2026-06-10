@@ -1,16 +1,17 @@
 import { useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./index.css";
-import HrmsNavbar from "../HrmsNavbar";
+// import HrmsNavbar from "../HrmsNavbar";
+import LeaveManagementNavBar from "../LeaveManagementNavBar";
 
 const menuData = [
   {
     title: "Leave Management",
     items: [
-      { label: "Leave Request", path: "/leave-request" },
-      { label: "Leave Balance", path: "/leave-balance" },
-      { label: "Leave Calendar", path: "/leave-calendar" },
-      { label: "Leave Status", path: "/leave-status" },
+      { label: "Leave Request", path: "/Home-leave-request" },
+      { label: "Leave Balance", path: "/Home-leave-balance" },
+      { label: "Leave Calendar", path: "/Home-leave-calendar" },
+      { label: "Leave Status", path: "/Home-leave-status" },
     ],
   },
 ];
@@ -126,7 +127,7 @@ function LeaveManagementLeftSide({ children }) {
       onMouseMove={resize}
       onMouseUp={stopResize}
     >
-      <HrmsNavbar />
+      <LeaveManagementNavBar />
 
       <div className="mainLayout">
         {/* SIDEBAR */}
