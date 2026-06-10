@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import logo from "../../../images/logo.png";
 import "./index.css";
 
-function HrmsNavbar() {
+function MyTasksNavBar() {
   const navigate = useNavigate();
 
   return (
@@ -10,7 +10,7 @@ function HrmsNavbar() {
       <div className="hrmslogo" onClick={() => navigate("/")}>
         <img src={logo} alt="logo" className="hrmslogoimage" />
         <div className="navname">
-          <p>HRMS</p>
+          <p>My Tasks</p>
         </div>
       </div>
 
@@ -19,4 +19,4 @@ function HrmsNavbar() {
   );
 }
 
-export default HrmsNavbar;
+export default MyTasksNavBar;

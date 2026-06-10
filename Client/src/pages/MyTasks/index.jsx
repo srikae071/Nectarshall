@@ -1,3 +1,4 @@
+import MyTasksNavBar from "./MyTaskNavvar";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -42,61 +43,64 @@ function ApprovalTable() {
     }
   };
   return (
-    <div className="approval-container">
-      <h2 className="approval-title">Request Approval List</h2>
+    <>
+      <MyTasksNavBar />
+      <div className="approval-container">
+        <h2 className="approval-title">Request Approval List</h2>
 
-      <table className="MyTaskTable">
-        <thead>
-          <tr className="MyTaskTableRow">
-            <th className="MyTaskTableHeader">Serial Number</th>
-            <th className="MyTaskTableHeader">Name</th>
-            <th className="MyTaskTableHeader">Approve</th>
-            <th className="MyTaskTableHeader">Delete</th>
-            <th className="MyTaskTableHeader">Comment</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {data.map((item) => (
-            <tr className="MyTaskTableRow" key={item._id}>
-              <td className="MyTaskTableCell">{item.leaveNumber}</td>
-
-              <td className="MyTaskTableCell">{item.employeeName}</td>
-
-              <td className="MyTaskTableCell MyTaskCenter">
-                {item.status === "Approved" ? (
-                  <button className="approved-btn">Approved</button>
-                ) : (
-                  <button
-                    className="approve-btn"
-                    onClick={() => approveLeave(item._id)}
-                  >
-                    Approve
-                  </button>
-                )}
-              </td>
-
-              <td className="MyTaskTableCell MyTaskCenter">
-                <button
-                  className="delete-btn"
-                  onClick={() => deleteLeave(item._id)}
-                >
-                  Delete
-                </button>
-              </td>
-
-              <td className="MyTaskTableCell">
-                <input
-                  type="text"
-                  placeholder="Enter comment..."
-                  className="comment-input"
-                />
-              </td>
+        <table className="MyTaskTable">
+          <thead>
+            <tr className="MyTaskTableRow">
+              <th className="MyTaskTableHeader">Serial Number</th>
+              <th className="MyTaskTableHeader">Name</th>
+              <th className="MyTaskTableHeader">Approve</th>
+              <th className="MyTaskTableHeader">Delete</th>
+              <th className="MyTaskTableHeader">Comment</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+
+          <tbody>
+            {data.map((item) => (
+              <tr className="MyTaskTableRow" key={item._id}>
+                <td className="MyTaskTableCell">{item.leaveNumber}</td>
+
+                <td className="MyTaskTableCell">{item.employeeName}</td>
+
+                <td className="MyTaskTableCell MyTaskCenter">
+                  {item.status === "Approved" ? (
+                    <button className="approved-btn">Approved</button>
+                  ) : (
+                    <button
+                      className="approve-btn"
+                      onClick={() => approveLeave(item._id)}
+                    >
+                      Approve
+                    </button>
+                  )}
+                </td>
+
+                <td className="MyTaskTableCell MyTaskCenter">
+                  <button
+                    className="delete-btn"
+                    onClick={() => deleteLeave(item._id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+
+                <td className="MyTaskTableCell">
+                  <input
+                    type="text"
+                    placeholder="Enter comment..."
+                    className="comment-input"
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }
 
