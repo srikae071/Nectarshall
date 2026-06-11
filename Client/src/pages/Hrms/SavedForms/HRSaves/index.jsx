@@ -46,7 +46,7 @@ function HRSaves() {
   return (
     <HrmsLeftLayout>
       <div className="CreateContainer">
-        <h2 className="CreateTitle">Create New Case</h2>
+        <h2 className="CreateTitle">HR CASE</h2>
 
         {/* ROW 1 */}
         <div className="CreateRow">
@@ -67,7 +67,7 @@ function HRSaves() {
           <div className="CreateField">
             <label>Department</label>
             <select name="department">
-              <option>IT</option>
+              <option>HR</option>
             </select>
           </div>
         </div>

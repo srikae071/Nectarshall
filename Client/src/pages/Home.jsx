@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
 import "../App.css";
 import { Route, useNavigate } from "react-router-dom";
 import logo from "../images/logo.png";
@@ -11,6 +13,27 @@ import corosolimg from "../images/corosolimg.jpg";
 
 function Home() {
   const navigate = useNavigate();
+  const [pendingCount, setPendingCount] = useState(0);
+
+  useEffect(() => {
+    fetchPendingLeaves();
+  }, []);
+
+  const fetchPendingLeaves = async () => {
+    try {
+      const response = await axios.get(
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves",
+      );
+
+      const pending = response.data.filter(
+        (item) => item.status !== "Approved",
+      );
+
+      setPendingCount(pending.length);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const services = [
     {
@@ -91,7 +114,7 @@ function Home() {
           >
             HRMS
           </a>
-          <a
+          {/* <a
             role="button"
             tabIndex={0}
             onClick={() => navigate("/my-tasks")}
@@ -100,7 +123,21 @@ function Home() {
             }}
           >
             MY TASK
-          </a>
+          </a> */}
+
+          <div
+            className="MyTaskNotificationWrapper"
+            role="button"
+            tabIndex={0}
+            onClick={() => navigate("/my-tasks")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") navigate("/my-tasks");
+            }}
+          >
+            <a>MY TASK</a>
+
+            <span className="MyTaskNotificationBadge">{pendingCount}</span>
+          </div>
           <a>MY TICKETS</a>
           <div className="profile">👤</div>
         </div>

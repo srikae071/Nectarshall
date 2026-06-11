@@ -32,7 +32,7 @@ function HRSavesCases() {
     <HrmsLeftLayout>
       <div className="Openhome">
         <div>
-          <h3 className="openheading">All</h3>
+          <h3 className="openheading">HR Cases</h3>
 
           <table className="opentable">
             <thead>

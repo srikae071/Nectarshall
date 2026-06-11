@@ -255,3 +255,32 @@ textarea {
   color: white;
   padding: 10px 20px;
 }
+.MyTaskNotificationWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.MyTaskNotificationBadge {
+  position: absolute;
+  top: -5px;
+  right: -10px;
+
+  min-width: 10px;
+  height: 10px;
+
+  border-radius: 50%;
+
+  background-color: #dc2626;
+  color: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 8px;
+  font-weight: 600;
+
+  padding: 2px;
+}
