@@ -42,6 +42,7 @@ import HomeLeaveCalendar from "./pages/Home/LeaveManagement/LeaveManagementRight
 import MyTasks from "./pages/MyTasks/index.jsx";
 import ITSaves from "./pages/Hrms/SavedForms/ITSaves/index.jsx";
 import HRSaves from "./pages/Hrms/SavedForms/HRSaves/index.jsx";
+import HRSavesCases from "./pages/Hrms/HRSavesCases/index.jsx";
 
 function App() {
   return (
@@ -105,6 +106,7 @@ function App() {
       {/* <Route path="/hrms/itsaves" element={<ITSaves />} /> */}
       <Route path="/hrms/itsaves/:id" element={<ITSaves />} />
       <Route path="/hrms/hrsaves/:id" element={<HRSaves />} />
+      <Route path="/hrms/hrsavescases" element={<HRSavesCases />} />
     </Routes>
   );
 }

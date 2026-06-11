@@ -52,7 +52,7 @@ function HRSavesCases() {
                   <tr
                     key={item._id}
                     style={{ cursor: "pointer" }}
-                    onClick={() => navigate(`/hrms/itsaves/${item._id}`)}
+                    onClick={() => navigate(`/hrms/HRsaves/${item._id}`)}
                   >
                     <td>{item.incidentNumber || "N/A"}</td>
                     <td>{item.requester || "N/A"}</td>

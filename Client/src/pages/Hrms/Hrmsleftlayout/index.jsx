@@ -8,7 +8,7 @@ const menuData = [
     title: "Case Management",
     items: [
       { label: "All", path: "/hrms" },
-      { label: "HR Cases", path: "/hrms/HrCases" },
+      { label: "HR Cases", path: "/hrms/hrsavescases" },
       { label: "Create New", path: "/hrms/createnew" },
       { label: "Open", path: "/hrms/it-open" },
       { label: "Resolved", path: "/hrms/resolved-cases" },
