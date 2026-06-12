@@ -1,0 +1,65 @@
+.MyTicketsContainer {
+  width: 95%;
+  margin: 30px auto;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.MyTicketsHeader {
+  margin-bottom: 20px;
+}
+
+.MyTicketsHeader h2 {
+  color: #1f2937;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.MyTicketsTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.MyTicketsTable th {
+  background: #f3f4f6;
+  color: #374151;
+  padding: 14px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.MyTicketsTable td {
+  padding: 14px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.MyTicketsTable tr:hover {
+  background: #f9fafb;
+}
+
+.TicketBadgeIT {
+  background: #2563eb;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.TicketBadgeHR {
+  background: #16a34a;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.NoRecords {
+  text-align: center;
+  padding: 30px;
+  color: #6b7280;
+}

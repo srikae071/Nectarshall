@@ -138,7 +138,9 @@ function Home() {
 
             <span className="MyTaskNotificationBadge">{pendingCount}</span>
           </div>
-          <a>MY TICKETS</a>
+          <a role="button" tabIndex={0} onClick={() => navigate("/my-tickets")}>
+            MY TICKETS
+          </a>
           <div className="profile">👤</div>
         </div>
       </div>
