@@ -11,11 +11,15 @@ function ItSaves() {
 
   const [formData, setFormData] = useState({
     caseId: "",
-    requesterName: "",
+    requester: "",
+    requesterFor: "",
     category: "",
     urgency: "",
     shortDescription: "",
     description: "",
+    status: "",
+    subStatus: "",
+    assignmentGroup: "",
   });
 
   useEffect(() => {
@@ -27,11 +31,15 @@ function ItSaves() {
 
         setFormData({
           caseId: response.data.incidentNumber || "",
-          requesterName: response.data.requester || "",
+          requester: response.data.requester || "",
+          requesterFor: response.data.requesterFor || "",
           category: response.data.category || "",
           urgency: response.data.urgency || "",
           shortDescription: response.data.shortDescription || "",
           description: response.data.description || "",
+          status: response.data.status || "Open",
+          subStatus: response.data.subStatus || "",
+          assignmentGroup: response.data.assignmentGroup || "",
         });
       } catch (error) {
         console.log(error);
@@ -42,7 +50,13 @@ function ItSaves() {
       fetchRequest();
     }
   }, [id]);
-
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+    console.log(formData);
+  };
   const handleSave = async () => {
     try {
       await axios.put(
@@ -89,7 +103,11 @@ function ItSaves() {
           <div className="CreateField">
             <label>Status</label>
 
-            <select name="status">
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+            >
               <option value="">Select Status</option>
               <option value="Open">Open</option>
               <option value="Work In Progress">Work In Progress</option>
