@@ -11,6 +11,7 @@ function HomeLeaveRequest() {
   const [halfDay, setHalfDay] = useState(false);
   const [description, setDescription] = useState("");
   // const [leaveType, setLeaveType] = useState("Earned Leaves");
+  const [leaveType, setLeaveType] = useState("");
   const handleSave = async () => {
     try {
       await axios.post(
@@ -18,6 +19,7 @@ function HomeLeaveRequest() {
         {
           employeeName: "Sumith Sir",
           startDate,
+          leaveType,
           endDate,
           totalLeaves: calculateLeaves(),
           halfDay,
@@ -53,8 +55,16 @@ function HomeLeaveRequest() {
           <div className="LeaveRequestRow">
             <div className="LeaveRequestField">
               <label>Leave Types</label>
-              <select className="LeaveRequestInput">
-                <option>Earned Leaves</option>
+              <select
+                className="LeaveRequestInput"
+                value={leaveType}
+                onChange={(e) => setLeaveType(e.target.value)}
+              >
+                <option value="">Select Leave Type</option>
+                <option value="Casual Leave">Casual Leave</option>
+                <option value="Maternity Leave">Maternity Leave</option>
+                <option value="Paternity Leave">Paternity Leave</option>
+                <option value="Paid Leave">Paid Leave</option>
               </select>
             </div>
 

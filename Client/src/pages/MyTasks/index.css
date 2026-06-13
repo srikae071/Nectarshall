@@ -1,89 +1,88 @@
+body {
+  background: #e9e5e5;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
 .approval-container {
-  width: 95%;
-  margin: 30px auto;
-  background: #ffffff;
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  background: #e9e5e5;
+  padding: 20px;
+  min-height: 100vh;
 }
 
 .approval-title {
   margin-bottom: 20px;
-  color: #1f2937;
-  font-size: 24px;
+  color: #000;
+  font-size: 22px;
   font-weight: 600;
 }
 
-/* TABLE */
+.table-wrapper {
+  overflow-x: auto;
+}
 
 .MyTaskTable {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed;
+  background: #e9e5e5;
 }
-
-/* HEADER */
 
 .MyTaskTableHeader {
-  background: #f3f4f6;
-  color: #374151;
-  padding: 14px;
+  background: #e9e5e5;
+  color: #000;
+  font-size: 13px;
   font-weight: 600;
-  border-bottom: 2px solid #e5e7eb;
+  padding: 10px;
   text-align: left;
+  border: 1px solid #cfcaca;
 }
 
-/* BODY */
-
 .MyTaskTableCell {
-  padding: 14px;
-  border-bottom: 1px solid #e5e7eb;
+  background: #e9e5e5;
+  color: #000;
+  font-size: 13px;
+  padding: 10px;
+  text-align: left;
+  border: 2px solid #cfcaca;
   vertical-align: middle;
 }
 
+.NoDataCell {
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 15px;
+  color: #666;
+  border-top: 1px solid #cfcaca;
+  border-bottom: 1px solid #cfcaca;
+  background: #e9e5e5;
+}
+
 .MyTaskTableRow:hover {
-  background: #f9fafb;
+  background: #e9e5e5;
 }
 
-/* COLUMN WIDTHS */
-
-.MyTaskTableHeader:nth-child(1),
-.MyTaskTableCell:nth-child(1) {
-  width: 15%;
-}
-
-.MyTaskTableHeader:nth-child(2),
-.MyTaskTableCell:nth-child(2) {
-  width: 25%;
-}
-
-.MyTaskTableHeader:nth-child(3),
-.MyTaskTableCell:nth-child(3) {
-  width: 15%;
+/* Center only required columns */
+.MyTaskTable th:nth-child(1),
+.MyTaskTable td:nth-child(1),
+.MyTaskTable th:nth-child(6),
+.MyTaskTable td:nth-child(6),
+.MyTaskTable th:nth-child(7),
+.MyTaskTable td:nth-child(7),
+.MyTaskTable th:nth-child(8),
+.MyTaskTable td:nth-child(8),
+.MyTaskTable th:nth-child(9),
+.MyTaskTable td:nth-child(9) {
   text-align: center;
 }
-
-.MyTaskTableHeader:nth-child(4),
-.MyTaskTableCell:nth-child(4) {
-  width: 15%;
-  text-align: center;
-}
-
-.MyTaskTableHeader:nth-child(5),
-.MyTaskTableCell:nth-child(5) {
-  width: 30%;
-}
-
-/* BUTTONS */
 
 .approve-btn {
   background: #16a34a;
-  color: #fff;
+  color: white;
   border: none;
-  padding: 8px 18px;
-  border-radius: 6px;
+  padding: 6px 12px;
+  border-radius: 4px;
   cursor: pointer;
-  font-weight: 500;
 }
 
 .approve-btn:hover {
@@ -91,48 +90,46 @@
 }
 
 .approved-btn {
-  background: #bbf7d0;
-  color: #166534;
-  border: 1px solid #86efac;
-  padding: 8px 18px;
-  border-radius: 6px;
-  font-weight: 600;
-  cursor: default;
+  background: #16a34a;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
 }
 
 .delete-btn {
   background: #dc2626;
-  color: #fff;
+  color: white;
   border: none;
-  padding: 8px 18px;
-  border-radius: 6px;
+  padding: 6px 12px;
+  border-radius: 4px;
   cursor: pointer;
-  font-weight: 500;
 }
 
 .delete-btn:hover {
   background: #b91c1c;
 }
 
-/* COMMENT */
-
 .comment-input {
   width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
+  box-sizing: border-box;
+  padding: 6px;
+  border: 1px solid #bdbdbd;
+  border-radius: 4px;
   background: #fff;
-  outline: none;
-  font-size: 13px;
 }
 
 .comment-input:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+  outline: none;
+  border-color: #888;
 }
 
-/* CENTER ALIGN */
+@media (max-width: 768px) {
+  .approval-container {
+    padding: 10px;
+  }
 
-.MyTaskCenter {
-  text-align: center;
+  .MyTaskTable {
+    min-width: 850px;
+  }
 }

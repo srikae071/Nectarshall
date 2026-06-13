@@ -10,6 +10,7 @@ const LeaveSchema = new mongoose.Schema(
     totalLeaves: Number,
     halfDay: Boolean,
     description: String,
+
     status: {
       type: String,
       default: "Pending",
