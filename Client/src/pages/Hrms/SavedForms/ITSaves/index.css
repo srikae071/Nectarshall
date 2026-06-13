@@ -87,8 +87,8 @@
 
 /* DESCRIPTION */
 .CreateDescriptionTextarea {
-  height: 100px !important;
-  min-height: 100px !important;
+  height: 70px !important;
+  min-height: 70px !important ;
 }
 
 /* ---------------- */
@@ -116,4 +116,31 @@
   .CreateBtn {
     width: 100%;
   }
+}
+.CreateTextareaGroup {
+  margin-top: 16px;
+}
+
+.CreateTextareaGroup label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.CreateTextarea {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  resize: vertical;
+  box-sizing: border-box;
+  background: #fff;
+}
+
+.CreateTextarea:focus {
+  outline: none;
+  border-color: #2563eb;
 }

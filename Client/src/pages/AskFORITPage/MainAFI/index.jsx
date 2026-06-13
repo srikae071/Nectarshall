@@ -14,6 +14,7 @@ function MainAFI() {
     urgency: "",
     shortDescription: "",
     description: "",
+    workNotes: "",
   });
 
   const { id } = useParams();
@@ -33,6 +34,7 @@ function MainAFI() {
           urgency: response.data.urgency || "",
           shortDescription: response.data.shortDescription || "",
           description: response.data.description || "",
+          workNotes: response.data.workNotes || "",
         });
       } catch (error) {
         console.log(error);
@@ -80,8 +82,9 @@ function MainAFI() {
         category: "",
         subCategory: "",
         urgency: "",
-        // shortDescription: "",
-        // description: "",
+        shortDescription: "",
+        description: "",
+        workNotes: "",
       });
     } catch (error) {
       console.error(error);
@@ -180,14 +183,29 @@ function MainAFI() {
         </div>
 
         {/* DESCRIPTION */}
+        {/* DESCRIPTION */}
         <div className="CreateTextareaGroup">
           <label>Description</label>
 
           <textarea
-            className="CreateTextarea"
+            className="CreateTextarea CreateDescriptionTextarea"
             name="description"
             value={formData.description}
             onChange={handleChange}
+            placeholder="Enter detailed description..."
+          />
+        </div>
+
+        {/* WORK NOTES */}
+        <div className="CreateTextareaGroup">
+          <label>Work Notes</label>
+
+          <textarea
+            className="CreateTextarea CreateWorkNotesTextarea"
+            name="workNotes"
+            value={formData.workNotes || ""}
+            onChange={handleChange}
+            placeholder="Add work notes..."
           />
         </div>
 

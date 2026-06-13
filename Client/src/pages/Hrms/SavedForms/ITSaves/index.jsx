@@ -20,6 +20,7 @@ function ItSaves() {
     status: "",
     subStatus: "",
     assignmentGroup: "",
+    workNotes: "",
   });
 
   useEffect(() => {
@@ -40,6 +41,7 @@ function ItSaves() {
           status: response.data.status || "Open",
           subStatus: response.data.subStatus || "",
           assignmentGroup: response.data.assignmentGroup || "",
+          workNotes: response.data.workNotes || "",
         });
       } catch (error) {
         console.log(error);
@@ -83,11 +85,7 @@ function ItSaves() {
 
           <div className="CreateField">
             <label>Requester Name</label>
-            <input
-              name="requesterName"
-              value={formData.requesterName}
-              readOnly
-            />
+            <input name="requester" value={formData.requester} readOnly />
           </div>
 
           <div className="CreateField">
@@ -186,7 +184,7 @@ function ItSaves() {
           ></textarea>
         </div>
 
-        <div className="CreateTextareaGroup">
+        {/* <div className="CreateTextareaGroup">
           <label>Description</label>
           <textarea
             className="CreateTextarea CreateDescriptionTextarea"
@@ -194,6 +192,29 @@ function ItSaves() {
             value={formData.description}
             readOnly
           ></textarea>
+        </div> */}
+
+        <div className="CreateTextareaGroup">
+          <label>Description</label>
+
+          <textarea
+            className="CreateTextarea CreateDescriptionTextarea"
+            name="description"
+            value={formData.description}
+            readOnly
+          />
+        </div>
+
+        <div className="CreateTextareaGroup">
+          <label>Work Notes</label>
+
+          <textarea
+            className="CreateTextarea CreateWorkNotesTextarea"
+            name="workNotes"
+            value={formData.workNotes}
+            onChange={handleChange}
+            placeholder="Enter work notes..."
+          />
         </div>
 
         {/* BUTTONS */}
