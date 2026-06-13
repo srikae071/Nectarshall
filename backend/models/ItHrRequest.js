@@ -10,6 +10,31 @@ const ItHrRequestSchema = new mongoose.Schema(
     urgency: String,
     shortDescription: String,
     description: String,
+
+    status: {
+      type: String,
+      default: "Open",
+    },
+
+    assignmentGroup: {
+      type: String,
+      default: "",
+    },
+
+    assignTo: {
+      type: String,
+      default: "",
+    },
+
+    impact: {
+      type: String,
+      default: "",
+    },
+
+    priority: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,

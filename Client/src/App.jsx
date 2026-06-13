@@ -45,7 +45,12 @@ import HRSaves from "./pages/Hrms/SavedForms/HRSaves/index.jsx";
 import HRSavesCases from "./pages/Hrms/HRSavesCases/index.jsx";
 import "./App.css";
 import MyTickets from "./pages/NavItems/MyTickets/index.jsx";
-
+import ItNavMain from "./pages/NavItems/IT/ItRightSide/ItNavMain/index.jsx";
+import ITCreateNew from "./pages/NavItems/IT/ItRightSide/ITCreateNew/index.jsx";
+import ItOpen from "./pages/NavItems/IT/ItRightSide/ItOpen/index.jsx";
+import ItResolved from "./pages/NavItems/IT/ItRightSide/ItResolved/index.jsx";
+import ItAssignedToMe from "./pages/NavItems/IT/ItRightSide/ItAssignedToMe/index.jsx";
+import ItClosed from "./pages/NavItems/IT/ItRightSide/ItClosed/index.jsx";
 function App() {
   return (
     <Routes>
@@ -110,6 +115,12 @@ function App() {
       <Route path="/hrms/hrsaves/:id" element={<HRSaves />} />
       <Route path="/hrms/hrsavescases" element={<HRSavesCases />} />
       <Route path="/my-tickets" element={<MyTickets />} />
+      <Route path="/it" element={<ItNavMain />} />
+      <Route path="/it/create-new" element={<ITCreateNew />} />
+      <Route path="/it/open" element={<ItOpen />} />
+      <Route path="/it/resolved" element={<ItResolved />} />
+      <Route path="/it/closed" element={<ItClosed />} />
+      <Route path="/it/assigned-to-me" element={<ItAssignedToMe />} />
     </Routes>
   );
 }

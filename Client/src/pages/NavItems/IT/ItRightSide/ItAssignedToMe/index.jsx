@@ -1,4 +1,4 @@
-import HrmsLeftLayout from "../Hrmsleftlayout";
+import ItLeftSide from "../../ItLeftSide";
 import "./index.css";
 
 const data = [
@@ -12,9 +12,9 @@ const data = [
   },
 ];
 
-function Assigntome() {
+function ItAssignedToMe() {
   return (
-    <HrmsLeftLayout>
+    <ItLeftSide>
       <div className="Openhome">
         <div>
           <h3 className="openheading">Assigned Cases</h3>
@@ -48,8 +48,8 @@ function Assigntome() {
           © Copyright 2023 Enhance Services - All Rights Reserved.
         </div> */}
       </div>
-    </HrmsLeftLayout>
+    </ItLeftSide>
   );
 }
 
-export default Assigntome;
+export default ItAssignedToMe;

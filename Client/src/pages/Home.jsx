@@ -85,6 +85,16 @@ function Home() {
           <a
             role="button"
             tabIndex={0}
+            onClick={() => navigate("/it")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") navigate("/it");
+            }}
+          >
+            IT
+          </a>
+          <a
+            role="button"
+            tabIndex={0}
             onClick={() => navigate("/PatrolingSchedule")}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ")

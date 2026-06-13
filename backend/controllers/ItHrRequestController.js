@@ -63,3 +63,18 @@ exports.getAllItHrRequests = async (req, res) => {
     });
   }
 };
+exports.updateItRequest = async (req, res) => {
+  try {
+    const updatedRequest = await ItHrRequest.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true },
+    );
+
+    res.json(updatedRequest);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};

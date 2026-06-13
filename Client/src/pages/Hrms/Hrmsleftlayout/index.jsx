@@ -257,7 +257,9 @@ function HrmsLeftLayout({ children }) {
   //   setOpenIndex(openIndex === index ? null : index);
   // };
 
-  const [openMenus, setOpenMenus] = useState({});
+  const [openMenus, setOpenMenus] = useState({
+    0: true,
+  });
   const [expandedMenus, setExpandedMenus] = useState({});
 
   const toggle = (index) => {
