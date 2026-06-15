@@ -1,50 +1,27 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
 import LeaveManagementLeftSide from "./../../LeaveManagementLeftSide";
 import "./index.css";
 
-const data = [
-  {
-    id: 1,
-    type: "Casual leave",
-    start: "11/01/2025",
-    end: "11/04/2025",
-    total: 4,
-    status: "Withdrawn",
-  },
-  {
-    id: 2,
-    type: "Maternity leave",
-    start: "12/16/2025",
-    end: "12/22/2025",
-    total: 7,
-    status: "Pending approval",
-  },
-  {
-    id: 3,
-    type: "Unpaid leave",
-    start: "12/15/2025",
-    end: "12/15/2025",
-    total: 1,
-    status: "Approved",
-  },
-  {
-    id: 4,
-    type: "Unpaid leave",
-    start: "12/06/2025",
-    end: "12/06/2025",
-    total: 1,
-    status: "Cancelled",
-  },
-  {
-    id: 5,
-    type: "Comp-off",
-    start: "12/10/2025",
-    end: "12/11/2025",
-    total: 2,
-    status: "Registered",
-  },
-];
-
 function HomeLeaveStatus() {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    fetchLeaves();
+  }, []);
+
+  const fetchLeaves = async () => {
+    try {
+      const response = await axios.get(
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves",
+      );
+
+      setData(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <LeaveManagementLeftSide>
       <div className="Openhome">
@@ -52,41 +29,42 @@ function HomeLeaveStatus() {
           <h3 className="openheading">Leave Status</h3>
 
           <table className="opentable">
-            <thead className="opentablerow">
-              <tr className="opentablerow">
-                <th className="opentablerow">Leave ID</th>
-                <th className="opentablerow">Leave type</th>
-                <th className="opentablerow">Start date</th>
-                <th className="opentablerow">End date</th>
-                <th className="opentablerow">Total leave count</th>
-                <th className="opentablerow">Status</th>
+            <thead>
+              <tr>
+                <th>Leave ID</th>
+                <th>Leave Type</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Total Leave Count</th>
+                <th>Status</th>
               </tr>
             </thead>
 
-            <tbody className="opentablerow">
-              {data.map((item) => (
-                <tr className="opentablerow" key={item.id}>
-                  <td>{item.id}</td>
-                  <td>{item.type}</td>
-                  <td>{item.start}</td>
-                  <td>{item.end}</td>
-                  <td>{item.total}</td>
-                  <td>
-                    <span
-                      className={`badge ${item.status.replace(" ", "-").toLowerCase()}`}
-                    >
-                      {item.status}
-                    </span>
-                  </td>
+            <tbody>
+              {data.length > 0 ? (
+                data.map((item) => (
+                  <tr key={item._id}>
+                    <td>{item.leaveNumber}</td>
+                    <td>{item.leaveType}</td>
+                    <td>{item.startDate}</td>
+                    <td>{item.endDate}</td>
+                    <td>{item.totalLeaves}</td>
+
+                    <td>
+                      <span className={`badge ${item.status.toLowerCase()}`}>
+                        {item.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6">No Leave Requests Found</td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
-
-        {/* <div className="footer">
-          © Copyright 2023 Enhance Services - All Rights Reserved.
-        </div> */}
       </div>
     </LeaveManagementLeftSide>
   );

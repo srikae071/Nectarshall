@@ -51,6 +51,8 @@ import ItOpen from "./pages/NavItems/IT/ItRightSide/ItOpen/index.jsx";
 import ItResolved from "./pages/NavItems/IT/ItRightSide/ItResolved/index.jsx";
 import ItAssignedToMe from "./pages/NavItems/IT/ItRightSide/ItAssignedToMe/index.jsx";
 import ItClosed from "./pages/NavItems/IT/ItRightSide/ItClosed/index.jsx";
+import ItPending from "./pages/NavItems/IT/ItRightSide/ItPending/index.jsx";
+import ItWorkInProgress from "./pages/NavItems/IT/ItRightSide/ItWorkInProgress/index.jsx";
 function App() {
   return (
     <Routes>
@@ -121,6 +123,8 @@ function App() {
       <Route path="/it/resolved" element={<ItResolved />} />
       <Route path="/it/closed" element={<ItClosed />} />
       <Route path="/it/assigned-to-me" element={<ItAssignedToMe />} />
+      <Route path="/it/pending" element={<ItPending />} />
+      <Route path="/it/work-in-progress" element={<ItWorkInProgress />} />
     </Routes>
   );
 }

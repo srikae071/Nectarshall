@@ -18,6 +18,8 @@ const menuData = [
       { label: "Resolved", path: "/it/resolved" },
       { label: "Assigned to me", path: "/it/assigned-to-me" },
       { label: "Closed", path: "/it/closed" },
+      { label: "Work In Progress", path: "/it/work-in-progress" },
+      { label: "Pending", path: "/it/pending  " },
     ],
   },
 ];

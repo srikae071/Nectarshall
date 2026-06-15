@@ -200,10 +200,12 @@ function Home() {
             <div
               className="card-img"
               style={{ backgroundImage: `url(${item.img})` }}
-            ></div>
+            />
 
-            <h3>{item.title}</h3>
-            <p>{item.desc}</p>
+            <div className="card-content">
+              <h3>{item.title}</h3>
+              <p>{item.desc}</p>
+            </div>
           </div>
         ))}
       </div>

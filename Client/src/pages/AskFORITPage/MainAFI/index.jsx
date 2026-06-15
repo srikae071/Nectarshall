@@ -197,7 +197,7 @@ function MainAFI() {
         </div>
 
         {/* WORK NOTES */}
-        <div className="CreateTextareaGroup">
+        {/* <div className="CreateTextareaGroup">
           <label>Work Notes</label>
 
           <textarea
@@ -207,7 +207,7 @@ function MainAFI() {
             onChange={handleChange}
             placeholder="Add work notes..."
           />
-        </div>
+        </div> */}
 
         {/* BUTTONS */}
         <div className="CreateFooter">

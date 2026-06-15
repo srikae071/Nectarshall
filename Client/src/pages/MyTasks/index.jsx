@@ -35,10 +35,10 @@ function ApprovalTable() {
     }
   };
 
-  const deleteLeave = async (id) => {
+  const rejectLeave = async (id) => {
     try {
-      await axios.delete(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves/${id}`,
+      await axios.put(
+        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves/reject/${id}`,
       );
 
       fetchLeaves();
@@ -58,7 +58,7 @@ function ApprovalTable() {
           <table className="MyTaskTable">
             <thead>
               <tr className="MyTaskTableRow">
-                <th className="MyTaskTableHeader">No</th>
+                <th className="MyTaskTableHeader">Record No</th>
                 <th className="MyTaskTableHeader">Employee</th>
                 <th className="MyTaskTableHeader">Leave Type</th>
                 <th className="MyTaskTableHeader">Start Date</th>
@@ -110,7 +110,7 @@ function ApprovalTable() {
                     <td className="MyTaskTableCell MyTaskCenter">
                       <button
                         className="delete-btn"
-                        onClick={() => deleteLeave(item._id)}
+                        onClick={() => rejectLeave(item._id)}
                       >
                         Reject
                       </button>
