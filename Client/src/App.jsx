@@ -63,6 +63,7 @@ import OnBoardingPreJoining from "./pages/Hrms/OnBoarding/OnBoardingPreJoining/i
 import OnBoardingOfferLetter from "./pages/Hrms/OnBoarding/OnBoardingOfferLetter/index.jsx";
 import OnBoardingResolve from "./pages/Hrms/OnBoarding/OnBoardingResolve";
 import OnBoardingEmReqAll from "./pages/Hrms/OnBoarding/OnBoardingEmpReqAll/index.jsx";
+import EmployeeRequestSave from "./pages/Home/EmployeRequestSave/index.jsx";
 function App() {
   return (
     <Routes>
@@ -151,6 +152,10 @@ function App() {
       <Route
         path="/onboarding/employerequest"
         element={<OnBoardingEmReqAll />}
+      />
+      <Route
+        path="/employee-request-save/:id"
+        element={<EmployeeRequestSave />}
       />
     </Routes>
   );

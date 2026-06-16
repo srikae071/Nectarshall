@@ -4,8 +4,10 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./index.css";
 
-function OnBoardingPreJoining() {
+function OnBoardingEmpAll() {
   const [data, setData] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchData();
@@ -17,72 +19,67 @@ function OnBoardingPreJoining() {
         "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests",
       );
 
-      setData(
-        response.data.filter(
-          (item) =>
-            item.category === "Resonance Requirement" &&
-            item.status === "Pre-Joining",
-        ),
+      const filteredData = response.data.filter(
+        (item) => item.requestType === "Resonance" && item.status === "Pending",
       );
+
+      setData(filteredData);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const navigate = useNavigate();
-
   const handleRowClick = (item) => {
-    navigate(`/onboarding-saves/${item._id}`);
+    navigate(`/employee-request-save/${item._id}`);
   };
+
   return (
     <HrmsLeftLayout>
       <div className="Openhome">
         <div>
-          <h3 className="openheading">All Resonance Requirements cases</h3>
+          <h3 className="openheading">Employee Requests</h3>
 
           <table className="opentable">
-            <thead className="opentablerow">
+            <thead>
               <tr className="opentablerow">
-                <th className="opentablerow">Case ID</th>
-                <th className="opentablerow">Requester Name</th>
-                <th className="opentablerow">Department</th>
-                <th className="opentablerow">Category</th>
-                <th className="opentablerow">Status</th>
+                <th>Case ID</th>
+                <th>Requester Name</th>
+                <th>Department</th>
+                <th>Skill Set</th>
+                <th>Experience</th>
+                <th>Status</th>
               </tr>
             </thead>
-            <tbody className="opentablerow">
+
+            <tbody>
               {data.length === 0 ? (
                 <tr>
-                  <td colSpan="5" style={{ textAlign: "center" }}>
+                  <td colSpan="6" style={{ textAlign: "center" }}>
                     No Records Found
                   </td>
                 </tr>
               ) : (
                 data.map((item) => (
                   <tr
-                    className="opentablerow"
                     key={item._id}
                     onClick={() => handleRowClick(item)}
                     style={{ cursor: "pointer" }}
                   >
-                    <td className="opentablerow">{item.caseId}</td>
-                    <td className="opentablerow">{item.requesterName}</td>
-                    <td className="opentablerow">{item.department}</td>
-                    <td className="opentablerow">{item.category}</td>
-                    <td className="opentablerow">{item.status}</td>
+                    <td>{item.caseId}</td>
+                    <td>{item.requesterName}</td>
+                    <td>{item.department}</td>
+                    <td>{item.skillSet}</td>
+                    <td>{item.experience}</td>
+                    <td>{item.status}</td>
                   </tr>
                 ))
               )}
             </tbody>
           </table>
         </div>
-
-        {/* <div className="footer">
-          © Copyright 2023 Enhance Services - All Rights Reserved.
-        </div> */}
       </div>
     </HrmsLeftLayout>
   );
 }
 
-export default OnBoardingPreJoining;
+export default OnBoardingEmpAll;

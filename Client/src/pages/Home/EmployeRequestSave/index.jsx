@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import HrmsLeftLayout from "../../../Hrmsleftlayout/index.jsx";
+import HrmsLeftLayout from "../../Hrms/Hrmsleftlayout";
 import axios from "axios";
 import "./index.css";
 
@@ -51,9 +51,6 @@ function EmployeRequestSave() {
     interview: "",
   });
 
-  const subStatusOptions = {
-    Pending: ["Request Information Pending", "Vendor Action Pending"],
-  };
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -71,8 +68,6 @@ function EmployeRequestSave() {
       alert("Department is mandatory");
       return;
     }
-
-    setShowPreliminary(true);
   };
 
   const handlePreliminarySave = () => {
@@ -95,13 +90,9 @@ function EmployeRequestSave() {
       alert("Contact Number is mandatory");
       return;
     }
-
-    setShowBarriers(true);
   };
 
-  const handleQualificationSave = () => {
-    setShowReferences(true);
-  };
+  const handleQualificationSave = () => {};
   const handleBarrierSave = () => {
     if (!formData.modernSlavery) {
       alert("Modern Slavery is mandatory");
@@ -122,12 +113,8 @@ function EmployeRequestSave() {
       alert("Work Rights is mandatory");
       return;
     }
-
-    setShowQualifications(true);
   };
   const { id } = useParams();
-
-  const [formData, setFormData] = useState({});
 
   useEffect(() => {
     fetchData();
