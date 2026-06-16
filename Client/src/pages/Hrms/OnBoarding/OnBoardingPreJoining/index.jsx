@@ -62,6 +62,7 @@ function OnBoardingPreJoining() {
                   <tr
                     className="opentablerow"
                     key={item._id}
+                    a
                     onClick={() => handleRowClick(item)}
                     style={{ cursor: "pointer" }}
                   >
