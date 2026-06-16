@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./index.css";
 import HrmsNavbar from "../HrmsNavbar";
@@ -34,7 +34,7 @@ const menuData = [
         children: [
           {
             label: "Onbording Compilence",
-            path: "/onboarding/clint",
+            path: "/Client/onboarding-compliance",
             icon: "📄",
           },
         ],
@@ -49,15 +49,15 @@ const menuData = [
             children: [
               {
                 label: "All",
-                path: "/hrms/Open",
+                path: "/onboarding/resonancerequirement/all",
               },
               {
                 label: "Create New",
-                path: "/hrms/createnew",
+                path: "/onboarding/resonancerequirement/createnew",
               },
               {
                 label: "Resolve",
-                path: "/hrms/Resolved-cases",
+                path: "/onboarding/resonancerequirement/resolved",
               },
             ],
           },
@@ -251,25 +251,37 @@ const MenuItem = ({ item, level = 0, expandedMenus, setExpandedMenus }) => {
 };
 /* ================= MAIN LAYOUT ================= */
 function HrmsLeftLayout({ children }) {
-  // const [openIndex, setOpenIndex] = useState(0);
+  const [openMenus, setOpenMenus] = useState(() => {
+    const saved = localStorage.getItem("hrms-open-menus");
 
-  // const toggle = (index) => {
-  //   setOpenIndex(openIndex === index ? null : index);
-  // };
-
-  const [openMenus, setOpenMenus] = useState({
-    0: true,
+    return saved ? JSON.parse(saved) : { 0: true };
   });
-  const [expandedMenus, setExpandedMenus] = useState({});
+
+  const [expandedMenus, setExpandedMenus] = useState(() => {
+    const saved = localStorage.getItem("hrms-expanded-menus");
+
+    return saved ? JSON.parse(saved) : {};
+  });
 
   const toggle = (index) => {
-    setOpenMenus((prev) => ({
-      ...prev,
-      [index]: !prev[index],
-    }));
+    setOpenMenus((prev) => {
+      const updated = {
+        ...prev,
+        [index]: !prev[index],
+      };
+
+      localStorage.setItem("hrms-open-menus", JSON.stringify(updated));
+
+      return updated;
+    });
   };
-  const [sidebarWidth, setSidebarWidth] = useState(250);
+
+  const [sidebarWidth, setSidebarWidth] = useState(() => {
+    return Number(localStorage.getItem("hrms-sidebar-width")) || 250;
+  });
+
   const isResizing = useRef(false);
+
   const startResize = () => {
     isResizing.current = true;
   };
@@ -282,9 +294,10 @@ function HrmsLeftLayout({ children }) {
     if (isResizing.current) {
       const newWidth = e.clientX;
 
-      // limits (important)
       if (newWidth > 180 && newWidth < 400) {
         setSidebarWidth(newWidth);
+
+        localStorage.setItem("hrms-sidebar-width", newWidth);
       }
     }
   };
@@ -298,12 +311,7 @@ function HrmsLeftLayout({ children }) {
       <HrmsNavbar />
 
       <div className="mainLayout">
-        {/* SIDEBAR */}
-        <div
-          className="hrmssidebar"
-          className="hrmssidebar"
-          style={{ width: sidebarWidth }}
-        >
+        <div className="hrmssidebar" style={{ width: sidebarWidth }}>
           {menuData.map((menu, index) => (
             <div key={index} className="menuBlock">
               <div className="hrmsmenuHeader" onClick={() => toggle(index)}>
@@ -311,6 +319,7 @@ function HrmsLeftLayout({ children }) {
 
                 <span>{openMenus[index] ? "-" : "+"}</span>
               </div>
+
               {openMenus[index] && (
                 <div className="submenu">
                   {menu.items.map((item, i) => (
@@ -318,7 +327,21 @@ function HrmsLeftLayout({ children }) {
                       key={i}
                       item={item}
                       expandedMenus={expandedMenus}
-                      setExpandedMenus={setExpandedMenus}
+                      setExpandedMenus={(updater) => {
+                        setExpandedMenus((prev) => {
+                          const updated =
+                            typeof updater === "function"
+                              ? updater(prev)
+                              : updater;
+
+                          localStorage.setItem(
+                            "hrms-expanded-menus",
+                            JSON.stringify(updated),
+                          );
+
+                          return updated;
+                        });
+                      }}
                     />
                   ))}
                 </div>
@@ -326,8 +349,9 @@ function HrmsLeftLayout({ children }) {
             </div>
           ))}
         </div>
+
         <div className="resizer" onMouseDown={startResize}></div>
-        {/* RIGHT CONTENT */}
+
         <div className="rightContent">{children}</div>
       </div>
     </div>

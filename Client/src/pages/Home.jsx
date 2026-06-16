@@ -25,9 +25,7 @@ function Home() {
         "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves",
       );
 
-      const pending = response.data.filter(
-        (item) => item.status !== "Approved",
-      );
+      const pending = response.data.filter((item) => item.status === "Pending");
 
       setPendingCount(pending.length);
     } catch (error) {

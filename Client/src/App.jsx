@@ -13,7 +13,7 @@ import Createnew from "../src/pages/Hrms/Createnew/index.jsx";
 import Open from "./pages/Hrms/Open/index.jsx";
 import Resolved from "../src/pages/Hrms/Resolved/index.jsx";
 import Assingtome from "../src/pages/Hrms/Assigntome/index.jsx";
-import OnboardingCompliance from "../src/pages/Hrms/OnboardingCompliance/indeex.jsx";
+// import OnboardingCompliance from "../src/pages/Hrms/OnboardingCompliance/indeex.jsx";
 import All from "../src/pages/Hrms/Employee/ResourceRequirement/All/index.jsx";
 import EmployeeCreateNew from "../src/pages/Hrms/Employee/ResourceRequirement/EmployeeCreateNew/index.jsx";
 import EmployeeResolved from "../src/pages/Hrms/Employee/ResourceRequirement/EmployeeResolved/index.jsx";
@@ -53,6 +53,10 @@ import ItAssignedToMe from "./pages/NavItems/IT/ItRightSide/ItAssignedToMe/index
 import ItClosed from "./pages/NavItems/IT/ItRightSide/ItClosed/index.jsx";
 import ItPending from "./pages/NavItems/IT/ItRightSide/ItPending/index.jsx";
 import ItWorkInProgress from "./pages/NavItems/IT/ItRightSide/ItWorkInProgress/index.jsx";
+import OnBoardingCompliance from "./pages/Hrms/OnBoarding/OnBoardingClinet/OnBoardingCompliance/indeex.jsx";
+import OnBoardingResonanceRequirementsAll from "./pages/Hrms/OnBoarding/OnBoardingEmployee/ResonanceRequirements/OnBoardingResonanceRequirementsAll/index.jsx";
+import OnBoardingResonanceRequirementsCreateNew from "./pages/Hrms/OnBoarding/OnBoardingEmployee/ResonanceRequirements/OnBoardingResonanceRequirementsCreateNew/index.jsx";
+import OnBoardingResonanceRequirementsResolve from "./pages/Hrms/OnBoarding/OnBoardingEmployee/ResonanceRequirements/OnBoardingResonanceRequirementsResolve/index.jsx";
 function App() {
   return (
     <Routes>
@@ -67,23 +71,8 @@ function App() {
       <Route path="/hrms/open" element={<Open />} />
       <Route path="/hrms/resolved-cases" element={<Resolved />} />
       <Route path="/hrms/assigned-cases" element={<Assingtome />} />
-      <Route path="/onboarding/clint" element={<OnboardingCompliance />} />
-      <Route path="/onboarding/resonance/all" element={<All />} />
-      <Route
-        path="/onboarding/resonance/create"
-        element={<EmployeeCreateNew />}
-      />
-      <Route
-        path="/onboarding/resonance/resolve"
-        element={<EmployeeResolved />}
-      />
-      <Route path="/onboarding/prejoining/all" element={<PreAll />} />
-      <Route path="/onboarding/prejoining/create" element={<Createnew />} />
-      <Route
-        path="/onboarding/prejoining/resolve"
-        element={<PreEmployeeResolved />}
-      />
-      <Route path="/onboarding/offer-letter" element={<OfferLetter />} />
+      {/* <Route path="/onboarding/clint" element={<OnboardingCompliance />} /> */}
+
       <Route path="/organisation-policies" element={<OrganisationPolicies />} />
       <Route path="/schedule" element={<Schedule />} />
       <Route path="/timesheets" element={<TimeSheat />} />
@@ -125,6 +114,22 @@ function App() {
       <Route path="/it/assigned-to-me" element={<ItAssignedToMe />} />
       <Route path="/it/pending" element={<ItPending />} />
       <Route path="/it/work-in-progress" element={<ItWorkInProgress />} />
+      <Route
+        path="/Client/onboarding-compliance"
+        element={<OnBoardingCompliance />}
+      />
+      <Route
+        path="/onboarding/resonancerequirement/all"
+        element={<OnBoardingResonanceRequirementsAll />}
+      />
+      <Route
+        path="/onboarding/resonancerequirement/createnew"
+        element={<OnBoardingResonanceRequirementsCreateNew />}
+      />
+      <Route
+        path="/onboarding/resonancerequirement/resolved"
+        element={<OnBoardingResonanceRequirementsResolve />}
+      />
     </Routes>
   );
 }

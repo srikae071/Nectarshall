@@ -17,7 +17,7 @@ function ApprovalTable() {
         "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves",
       );
 
-      setData(response.data);
+      setData(response.data.filter((item) => item.status === "Pending"));
     } catch (error) {
       console.log(error);
     }
