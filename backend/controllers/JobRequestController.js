@@ -3,6 +3,7 @@ const JobRequest = require("../models/JobRequest");
 exports.createJobRequest = async (req, res) => {
   try {
     const data = req.body;
+    console.log(req.body);
 
     // Generate Case ID
     const lastRecord = await JobRequest.findOne().sort({ caseId: -1 });
@@ -36,6 +37,40 @@ exports.getAllJobRequests = async (req, res) => {
     const requests = await JobRequest.find().sort({ createdAt: -1 });
 
     res.status(200).json(requests);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.getJobRequestById = async (req, res) => {
+  try {
+    const request = await JobRequest.findById(req.params.id);
+
+    if (!request) {
+      return res.status(404).json({
+        message: "Record not found",
+      });
+    }
+
+    res.json(request);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.updateJobRequest = async (req, res) => {
+  try {
+    const updated = await JobRequest.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true },
+    );
+
+    res.json(updated);
   } catch (error) {
     res.status(500).json({
       message: error.message,

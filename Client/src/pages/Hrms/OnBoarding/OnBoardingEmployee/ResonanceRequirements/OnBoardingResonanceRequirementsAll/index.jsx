@@ -1,5 +1,6 @@
 import HrmsLeftLayout from "../../../../Hrmsleftlayout/index.jsx";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./index.css";
 
@@ -18,6 +19,12 @@ function OnBoardingResonanceRequirementsAll() {
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const navigate = useNavigate();
+
+  const handleRowClick = (item) => {
+    navigate(`/onboarding-saves/${item._id}`);
   };
   return (
     <HrmsLeftLayout>
@@ -44,7 +51,12 @@ function OnBoardingResonanceRequirementsAll() {
                 </tr>
               ) : (
                 data.map((item) => (
-                  <tr className="opentablerow" key={item._id}>
+                  <tr
+                    className="opentablerow"
+                    key={item._id}
+                    onClick={() => handleRowClick(item)}
+                    style={{ cursor: "pointer" }}
+                  >
                     <td className="opentablerow">{item.caseId}</td>
                     <td className="opentablerow">{item.requesterName}</td>
                     <td className="opentablerow">{item.department}</td>

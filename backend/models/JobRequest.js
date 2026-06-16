@@ -16,7 +16,10 @@ const JobRequestSchema = new mongoose.Schema(
       type: String,
       default: "Pending",
     },
-
+    department: {
+      type: String,
+      required: true,
+    },
     impact: String,
     urgency: String,
     priority: String,
@@ -60,7 +63,24 @@ const JobRequestSchema = new mongoose.Schema(
 
     shortDescription: String,
     description: String,
+    offerStatus: String,
+
+    bankName: String,
+    bankAccount: String,
+    bsb: String,
+    taxFileNumber: String,
+
+    superFundName: String,
+    superMemberNumber: String,
+
+    longServiceLeaveId: String,
+
+    confidentialityAgreement: String,
+    contract: String,
+    handbookWhs: String,
+    handbookEmployment: String,
   },
+
   {
     timestamps: true,
   },

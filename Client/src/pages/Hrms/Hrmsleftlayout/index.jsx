@@ -69,14 +69,6 @@ const menuData = [
                 label: "All",
                 path: "/hrms/Open",
               },
-              {
-                label: "Create New",
-                path: "/hrms/createnew",
-              },
-              {
-                label: "Resolve",
-                path: "/hrms/Resolved-cases",
-              },
             ],
           },
           {
@@ -104,64 +96,6 @@ const menuData = [
     items: [
       {
         label: "Client",
-        // icon: "📁",
-        children: [
-          {
-            label: "Onbording Compilence",
-            path: "/onboarding/clint",
-            // icon: "📄",
-          },
-        ],
-      },
-      {
-        label: "Employee",
-        // icon: "📁",
-        children: [
-          {
-            label: "Resonence Requirement",
-            // icon: "📄",
-            children: [
-              {
-                label: "All",
-                path: "/hrms/Open",
-              },
-              {
-                label: "Create New",
-                path: "/hrms/createnew",
-              },
-              {
-                label: "Resolve",
-                path: "/hrms/Resolved-cases",
-              },
-            ],
-          },
-          {
-            label: "Pre-Joining Compilence",
-            // icon: "📁",
-            children: [
-              {
-                label: "All",
-                path: "/hrms/Open",
-              },
-              {
-                label: "Create New",
-                path: "/hrms/createnew ",
-              },
-              {
-                label: "Resolve",
-                path: "/hrms/Resolved-cases",
-              },
-            ],
-          },
-          {
-            label: "Offer-letter",
-            // icon: "📄",
-            path: "/onboarding/offer-letter",
-          },
-        ],
-      },
-      {
-        label: "Supplier",
         // icon: "📁",
         children: [
           {

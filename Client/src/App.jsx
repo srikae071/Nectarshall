@@ -57,6 +57,7 @@ import OnBoardingCompliance from "./pages/Hrms/OnBoarding/OnBoardingClinet/OnBoa
 import OnBoardingResonanceRequirementsAll from "./pages/Hrms/OnBoarding/OnBoardingEmployee/ResonanceRequirements/OnBoardingResonanceRequirementsAll/index.jsx";
 import OnBoardingResonanceRequirementsCreateNew from "./pages/Hrms/OnBoarding/OnBoardingEmployee/ResonanceRequirements/OnBoardingResonanceRequirementsCreateNew/index.jsx";
 import OnBoardingResonanceRequirementsResolve from "./pages/Hrms/OnBoarding/OnBoardingEmployee/ResonanceRequirements/OnBoardingResonanceRequirementsResolve/index.jsx";
+import OnBoardingSaves from "./pages/Hrms/OnBoarding/OnBoardingEmployee/OnBoardingSaves/index.jsx";
 function App() {
   return (
     <Routes>
@@ -130,6 +131,7 @@ function App() {
         path="/onboarding/resonancerequirement/resolved"
         element={<OnBoardingResonanceRequirementsResolve />}
       />
+      <Route path="/onboarding-saves/:id" element={<OnBoardingSaves />} />
     </Routes>
   );
 }

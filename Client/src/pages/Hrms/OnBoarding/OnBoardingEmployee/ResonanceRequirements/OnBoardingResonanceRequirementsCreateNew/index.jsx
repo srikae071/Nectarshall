@@ -72,6 +72,11 @@ function OnBoardingResonanceRequirementsCreateNew() {
       return;
     }
 
+    if (!formData.department) {
+      alert("Department is mandatory");
+      return;
+    }
+
     setShowPreliminary(true);
   };
 
@@ -188,7 +193,14 @@ function OnBoardingResonanceRequirementsCreateNew() {
               value={formData.department}
               onChange={handleChange}
             >
-              <option>IT</option>
+              <option value="">Select Department</option>
+              <option value="IT">IT</option>
+              <option value="HR">HR</option>
+              <option value="C & C">C & C</option>
+              <option value="Gardening">Gardening</option>
+              <option value="Patrolling">Patrolling</option>
+              <option value="Security">Security</option>
+              <option value="Accounts">Accounts</option>
             </select>
           </div>
         </div>
@@ -225,21 +237,6 @@ function OnBoardingResonanceRequirementsCreateNew() {
               ))}
             </select>
           </div>
-
-          <div className="CreateField">
-            <label>Category</label>
-            <select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-            >
-              <option>Payroll</option>
-            </select>
-          </div>
-        </div>
-
-        {/* ROW 3 */}
-        <div className="CreateRow">
           <div className="CreateField">
             <label>Impact</label>
 
@@ -254,7 +251,10 @@ function OnBoardingResonanceRequirementsCreateNew() {
               <option>Low</option>
             </select>
           </div>
+        </div>
 
+        {/* ROW 3 */}
+        <div className="CreateRow">
           <div className="CreateField">
             <label>Urgency</label>
 
@@ -279,6 +279,29 @@ function OnBoardingResonanceRequirementsCreateNew() {
               onChange={handleChange}
             />
           </div>
+        </div>
+
+        {/* ROW 4 */}
+
+        {/* TEXTAREAS */}
+        <div className="CreateTextareaGroup">
+          <label>Short Description</label>
+          <textarea
+            className="CreateTextarea CreateShortTextarea"
+            name="shortDescription"
+            value={formData.shortDescription}
+            onChange={handleChange}
+          ></textarea>
+        </div>
+
+        <div className="CreateTextareaGroup">
+          <label>Description</label>
+          <textarea
+            className="CreateTextarea CreateDescriptionTextarea"
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+          ></textarea>
         </div>
         {showPreliminary && (
           <div className="SectionCard">
@@ -768,35 +791,12 @@ function OnBoardingResonanceRequirementsCreateNew() {
           </div>
         )}
 
-        {/* ROW 4 */}
-
-        {/* TEXTAREAS */}
-        <div className="CreateTextareaGroup">
-          <label>Short Description</label>
-          <textarea
-            className="CreateTextarea CreateShortTextarea"
-            name="shortDescription"
-            value={formData.shortDescription}
-            onChange={handleChange}
-          ></textarea>
-        </div>
-
-        <div className="CreateTextareaGroup">
-          <label>Description</label>
-          <textarea
-            className="CreateTextarea CreateDescriptionTextarea"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-          ></textarea>
-        </div>
-
         {/* BUTTONS */}
         <div className="CreateFooter">
           <button className="CreateBtn" onClick={handleCaseSave}>
-            Save & Continue
+            Submit
           </button>
-          <button className="CreateBtn">Submit</button>
+          {/* <button className="CreateBtn">Submit</button> */}
           <button className="CreateBtn">Cancel</button>
         </div>
       </div>
