@@ -59,6 +59,10 @@ import OnBoardingResonanceRequirementsCreateNew from "./pages/Hrms/OnBoarding/On
 import OnBoardingResonanceRequirementsResolve from "./pages/Hrms/OnBoarding/OnBoardingEmployee/ResonanceRequirements/OnBoardingResonanceRequirementsResolve/index.jsx";
 import OnBoardingSaves from "./pages/Hrms/OnBoarding/OnBoardingEmployee/OnBoardingSaves/index.jsx";
 import ResonanceMain from "./pages/Home/Resonance/ResonanceMain/index.jsx";
+import OnBoardingPreJoining from "./pages/Hrms/OnBoarding/OnBoardingPreJoining/index.jsx";
+import OnBoardingOfferLetter from "./pages/Hrms/OnBoarding/OnBoardingOfferLetter/index.jsx";
+import OnBoardingResolve from "./pages/Hrms/OnBoarding/OnBoardingResolve";
+import OnBoardingEmReqAll from "./pages/Hrms/OnBoarding/OnBoardingEmpReqAll/index.jsx";
 function App() {
   return (
     <Routes>
@@ -128,12 +132,26 @@ function App() {
         path="/onboarding/resonancerequirement/createnew"
         element={<OnBoardingResonanceRequirementsCreateNew />}
       />
-      <Route
+      {/* <Route
         path="/onboarding/resonancerequirement/resolved"
         element={<OnBoardingResonanceRequirementsResolve />}
-      />
+      /> */}
       <Route path="/onboarding-saves/:id" element={<OnBoardingSaves />} />
       <Route path="/Resonancereq" element={<ResonanceMain />} />
+
+      <Route path="/onboarding/prejoining" element={<OnBoardingPreJoining />} />
+      <Route
+        path="/onboarding/Offerletter"
+        element={<OnBoardingOfferLetter />}
+      />
+      <Route
+        path="/onboarding/resonancerequirement/resolved"
+        element={<OnBoardingResolve />}
+      />
+      <Route
+        path="/onboarding/employerequest"
+        element={<OnBoardingEmReqAll />}
+      />
     </Routes>
   );
 }

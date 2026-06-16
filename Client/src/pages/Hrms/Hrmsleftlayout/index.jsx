@@ -40,44 +40,35 @@ const menuData = [
         ],
       },
       {
-        label: "Employee",
-        // icon: "📁",
+        label: "Resonence Requirement",
         children: [
           {
-            label: "Resonence Requirement",
-            // icon: "📄",
-            children: [
-              {
-                label: "All",
-                path: "/onboarding/resonancerequirement/all",
-              },
-              {
-                label: "Create New",
-                path: "/onboarding/resonancerequirement/createnew",
-              },
-              {
-                label: "Resolve",
-                path: "/onboarding/resonancerequirement/resolved",
-              },
-            ],
+            label: "All",
+            path: "/onboarding/resonancerequirement/all",
           },
           {
-            label: "Pre-Joining Compilence",
-            // icon: "📁",
-            children: [
-              {
-                label: "All",
-                path: "/hrms/Open",
-              },
-            ],
+            label: "Create New",
+            path: "/onboarding/resonancerequirement/createnew",
           },
           {
-            label: "Offer-letter",
-            // icon: "📄",
-            path: "/onboarding/offer-letter",
+            label: "Resolve",
+            path: "/onboarding/resonancerequirement/resolved",
+          },
+          {
+            label: "Employe Request",
+            path: "/onboarding/employerequest",
           },
         ],
       },
+      {
+        label: "Pre-Joining Compilence",
+        path: "/onboarding/prejoining",
+      },
+      {
+        label: "Offer Letter",
+        path: "/onboarding/Offerletter",
+      },
+
       {
         label: "Supplier",
         // icon: "📁",
@@ -99,7 +90,7 @@ const menuData = [
         // icon: "📁",
         children: [
           {
-            label: "Onbording Compilence",
+            label: "OffBoarding Compilence",
             path: "/onboarding/clint",
             // icon: "📄",
           },

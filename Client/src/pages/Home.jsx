@@ -11,6 +11,7 @@ import askItImg from "../images/askit.jfif";
 import askHrImg from "../images/askhr.jfif";
 import corosolimg from "../images/corosolimg.jpg";
 import resonanceimg from "../images/resonance-ltd-logo-png_seeklogo-549517.png";
+import empreq from "../images/empreq.png";
 
 function Home() {
   const navigate = useNavigate();
@@ -72,9 +73,9 @@ function Home() {
       route: "/ask-for-hr",
     },
     {
-      title: "Resonance",
+      title: "Employe Request",
       desc: "A simple way to communicate HR issues",
-      img: resonanceimg,
+      img: empreq,
       route: "/Resonancereq",
     },
   ];

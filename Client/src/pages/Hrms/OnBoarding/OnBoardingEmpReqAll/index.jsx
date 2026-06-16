@@ -1,10 +1,10 @@
-import HrmsLeftLayout from "../../../../Hrmsleftlayout/index.jsx";
+import HrmsLeftLayout from "../../../Hrms/Hrmsleftlayout/index.jsx";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./index.css";
 
-function OnBoardingResonanceRequirementsAll() {
+function OnBoardingPreJoining() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -20,7 +20,8 @@ function OnBoardingResonanceRequirementsAll() {
       setData(
         response.data.filter(
           (item) =>
-            item.category === "Resonance Requirement" && item.status === "Open",
+            item.category === "Resonance Requirement" &&
+            item.status === "Pre-Joining",
         ),
       );
     } catch (error) {
@@ -84,4 +85,4 @@ function OnBoardingResonanceRequirementsAll() {
   );
 }
 
-export default OnBoardingResonanceRequirementsAll;
+export default OnBoardingPreJoining;

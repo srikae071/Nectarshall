@@ -10,7 +10,7 @@ function AskForItNavBar() {
       <div className="hrmslogo" onClick={() => navigate("/")}>
         <img src={logo} alt="logo" className="hrmslogoimage" />
         <div className="navname">
-          <p>Resonance Request</p>
+          <p>Employe Request</p>
         </div>
       </div>
 

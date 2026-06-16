@@ -68,7 +68,7 @@ function OnBoardingSaves() {
           whs,
           employment,
 
-          status: "Open",
+          status: jobRequest.status,
         },
       );
 
@@ -83,20 +83,27 @@ function OnBoardingSaves() {
         <h2 className="OfferTitle">Onboarding Compliance</h2>
 
         {/* Basic Details */}
-
         <div className="OfferRow">
           <div className="OfferField">
             <label>Name</label>
             <input value={jobRequest.requesterName || ""} readOnly />
           </div>
+
           <div className="OfferField">
-            <label>case Id</label>
+            <label>Case ID</label>
             <input value={jobRequest.caseId || ""} readOnly />
           </div>
+        </div>
 
+        <div className="OfferRow">
           <div className="OfferField">
             <label>Department</label>
             <input value={jobRequest.department || ""} readOnly />
+          </div>
+
+          <div className="OfferField">
+            <label>Status</label>
+            <input value={jobRequest.status || ""} readOnly />
           </div>
         </div>
 

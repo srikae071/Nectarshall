@@ -146,9 +146,13 @@ function OnBoardingResonanceRequirementsCreateNew() {
     }
 
     try {
+      if (!formData.status) {
+        alert("Status is mandatory");
+        return;
+      }
+
       const payload = {
         ...formData,
-        status: "Pending",
         category: "Resonance Requirement",
       };
 
@@ -219,7 +223,14 @@ function OnBoardingResonanceRequirementsCreateNew() {
               onChange={handleChange}
             >
               <option value="">Select Status</option>
+
               <option value="Open">Open</option>
+
+              <option value="Pre-Joining">Pre-Joining Compliance</option>
+
+              <option value="Offer Letter">Offer Letter</option>
+
+              <option value="Resolved">Resolved</option>
             </select>
           </div>
 

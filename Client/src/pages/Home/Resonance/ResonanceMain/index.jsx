@@ -28,7 +28,7 @@ function ResonanceMain() {
         {
           ...formData,
           category: "Resonance Requirement",
-          status: "Resonance REQ",
+          status: "Pending",
           requestType: "Resonance",
         },
       );
