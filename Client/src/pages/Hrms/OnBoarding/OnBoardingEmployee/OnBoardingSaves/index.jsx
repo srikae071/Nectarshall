@@ -28,16 +28,16 @@ function OnBoardingSaves() {
   const fetchRequest = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/jobrequests/${id}`,
+        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
       );
       console.log(response.data);
 
       setJobRequest(response.data);
       setOfferStatus(response.data.offerStatus || "");
-      setConfidentiality(response.data.confidentiality || "");
+      setConfidentiality(response.data.confidentialityAgreement || "");
       setContract(response.data.contract || "");
-      setWhs(response.data.whs || "");
-      setEmployment(response.data.employment || "");
+      setWhs(response.data.handbookWhs || "");
+      setEmployment(response.data.handbookEmployment || "");
       setBankName(response.data.bankName || "");
       setBankAccount(response.data.bankAccount || "");
       setBsb(response.data.bsb || "");
@@ -52,22 +52,25 @@ function OnBoardingSaves() {
 
   const handleSubmit = async () => {
     try {
-      await axios.put(`http://localhost:5000/api/jobrequests/${id}`, {
-        offerStatus,
-        bankName,
-        bankAccount,
-        bsb,
-        taxFileNumber,
-        superFundName,
-        superMemberNumber,
-        longServiceLeaveId,
-        confidentiality,
-        contract,
-        whs,
-        employment,
+      await axios.put(
+        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
+        {
+          offerStatus,
+          bankName,
+          bankAccount,
+          bsb,
+          taxFileNumber,
+          superFundName,
+          superMemberNumber,
+          longServiceLeaveId,
+          confidentiality,
+          contract,
+          whs,
+          employment,
 
-        status: "Open",
-      });
+          status: "Open",
+        },
+      );
 
       alert("Saved Successfully");
     } catch (error) {
@@ -144,7 +147,11 @@ function OnBoardingSaves() {
           <div className="OfferRow">
             <div className="OfferField">
               <label>Bank Name *</label>
-              <input type="text" />
+              <input
+                type="text"
+                value={bankName}
+                onChange={(e) => setBankName(e.target.value)}
+              />
             </div>
 
             <div className="OfferField">
@@ -156,7 +163,11 @@ function OnBoardingSaves() {
           <div className="OfferRow">
             <div className="OfferField">
               <label>Bank Account *</label>
-              <input type="text" />
+              <input
+                type="text"
+                value={bankAccount}
+                onChange={(e) => setBankAccount(e.target.value)}
+              />
             </div>
 
             <div className="OfferField">
@@ -168,7 +179,11 @@ function OnBoardingSaves() {
           <div className="OfferRow">
             <div className="OfferField">
               <label>BSB *</label>
-              <input type="text" />
+              <input
+                type="text"
+                value={bsb}
+                onChange={(e) => setBsb(e.target.value)}
+              />
             </div>
 
             <div className="OfferField">
@@ -180,7 +195,11 @@ function OnBoardingSaves() {
           <div className="OfferRow">
             <div className="OfferField">
               <label>Tax File Number *</label>
-              <input type="text" />
+              <input
+                type="text"
+                value={taxFileNumber}
+                onChange={(e) => setTaxFileNumber(e.target.value)}
+              />
             </div>
 
             <div className="OfferField">
@@ -192,7 +211,11 @@ function OnBoardingSaves() {
           <div className="OfferRow">
             <div className="OfferField">
               <label>Superannuation Fund Name *</label>
-              <input type="text" />
+              <input
+                type="text"
+                value={superFundName}
+                onChange={(e) => setSuperFundName(e.target.value)}
+              />
             </div>
 
             <div className="OfferField">
@@ -204,7 +227,11 @@ function OnBoardingSaves() {
           <div className="OfferRow">
             <div className="OfferField">
               <label>Superannuation Member Number *</label>
-              <input type="text" />
+              <input
+                type="text"
+                value={superMemberNumber}
+                onChange={(e) => setSuperMemberNumber(e.target.value)}
+              />
             </div>
 
             <div className="OfferField">
@@ -216,7 +243,11 @@ function OnBoardingSaves() {
           <div className="OfferRow">
             <div className="OfferField">
               <label>Long Service Leave ID Number</label>
-              <input type="text" />
+              <input
+                type="text"
+                value={longServiceLeaveId}
+                onChange={(e) => setLongServiceLeaveId(e.target.value)}
+              />
             </div>
           </div>
         </div>
@@ -351,11 +382,7 @@ function OnBoardingSaves() {
 
         <div className="OfferFooter">
           <button className="CreateBtn">Save</button>
-          <button
-            className="CreateBtn"
-            className="CreateBtn"
-            onClick={handleSubmit}
-          >
+          <button className="CreateBtn" onClick={handleSubmit}>
             Submit
           </button>
           <button className="CreateBtn">Cancel</button>
