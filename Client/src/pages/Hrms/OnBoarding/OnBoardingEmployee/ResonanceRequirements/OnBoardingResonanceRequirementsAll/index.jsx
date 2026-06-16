@@ -13,7 +13,9 @@ function OnBoardingResonanceRequirementsAll() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/jobrequests");
+      const response = await axios.get(
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests",
+      );
 
       setData(response.data);
     } catch (error) {

@@ -79,6 +79,9 @@ const JobRequestSchema = new mongoose.Schema(
     contract: String,
     handbookWhs: String,
     handbookEmployment: String,
+    skillSet: String,
+    experience: String,
+    requestType: String,
   },
 
   {

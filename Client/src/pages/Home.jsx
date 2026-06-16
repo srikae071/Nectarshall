@@ -10,6 +10,7 @@ import orgImg from "../images/orhanizationpolicies.jfif";
 import askItImg from "../images/askit.jfif";
 import askHrImg from "../images/askhr.jfif";
 import corosolimg from "../images/corosolimg.jpg";
+import resonanceimg from "../images/resonance-ltd-logo-png_seeklogo-549517.png";
 
 function Home() {
   const navigate = useNavigate();
@@ -69,6 +70,12 @@ function Home() {
       desc: "A simple way to communicate HR issues",
       img: askHrImg,
       route: "/ask-for-hr",
+    },
+    {
+      title: "Resonance",
+      desc: "A simple way to communicate HR issues",
+      img: resonanceimg,
+      route: "/Resonancereq",
     },
   ];
 

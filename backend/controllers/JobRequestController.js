@@ -11,10 +11,10 @@ exports.createJobRequest = async (req, res) => {
     let nextNumber = 1;
 
     if (lastRecord?.caseId) {
-      nextNumber = parseInt(lastRecord.caseId.replace("HR", "")) + 1;
+      nextNumber = parseInt(lastRecord.caseId.replace("HRY", "")) + 1;
     }
 
-    data.caseId = `HR${String(nextNumber).padStart(3, "0")}`;
+    data.caseId = `HRY${String(nextNumber).padStart(3, "0")}`;
 
     // Default values
     data.status = "Pending";

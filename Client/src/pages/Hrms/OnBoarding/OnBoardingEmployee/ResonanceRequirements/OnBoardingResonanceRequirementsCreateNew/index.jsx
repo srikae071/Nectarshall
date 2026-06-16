@@ -152,7 +152,10 @@ function OnBoardingResonanceRequirementsCreateNew() {
         category: "Resonance Requirement",
       };
 
-      await axios.post("http://localhost:5000/api/jobrequests", payload);
+      await axios.post(
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests",
+        payload,
+      );
 
       alert("Job Request Saved Successfully");
     } catch (error) {
