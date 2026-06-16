@@ -11,7 +11,7 @@ function OnBoardingResonanceRequirementsCreateNew() {
   const [showQualifications, setShowQualifications] = useState(false);
   const [showReferences, setShowReferences] = useState(false);
   const [formData, setFormData] = useState({
-    caseId: "HR001",
+    caseId: "",
     requesterName: "",
     department: "",
     impact: "",
@@ -125,13 +125,36 @@ function OnBoardingResonanceRequirementsCreateNew() {
 
     setShowQualifications(true);
   };
-  const handleFinalSave = () => {
+  // const handleFinalSave = () => {
+  //   if (!formData.interview) {
+  //     alert("Interview result is mandatory");
+  //     return;
+  //   }
+
+  //   alert("Form Saved Successfully");
+  // };
+
+  const handleFinalSave = async () => {
     if (!formData.interview) {
       alert("Interview result is mandatory");
       return;
     }
 
-    alert("Form Saved Successfully");
+    try {
+      const payload = {
+        ...formData,
+        status: "Pending",
+        category: "Resonance Requirement",
+      };
+
+      await axios.post("http://localhost:5000/api/jobrequests", payload);
+
+      alert("Job Request Saved Successfully");
+    } catch (error) {
+      console.error(error);
+
+      alert("Error Saving Job Request");
+    }
   };
   return (
     <HrmsLeftLayout>

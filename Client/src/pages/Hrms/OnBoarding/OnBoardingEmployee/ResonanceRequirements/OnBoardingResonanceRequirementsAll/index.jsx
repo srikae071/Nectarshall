@@ -1,32 +1,24 @@
 import HrmsLeftLayout from "../../../../Hrmsleftlayout/index.jsx";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import "./index.css";
 
-const data = [
-  {
-    id: 101,
-    name: "Amit Jain",
-    dept: "IT",
-    category: "Payroll",
-    status: "Open",
-  },
-  { id: 102, name: "Sumit Jain", dept: "IT", category: "Tax", status: "Open" },
-  {
-    id: 103,
-    name: "Saumya Singh",
-    dept: "Operations",
-    category: "Compensation",
-    status: "Resolved",
-  },
-  {
-    id: 104,
-    name: "Kanak Singh",
-    dept: "HR",
-    category: "Compensation",
-    status: "Resolved",
-  },
-];
-
 function OnBoardingResonanceRequirementsAll() {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/jobrequests");
+
+      setData(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <HrmsLeftLayout>
       <div className="Openhome">
@@ -43,17 +35,24 @@ function OnBoardingResonanceRequirementsAll() {
                 <th className="opentablerow">Status</th>
               </tr>
             </thead>
-
             <tbody className="opentablerow">
-              {data.map((item) => (
-                <tr className="opentablerow" key={item.id}>
-                  <td className="opentablerow">{item.id}</td>
-                  <td className="opentablerow">{item.name}</td>
-                  <td className="opentablerow">{item.dept}</td>
-                  <td className="opentablerow">{item.category}</td>
-                  <td className="opentablerow">{item.status}</td>
+              {data.length === 0 ? (
+                <tr>
+                  <td colSpan="5" style={{ textAlign: "center" }}>
+                    No Records Found
+                  </td>
                 </tr>
-              ))}
+              ) : (
+                data.map((item) => (
+                  <tr className="opentablerow" key={item._id}>
+                    <td className="opentablerow">{item.caseId}</td>
+                    <td className="opentablerow">{item.requesterName}</td>
+                    <td className="opentablerow">{item.department}</td>
+                    <td className="opentablerow">{item.category}</td>
+                    <td className="opentablerow">{item.status}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

@@ -1,0 +1,69 @@
+const mongoose = require("mongoose");
+
+const JobRequestSchema = new mongoose.Schema(
+  {
+    caseId: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+
+    requesterName: String,
+    department: String,
+    category: String,
+
+    status: {
+      type: String,
+      default: "Pending",
+    },
+
+    impact: String,
+    urgency: String,
+    priority: String,
+
+    firstName: String,
+    lastName: String,
+    preferredName: String,
+    email: String,
+    contactNumber: String,
+
+    modernSlavery: String,
+    legalBarrier: String,
+    medicalLimitations: String,
+    workRights: String,
+
+    securityLicence: String,
+    securityLicenceExpiry: Date,
+
+    drivingLicence: String,
+    drivingLicenceExpiry: Date,
+
+    firstAid: String,
+    firstAidExpiry: Date,
+
+    cpr: String,
+    cprExpiry: Date,
+
+    workingWithChildren: String,
+    workingWithChildrenExpiry: Date,
+
+    trafficManagement: String,
+    trafficManagementExpiry: Date,
+
+    whiteCard: String,
+    whiteCardExpiry: Date,
+
+    yellowCard: String,
+    yellowCardExpiry: Date,
+
+    interview: String,
+
+    shortDescription: String,
+    description: String,
+  },
+  {
+    timestamps: true,
+  },
+);
+
+module.exports = mongoose.model("JobRequest", JobRequestSchema);

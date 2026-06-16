@@ -5,9 +5,9 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const itRequestRoutes = require("./routes/ItHrRequestRoutes");
 const hrRequestRoutes = require("./routes/HrRequestRoutes");
-
 const caseRoutes = require("./routes/caseRoutes");
 const leaveRoutes = require("./routes/leaveRoutes");
+const jobRequestRoutes = require("./routes/jobRequestRoutes");
 const app = express();
 
 app.use(cors());
@@ -17,6 +17,7 @@ app.use("/api/cases", caseRoutes);
 app.use("/api/itrequests", itRequestRoutes);
 app.use("/api/leaves", leaveRoutes);
 app.use("/api/hrrequests", hrRequestRoutes);
+app.use("/api/jobrequests", jobRequestRoutes);
 // Middleware
 
 // MongoDB Connection
