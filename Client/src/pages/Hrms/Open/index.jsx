@@ -13,7 +13,7 @@ function Open() {
   const fetchOpenCases = async () => {
     try {
       const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests",
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/hrrequests",
       );
 
       const openCases = response.data.filter((item) => item.status === "Open");
