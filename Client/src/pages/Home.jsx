@@ -123,13 +123,15 @@ function Home() {
           <a
             role="button"
             tabIndex={0}
-            onClick={() => navigate("/hrms")}
+            onClick={() => navigate("/hrms/hrsavescases")}
             onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") navigate("/hrms");
+              if (e.key === "Enter" || e.key === " ")
+                navigate("/hrms/hrsavescases");
             }}
           >
             HRMS
           </a>
+
           {/* <a
             role="button"
             tabIndex={0}
