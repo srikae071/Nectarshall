@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
-
+import { useParams } from "react-router-dom";
+import { useEffect } from "react";
 import ItLeftside from "../../ItLeftSide";
 
 import "./index.css";
@@ -21,6 +22,34 @@ function ITCreateCase() {
     shortDescription: "",
     description: "",
   });
+  const { id } = useParams();
+
+  useEffect(() => {
+    const fetchRequest = async () => {
+      try {
+        const response = await axios.get(
+          `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests/${id}`,
+        );
+
+        setFormData({
+          requesterName: response.data.requesterName || "",
+          requesterFor: response.data.requesterFor || "",
+          category: response.data.category || "",
+          subCategory: response.data.subCategory || "",
+          urgency: response.data.urgency || "",
+          shortDescription: response.data.shortDescription || "",
+          description: response.data.description || "",
+          workNotes: response.data.workNotes || "",
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (id) {
+      fetchRequest();
+    }
+  }, [id]);
   const subStatusOptions = {
     Pending: ["Request Information Pending", "Vendor Action Pending"],
   };
@@ -31,19 +60,51 @@ function ITCreateCase() {
     });
   };
 
+  // const handleSave = async () => {
+  //   try {
+  //     const response = await axios.post(
+  //       "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/cases/create",
+  //       formData,
+  //     );
+
+  //     alert("Case Saved Successfully");
+
+  //     console.log(response.data);
+  //   } catch (error) {
+  //     console.error(error);
+  //     alert("Error Saving Case");
+  //   }
+  // };
   const handleSave = async () => {
+    console.log("FORM DATA BEFORE SAVE:", formData);
     try {
+      console.log("Sending:", formData);
+
       const response = await axios.post(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/cases/create",
-        formData,
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests/create",
+        {
+          ...formData,
+          requestType: "IT",
+        },
       );
 
-      alert("Case Saved Successfully");
-
       console.log(response.data);
+
+      alert("IT Request Saved Successfully");
+
+      setFormData({
+        requester: "",
+        requesterFor: "",
+        category: "",
+        subCategory: "",
+        urgency: "",
+        shortDescription: "",
+        description: "",
+        workNotes: "",
+      });
     } catch (error) {
       console.error(error);
-      alert("Error Saving Case");
+      alert("Error Saving Request");
     }
   };
   return (

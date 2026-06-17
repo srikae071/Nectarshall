@@ -10,6 +10,8 @@ const ItHrRequestSchema = new mongoose.Schema(
     urgency: String,
     shortDescription: String,
     description: String,
+    requesterName: String,
+    department: String,
 
     status: {
       type: String,

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
 import AskForItNavBar from "../AskForItNavBar";
@@ -18,7 +18,7 @@ function MainAFI() {
   });
 
   const { id } = useParams();
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchRequest = async () => {
       try {
@@ -73,7 +73,7 @@ function MainAFI() {
       );
 
       console.log(response.data);
-
+      navigate("/"); // Home page route
       alert("IT Request Saved Successfully");
 
       setFormData({
