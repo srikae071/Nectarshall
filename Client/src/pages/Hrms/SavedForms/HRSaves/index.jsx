@@ -17,6 +17,10 @@ function HRSaves() {
     urgency: "",
     shortDescription: "",
     description: "",
+    status: "",
+    subStatus: "",
+    assignmentGroup: "",
+    workNotes: "",
   });
 
   useEffect(() => {
@@ -28,11 +32,18 @@ function HRSaves() {
 
         setFormData({
           caseId: response.data.incidentNumber || "",
-          requesterName: response.data.requester || "",
+          requester: response.data.requester || response.data.requesterName,
+
+          requesterName: response.data.requesterName || "",
+          requesterFor: response.data.requesterFor || "",
           category: response.data.category || "",
           urgency: response.data.urgency || "",
           shortDescription: response.data.shortDescription || "",
           description: response.data.description || "",
+          status: response.data.status || "Open",
+          subStatus: response.data.subStatus || "",
+          assignmentGroup: response.data.assignmentGroup || "",
+          workNotes: response.data.workNotes || "",
         });
       } catch (error) {
         console.log(error);
@@ -43,6 +54,25 @@ function HRSaves() {
       fetchRequest();
     }
   }, [id]);
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+    console.log(formData);
+  };
+  const handleSave = async () => {
+    try {
+      await axios.put(
+        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests/${id}`,
+        formData,
+      );
+
+      alert("Case Updated Successfully");
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <HrmsLeftLayout>
       <div className="CreateContainer">
@@ -77,7 +107,11 @@ function HRSaves() {
           <div className="CreateField">
             <label>Status</label>
 
-            <select name="status">
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+            >
               <option value="">Select Status</option>
               <option value="Open">Open</option>
               <option value="Work In Progress">Work In Progress</option>
@@ -168,7 +202,9 @@ function HRSaves() {
 
         {/* BUTTONS */}
         <div className="CreateFooter">
-          <button className="CreateBtn">Save</button>
+          <button className="CreateBtn" onClick={handleSave}>
+            Save
+          </button>
           <button className="CreateBtn">Submit</button>
           <button className="CreateBtn">Cancel</button>
         </div>
