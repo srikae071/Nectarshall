@@ -42,3 +42,19 @@ exports.getHrRequestById = async (req, res) => {
     });
   }
 };
+
+exports.updateHrRequest = async (req, res) => {
+  try {
+    const updatedRequest = await HrRequest.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true },
+    );
+
+    res.json(updatedRequest);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};

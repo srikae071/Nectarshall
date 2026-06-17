@@ -64,7 +64,7 @@ function HRSaves() {
   const handleSave = async () => {
     try {
       await axios.put(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests/${id}`,
+        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/hrrequests/${id}`,
         formData,
       );
 
