@@ -32,7 +32,8 @@ function ItSaves() {
 
         setFormData({
           caseId: response.data.incidentNumber || "",
-          requester: response.data.requester || "",
+          requester: response.data.requester || response.data.requesterName,
+
           requesterName: response.data.requesterName || "",
           requesterFor: response.data.requesterFor || "",
           category: response.data.category || "",

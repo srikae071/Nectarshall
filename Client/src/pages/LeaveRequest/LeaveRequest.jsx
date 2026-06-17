@@ -1,4 +1,5 @@
 // import { useState } from "react";
+import axios from "axios";
 import Hrmsleftlayout from "../../pages/Hrms/Hrmsleftlayout";
 import "./LeaveRequest.css";
 import { useState } from "react";
@@ -7,7 +8,30 @@ function LeaveRequest() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [halfDay, setHalfDay] = useState(false);
+  const [description, setDescription] = useState("");
   // const [leaveType, setLeaveType] = useState("Earned Leaves");
+  const [leaveType, setLeaveType] = useState("");
+  const handleSave = async () => {
+    try {
+      await axios.post(
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves/create",
+        {
+          employeeName: "Sumith Sir",
+          startDate,
+          leaveType,
+          endDate,
+          totalLeaves: calculateLeaves(),
+          halfDay,
+          description,
+        },
+      );
+
+      alert("Leave Request Saved Successfully");
+    } catch (error) {
+      console.log(error);
+      alert("Error Saving Leave Request");
+    }
+  };
   const calculateLeaves = () => {
     if (!startDate || !endDate) return "";
 
@@ -30,8 +54,16 @@ function LeaveRequest() {
           <div className="LeaveRequestRow">
             <div className="LeaveRequestField">
               <label>Leave Types</label>
-              <select className="LeaveRequestInput">
-                <option>Earned Leaves</option>
+              <select
+                className="LeaveRequestInput"
+                value={leaveType}
+                onChange={(e) => setLeaveType(e.target.value)}
+              >
+                <option value="">Select Leave Type</option>
+                <option value="Casual Leave">Casual Leave</option>
+                <option value="Maternity Leave">Maternity Leave</option>
+                <option value="Paternity Leave">Paternity Leave</option>
+                <option value="Paid Leave">Paid Leave</option>
               </select>
             </div>
 
@@ -81,12 +113,18 @@ function LeaveRequest() {
           {/* ROW 3 */}
           <div className="LeaveRequestField LeaveRequestFull">
             <label className="leqreason">Description</label>
-            <textarea className="LeaveRequestTextarea"></textarea>
+            <textarea
+              className="LeaveRequestTextarea"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            ></textarea>
           </div>
 
           {/* ACTIONS */}
           <div className="LeaveRequestActions">
-            <button className="LeaveRequestSave">Save</button>
+            <button className="LeaveRequestSave" onClick={handleSave}>
+              Save
+            </button>
             <button className="LeaveRequestCancel">Cancel</button>
           </div>
         </div>

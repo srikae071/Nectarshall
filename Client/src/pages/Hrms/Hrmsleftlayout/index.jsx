@@ -10,7 +10,7 @@ const menuData = [
       // { label: "All", path: "/hrms" },
       { label: "All", path: "/hrms/hrsavescases" },
       { label: "Create New", path: "/hrms/createnew" },
-      { label: "Open", path: "/hrms/it-open" },
+      { label: "Open", path: "/hrms/open" },
       { label: "Resolved", path: "/hrms/resolved-cases" },
       { label: "Assign to Me", path: "/hrms/assigned-cases" },
     ],

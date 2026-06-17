@@ -55,7 +55,7 @@ function ItNavMain() {
                     onClick={() => navigate(`/hrms/itsaves/${item._id}`)}
                   >
                     <td>{item.incidentNumber || "N/A"}</td>
-                    <td>{item.requester || "N/A"}</td>
+                    <td>{item.requester || item.requesterName}</td>
                     <td>{item.requesterFor || "N/A"}</td>
                     <td>{item.category || "N/A"}</td>
                     <td>{item.subCategory || "N/A"}</td>

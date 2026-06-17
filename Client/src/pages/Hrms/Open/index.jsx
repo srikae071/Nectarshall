@@ -1,33 +1,29 @@
-import Layout from "../../../components/Layout";
 import HrmsLeftLayout from "../Hrmsleftlayout";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import "./index.css";
 
-const data = [
-  {
-    id: 101,
-    name: "Amit Jain",
-    dept: "IT",
-    category: "Payroll",
-    status: "Open",
-  },
-  { id: 102, name: "Sumit Jain", dept: "IT", category: "Tax", status: "Open" },
-  {
-    id: 103,
-    name: "Saumya Singh",
-    dept: "Operations",
-    category: "Compensation",
-    status: "Resolved",
-  },
-  {
-    id: 104,
-    name: "Kanak Singh",
-    dept: "HR",
-    category: "Compensation",
-    status: "Resolved",
-  },
-];
-
 function Open() {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    fetchOpenCases();
+  }, []);
+
+  const fetchOpenCases = async () => {
+    try {
+      const response = await axios.get(
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests",
+      );
+
+      const openCases = response.data.filter((item) => item.status === "Open");
+
+      setData(openCases);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <HrmsLeftLayout>
       <div className="Openhome">
@@ -37,8 +33,8 @@ function Open() {
           <table className="opentable">
             <thead className="opentablerow">
               <tr className="opentablerow">
-                <th className="opentablerow">Case ID</th>
-                <th className="opentablerow">Requester Name</th>
+                <th className="opentablerow">Incident ID</th>
+                <th className="opentablerow">Requester</th>
                 <th className="opentablerow">Department</th>
                 <th className="opentablerow">Category</th>
                 <th className="opentablerow">Status</th>
@@ -47,21 +43,21 @@ function Open() {
 
             <tbody className="opentablerow">
               {data.map((item) => (
-                <tr className="opentablerow" key={item.id}>
-                  <td className="opentablerow">{item.id}</td>
-                  <td className="opentablerow">{item.name}</td>
-                  <td className="opentablerow">{item.dept}</td>
+                <tr className="opentablerow" key={item._id}>
+                  <td className="opentablerow">{item.incidentNumber}</td>
+
+                  <td className="opentablerow">{item.requester}</td>
+
+                  <td className="opentablerow">IT</td>
+
                   <td className="opentablerow">{item.category}</td>
+
                   <td className="opentablerow">{item.status}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-
-        {/* <div className="footer">
-          © Copyright 2023 Enhance Services - All Rights Reserved.
-        </div> */}
       </div>
     </HrmsLeftLayout>
   );
