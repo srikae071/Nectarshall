@@ -97,3 +97,25 @@ exports.updateJobRequest = async (req, res) => {
     });
   }
 };
+
+exports.updateJobRequestByCaseId = async (req, res) => {
+  try {
+    const updated = await JobRequest.findOneAndUpdate(
+      { caseId: req.params.caseId },
+      req.body,
+      { new: true },
+    );
+
+    if (!updated) {
+      return res.status(404).json({
+        message: "Record not found",
+      });
+    }
+
+    res.json(updated);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};

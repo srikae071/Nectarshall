@@ -109,27 +109,19 @@ function CandidateForm() {
       console.log(error);
     }
   };
+  const handleFinalSave = async () => {
+    try {
+      await axios.put(
+        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/case/${id}`,
+        formData,
+      );
 
-  //   const handleFinalSave = async () => {
-  //     try {
-  //       await axios.put(
-  //         `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
-  //         {
-  //           ...formData,
-  //           status: "Open",
-  //         },
-  //       );
-
-  //       alert("Request Updated Successfully");
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-  const handleFinalSave = () => {
-    console.log(formData);
-
-    alert("Candidate Form Submitted");
+      alert("Candidate Form Submitted Successfully");
+    } catch (error) {
+      console.log(error);
+    }
   };
+
   return (
     <div className="CreateContainer">
       <div className="SectionCard">
