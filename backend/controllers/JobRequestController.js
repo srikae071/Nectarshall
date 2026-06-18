@@ -142,26 +142,31 @@ exports.sendCandidateEmail = async (req, res) => {
     });
 
     const candidateLink = `http://localhost:5173/candidate-form/${request.caseId}`;
+    console.log("EMAIL:", request.email);
+    console.log("CASE ID:", request.caseId);
+    console.log("FIRST NAME:", request.firstName);
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: request.email,
       subject: "Complete Candidate Form",
       html: `
-        <h3>Hello ${request.firstName}</h3>
+          <h3>Hello ${request.firstName}</h3>
 
-        <p>Please complete your onboarding form.</p>
+          <p>Please complete your onboarding form.</p>
 
-        <a href="${candidateLink}">
-          Open Candidate Form
-        </a>
-      `,
+          <a href="${candidateLink}">
+            Open Candidate Form
+          </a>
+        `,
     });
 
     res.json({
       message: "Email Sent",
     });
   } catch (error) {
+    console.log("EMAIL ERROR:", error);
+
     res.status(500).json({
       message: error.message,
     });
