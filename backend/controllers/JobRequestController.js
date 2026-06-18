@@ -132,6 +132,9 @@ exports.sendCandidateEmail = async (req, res) => {
         message: "Record not found",
       });
     }
+    console.log("EMAIL:", request.email);
+    console.log("CASE ID:", request.caseId);
+    console.log("FIRST NAME:", request.firstName);
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -140,11 +143,10 @@ exports.sendCandidateEmail = async (req, res) => {
         pass: process.env.EMAIL_PASS,
       },
     });
+    console.log("ENV USER:", process.env.EMAIL_USER);
+    console.log("ENV PASS:", process.env.EMAIL_PASS);
 
     const candidateLink = `http://localhost:5173/candidate-form/${request.caseId}`;
-    console.log("EMAIL:", request.email);
-    console.log("CASE ID:", request.caseId);
-    console.log("FIRST NAME:", request.firstName);
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
