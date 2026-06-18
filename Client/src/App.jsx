@@ -64,6 +64,7 @@ import OnBoardingOfferLetter from "./pages/Hrms/OnBoarding/OnBoardingOfferLetter
 import OnBoardingResolve from "./pages/Hrms/OnBoarding/OnBoardingResolve";
 import OnBoardingEmReqAll from "./pages/Hrms/OnBoarding/OnBoardingEmpReqAll/index.jsx";
 import EmployeeRequestSave from "./pages/Home/EmployeRequestSave/index.jsx";
+import CandidateForm from "./pages/Hrms/OnBoarding/OnBoardingClinet/CandidateForm";
 function App() {
   return (
     <Routes>
@@ -157,6 +158,7 @@ function App() {
         path="/employee-request-save/:id"
         element={<EmployeeRequestSave />}
       />
+      <Route path="/candidate-form/:id" element={<CandidateForm />} />
     </Routes>
   );
 }

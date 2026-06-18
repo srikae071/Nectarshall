@@ -5,6 +5,7 @@ import axios from "axios";
 import "./index.css";
 
 function EmployeRequestSave() {
+  const [showFullForm, setShowFullForm] = useState(false);
   const [formData, setFormData] = useState({
     caseId: "",
     requesterName: "",
@@ -113,6 +114,7 @@ function EmployeRequestSave() {
       alert("Work Rights is mandatory");
       return;
     }
+    setShowFullForm(true);
   };
   const { id } = useParams();
 
@@ -132,6 +134,9 @@ function EmployeRequestSave() {
     }
   };
 
+  const handleSendEmail = () => {
+    alert("Email feature coming next");
+  };
   const handleFinalSave = async () => {
     try {
       await axios.put(
@@ -155,6 +160,10 @@ function EmployeRequestSave() {
           <h3>1. Preliminary Information</h3>
 
           <div className="CreateRow">
+            <div className="CreateField">
+              <label>Requester Name</label>
+              <input value={formData.requesterName} readOnly />
+            </div>
             <div className="CreateField">
               <label>First Name *</label>
               <input
@@ -203,434 +212,458 @@ function EmployeRequestSave() {
             </div>
           </div>
 
-          <button className="CreateBtn" onClick={handlePreliminarySave}>
+          {/* <button className="CreateBtn" onClick={handlePreliminarySave}>
             Save & Continue
-          </button>
-        </div>
-        <div className="SectionCard">
-          <h3>2. Barriers To Employment (Self Declaration)</h3>
-
-          {/* Modern Slavery */}
-          <div className="BarrierRow">
-            <label>Modern Slavery *</label>
-
-            <div className="ToggleGroup">
-              <button
-                type="button"
-                className={
-                  formData.modernSlavery === "PASS"
-                    ? "ToggleActive"
-                    : "ToggleBtn"
-                }
-                onClick={() =>
-                  setFormData({
-                    ...formData,
-                    modernSlavery: "PASS",
-                  })
-                }
-              >
-                PASS
-              </button>
-
-              <button
-                type="button"
-                className={
-                  formData.modernSlavery === "FAIL" ? "ToggleFail" : "ToggleBtn"
-                }
-                onClick={() =>
-                  setFormData({
-                    ...formData,
-                    modernSlavery: "FAIL",
-                  })
-                }
-              >
-                FAIL
-              </button>
-            </div>
-          </div>
-
-          {/* Legal Barrier */}
-          <div className="BarrierRow">
-            <label>Legal Barrier *</label>
-
-            <div className="ToggleGroup">
-              <button
-                type="button"
-                className={
-                  formData.legalBarrier === "PASS"
-                    ? "ToggleActive"
-                    : "ToggleBtn"
-                }
-                onClick={() =>
-                  setFormData({
-                    ...formData,
-                    legalBarrier: "PASS",
-                  })
-                }
-              >
-                PASS
-              </button>
-
-              <button
-                type="button"
-                className={
-                  formData.legalBarrier === "FAIL" ? "ToggleFail" : "ToggleBtn"
-                }
-                onClick={() =>
-                  setFormData({
-                    ...formData,
-                    legalBarrier: "FAIL",
-                  })
-                }
-              >
-                FAIL
-              </button>
-            </div>
-          </div>
-
-          {/* Medical Limitations */}
-          <div className="BarrierRow">
-            <label>Medical Limitations *</label>
-
-            <div className="ToggleGroup">
-              <button
-                type="button"
-                className={
-                  formData.medicalLimitations === "PASS"
-                    ? "ToggleActive"
-                    : "ToggleBtn"
-                }
-                onClick={() =>
-                  setFormData({
-                    ...formData,
-                    medicalLimitations: "PASS",
-                  })
-                }
-              >
-                PASS
-              </button>
-
-              <button
-                type="button"
-                className={
-                  formData.medicalLimitations === "FAIL"
-                    ? "ToggleFail"
-                    : "ToggleBtn"
-                }
-                onClick={() =>
-                  setFormData({
-                    ...formData,
-                    medicalLimitations: "FAIL",
-                  })
-                }
-              >
-                FAIL
-              </button>
-            </div>
-          </div>
-
-          {/* Work Rights */}
-          <div className="BarrierRow">
-            <label>Work Rights *</label>
-
-            <div className="ToggleGroup">
-              <button
-                type="button"
-                className={
-                  formData.workRights === "PASS" ? "ToggleActive" : "ToggleBtn"
-                }
-                onClick={() =>
-                  setFormData({
-                    ...formData,
-                    workRights: "PASS",
-                  })
-                }
-              >
-                PASS
-              </button>
-
-              <button
-                type="button"
-                className={
-                  formData.workRights === "FAIL" ? "ToggleFail" : "ToggleBtn"
-                }
-                onClick={() =>
-                  setFormData({
-                    ...formData,
-                    workRights: "FAIL",
-                  })
-                }
-              >
-                FAIL
-              </button>
-            </div>
-
-            <input
-              type="file"
-              className="DocumentUpload"
-              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-            />
-          </div>
-
+          </button> */}
           <div className="SectionActions">
-            <button className="CreateBtn" onClick={handleBarrierSave}>
+            <button className="CreateBtn" onClick={handleSendEmail}>
+              Send Email
+            </button>
+
+            <button className="CreateBtn" onClick={handlePreliminarySave}>
               Save & Continue
             </button>
           </div>
         </div>
-        <div className="SectionCard">
-          <h3>3. Qualifications</h3>
 
-          {/* Security Licence */}
-          <div className="QualificationCard">
-            <h4>Security Licence</h4>
+        {showFullForm && (
+          <>
+            <div className="SectionCard">
+              <h3>2. Barriers To Employment (Self Declaration)</h3>
 
-            <div className="QualificationRow">
-              <input
-                type="text"
-                placeholder="Licence Number"
-                name="securityLicence"
-                value={formData.securityLicence}
-                onChange={handleChange}
-              />
+              {/* Modern Slavery */}
+              <div className="BarrierRow">
+                <label>Modern Slavery *</label>
 
-              <input type="file" />
+                <div className="ToggleGroup">
+                  <button
+                    type="button"
+                    className={
+                      formData.modernSlavery === "PASS"
+                        ? "ToggleActive"
+                        : "ToggleBtn"
+                    }
+                    onClick={() =>
+                      setFormData({
+                        ...formData,
+                        modernSlavery: "PASS",
+                      })
+                    }
+                  >
+                    PASS
+                  </button>
 
-              <input
-                type="date"
-                name="securityLicenceExpiry"
-                value={formData.securityLicenceExpiry}
-                onChange={handleChange}
-              />
+                  <button
+                    type="button"
+                    className={
+                      formData.modernSlavery === "FAIL"
+                        ? "ToggleFail"
+                        : "ToggleBtn"
+                    }
+                    onClick={() =>
+                      setFormData({
+                        ...formData,
+                        modernSlavery: "FAIL",
+                      })
+                    }
+                  >
+                    FAIL
+                  </button>
+                </div>
+              </div>
+
+              {/* Legal Barrier */}
+              <div className="BarrierRow">
+                <label>Legal Barrier *</label>
+
+                <div className="ToggleGroup">
+                  <button
+                    type="button"
+                    className={
+                      formData.legalBarrier === "PASS"
+                        ? "ToggleActive"
+                        : "ToggleBtn"
+                    }
+                    onClick={() =>
+                      setFormData({
+                        ...formData,
+                        legalBarrier: "PASS",
+                      })
+                    }
+                  >
+                    PASS
+                  </button>
+
+                  <button
+                    type="button"
+                    className={
+                      formData.legalBarrier === "FAIL"
+                        ? "ToggleFail"
+                        : "ToggleBtn"
+                    }
+                    onClick={() =>
+                      setFormData({
+                        ...formData,
+                        legalBarrier: "FAIL",
+                      })
+                    }
+                  >
+                    FAIL
+                  </button>
+                </div>
+              </div>
+
+              {/* Medical Limitations */}
+              <div className="BarrierRow">
+                <label>Medical Limitations *</label>
+
+                <div className="ToggleGroup">
+                  <button
+                    type="button"
+                    className={
+                      formData.medicalLimitations === "PASS"
+                        ? "ToggleActive"
+                        : "ToggleBtn"
+                    }
+                    onClick={() =>
+                      setFormData({
+                        ...formData,
+                        medicalLimitations: "PASS",
+                      })
+                    }
+                  >
+                    PASS
+                  </button>
+
+                  <button
+                    type="button"
+                    className={
+                      formData.medicalLimitations === "FAIL"
+                        ? "ToggleFail"
+                        : "ToggleBtn"
+                    }
+                    onClick={() =>
+                      setFormData({
+                        ...formData,
+                        medicalLimitations: "FAIL",
+                      })
+                    }
+                  >
+                    FAIL
+                  </button>
+                </div>
+              </div>
+
+              {/* Work Rights */}
+              <div className="BarrierRow">
+                <label>Work Rights *</label>
+
+                <div className="ToggleGroup">
+                  <button
+                    type="button"
+                    className={
+                      formData.workRights === "PASS"
+                        ? "ToggleActive"
+                        : "ToggleBtn"
+                    }
+                    onClick={() =>
+                      setFormData({
+                        ...formData,
+                        workRights: "PASS",
+                      })
+                    }
+                  >
+                    PASS
+                  </button>
+
+                  <button
+                    type="button"
+                    className={
+                      formData.workRights === "FAIL"
+                        ? "ToggleFail"
+                        : "ToggleBtn"
+                    }
+                    onClick={() =>
+                      setFormData({
+                        ...formData,
+                        workRights: "FAIL",
+                      })
+                    }
+                  >
+                    FAIL
+                  </button>
+                </div>
+
+                <input
+                  type="file"
+                  className="DocumentUpload"
+                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                />
+              </div>
+
+              <div className="SectionActions">
+                <button className="CreateBtn" onClick={handleBarrierSave}>
+                  Save & Continue
+                </button>
+              </div>
             </div>
-          </div>
+            <div className="SectionCard">
+              <h3>3. Qualifications</h3>
 
-          {/* Driving Licence */}
-          <div className="QualificationCard">
-            <h4>Driving Licence</h4>
+              {/* Security Licence */}
+              <div className="QualificationCard">
+                <h4>Security Licence</h4>
 
-            <div className="QualificationRow">
-              <input
-                type="text"
-                placeholder="Licence Number"
-                name="drivingLicence"
-                value={formData.drivingLicence}
-                onChange={handleChange}
-              />
+                <div className="QualificationRow">
+                  <input
+                    type="text"
+                    placeholder="Licence Number"
+                    name="securityLicence"
+                    value={formData.securityLicence}
+                    onChange={handleChange}
+                  />
 
-              <input type="file" />
+                  <input type="file" />
 
-              <input
-                type="date"
-                name="drivingLicenceExpiry"
-                value={formData.drivingLicenceExpiry}
-                onChange={handleChange}
-              />
+                  <input
+                    type="date"
+                    name="securityLicenceExpiry"
+                    value={formData.securityLicenceExpiry}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              {/* Driving Licence */}
+              <div className="QualificationCard">
+                <h4>Driving Licence</h4>
+
+                <div className="QualificationRow">
+                  <input
+                    type="text"
+                    placeholder="Licence Number"
+                    name="drivingLicence"
+                    value={formData.drivingLicence}
+                    onChange={handleChange}
+                  />
+
+                  <input type="file" />
+
+                  <input
+                    type="date"
+                    name="drivingLicenceExpiry"
+                    value={formData.drivingLicenceExpiry}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              {/* First Aid */}
+              <div className="QualificationCard">
+                <h4>First Aid</h4>
+
+                <div className="QualificationRow">
+                  <input
+                    type="text"
+                    placeholder="Certificate Number"
+                    name="firstAid"
+                    value={formData.firstAid}
+                    onChange={handleChange}
+                  />
+
+                  <input type="file" />
+
+                  <input
+                    type="date"
+                    name="firstAidExpiry"
+                    value={formData.firstAidExpiry}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              {/* CPR */}
+              <div className="QualificationCard">
+                <h4>CPR</h4>
+
+                <div className="QualificationRow">
+                  <input
+                    type="text"
+                    placeholder="Certificate Number"
+                    name="cpr"
+                    value={formData.cpr}
+                    onChange={handleChange}
+                  />
+
+                  <input type="file" />
+
+                  <input
+                    type="date"
+                    name="cprExpiry"
+                    value={formData.cprExpiry}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              {/* Working With Children Check */}
+              <div className="QualificationCard">
+                <h4>Working With Children Check</h4>
+
+                <div className="QualificationRow">
+                  <input
+                    type="text"
+                    placeholder="Check Number"
+                    name="workingWithChildren"
+                    value={formData.workingWithChildren}
+                    onChange={handleChange}
+                  />
+
+                  <input type="file" />
+
+                  <input
+                    type="date"
+                    name="workingWithChildrenExpiry"
+                    value={formData.workingWithChildrenExpiry}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              {/* Traffic Management */}
+              <div className="QualificationCard">
+                <h4>Traffic Management</h4>
+
+                <div className="QualificationRow">
+                  <input
+                    type="text"
+                    placeholder="Certificate Number"
+                    name="trafficManagement"
+                    value={formData.trafficManagement}
+                    onChange={handleChange}
+                  />
+
+                  <input type="file" />
+
+                  <input
+                    type="date"
+                    name="trafficManagementExpiry"
+                    value={formData.trafficManagementExpiry}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              {/* White Card */}
+              <div className="QualificationCard">
+                <h4>White Card</h4>
+
+                <div className="QualificationRow">
+                  <input
+                    type="text"
+                    placeholder="White Card Number"
+                    name="whiteCard"
+                    value={formData.whiteCard}
+                    onChange={handleChange}
+                  />
+
+                  <input type="file" />
+
+                  <input
+                    type="date"
+                    name="whiteCardExpiry"
+                    value={formData.whiteCardExpiry}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              {/* Yellow Card */}
+              <div className="QualificationCard">
+                <h4>Yellow Card</h4>
+
+                <div className="QualificationRow">
+                  <input
+                    type="text"
+                    placeholder="Yellow Card Number"
+                    name="yellowCard"
+                    value={formData.yellowCard}
+                    onChange={handleChange}
+                  />
+
+                  <input type="file" />
+
+                  <input
+                    type="date"
+                    name="yellowCardExpiry"
+                    value={formData.yellowCardExpiry}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <div className="SectionActions">
+                <button className="CreateBtn" onClick={handleQualificationSave}>
+                  Save Qualifications
+                </button>
+              </div>
             </div>
-          </div>
+            <div className="SectionCard">
+              <h3>4. References</h3>
 
-          {/* First Aid */}
-          <div className="QualificationCard">
-            <h4>First Aid</h4>
+              <div className="BarrierRow">
+                <label>Interview *</label>
 
-            <div className="QualificationRow">
-              <input
-                type="text"
-                placeholder="Certificate Number"
-                name="firstAid"
-                value={formData.firstAid}
-                onChange={handleChange}
-              />
+                <div className="ToggleGroup">
+                  <button
+                    type="button"
+                    className={
+                      formData.interview === "PASS"
+                        ? "ToggleActive"
+                        : "ToggleBtn"
+                    }
+                    onClick={() =>
+                      setFormData({
+                        ...formData,
+                        interview: "PASS",
+                      })
+                    }
+                  >
+                    PASS
+                  </button>
 
-              <input type="file" />
+                  <button
+                    type="button"
+                    className={
+                      formData.interview === "FAIL" ? "ToggleFail" : "ToggleBtn"
+                    }
+                    onClick={() =>
+                      setFormData({
+                        ...formData,
+                        interview: "FAIL",
+                      })
+                    }
+                  >
+                    FAIL
+                  </button>
+                </div>
+              </div>
 
-              <input
-                type="date"
-                name="firstAidExpiry"
-                value={formData.firstAidExpiry}
-                onChange={handleChange}
-              />
+              <div className="SectionActions">
+                <button className="CreateBtn" onClick={handleFinalSave}>
+                  Save
+                </button>
+              </div>
             </div>
-          </div>
-
-          {/* CPR */}
-          <div className="QualificationCard">
-            <h4>CPR</h4>
-
-            <div className="QualificationRow">
-              <input
-                type="text"
-                placeholder="Certificate Number"
-                name="cpr"
-                value={formData.cpr}
-                onChange={handleChange}
-              />
-
-              <input type="file" />
-
-              <input
-                type="date"
-                name="cprExpiry"
-                value={formData.cprExpiry}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          {/* Working With Children Check */}
-          <div className="QualificationCard">
-            <h4>Working With Children Check</h4>
-
-            <div className="QualificationRow">
-              <input
-                type="text"
-                placeholder="Check Number"
-                name="workingWithChildren"
-                value={formData.workingWithChildren}
-                onChange={handleChange}
-              />
-
-              <input type="file" />
-
-              <input
-                type="date"
-                name="workingWithChildrenExpiry"
-                value={formData.workingWithChildrenExpiry}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          {/* Traffic Management */}
-          <div className="QualificationCard">
-            <h4>Traffic Management</h4>
-
-            <div className="QualificationRow">
-              <input
-                type="text"
-                placeholder="Certificate Number"
-                name="trafficManagement"
-                value={formData.trafficManagement}
-                onChange={handleChange}
-              />
-
-              <input type="file" />
-
-              <input
-                type="date"
-                name="trafficManagementExpiry"
-                value={formData.trafficManagementExpiry}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          {/* White Card */}
-          <div className="QualificationCard">
-            <h4>White Card</h4>
-
-            <div className="QualificationRow">
-              <input
-                type="text"
-                placeholder="White Card Number"
-                name="whiteCard"
-                value={formData.whiteCard}
-                onChange={handleChange}
-              />
-
-              <input type="file" />
-
-              <input
-                type="date"
-                name="whiteCardExpiry"
-                value={formData.whiteCardExpiry}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          {/* Yellow Card */}
-          <div className="QualificationCard">
-            <h4>Yellow Card</h4>
-
-            <div className="QualificationRow">
-              <input
-                type="text"
-                placeholder="Yellow Card Number"
-                name="yellowCard"
-                value={formData.yellowCard}
-                onChange={handleChange}
-              />
-
-              <input type="file" />
-
-              <input
-                type="date"
-                name="yellowCardExpiry"
-                value={formData.yellowCardExpiry}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          <div className="SectionActions">
-            <button className="CreateBtn" onClick={handleQualificationSave}>
-              Save Qualifications
-            </button>
-          </div>
-        </div>
-        <div className="SectionCard">
-          <h3>4. References</h3>
-
-          <div className="BarrierRow">
-            <label>Interview *</label>
-
-            <div className="ToggleGroup">
-              <button
-                type="button"
-                className={
-                  formData.interview === "PASS" ? "ToggleActive" : "ToggleBtn"
-                }
-                onClick={() =>
-                  setFormData({
-                    ...formData,
-                    interview: "PASS",
-                  })
-                }
-              >
-                PASS
+            <div className="CreateFooter">
+              <button className="CreateBtn" onClick={handleCaseSave}>
+                Submit
               </button>
-
-              <button
-                type="button"
-                className={
-                  formData.interview === "FAIL" ? "ToggleFail" : "ToggleBtn"
-                }
-                onClick={() =>
-                  setFormData({
-                    ...formData,
-                    interview: "FAIL",
-                  })
-                }
-              >
-                FAIL
-              </button>
+              {/* <button className="CreateBtn">Submit</button> */}
+              <button className="CreateBtn">Cancel</button>
             </div>
-          </div>
-
-          <div className="SectionActions">
-            <button className="CreateBtn" onClick={handleFinalSave}>
-              Save
-            </button>
-          </div>
-        </div>
-        <div className="CreateFooter">
-          <button className="CreateBtn" onClick={handleCaseSave}>
-            Submit
-          </button>
-          {/* <button className="CreateBtn">Submit</button> */}
-          <button className="CreateBtn">Cancel</button>
-        </div>
+          </>
+        )}
       </div>
     </HrmsLeftLayout>
   );
