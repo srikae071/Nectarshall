@@ -129,13 +129,24 @@ function EmployeRequestSave() {
       );
 
       setFormData(response.data);
+      if (response.data.candidateCompleted) {
+        setShowFullForm(true);
+      }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleSendEmail = () => {
-    alert("Email feature coming next");
+  const handleSendEmail = async () => {
+    try {
+      await axios.post(
+        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/send-email/${formData.caseId}`,
+      );
+
+      alert("Email Sent Successfully");
+    } catch (error) {
+      console.log(error);
+    }
   };
   const handleFinalSave = async () => {
     try {

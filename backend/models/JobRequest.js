@@ -82,6 +82,10 @@ const JobRequestSchema = new mongoose.Schema(
     skillSet: String,
     experience: String,
     requestType: String,
+    candidateCompleted: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   {

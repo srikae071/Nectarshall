@@ -1,4 +1,5 @@
 const JobRequest = require("../models/JobRequest");
+const nodemailer = require("nodemailer");
 
 exports.createJobRequest = async (req, res) => {
   try {
@@ -113,6 +114,53 @@ exports.updateJobRequestByCaseId = async (req, res) => {
     }
 
     res.json(updated);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+exports.sendCandidateEmail = async (req, res) => {
+  try {
+    const request = await JobRequest.findOne({
+      caseId: req.params.caseId,
+    });
+
+    if (!request) {
+      return res.status(404).json({
+        message: "Record not found",
+      });
+    }
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    const candidateLink = `http://localhost:5173/candidate-form/${request.caseId}`;
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: request.email,
+      subject: "Complete Candidate Form",
+      html: `
+        <h3>Hello ${request.firstName}</h3>
+
+        <p>Please complete your onboarding form.</p>
+
+        <a href="${candidateLink}">
+          Open Candidate Form
+        </a>
+      `,
+    });
+
+    res.json({
+      message: "Email Sent",
+    });
   } catch (error) {
     res.status(500).json({
       message: error.message,
