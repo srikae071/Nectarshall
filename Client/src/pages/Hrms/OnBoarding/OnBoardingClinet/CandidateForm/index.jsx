@@ -114,7 +114,7 @@ function CandidateForm() {
       await axios.put(
         `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/case/${id}`,
         {
-          formData,
+          ...formData,
           candidateCompleted: true,
         },
       );

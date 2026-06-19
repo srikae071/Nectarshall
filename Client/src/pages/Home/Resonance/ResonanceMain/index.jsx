@@ -71,7 +71,7 @@ function ResonanceMain() {
           </div>
 
           <div className="CreateField">
-            <label>Department</label>
+            <label>Departmentss</label>
 
             <select
               name="department"
