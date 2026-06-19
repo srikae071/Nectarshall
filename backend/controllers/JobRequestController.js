@@ -147,7 +147,8 @@ exports.sendCandidateEmail = async (req, res) => {
     console.log("ENV PASS:", process.env.EMAIL_PASS);
 
     const candidateLink = `http://localhost:5173/candidate-form/${request.caseId}`;
-
+    console.log("EMAIL:", request.email);
+    console.log("REQUEST:", request);
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: request.email,

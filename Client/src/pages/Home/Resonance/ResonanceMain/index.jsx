@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import ResonanceNav from "../ResonanceNav/index.jsx";
 import "./index.css";
 
@@ -13,7 +14,7 @@ function ResonanceMain() {
     shortDescription: "",
     description: "",
   });
-
+  const navigate = useNavigate();
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -32,6 +33,7 @@ function ResonanceMain() {
           requestType: "Resonance",
         },
       );
+      navigate("/");
 
       console.log(response.data);
 

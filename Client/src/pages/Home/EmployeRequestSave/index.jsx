@@ -151,12 +151,33 @@ function EmployeRequestSave() {
     }
   };
   const handleFinalSave = async () => {
+    console.log("save button clicked");
+    if (!formData.firstName) {
+      alert("First Name is mandatory");
+      return;
+    }
+
+    if (!formData.lastName) {
+      alert("Last Name is mandatory");
+      return;
+    }
+
+    if (!formData.email) {
+      alert("Email is mandatory");
+      return;
+    }
+
+    if (!formData.contactNumber) {
+      alert("Contact Number is mandatory");
+      return;
+    }
+
     try {
       await axios.put(
         `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
         {
           ...formData,
-          status: "Open",
+          // status: "Open",
         },
       );
 
@@ -195,14 +216,14 @@ function EmployeRequestSave() {
               />
             </div>
 
-            <div className="CreateField">
+            {/* <div className="CreateField">
               <label>Preferred Name</label>
               <input
                 name="preferredName"
                 value={formData.preferredName}
                 onChange={handleChange}
               />
-            </div>
+            </div> */}
           </div>
 
           <div className="CreateRow">
@@ -233,7 +254,7 @@ function EmployeRequestSave() {
               Send Email
             </button>
 
-            <button className="CreateBtn" onClick={handlePreliminarySave}>
+            <button className="CreateBtn" onClick={handleFinalSave}>
               Save & Continue
             </button>
           </div>
