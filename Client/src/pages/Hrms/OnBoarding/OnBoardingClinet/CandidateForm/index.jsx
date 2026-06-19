@@ -290,11 +290,7 @@ function CandidateForm() {
           />
         </div>
 
-        <div className="SectionActions">
-          <button className="CreateBtn" onClick={handleBarrierSave}>
-            Save & Continue
-          </button>
-        </div>
+        <div className="SectionActions"></div>
       </div>
       <div className="SectionCard">
         <h3>3. Qualifications</h3>
@@ -491,11 +487,7 @@ function CandidateForm() {
           </div>
         </div>
 
-        <div className="SectionActions">
-          <button className="CreateBtn" onClick={handleQualificationSave}>
-            Save Qualifications
-          </button>
-        </div>
+        <div className="SectionActions"></div>
       </div>
       <div className="SectionCard">
         <h3>4. References</h3>

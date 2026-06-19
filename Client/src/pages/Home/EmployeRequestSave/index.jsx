@@ -59,17 +59,17 @@ function EmployeRequestSave() {
     });
   };
 
-  const handleCaseSave = () => {
-    if (!formData.requesterName) {
-      alert("Requester Name is mandatory");
-      return;
-    }
+  // const handleCaseSave = () => {
+  //   if (!formData.requesterName) {
+  //     alert("Requester Name is mandatory");
+  //     return;
+  //   }
 
-    if (!formData.department) {
-      alert("Department is mandatory");
-      return;
-    }
-  };
+  //   if (!formData.department) {
+  //     alert("Department is mandatory");
+  //     return;
+  //   }
+  // };
 
   const handlePreliminarySave = () => {
     if (!formData.firstName) {
@@ -254,9 +254,9 @@ function EmployeRequestSave() {
               Send Email
             </button>
 
-            <button className="CreateBtn" onClick={handleFinalSave}>
+            {/* <button className="CreateBtn" onClick={handleFinalSave}>
               Save & Continue
-            </button>
+            </button> */}
           </div>
         </div>
 
@@ -436,9 +436,9 @@ function EmployeRequestSave() {
               </div>
 
               <div className="SectionActions">
-                <button className="CreateBtn" onClick={handleBarrierSave}>
+                {/* <button className="CreateBtn" onClick={handleBarrierSave}>
                   Save & Continue
-                </button>
+                </button> */}
               </div>
             </div>
             <div className="SectionCard">
@@ -684,13 +684,13 @@ function EmployeRequestSave() {
               </div>
 
               <div className="SectionActions">
-                <button className="CreateBtn" onClick={handleFinalSave}>
+                {/* <button className="CreateBtn" onClick={}>
                   Save
-                </button>
+                </button> */}
               </div>
             </div>
             <div className="CreateFooter">
-              <button className="CreateBtn" onClick={handleCaseSave}>
+              <button className="CreateBtn" onClick={handleFinalSave}>
                 Submit
               </button>
               {/* <button className="CreateBtn">Submit</button> */}
