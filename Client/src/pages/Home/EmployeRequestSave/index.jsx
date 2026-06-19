@@ -297,9 +297,9 @@ function EmployeRequestSave() {
               Send Email
             </button>
 
-            {/* <button className="CreateBtn" onClick={handleFinalSave}>
+            <button className="CreateBtn" onClick={handleFinalSave}>
               Save & Continue
-            </button> */}
+            </button>
           </div>
         </div>
 
