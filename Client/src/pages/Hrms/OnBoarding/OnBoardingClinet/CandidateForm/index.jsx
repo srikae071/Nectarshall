@@ -529,13 +529,13 @@ function CandidateForm() {
         </div>
 
         <div className="SectionActions">
-          <button className="CreateBtn" onClick={handleFinalSave}>
+          {/* <button className="CreateBtn" onClick={handleFinalSave}>
             Save
-          </button>
+          </button> */}
         </div>
       </div>
       <div className="CreateFooter">
-        <button className="CreateBtn" onClick={handleCaseSave}>
+        <button className="CreateBtn" onClick={handleFinalSave}>
           Submit
         </button>
         {/* <button className="CreateBtn">Submit</button> */}

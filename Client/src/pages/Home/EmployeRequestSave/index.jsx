@@ -199,20 +199,18 @@ function EmployeRequestSave() {
               <input value={formData.requesterName} readOnly />
             </div>
             <div className="CreateField">
-              <label>First Name *</label>
-              <input
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
-              />
+              <label>Case Id *</label>
+              <input name="CaseId" value={formData.caseId} readOnly />
             </div>
-
             <div className="CreateField">
-              <label>Last Name *</label>
+              <label>Department</label>
               <input
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
+                name="Department"
+                value={formData.department}
+                readOnly
+                type="text"
+                type="text"
+                autoComplete="off"
               />
             </div>
 
@@ -228,6 +226,50 @@ function EmployeRequestSave() {
 
           <div className="CreateRow">
             <div className="CreateField">
+              <label>SkillSet *</label>
+              <input
+                name="Slillset"
+                value={formData.skillSet}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="CreateField">
+              <label>Urgency*</label>
+              <input
+                name="Urgency"
+                value={formData.urgency}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="CreateField">
+              <label>First Name*</label>
+              <input
+                name="FirstName"
+                value={formData.firstName}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+          <div className="CreateRow">
+            <div className="CreateField">
+              <label>Last Name *</label>
+              <input
+                name="LastName"
+                value={formData.lastName}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="CreateField">
+              <label>Preferd Name*</label>
+              <input
+                name="preferredName"
+                value={formData.preferredName}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="CreateField">
               <label>Email *</label>
               <input
                 name="email"
@@ -235,7 +277,8 @@ function EmployeRequestSave() {
                 onChange={handleChange}
               />
             </div>
-
+          </div>
+          <div className="CreateRow">
             <div className="CreateField">
               <label>Contact Number *</label>
               <input
