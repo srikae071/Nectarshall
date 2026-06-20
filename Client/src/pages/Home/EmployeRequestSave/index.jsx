@@ -205,7 +205,7 @@ function EmployeRequestSave() {
             <div className="CreateField">
               <label>Department</label>
               <input
-                name="Department"
+                name="department"
                 value={formData.department}
                 readOnly
                 type="text"
@@ -245,7 +245,7 @@ function EmployeRequestSave() {
             <div className="CreateField">
               <label>First Name*</label>
               <input
-                name="FirstName"
+                name="firstName"
                 value={formData.firstName}
                 onChange={handleChange}
               />
@@ -255,7 +255,7 @@ function EmployeRequestSave() {
             <div className="CreateField">
               <label>Last Name *</label>
               <input
-                name="LastName"
+                name="lastName"
                 value={formData.lastName}
                 onChange={handleChange}
               />
