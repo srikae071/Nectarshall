@@ -146,7 +146,7 @@ exports.sendCandidateEmail = async (req, res) => {
     console.log("ENV USER:", process.env.EMAIL_USER);
     console.log("ENV PASS:", process.env.EMAIL_PASS);
 
-    const candidateLink = `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/candidate-form/${request.caseId}`;
+    const candidateLink = `https://purple-sand-0241d5e00.7.azurestaticapps.net/candidate-form/${request.caseId}`;
     console.log("EMAIL:", request.email);
     console.log("REQUEST:", request);
     await transporter.sendMail({
