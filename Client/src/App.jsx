@@ -65,6 +65,7 @@ import OnBoardingResolve from "./pages/Hrms/OnBoarding/OnBoardingResolve";
 import OnBoardingEmReqAll from "./pages/Hrms/OnBoarding/OnBoardingEmpReqAll/index.jsx";
 import EmployeeRequestSave from "./pages/Home/EmployeRequestSave/index.jsx";
 import CandidateForm from "./pages/Hrms/OnBoarding/OnBoardingClinet/CandidateForm";
+import Candidateform2 from "./pages/Hrms/OnBoarding/OnBoardingClinet/Candidateform2";
 import OnBoardingComplianceSupplier from "./pages/Hrms/OnBoarding/OnBoardingSupplier/OnBoardingComplianceSupplier/indeex.jsx";
 import Interview from "./pages/Hrms/OnBoarding/Interview/index.jsx";
 function App() {
@@ -166,6 +167,7 @@ function App() {
         element={<OnBoardingComplianceSupplier />}
       />
       <Route path="/onboarding/Interview" element={<Interview />} />
+      <Route path="/Candidate-form2/:id" element={<Candidateform2 />} />
     </Routes>
   );
 }

@@ -20,7 +20,7 @@ function OnBoardingEmpAll() {
       );
 
       const filteredData = response.data.filter(
-        (item) => item.category === "Employee Save",
+        (item) => item.category === "Employee Save" && item.status === "Open",
       );
 
       setData(filteredData);

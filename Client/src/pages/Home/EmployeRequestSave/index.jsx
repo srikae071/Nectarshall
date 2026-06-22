@@ -157,21 +157,7 @@ function EmployeRequestSave() {
     }
   };
 
-  const handleSendEmail = async () => {
-    try {
-      await axios.post(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/send-email/${formData.caseId}`,
-      );
-
-      alert("Email Sent Successfully");
-    } catch (error) {
-      console.log(error.response?.data);
-      console.log(error.response?.status);
-      // console.log(error);
-    }
-  };
   const handleFinalSave = async () => {
-    console.log("save button clicked");
     if (!formData.firstName) {
       alert("First Name is mandatory");
       return;
@@ -191,6 +177,7 @@ function EmployeRequestSave() {
       alert("Contact Number is mandatory");
       return;
     }
+
     let nextStatus = formData.status || "Open";
 
     if (formData.interview === "PASS") {
@@ -202,14 +189,21 @@ function EmployeRequestSave() {
     }
 
     try {
+      // Update Job Request
       await axios.put(
         `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
         {
           ...formData,
-          // status: "Open",
           status: nextStatus,
         },
       );
+
+      // Send Candidate Form 2 email only when PASS
+      if (formData.interview === "PASS") {
+        await axios.post(
+          `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/send-candidate-form2/${formData.caseId}`,
+        );
+      }
 
       alert("Request Updated Successfully");
     } catch (error) {
@@ -580,16 +574,29 @@ function EmployeRequestSave() {
                     onChange={handleChange}
                   />
                 </div>
-                <input
-                  value={
-                    formData.securityLicenceResult === "PASS"
-                      ? "true"
-                      : formData.securityLicenceResult === "FAIL"
-                        ? "false"
-                        : ""
-                  }
-                  readOnly
-                />
+                <div className="ToggleGroup">
+                  <button
+                    type="button"
+                    className={
+                      formData.securityLicenceResult === "PASS"
+                        ? "ToggleActive"
+                        : "ToggleBtn"
+                    }
+                  >
+                    PASS
+                  </button>
+
+                  <button
+                    type="button"
+                    className={
+                      formData.securityLicenceResult === "FAIL"
+                        ? "ToggleFail"
+                        : "ToggleBtn"
+                    }
+                  >
+                    FAIL
+                  </button>
+                </div>
               </div>
 
               {/* Driving Licence */}
@@ -613,16 +620,29 @@ function EmployeRequestSave() {
                     value={formData.drivingLicenceExpiry}
                     onChange={handleChange}
                   />
-                  <input
-                    value={
-                      formData.drivingLicenceResult === "PASS"
-                        ? "true"
-                        : formData.drivingLicenceResult === "FAIL"
-                          ? "false"
-                          : ""
-                    }
-                    readOnly
-                  />
+                  <div className="ToggleGroup">
+                    <button
+                      type="button"
+                      className={
+                        formData.drivingLicenceResult === "PASS"
+                          ? "ToggleActive"
+                          : "ToggleBtn"
+                      }
+                    >
+                      PASS
+                    </button>
+
+                    <button
+                      type="button"
+                      className={
+                        formData.drivingLicenceResult === "FAIL"
+                          ? "ToggleFail"
+                          : "ToggleBtn"
+                      }
+                    >
+                      FAIL
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -647,16 +667,29 @@ function EmployeRequestSave() {
                     value={formData.firstAidExpiry}
                     onChange={handleChange}
                   />
-                  <input
-                    value={
-                      formData.firstAidResult === "PASS"
-                        ? "true"
-                        : formData.firstAidResult === "FAIL"
-                          ? "false"
-                          : ""
-                    }
-                    readOnly
-                  />
+                  <div className="ToggleGroup">
+                    <button
+                      type="button"
+                      className={
+                        formData.firstAidResult === "PASS"
+                          ? "ToggleActive"
+                          : "ToggleBtn"
+                      }
+                    >
+                      PASS
+                    </button>
+
+                    <button
+                      type="button"
+                      className={
+                        formData.firstAidResult === "FAIL"
+                          ? "ToggleFail"
+                          : "ToggleBtn"
+                      }
+                    >
+                      FAIL
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -681,16 +714,29 @@ function EmployeRequestSave() {
                     value={formData.cprExpiry}
                     onChange={handleChange}
                   />
-                  <input
-                    value={
-                      formData.cprResult === "PASS"
-                        ? "true"
-                        : formData.cprResult === "FAIL"
-                          ? "false"
-                          : ""
-                    }
-                    readOnly
-                  />
+                  <div className="ToggleGroup">
+                    <button
+                      type="button"
+                      className={
+                        formData.cprResult === "PASS"
+                          ? "ToggleActive"
+                          : "ToggleBtn"
+                      }
+                    >
+                      PASS
+                    </button>
+
+                    <button
+                      type="button"
+                      className={
+                        formData.cprResult === "FAIL"
+                          ? "ToggleFail"
+                          : "ToggleBtn"
+                      }
+                    >
+                      FAIL
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -715,16 +761,29 @@ function EmployeRequestSave() {
                     value={formData.workingWithChildrenExpiry}
                     onChange={handleChange}
                   />
-                  <input
-                    value={
-                      formData.workingWithChildrenResult === "PASS"
-                        ? "true"
-                        : formData.workingWithChildrenResult === "FAIL"
-                          ? "false"
-                          : ""
-                    }
-                    readOnly
-                  />
+                  <div className="ToggleGroup">
+                    <button
+                      type="button"
+                      className={
+                        formData.workingWithChildrenResult === "PASS"
+                          ? "ToggleActive"
+                          : "ToggleBtn"
+                      }
+                    >
+                      PASS
+                    </button>
+
+                    <button
+                      type="button"
+                      className={
+                        formData.workingWithChildrenResult === "FAIL"
+                          ? "ToggleFail"
+                          : "ToggleBtn"
+                      }
+                    >
+                      FAIL
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -749,16 +808,29 @@ function EmployeRequestSave() {
                     value={formData.trafficManagementExpiry}
                     onChange={handleChange}
                   />
-                  <input
-                    value={
-                      formData.trafficManagementResult === "PASS"
-                        ? "true"
-                        : formData.trafficManagementResult === "FAIL"
-                          ? "false"
-                          : ""
-                    }
-                    readOnly
-                  />
+                  <div className="ToggleGroup">
+                    <button
+                      type="button"
+                      className={
+                        formData.trafficManagementResult === "PASS"
+                          ? "ToggleActive"
+                          : "ToggleBtn"
+                      }
+                    >
+                      PASS
+                    </button>
+
+                    <button
+                      type="button"
+                      className={
+                        formData.trafficManagementResult === "FAIL"
+                          ? "ToggleFail"
+                          : "ToggleBtn"
+                      }
+                    >
+                      FAIL
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -783,16 +855,29 @@ function EmployeRequestSave() {
                     value={formData.whiteCardExpiry}
                     onChange={handleChange}
                   />
-                  <input
-                    value={
-                      formData.whiteCardResult === "PASS"
-                        ? "true"
-                        : formData.whiteCardResult === "FAIL"
-                          ? "false"
-                          : ""
-                    }
-                    readOnly
-                  />
+                  <div className="ToggleGroup">
+                    <button
+                      type="button"
+                      className={
+                        formData.whiteCardResult === "PASS"
+                          ? "ToggleActive"
+                          : "ToggleBtn"
+                      }
+                    >
+                      PASS
+                    </button>
+
+                    <button
+                      type="button"
+                      className={
+                        formData.whiteCardResult === "FAIL"
+                          ? "ToggleFail"
+                          : "ToggleBtn"
+                      }
+                    >
+                      FAIL
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -817,16 +902,29 @@ function EmployeRequestSave() {
                     value={formData.yellowCardExpiry}
                     onChange={handleChange}
                   />
-                  <input
-                    value={
-                      formData.yellowCardResult === "PASS"
-                        ? "true"
-                        : formData.yellowCardResult === "FAIL"
-                          ? "false"
-                          : ""
-                    }
-                    readOnly
-                  />
+                  <div className="ToggleGroup">
+                    <button
+                      type="button"
+                      className={
+                        formData.yellowCardResult === "PASS"
+                          ? "ToggleActive"
+                          : "ToggleBtn"
+                      }
+                    >
+                      PASS
+                    </button>
+
+                    <button
+                      type="button"
+                      className={
+                        formData.yellowCardResult === "FAIL"
+                          ? "ToggleFail"
+                          : "ToggleBtn"
+                      }
+                    >
+                      FAIL
+                    </button>
+                  </div>
                 </div>
               </div>
 

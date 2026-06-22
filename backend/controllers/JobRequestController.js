@@ -148,6 +148,7 @@ exports.sendCandidateEmail = async (req, res) => {
     console.log("ENV PASS:", process.env.EMAIL_PASS);
 
     const candidateLink = `https://purple-sand-0241d5e00.7.azurestaticapps.net/candidate-form/${request.caseId}`;
+
     console.log("EMAIL:", request.email);
     console.log("REQUEST:", request);
     await transporter.sendMail({
@@ -170,6 +171,52 @@ exports.sendCandidateEmail = async (req, res) => {
     });
   } catch (error) {
     console.log("EMAIL ERROR:", error);
+
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+exports.sendCandidateForm2Email = async (req, res) => {
+  try {
+    const request = await JobRequest.findOne({
+      caseId: req.params.caseId,
+    });
+
+    if (!request) {
+      return res.status(404).json({
+        message: "Record not found",
+      });
+    }
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    const candidateLink = `https://purple-sand-0241d5e00.7.azurestaticapps.net/Candidate-form2/${request.caseId}`;
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: request.email,
+      subject: "Complete Candidate Form 2",
+      html: `
+        <h3>Hello ${request.firstName}</h3>
+        <p>Please complete Candidate Form 2.</p>
+        <a href="${candidateLink}">
+          Open Candidate Form 2
+        </a>
+      `,
+    });
+
+    res.json({
+      message: "Candidate Form 2 Email Sent",
+    });
+  } catch (error) {
+    console.log(error);
 
     res.status(500).json({
       message: error.message,

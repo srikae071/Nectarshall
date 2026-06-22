@@ -10,6 +10,7 @@ const {
   updateJobRequest,
   updateJobRequestByCaseId,
   sendCandidateEmail,
+  sendCandidateForm2Email,
 } = require("../controllers/jobRequestController");
 
 router.post("/", createJobRequest);
@@ -20,4 +21,5 @@ router.get("/:id", getJobRequestById);
 router.put("/case/:caseId", updateJobRequestByCaseId);
 router.put("/:id", updateJobRequest);
 router.post("/send-email/:caseId", sendCandidateEmail);
+router.post("/send-candidate-form2/:caseId", sendCandidateForm2Email);
 module.exports = router;
