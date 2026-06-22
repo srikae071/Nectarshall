@@ -37,29 +37,30 @@ const menuData = [
             path: "/Client/onboarding-compliance",
             icon: "📄",
           },
+          {
+            label: "Resonence Requirement",
+            children: [
+              {
+                label: "All",
+                path: "/onboarding/resonancerequirement/all",
+              },
+              {
+                label: "Create New",
+                path: "/onboarding/resonancerequirement/createnew",
+              },
+              {
+                label: "Resolve",
+                path: "/onboarding/resonancerequirement/resolved",
+              },
+              {
+                label: "Employe Request",
+                path: "/onboarding/employerequest",
+              },
+            ],
+          },
         ],
       },
-      {
-        label: "Resonence Requirement",
-        children: [
-          {
-            label: "All",
-            path: "/onboarding/resonancerequirement/all",
-          },
-          {
-            label: "Create New",
-            path: "/onboarding/resonancerequirement/createnew",
-          },
-          {
-            label: "Resolve",
-            path: "/onboarding/resonancerequirement/resolved",
-          },
-          {
-            label: "Employe Request",
-            path: "/onboarding/employerequest",
-          },
-        ],
-      },
+
       {
         label: "Pre-Joining Compilence",
         path: "/onboarding/prejoining",
@@ -75,7 +76,7 @@ const menuData = [
         children: [
           {
             label: "Onbording Compilence",
-            path: "/onboarding/clint",
+            path: "/supplier/onboardingcompilence",
             // icon: "📄",
           },
         ],
@@ -91,8 +92,29 @@ const menuData = [
         children: [
           {
             label: "OffBoarding Compilence",
-            path: "/onboarding/clint",
+            path: "/onb",
             // icon: "📄",
+          },
+          {
+            label: "Resonence Requirement",
+            children: [
+              {
+                label: "All",
+                path: "/onboarding/resonancerequirement/all",
+              },
+              {
+                label: "Create New",
+                path: "/onboarding/resonancerequirement/createnew",
+              },
+              {
+                label: "Resolve",
+                path: "/onboarding/resonancerequirement/resolved",
+              },
+              {
+                label: "Employe Request",
+                path: "/onboarding/employerequest",
+              },
+            ],
           },
         ],
       },

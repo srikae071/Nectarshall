@@ -72,6 +72,43 @@
   color: white;
   cursor: pointer;
 }
+.EmployeeSaveStatusDropdown {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+}
+
+.EmployeeSaveNotesContainer {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+}
+
+.EmployeeSaveNotesContainer label {
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.EmployeeSaveShortDescriptionBox {
+  width: 100%;
+  min-height: 90px;
+  padding: 12px;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.EmployeeSaveDescriptionBox {
+  width: 100%;
+  min-height: 180px;
+  padding: 12px;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  resize: vertical;
+  box-sizing: border-box;
+}
 
 .OfferFooter {
   display: flex;

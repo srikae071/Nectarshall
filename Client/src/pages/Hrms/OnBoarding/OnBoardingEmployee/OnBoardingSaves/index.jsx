@@ -7,7 +7,10 @@ import "./index.css";
 
 function OnBoardingSaves() {
   const { id } = useParams();
+  const [onboardingShortDescription, setOnboardingShortDescription] =
+    useState("");
 
+  const [onboardingDescription, setOnboardingDescription] = useState("");
   const [jobRequest, setJobRequest] = useState({});
   const [offerStatus, setOfferStatus] = useState("");
   const [confidentiality, setConfidentiality] = useState("");

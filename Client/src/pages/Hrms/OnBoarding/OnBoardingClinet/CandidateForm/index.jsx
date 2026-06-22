@@ -32,6 +32,14 @@ function CandidateForm() {
 
     firstAid: "",
     firstAidExpiry: "",
+    securityLicenceResult: "",
+    drivingLicenceResult: "",
+    firstAidResult: "",
+    cprResult: "",
+    workingWithChildrenResult: "",
+    trafficManagementResult: "",
+    whiteCardResult: "",
+    yellowCardResult: "",
 
     cpr: "",
     cprExpiry: "",
@@ -296,26 +304,58 @@ function CandidateForm() {
         <h3>3. Qualifications</h3>
 
         {/* Security Licence */}
-        <div className="QualificationCard">
-          <h4>Security Licence</h4>
+        <div className="QualificationRow">
+          <input
+            type="text"
+            placeholder="Licence Number"
+            name="securityLicence"
+            value={formData.securityLicence}
+            onChange={handleChange}
+          />
 
-          <div className="QualificationRow">
-            <input
-              type="text"
-              placeholder="Licence Number"
-              name="securityLicence"
-              value={formData.securityLicence}
-              onChange={handleChange}
-            />
+          <input type="file" />
 
-            <input type="file" />
+          <input
+            type="date"
+            name="securityLicenceExpiry"
+            value={formData.securityLicenceExpiry}
+            onChange={handleChange}
+          />
 
-            <input
-              type="date"
-              name="securityLicenceExpiry"
-              value={formData.securityLicenceExpiry}
-              onChange={handleChange}
-            />
+          <div className="ToggleGroup">
+            <button
+              type="button"
+              className={
+                formData.securityLicenceResult === "PASS"
+                  ? "ToggleActive"
+                  : "ToggleBtn"
+              }
+              onClick={() =>
+                setFormData({
+                  ...formData,
+                  securityLicenceResult: "PASS",
+                })
+              }
+            >
+              PASS
+            </button>
+
+            <button
+              type="button"
+              className={
+                formData.securityLicenceResult === "FAIL"
+                  ? "ToggleFail"
+                  : "ToggleBtn"
+              }
+              onClick={() =>
+                setFormData({
+                  ...formData,
+                  securityLicenceResult: "FAIL",
+                })
+              }
+            >
+              FAIL
+            </button>
           </div>
         </div>
 

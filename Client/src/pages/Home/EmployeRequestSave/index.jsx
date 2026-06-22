@@ -50,6 +50,9 @@ function EmployeRequestSave() {
     yellowCardExpiry: "",
 
     interview: "",
+    status: "",
+    employeeShortDescription: "",
+    employeeDescription: "",
   });
 
   const handleChange = (e) => {
@@ -287,6 +290,47 @@ function EmployeRequestSave() {
                 onChange={handleChange}
               />
             </div>
+
+            <div className="CreateField">
+              <label>Status *</label>
+
+              <select
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                className="EmployeeSaveStatusDropdown"
+              >
+                <option value="">Select Status</option>
+                <option value="Open">Open</option>
+                <option value="Work In Progress">Work In Progress</option>
+                <option value="Offer Letter">Offer Letter</option>
+                <option value="Pre Joining Compliance">
+                  Pre Joining Compliance
+                </option>
+              </select>
+            </div>
+          </div>
+          <div className="EmployeeSaveNotesContainer">
+            <label>Short Description</label>
+
+            <textarea
+              name="employeeShortDescription"
+              value={formData.employeeShortDescription || ""}
+              onChange={handleChange}
+              className="EmployeeSaveShortDescriptionBox"
+            />
+          </div>
+
+          <div className="EmployeeSaveNotesContainer">
+            <label>Description</label>
+
+            <textarea
+              name="employeeDescription"
+              value={formData.employeeDescription || ""}
+              onChange={handleChange}
+              className="EmployeeSaveDescriptionBox"
+              placeholder="Enter detailed description..."
+            />
           </div>
 
           {/* <button className="CreateBtn" onClick={handlePreliminarySave}>
