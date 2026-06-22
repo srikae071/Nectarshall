@@ -19,7 +19,8 @@ function EmployeRequestSave() {
     preferredName: "",
     email: "",
     contactNumber: "",
-
+    shortDescription: "",
+    description: "",
     modernSlavery: "",
     legalBarrier: "",
     medicalLimitations: "",
@@ -190,13 +191,13 @@ function EmployeRequestSave() {
       alert("Contact Number is mandatory");
       return;
     }
-    let nextStatus = "Open";
+    let nextStatus = formData.status || "Open";
 
-    if (formData.interview === "Pass") {
+    if (formData.interview === "PASS") {
       nextStatus = "Interview";
     }
 
-    if (formData.interview === "Fail") {
+    if (formData.interview === "FAIL") {
       nextStatus = "Closed";
     }
 
@@ -341,7 +342,7 @@ function EmployeRequestSave() {
 
             <textarea
               name="employeeShortDescription"
-              value={formData.employeeShortDescription || ""}
+              value={formData.shortDescription || ""}
               onChange={handleChange}
               className="EmployeeSaveShortDescriptionBox"
             />
@@ -352,7 +353,7 @@ function EmployeRequestSave() {
 
             <textarea
               name="employeeDescription"
-              value={formData.employeeDescription || ""}
+              value={formData.description || ""}
               onChange={handleChange}
               className="EmployeeSaveDescriptionBox"
               placeholder="Enter detailed description..."
