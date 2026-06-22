@@ -80,7 +80,7 @@ function OnBoardingInterviewSaves() {
   return (
     <HrmsLeftLayout>
       <div className="OfferContainer">
-        <h2 className="OfferTitle">Onboarding Compliance</h2>
+        <h2 className="OfferTitle">Interview</h2>
 
         {/* Basic Details */}
         <div className="OfferRow">
@@ -158,8 +158,8 @@ function OnBoardingInterviewSaves() {
               <label>Bank Name *</label>
               <input
                 type="text"
-                value={bankName}
-                onChange={(e) => setBankName(e.target.value)}
+                value={jobRequest.bankName}
+                // onChange={(e) => setBankName(e.target.value)}
               />
             </div>
 
@@ -174,7 +174,7 @@ function OnBoardingInterviewSaves() {
               <label>Bank Account *</label>
               <input
                 type="text"
-                value={bankAccount}
+                value={jobRequest.bankAccount}
                 onChange={(e) => setBankAccount(e.target.value)}
               />
             </div>
