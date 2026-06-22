@@ -167,7 +167,7 @@ function App() {
         path="/supplier/onboardingcompilence"
         element={<OnBoardingComplianceSupplier />}
       />
-      <Route path="/onboarding/Interview" element={<Interview />} />
+      <Route path="/onboarding/Interview/:id" element={<Interview />} />
       <Route path="/Candidate-form2/:id" element={<Candidateform2 />} />
       <Route
         path="/OnBoardingInterviewSaves"
