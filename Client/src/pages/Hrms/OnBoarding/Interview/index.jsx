@@ -32,7 +32,7 @@ function Interview() {
   const navigate = useNavigate();
 
   const handleRowClick = (item) => {
-    navigate(`/onboarding/Interview/${item._id}`);
+    navigate(`/OnBoardingInterviewSaves/${item._id}`);
   };
   return (
     <HrmsLeftLayout>
