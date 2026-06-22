@@ -20,7 +20,8 @@ exports.createJobRequest = async (req, res) => {
     // Default values
     // Default values only if not provided
     data.status = data.status || "Pending";
-    data.category = data.category || "Resonance Requirement";
+
+    data.category = data.category || "Employee Save";
     const savedRequest = await JobRequest.create(data);
 
     res.status(201).json(savedRequest);

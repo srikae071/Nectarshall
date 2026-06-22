@@ -124,6 +124,7 @@ function CandidateForm() {
         {
           ...formData,
           candidateCompleted: true,
+          status: "Open",
         },
       );
 
@@ -380,6 +381,42 @@ function CandidateForm() {
               value={formData.drivingLicenceExpiry}
               onChange={handleChange}
             />
+
+            <div className="ToggleGroup">
+              <button
+                type="button"
+                className={
+                  formData.drivingLicenceResult === "PASS"
+                    ? "ToggleActive"
+                    : "ToggleBtn"
+                }
+                onClick={() =>
+                  setFormData({
+                    ...formData,
+                    drivingLicenceResult: "PASS",
+                  })
+                }
+              >
+                PASS
+              </button>
+
+              <button
+                type="button"
+                className={
+                  formData.drivingLicenceResult === "FAIL"
+                    ? "ToggleFail"
+                    : "ToggleBtn"
+                }
+                onClick={() =>
+                  setFormData({
+                    ...formData,
+                    drivingLicenceResult: "FAIL",
+                  })
+                }
+              >
+                FAIL
+              </button>
+            </div>
           </div>
         </div>
 
@@ -404,6 +441,41 @@ function CandidateForm() {
               value={formData.firstAidExpiry}
               onChange={handleChange}
             />
+            <div className="ToggleGroup">
+              <button
+                type="button"
+                className={
+                  formData.firstAidResult === "PASS"
+                    ? "ToggleActive"
+                    : "ToggleBtn"
+                }
+                onClick={() =>
+                  setFormData({
+                    ...formData,
+                    firstAidResult: "PASS",
+                  })
+                }
+              >
+                PASS
+              </button>
+
+              <button
+                type="button"
+                className={
+                  formData.firstAidResult === "FAIL"
+                    ? "ToggleFail"
+                    : "ToggleBtn"
+                }
+                onClick={() =>
+                  setFormData({
+                    ...formData,
+                    firstAidResult: "FAIL",
+                  })
+                }
+              >
+                FAIL
+              </button>
+            </div>
           </div>
         </div>
 
@@ -428,6 +500,37 @@ function CandidateForm() {
               value={formData.cprExpiry}
               onChange={handleChange}
             />
+            <div className="ToggleGroup">
+              <button
+                type="button"
+                className={
+                  formData.cprResult === "PASS" ? "ToggleActive" : "ToggleBtn"
+                }
+                onClick={() =>
+                  setFormData({
+                    ...formData,
+                    cprResult: "PASS",
+                  })
+                }
+              >
+                PASS
+              </button>
+
+              <button
+                type="button"
+                className={
+                  formData.cprResult === "FAIL" ? "ToggleFail" : "ToggleBtn"
+                }
+                onClick={() =>
+                  setFormData({
+                    ...formData,
+                    cprResult: "FAIL",
+                  })
+                }
+              >
+                FAIL
+              </button>
+            </div>
           </div>
         </div>
 
@@ -452,6 +555,41 @@ function CandidateForm() {
               value={formData.workingWithChildrenExpiry}
               onChange={handleChange}
             />
+            <div className="ToggleGroup">
+              <button
+                type="button"
+                className={
+                  formData.workingWithChildrenResult === "PASS"
+                    ? "ToggleActive"
+                    : "ToggleBtn"
+                }
+                onClick={() =>
+                  setFormData({
+                    ...formData,
+                    workingWithChildrenResult: "PASS",
+                  })
+                }
+              >
+                PASS
+              </button>
+
+              <button
+                type="button"
+                className={
+                  formData.workingWithChildrenResult === "FAIL"
+                    ? "ToggleFail"
+                    : "ToggleBtn"
+                }
+                onClick={() =>
+                  setFormData({
+                    ...formData,
+                    workingWithChildrenResult: "FAIL",
+                  })
+                }
+              >
+                FAIL
+              </button>
+            </div>
           </div>
         </div>
 
@@ -476,6 +614,41 @@ function CandidateForm() {
               value={formData.trafficManagementExpiry}
               onChange={handleChange}
             />
+            <div className="ToggleGroup">
+              <button
+                type="button"
+                className={
+                  formData.trafficManagementResult === "PASS"
+                    ? "ToggleActive"
+                    : "ToggleBtn"
+                }
+                onClick={() =>
+                  setFormData({
+                    ...formData,
+                    trafficManagementResult: "PASS",
+                  })
+                }
+              >
+                PASS
+              </button>
+
+              <button
+                type="button"
+                className={
+                  formData.trafficManagementResult === "FAIL"
+                    ? "ToggleFail"
+                    : "ToggleBtn"
+                }
+                onClick={() =>
+                  setFormData({
+                    ...formData,
+                    trafficManagementResult: "FAIL",
+                  })
+                }
+              >
+                FAIL
+              </button>
+            </div>
           </div>
         </div>
 
@@ -500,6 +673,41 @@ function CandidateForm() {
               value={formData.whiteCardExpiry}
               onChange={handleChange}
             />
+            <div className="ToggleGroup">
+              <button
+                type="button"
+                className={
+                  formData.whiteCardResult === "PASS"
+                    ? "ToggleActive"
+                    : "ToggleBtn"
+                }
+                onClick={() =>
+                  setFormData({
+                    ...formData,
+                    whiteCardResult: "PASS",
+                  })
+                }
+              >
+                PASS
+              </button>
+
+              <button
+                type="button"
+                className={
+                  formData.whiteCardResult === "FAIL"
+                    ? "ToggleFail"
+                    : "ToggleBtn"
+                }
+                onClick={() =>
+                  setFormData({
+                    ...formData,
+                    whiteCardResult: "FAIL",
+                  })
+                }
+              >
+                FAIL
+              </button>
+            </div>
           </div>
         </div>
 
@@ -524,56 +732,47 @@ function CandidateForm() {
               value={formData.yellowCardExpiry}
               onChange={handleChange}
             />
+            <div className="ToggleGroup">
+              <button
+                type="button"
+                className={
+                  formData.yellowCardResult === "PASS"
+                    ? "ToggleActive"
+                    : "ToggleBtn"
+                }
+                onClick={() =>
+                  setFormData({
+                    ...formData,
+                    yellowCardResult: "PASS",
+                  })
+                }
+              >
+                PASS
+              </button>
+
+              <button
+                type="button"
+                className={
+                  formData.yellowCardResult === "FAIL"
+                    ? "ToggleFail"
+                    : "ToggleBtn"
+                }
+                onClick={() =>
+                  setFormData({
+                    ...formData,
+                    yellowCardResult: "FAIL",
+                  })
+                }
+              >
+                FAIL
+              </button>
+            </div>
           </div>
         </div>
 
         <div className="SectionActions"></div>
       </div>
-      <div className="SectionCard">
-        <h3>4. References</h3>
 
-        <div className="BarrierRow">
-          <label>Interview *</label>
-
-          <div className="ToggleGroup">
-            <button
-              type="button"
-              className={
-                formData.interview === "PASS" ? "ToggleActive" : "ToggleBtn"
-              }
-              onClick={() =>
-                setFormData({
-                  ...formData,
-                  interview: "PASS",
-                })
-              }
-            >
-              PASS
-            </button>
-
-            <button
-              type="button"
-              className={
-                formData.interview === "FAIL" ? "ToggleFail" : "ToggleBtn"
-              }
-              onClick={() =>
-                setFormData({
-                  ...formData,
-                  interview: "FAIL",
-                })
-              }
-            >
-              FAIL
-            </button>
-          </div>
-        </div>
-
-        <div className="SectionActions">
-          {/* <button className="CreateBtn" onClick={handleFinalSave}>
-            Save
-          </button> */}
-        </div>
-      </div>
       <div className="CreateFooter">
         <button className="CreateBtn" onClick={handleFinalSave}>
           Submit

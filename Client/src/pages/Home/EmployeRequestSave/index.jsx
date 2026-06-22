@@ -48,6 +48,14 @@ function EmployeRequestSave() {
 
     yellowCard: "",
     yellowCardExpiry: "",
+    securityLicenceResult: "",
+    drivingLicenceResult: "",
+    firstAidResult: "",
+    cprResult: "",
+    workingWithChildrenResult: "",
+    trafficManagementResult: "",
+    whiteCardResult: "",
+    yellowCardResult: "",
 
     interview: "",
     status: "",
@@ -95,7 +103,15 @@ function EmployeRequestSave() {
       return;
     }
   };
-
+  const showReferenceSection =
+    formData.securityLicenceResult === "PASS" &&
+    formData.drivingLicenceResult === "PASS" &&
+    formData.firstAidResult === "PASS" &&
+    formData.cprResult === "PASS" &&
+    formData.workingWithChildrenResult === "PASS" &&
+    formData.trafficManagementResult === "PASS" &&
+    formData.whiteCardResult === "PASS" &&
+    formData.yellowCardResult === "PASS";
   const handleQualificationSave = () => {};
   const handleBarrierSave = () => {
     if (!formData.modernSlavery) {
@@ -174,6 +190,15 @@ function EmployeRequestSave() {
       alert("Contact Number is mandatory");
       return;
     }
+    let nextStatus = "Open";
+
+    if (formData.interview === "Pass") {
+      nextStatus = "Interview";
+    }
+
+    if (formData.interview === "Fail") {
+      nextStatus = "Closed";
+    }
 
     try {
       await axios.put(
@@ -181,6 +206,7 @@ function EmployeRequestSave() {
         {
           ...formData,
           // status: "Open",
+          status: nextStatus,
         },
       );
 
@@ -553,6 +579,16 @@ function EmployeRequestSave() {
                     onChange={handleChange}
                   />
                 </div>
+                <input
+                  value={
+                    formData.securityLicenceResult === "PASS"
+                      ? "true"
+                      : formData.securityLicenceResult === "FAIL"
+                        ? "false"
+                        : ""
+                  }
+                  readOnly
+                />
               </div>
 
               {/* Driving Licence */}
@@ -575,6 +611,16 @@ function EmployeRequestSave() {
                     name="drivingLicenceExpiry"
                     value={formData.drivingLicenceExpiry}
                     onChange={handleChange}
+                  />
+                  <input
+                    value={
+                      formData.drivingLicenceResult === "PASS"
+                        ? "true"
+                        : formData.drivingLicenceResult === "FAIL"
+                          ? "false"
+                          : ""
+                    }
+                    readOnly
                   />
                 </div>
               </div>
@@ -600,6 +646,16 @@ function EmployeRequestSave() {
                     value={formData.firstAidExpiry}
                     onChange={handleChange}
                   />
+                  <input
+                    value={
+                      formData.firstAidResult === "PASS"
+                        ? "true"
+                        : formData.firstAidResult === "FAIL"
+                          ? "false"
+                          : ""
+                    }
+                    readOnly
+                  />
                 </div>
               </div>
 
@@ -623,6 +679,16 @@ function EmployeRequestSave() {
                     name="cprExpiry"
                     value={formData.cprExpiry}
                     onChange={handleChange}
+                  />
+                  <input
+                    value={
+                      formData.cprResult === "PASS"
+                        ? "true"
+                        : formData.cprResult === "FAIL"
+                          ? "false"
+                          : ""
+                    }
+                    readOnly
                   />
                 </div>
               </div>
@@ -648,6 +714,16 @@ function EmployeRequestSave() {
                     value={formData.workingWithChildrenExpiry}
                     onChange={handleChange}
                   />
+                  <input
+                    value={
+                      formData.workingWithChildrenResult === "PASS"
+                        ? "true"
+                        : formData.workingWithChildrenResult === "FAIL"
+                          ? "false"
+                          : ""
+                    }
+                    readOnly
+                  />
                 </div>
               </div>
 
@@ -671,6 +747,16 @@ function EmployeRequestSave() {
                     name="trafficManagementExpiry"
                     value={formData.trafficManagementExpiry}
                     onChange={handleChange}
+                  />
+                  <input
+                    value={
+                      formData.trafficManagementResult === "PASS"
+                        ? "true"
+                        : formData.trafficManagementResult === "FAIL"
+                          ? "false"
+                          : ""
+                    }
+                    readOnly
                   />
                 </div>
               </div>
@@ -696,6 +782,16 @@ function EmployeRequestSave() {
                     value={formData.whiteCardExpiry}
                     onChange={handleChange}
                   />
+                  <input
+                    value={
+                      formData.whiteCardResult === "PASS"
+                        ? "true"
+                        : formData.whiteCardResult === "FAIL"
+                          ? "false"
+                          : ""
+                    }
+                    readOnly
+                  />
                 </div>
               </div>
 
@@ -720,6 +816,16 @@ function EmployeRequestSave() {
                     value={formData.yellowCardExpiry}
                     onChange={handleChange}
                   />
+                  <input
+                    value={
+                      formData.yellowCardResult === "PASS"
+                        ? "true"
+                        : formData.yellowCardResult === "FAIL"
+                          ? "false"
+                          : ""
+                    }
+                    readOnly
+                  />
                 </div>
               </div>
 
@@ -729,53 +835,57 @@ function EmployeRequestSave() {
                 </button>
               </div>
             </div>
-            <div className="SectionCard">
-              <h3>4. References</h3>
+            {showReferenceSection && (
+              <div className="SectionCard">
+                <h3>4. References</h3>
 
-              <div className="BarrierRow">
-                <label>Interview *</label>
+                <div className="BarrierRow">
+                  <label>Interview *</label>
 
-                <div className="ToggleGroup">
-                  <button
-                    type="button"
-                    className={
-                      formData.interview === "PASS"
-                        ? "ToggleActive"
-                        : "ToggleBtn"
-                    }
-                    onClick={() =>
-                      setFormData({
-                        ...formData,
-                        interview: "PASS",
-                      })
-                    }
-                  >
-                    PASS
-                  </button>
+                  <div className="ToggleGroup">
+                    <button
+                      type="button"
+                      className={
+                        formData.interview === "PASS"
+                          ? "ToggleActive"
+                          : "ToggleBtn"
+                      }
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          interview: "PASS",
+                        })
+                      }
+                    >
+                      PASS
+                    </button>
 
-                  <button
-                    type="button"
-                    className={
-                      formData.interview === "FAIL" ? "ToggleFail" : "ToggleBtn"
-                    }
-                    onClick={() =>
-                      setFormData({
-                        ...formData,
-                        interview: "FAIL",
-                      })
-                    }
-                  >
-                    FAIL
-                  </button>
+                    <button
+                      type="button"
+                      className={
+                        formData.interview === "FAIL"
+                          ? "ToggleFail"
+                          : "ToggleBtn"
+                      }
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          interview: "FAIL",
+                        })
+                      }
+                    >
+                      FAIL
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-              <div className="SectionActions">
-                {/* <button className="CreateBtn" onClick={}>
+                <div className="SectionActions">
+                  {/* <button className="CreateBtn" onClick={}>
                   Save
                 </button> */}
+                </div>
               </div>
-            </div>
+            )}
             <div className="CreateFooter">
               <button className="CreateBtn" onClick={handleFinalSave}>
                 Submit

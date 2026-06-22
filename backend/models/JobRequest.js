@@ -86,6 +86,14 @@ const JobRequestSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    securityLicenceResult: String,
+    drivingLicenceResult: String,
+    firstAidResult: String,
+    cprResult: String,
+    workingWithChildrenResult: String,
+    trafficManagementResult: String,
+    whiteCardResult: String,
+    yellowCardResult: String,
   },
 
   {

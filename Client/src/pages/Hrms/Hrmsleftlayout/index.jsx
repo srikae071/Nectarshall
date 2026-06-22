@@ -66,6 +66,10 @@ const menuData = [
         path: "/onboarding/prejoining",
       },
       {
+        label: "Interview",
+        path: "/onboarding/Interview",
+      },
+      {
         label: "Offer Letter",
         path: "/onboarding/Offerletter",
       },

@@ -28,7 +28,7 @@ function ResonanceMain() {
         "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests",
         {
           ...formData,
-          category: "Resonance Requirement",
+          category: "Employee Save",
           status: "Pending",
           requestType: "Resonance",
         },
