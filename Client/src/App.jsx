@@ -68,6 +68,7 @@ import CandidateForm from "./pages/Hrms/OnBoarding/OnBoardingClinet/CandidateFor
 import Candidateform2 from "./pages/Hrms/OnBoarding/OnBoardingClinet/Candidateform2";
 import OnBoardingComplianceSupplier from "./pages/Hrms/OnBoarding/OnBoardingSupplier/OnBoardingComplianceSupplier/indeex.jsx";
 import Interview from "./pages/Hrms/OnBoarding/Interview/index.jsx";
+import OnBoardingInterviewSaves from "./pages/Hrms/OnBoarding/OnBoardingInterviewSaves";
 function App() {
   return (
     <Routes>
@@ -168,6 +169,10 @@ function App() {
       />
       <Route path="/onboarding/Interview" element={<Interview />} />
       <Route path="/Candidate-form2/:id" element={<Candidateform2 />} />
+      <Route
+        path="/OnBoardingInterviewSaves"
+        element={<OnBoardingInterviewSaves />}
+      />
     </Routes>
   );
 }
