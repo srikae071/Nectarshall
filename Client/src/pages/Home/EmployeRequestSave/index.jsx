@@ -214,7 +214,7 @@ function EmployeRequestSave() {
       // Send Candidate Form 2 email only when PASS
       if (formData.interview === "PASS") {
         await axios.post(
-          `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/send-email/${formData.caseId}`,
+          `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/send-candidate-form2/${formData.caseId}`,
         );
       }
 
