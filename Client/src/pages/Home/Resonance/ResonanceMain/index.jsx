@@ -29,7 +29,7 @@ function ResonanceMain() {
         {
           ...formData,
           category: "Employee Save",
-          status: "Pending",
+          status: "Open",
           requestType: "Resonance",
         },
       );
