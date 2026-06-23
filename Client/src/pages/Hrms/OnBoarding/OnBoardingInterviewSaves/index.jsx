@@ -410,6 +410,7 @@ function OnBoardingInterviewSaves() {
                 <option value="Pre Joining Compliance">
                   Pre Joining Compliance
                 </option>
+                <option value="Interview">Interwiew</option>
               </select>
             </div>
           </div>

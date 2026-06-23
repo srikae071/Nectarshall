@@ -237,7 +237,7 @@ function Candidateform2() {
             <input
               type="text"
               name="longServiceLeaveId"
-              value={formData.longServiceLeaveId || ""}
+              value={formData.superMemberNumber || ""}
               onChange={handleChange}
             />
           </div>
@@ -270,7 +270,7 @@ function Candidateform2() {
           <div className="OfferField">
             <label>Confidentiality Agreement *</label>
 
-            <div className="ToggleGroup">
+            {/* <div className="ToggleGroup">
               <button
                 type="button"
                 className={
@@ -304,7 +304,7 @@ function Candidateform2() {
               >
                 Fail
               </button>
-            </div>
+            </div> */}
           </div>
 
           <div className="OfferField">
@@ -317,7 +317,7 @@ function Candidateform2() {
           <div className="OfferField">
             <label>Contract *</label>
 
-            <div className="ToggleGroup">
+            {/* <div className="ToggleGroup">
               <button
                 type="button"
                 className={
@@ -347,7 +347,7 @@ function Candidateform2() {
               >
                 Fail
               </button>
-            </div>
+            </div> */}
           </div>
 
           <div className="OfferField">
@@ -360,7 +360,7 @@ function Candidateform2() {
           <div className="OfferField">
             <label>Handbook WHS *</label>
 
-            <div className="ToggleGroup">
+            {/* <div className="ToggleGroup">
               <button
                 type="button"
                 className={
@@ -390,7 +390,7 @@ function Candidateform2() {
               >
                 Fail
               </button>
-            </div>
+            </div> */}
           </div>
 
           <div className="OfferField">
@@ -403,7 +403,7 @@ function Candidateform2() {
           <div className="OfferField">
             <label>Handbook Employment *</label>
 
-            <div className="ToggleGroup">
+            {/* <div className="ToggleGroup">
               <button
                 type="button"
                 className={
@@ -437,7 +437,7 @@ function Candidateform2() {
               >
                 Fail
               </button>
-            </div>
+            </div> */}
           </div>
 
           <div className="OfferField">

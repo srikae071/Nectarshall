@@ -410,7 +410,7 @@ function EmployeRequestSave() {
                 <option value="Pre Joining Compliance">
                   Pre Joining Compliance
                 </option>
-                <option value="Interwiew">Interwiew</option>
+                <option value="Interview">Interwiew</option>
               </select>
             </div>
           </div>

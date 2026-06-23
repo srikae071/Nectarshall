@@ -350,7 +350,7 @@ function CandidateForm() {
           />
 
           <div className="ToggleGroup">
-            <button
+            {/* <button
               type="button"
               className={
                 formData.securityLicenceCandidateForm === "YES"
@@ -382,7 +382,7 @@ function CandidateForm() {
               }
             >
               NO
-            </button>
+            </button> */}
           </div>
         </div>
 
@@ -408,7 +408,7 @@ function CandidateForm() {
               onChange={handleChange}
             />
 
-            <div className="ToggleGroup">
+            {/* <div className="ToggleGroup">
               <button
                 type="button"
                 className={
@@ -442,7 +442,7 @@ function CandidateForm() {
               >
                 NO
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
 
