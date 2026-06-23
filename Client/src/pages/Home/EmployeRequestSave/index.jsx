@@ -266,11 +266,11 @@ function EmployeRequestSave() {
 
     let nextStatus = formData.status || "Open";
     if (formData.interview === "PASS") {
-      nextStatus = "Offer Letter";
+      nextStatus = "OfferLetter";
     }
 
     if (formData.interview === "FAIL") {
-      nextStatus = "Interview";
+      nextStatus = "Closed";
     }
     try {
       await axios.put(
@@ -300,13 +300,14 @@ function EmployeRequestSave() {
 
           <div className="CreateRow">
             <div className="CreateField">
-              <label>Requester Name</label>
-              <input value={formData.requesterName} readOnly />
-            </div>
-            <div className="CreateField">
               <label>Case Id *</label>
               <input name="CaseId" value={formData.caseId} readOnly />
             </div>
+            <div className="CreateField">
+              <label>Requester Name</label>
+              <input value={formData.requesterName} readOnly />
+            </div>
+
             <div className="CreateField">
               <label>Department</label>
               <input

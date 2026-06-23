@@ -67,7 +67,7 @@ function Candidateform2() {
         `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/case/${id}`,
         {
           ...formData,
-          status: "Pre Joining Compliance",
+          status: "PreJoiningCompliance",
         },
       );
 
