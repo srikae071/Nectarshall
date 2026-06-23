@@ -113,7 +113,7 @@ function EmployeRequestSave() {
     formData.trafficManagementResult === "PASS" &&
     formData.whiteCardResult === "PASS" &&
     formData.yellowCardResult === "PASS";
-  const handleQualificationSave = () => {};
+
   const handleBarrierSave = () => {
     if (!formData.modernSlavery) {
       alert("Modern Slavery is mandatory");
@@ -156,7 +156,38 @@ function EmployeRequestSave() {
       console.log(error);
     }
   };
+  const handleQualificationSave = async () => {
+    const allPassed =
+      formData.securityLicenceResult === "PASS" &&
+      formData.drivingLicenceResult === "PASS" &&
+      formData.firstAidResult === "PASS" &&
+      formData.cprResult === "PASS" &&
+      formData.workingWithChildrenResult === "PASS" &&
+      formData.trafficManagementResult === "PASS" &&
+      formData.whiteCardResult === "PASS" &&
+      formData.yellowCardResult === "PASS";
 
+    if (!allPassed) {
+      alert("All qualifications must be PASS");
+      return;
+    }
+
+    try {
+      await axios.put(
+        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
+        {
+          ...formData,
+          status: "Interview",
+        },
+      );
+
+      alert("Interview section opened");
+
+      fetchData();
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const handleSendEmail = async () => {
     try {
       await axios.post(
@@ -170,6 +201,60 @@ function EmployeRequestSave() {
       // console.log(error);
     }
   };
+  // const handleFinalSave = async () => {
+  //   if (!formData.firstName) {
+  //     alert("First Name is mandatory");
+  //     return;
+  //   }
+
+  //   if (!formData.lastName) {
+  //     alert("Last Name is mandatory");
+  //     return;
+  //   }
+
+  //   if (!formData.email) {
+  //     alert("Email is mandatory");
+  //     return;
+  //   }
+
+  //   if (!formData.contactNumber) {
+  //     alert("Contact Number is mandatory");
+  //     return;
+  //   }
+
+  //   let nextStatus = formData.status || "Open";
+
+  //   if (formData.interview === "PASS") {
+  //     nextStatus = "Interview";
+  //   }
+
+  //   if (formData.interview === "FAIL") {
+  //     nextStatus = "Closed";
+  //   }
+
+  //   try {
+  //     // Update Job Request
+  //     await axios.put(
+  //       `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
+  //       {
+  //         ...formData,
+  //         status: nextStatus,
+  //       },
+  //     );
+
+  //     // Send Candidate Form 2 email only when PASS
+  //     if (formData.interview === "PASS") {
+  //       await axios.post(
+  //         `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/send-candidate-form2/${formData.caseId}`,
+  //       );
+  //     }
+
+  //     alert("Request Updated Successfully");
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
   const handleFinalSave = async () => {
     if (!formData.firstName) {
       alert("First Name is mandatory");
@@ -194,7 +279,7 @@ function EmployeRequestSave() {
     let nextStatus = formData.status || "Open";
 
     if (formData.interview === "PASS") {
-      nextStatus = "Interview";
+      nextStatus = "Pre Joining Compliance";
     }
 
     if (formData.interview === "FAIL") {
@@ -202,7 +287,6 @@ function EmployeRequestSave() {
     }
 
     try {
-      // Update Job Request
       await axios.put(
         `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
         {
@@ -211,7 +295,6 @@ function EmployeRequestSave() {
         },
       );
 
-      // Send Candidate Form 2 email only when PASS
       if (formData.interview === "PASS") {
         await axios.post(
           `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/send-candidate-form2/${formData.caseId}`,

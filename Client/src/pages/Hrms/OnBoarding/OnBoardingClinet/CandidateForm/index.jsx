@@ -57,6 +57,20 @@ function CandidateForm() {
     yellowCardExpiry: "",
 
     interview: "",
+
+    modernSlaveryCandidateForm: "",
+    legalBarrierCandidateForm: "",
+    medicalLimitationsCandidateForm: "",
+    workRightsCandidateForm: "",
+
+    securityLicenceCandidateForm: "",
+    drivingLicenceCandidateForm: "",
+    firstAidCandidateForm: "",
+    cprCandidateForm: "",
+    workingWithChildrenCandidateForm: "",
+    trafficManagementCandidateForm: "",
+    whiteCardCandidateForm: "",
+    yellowCardCandidateForm: "",
   });
 
   const { id } = useParams();
@@ -149,31 +163,35 @@ function CandidateForm() {
             <button
               type="button"
               className={
-                formData.modernSlavery === "PASS" ? "ToggleActive" : "ToggleBtn"
+                formData.modernSlaveryCandidateForm === "YES"
+                  ? "ToggleActive"
+                  : "ToggleBtn"
               }
               onClick={() =>
                 setFormData({
                   ...formData,
-                  modernSlavery: "PASS",
+                  modernSlaveryCandidateForm: "YES",
                 })
               }
             >
-              PASS
+              YES
             </button>
 
             <button
               type="button"
               className={
-                formData.modernSlavery === "FAIL" ? "ToggleFail" : "ToggleBtn"
+                formData.modernSlaveryCandidateForm === "NO"
+                  ? "ToggleFail"
+                  : "ToggleBtn"
               }
               onClick={() =>
                 setFormData({
                   ...formData,
-                  modernSlavery: "FAIL",
+                  modernSlaveryCandidateForm: "NO",
                 })
               }
             >
-              FAIL
+              NO
             </button>
           </div>
         </div>
@@ -186,31 +204,35 @@ function CandidateForm() {
             <button
               type="button"
               className={
-                formData.legalBarrier === "PASS" ? "ToggleActive" : "ToggleBtn"
+                formData.legalBarrierCandidateForm === "YES"
+                  ? "ToggleActive"
+                  : "ToggleBtn"
               }
               onClick={() =>
                 setFormData({
                   ...formData,
-                  legalBarrier: "PASS",
+                  legalBarrierCandidateForm: "YES",
                 })
               }
             >
-              PASS
+              YES
             </button>
 
             <button
               type="button"
               className={
-                formData.legalBarrier === "FAIL" ? "ToggleFail" : "ToggleBtn"
+                formData.legalBarrierCandidateForm === "NO"
+                  ? "ToggleFail"
+                  : "ToggleBtn"
               }
               onClick={() =>
                 setFormData({
                   ...formData,
-                  legalBarrier: "FAIL",
+                  legalBarrierCandidateForm: "NO",
                 })
               }
             >
-              FAIL
+              NO
             </button>
           </div>
         </div>
@@ -223,35 +245,35 @@ function CandidateForm() {
             <button
               type="button"
               className={
-                formData.medicalLimitations === "PASS"
+                formData.medicalLimitationsCandidateForm === "YES"
                   ? "ToggleActive"
                   : "ToggleBtn"
               }
               onClick={() =>
                 setFormData({
                   ...formData,
-                  medicalLimitations: "PASS",
+                  medicalLimitationsCandidateForm: "YES",
                 })
               }
             >
-              PASS
+              YES
             </button>
 
             <button
               type="button"
               className={
-                formData.medicalLimitations === "FAIL"
+                formData.medicalLimitationsCandidateForm === "NO"
                   ? "ToggleFail"
                   : "ToggleBtn"
               }
               onClick={() =>
                 setFormData({
                   ...formData,
-                  medicalLimitations: "FAIL",
+                  medicalLimitationsCandidateForm: "NO",
                 })
               }
             >
-              FAIL
+              NO
             </button>
           </div>
         </div>
@@ -264,31 +286,35 @@ function CandidateForm() {
             <button
               type="button"
               className={
-                formData.workRights === "PASS" ? "ToggleActive" : "ToggleBtn"
+                formData.workRightsCandidateForm === "YES"
+                  ? "ToggleActive"
+                  : "ToggleBtn"
               }
               onClick={() =>
                 setFormData({
                   ...formData,
-                  workRights: "PASS",
+                  workRightsCandidateForm: "YES",
                 })
               }
             >
-              PASS
+              YES
             </button>
 
             <button
               type="button"
               className={
-                formData.workRights === "FAIL" ? "ToggleFail" : "ToggleBtn"
+                formData.workRightsCandidateForm === "NO"
+                  ? "ToggleFail"
+                  : "ToggleBtn"
               }
               onClick={() =>
                 setFormData({
                   ...formData,
-                  workRights: "FAIL",
+                  workRightsCandidateForm: "NO",
                 })
               }
             >
-              FAIL
+              NO
             </button>
           </div>
 
@@ -327,35 +353,35 @@ function CandidateForm() {
             <button
               type="button"
               className={
-                formData.securityLicenceResult === "PASS"
+                formData.securityLicenceCandidateForm === "YES"
                   ? "ToggleActive"
                   : "ToggleBtn"
               }
               onClick={() =>
                 setFormData({
                   ...formData,
-                  securityLicenceResult: "PASS",
+                  securityLicenceCandidateForm: "YES",
                 })
               }
             >
-              PASS
+              YES
             </button>
 
             <button
               type="button"
               className={
-                formData.securityLicenceResult === "FAIL"
+                formData.securityLicenceCandidateForm === "NO"
                   ? "ToggleFail"
                   : "ToggleBtn"
               }
               onClick={() =>
                 setFormData({
                   ...formData,
-                  securityLicenceResult: "FAIL",
+                  securityLicenceCandidateForm: "NO",
                 })
               }
             >
-              FAIL
+              NO
             </button>
           </div>
         </div>
@@ -386,35 +412,35 @@ function CandidateForm() {
               <button
                 type="button"
                 className={
-                  formData.drivingLicenceResult === "PASS"
+                  formData.drivingLicenceCandidateForm === "YES"
                     ? "ToggleActive"
                     : "ToggleBtn"
                 }
                 onClick={() =>
                   setFormData({
                     ...formData,
-                    drivingLicenceResult: "PASS",
+                    drivingLicenceCandidateForm: "YES",
                   })
                 }
               >
-                PASS
+                YES
               </button>
 
               <button
                 type="button"
                 className={
-                  formData.drivingLicenceResult === "FAIL"
+                  formData.drivingLicenceCandidateForm === "NO"
                     ? "ToggleFail"
                     : "ToggleBtn"
                 }
                 onClick={() =>
                   setFormData({
                     ...formData,
-                    drivingLicenceResult: "FAIL",
+                    drivingLicenceCandidateForm: "NO",
                   })
                 }
               >
-                FAIL
+                NO
               </button>
             </div>
           </div>
@@ -445,35 +471,35 @@ function CandidateForm() {
               <button
                 type="button"
                 className={
-                  formData.firstAidResult === "PASS"
+                  formData.firstAidCandidateForm === "YES"
                     ? "ToggleActive"
                     : "ToggleBtn"
                 }
                 onClick={() =>
                   setFormData({
                     ...formData,
-                    firstAidResult: "PASS",
+                    firstAidCandidateForm: "YES",
                   })
                 }
               >
-                PASS
+                YES
               </button>
 
               <button
                 type="button"
                 className={
-                  formData.firstAidResult === "FAIL"
+                  formData.firstAidCandidateForm === "NO"
                     ? "ToggleFail"
                     : "ToggleBtn"
                 }
                 onClick={() =>
                   setFormData({
                     ...formData,
-                    firstAidResult: "FAIL",
+                    firstAidCandidateForm: "NO",
                   })
                 }
               >
-                FAIL
+                NO
               </button>
             </div>
           </div>
@@ -504,31 +530,35 @@ function CandidateForm() {
               <button
                 type="button"
                 className={
-                  formData.cprResult === "PASS" ? "ToggleActive" : "ToggleBtn"
+                  formData.cprCandidateForm === "YES"
+                    ? "ToggleActive"
+                    : "ToggleBtn"
                 }
                 onClick={() =>
                   setFormData({
                     ...formData,
-                    cprResult: "PASS",
+                    cprCandidateForm: "YES",
                   })
                 }
               >
-                PASS
+                YES
               </button>
 
               <button
                 type="button"
                 className={
-                  formData.cprResult === "FAIL" ? "ToggleFail" : "ToggleBtn"
+                  formData.cprCandidateForm === "NO"
+                    ? "ToggleFail"
+                    : "ToggleBtn"
                 }
                 onClick={() =>
                   setFormData({
                     ...formData,
-                    cprResult: "FAIL",
+                    cprCandidateForm: "NO",
                   })
                 }
               >
-                FAIL
+                NO
               </button>
             </div>
           </div>
@@ -559,35 +589,35 @@ function CandidateForm() {
               <button
                 type="button"
                 className={
-                  formData.workingWithChildrenResult === "PASS"
+                  formData.workingWithChildrenCandidateForm === "YES"
                     ? "ToggleActive"
                     : "ToggleBtn"
                 }
                 onClick={() =>
                   setFormData({
                     ...formData,
-                    workingWithChildrenResult: "PASS",
+                    workingWithChildrenCandidateForm: "YES",
                   })
                 }
               >
-                PASS
+                YES
               </button>
 
               <button
                 type="button"
                 className={
-                  formData.workingWithChildrenResult === "FAIL"
+                  formData.workingWithChildrenCandidateForm === "NO"
                     ? "ToggleFail"
                     : "ToggleBtn"
                 }
                 onClick={() =>
                   setFormData({
                     ...formData,
-                    workingWithChildrenResult: "FAIL",
+                    workingWithChildrenCandidateForm: "NO",
                   })
                 }
               >
-                FAIL
+                NO
               </button>
             </div>
           </div>
@@ -618,35 +648,35 @@ function CandidateForm() {
               <button
                 type="button"
                 className={
-                  formData.trafficManagementResult === "PASS"
+                  formData.trafficManagementCandidateForm === "YES"
                     ? "ToggleActive"
                     : "ToggleBtn"
                 }
                 onClick={() =>
                   setFormData({
                     ...formData,
-                    trafficManagementResult: "PASS",
+                    trafficManagementCandidateForm: "YES",
                   })
                 }
               >
-                PASS
+                YES
               </button>
 
               <button
                 type="button"
                 className={
-                  formData.trafficManagementResult === "FAIL"
+                  formData.trafficManagementCandidateForm === "NO"
                     ? "ToggleFail"
                     : "ToggleBtn"
                 }
                 onClick={() =>
                   setFormData({
                     ...formData,
-                    trafficManagementResult: "FAIL",
+                    trafficManagementCandidateForm: "NO",
                   })
                 }
               >
-                FAIL
+                NO
               </button>
             </div>
           </div>
@@ -677,35 +707,35 @@ function CandidateForm() {
               <button
                 type="button"
                 className={
-                  formData.whiteCardResult === "PASS"
+                  formData.whiteCardCandidateForm === "YES"
                     ? "ToggleActive"
                     : "ToggleBtn"
                 }
                 onClick={() =>
                   setFormData({
                     ...formData,
-                    whiteCardResult: "PASS",
+                    whiteCardCandidateForm: "YES",
                   })
                 }
               >
-                PASS
+                YES
               </button>
 
               <button
                 type="button"
                 className={
-                  formData.whiteCardResult === "FAIL"
+                  formData.whiteCardCandidateForm === "NO"
                     ? "ToggleFail"
                     : "ToggleBtn"
                 }
                 onClick={() =>
                   setFormData({
                     ...formData,
-                    whiteCardResult: "FAIL",
+                    whiteCardCandidateForm: "NO",
                   })
                 }
               >
-                FAIL
+                NO
               </button>
             </div>
           </div>
@@ -736,35 +766,35 @@ function CandidateForm() {
               <button
                 type="button"
                 className={
-                  formData.yellowCardResult === "PASS"
+                  formData.yellowCardCandidateForm === "YES"
                     ? "ToggleActive"
                     : "ToggleBtn"
                 }
                 onClick={() =>
                   setFormData({
                     ...formData,
-                    yellowCardResult: "PASS",
+                    yellowCardCandidateForm: "YES",
                   })
                 }
               >
-                PASS
+                YES
               </button>
 
               <button
                 type="button"
                 className={
-                  formData.yellowCardResult === "FAIL"
+                  formData.yellowCardCandidateForm === "NO"
                     ? "ToggleFail"
                     : "ToggleBtn"
                 }
                 onClick={() =>
                   setFormData({
                     ...formData,
-                    yellowCardResult: "FAIL",
+                    yellowCardCandidateForm: "NO",
                   })
                 }
               >
-                FAIL
+                NO
               </button>
             </div>
           </div>

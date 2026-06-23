@@ -94,6 +94,20 @@ const JobRequestSchema = new mongoose.Schema(
     trafficManagementResult: String,
     whiteCardResult: String,
     yellowCardResult: String,
+
+    modernSlaveryCandidateForm: String,
+    legalBarrierCandidateForm: String,
+    medicalLimitationsCandidateForm: String,
+    workRightsCandidateForm: String,
+
+    securityLicenceCandidateForm: String,
+    drivingLicenceCandidateForm: String,
+    firstAidCandidateForm: String,
+    cprCandidateForm: String,
+    workingWithChildrenCandidateForm: String,
+    trafficManagementCandidateForm: String,
+    whiteCardCandidateForm: String,
+    yellowCardCandidateForm: String,
   },
 
   {
