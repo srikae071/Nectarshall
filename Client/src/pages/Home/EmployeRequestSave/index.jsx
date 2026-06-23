@@ -279,7 +279,7 @@ function EmployeRequestSave() {
     let nextStatus = formData.status || "Open";
 
     if (formData.interview === "PASS") {
-      nextStatus = "Pre Joining Compliance";
+      nextStatus = "Interview";
     }
 
     if (formData.interview === "FAIL") {

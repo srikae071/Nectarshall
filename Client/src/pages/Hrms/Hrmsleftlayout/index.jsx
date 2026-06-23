@@ -50,7 +50,7 @@ const menuData = [
               },
               {
                 label: "Resolve",
-                path: "/onboarding/resonancerequirement/resolved",
+                path: "/onboardingresolved",
               },
               {
                 label: "Employe Request",

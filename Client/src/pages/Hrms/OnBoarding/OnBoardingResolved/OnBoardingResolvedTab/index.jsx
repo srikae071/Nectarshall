@@ -1,10 +1,10 @@
-import HrmsLeftLayout from "../../../Hrms/Hrmsleftlayout/index.jsx";
-import { useEffect, useState } from "react";
+import HrmsLeftLayout from "../../../Hrmsleftlayout";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import "./index.css";
 
-function OnBoardingResolve() {
+function OnBoardingResolvedTab() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -17,13 +17,11 @@ function OnBoardingResolve() {
         "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests",
       );
 
-      // setData(response.data);
-
       setData(
         response.data.filter(
           (item) =>
             item.category === "Resonance Requirement" &&
-            item.status === "Resolved",
+            item.status === "Pre-Joining",
         ),
       );
     } catch (error) {
@@ -34,13 +32,13 @@ function OnBoardingResolve() {
   const navigate = useNavigate();
 
   const handleRowClick = (item) => {
-    navigate(`/onboarding-saves/${item._id}`);
+    navigate(`/OnBoardingResolvedSaves/${item._id}`);
   };
   return (
     <HrmsLeftLayout>
       <div className="Openhome">
         <div>
-          <h3 className="openheading">Resolved cases</h3>
+          <h3 className="openheading">PreJoining </h3>
 
           <table className="opentable">
             <thead className="opentablerow">
@@ -64,6 +62,7 @@ function OnBoardingResolve() {
                   <tr
                     className="opentablerow"
                     key={item._id}
+                    a
                     onClick={() => handleRowClick(item)}
                     style={{ cursor: "pointer" }}
                   >
@@ -87,4 +86,4 @@ function OnBoardingResolve() {
   );
 }
 
-export default OnBoardingResolve;
+export default OnBoardingResolvedTab;

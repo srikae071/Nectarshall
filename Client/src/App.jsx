@@ -61,7 +61,7 @@ import OnBoardingSaves from "./pages/Hrms/OnBoarding/OnBoardingEmployee/OnBoardi
 import ResonanceMain from "./pages/Home/Resonance/ResonanceMain/index.jsx";
 import OnBoardingPreJoining from "./pages/Hrms/OnBoarding/OnBoardingPreJoining/index.jsx";
 import OnBoardingOfferLetter from "./pages/Hrms/OnBoarding/OnBoardingOfferLetter/index.jsx";
-import OnBoardingResolve from "./pages/Hrms/OnBoarding/OnBoardingResolve";
+
 import OnBoardingEmReqAll from "./pages/Hrms/OnBoarding/OnBoardingEmpReqAll/index.jsx";
 import EmployeeRequestSave from "./pages/Home/EmployeRequestSave/index.jsx";
 import CandidateForm from "./pages/Hrms/OnBoarding/OnBoardingClinet/CandidateForm";
@@ -70,8 +70,8 @@ import OnBoardingComplianceSupplier from "./pages/Hrms/OnBoarding/OnBoardingSupp
 import Interview from "./pages/Hrms/OnBoarding/Interview/index.jsx";
 import OnBoardingInterviewSaves from "./pages/Hrms/OnBoarding/OnBoardingInterviewSaves";
 import OnBoardingPreJoiningSaves from "./pages/Hrms/OnBoarding/OnBoardingPreJoining/OnBoardingPreJoiningSaves";
-import OnBoardingClosedTab from "./pages/Hrms/OnBoarding/OnBoardingClosed/OnBoardingClosedTab";
-import OnBoardingClosedSaves from "./pages/Hrms/OnBoarding/OnBoardingClosed/OnBoardingClosedSaves";
+import OnBoardingResolvedTab from "./pages/Hrms/OnBoarding/OnBoardingResolved/OnBoardingResolvedTab";
+import OnBoardingResolvSaves from "./pages/Hrms/OnBoarding/OnBoardingResolved/OnBoardingResolvedSaves";
 function App() {
   return (
     <Routes>
@@ -153,10 +153,10 @@ function App() {
         path="/onboarding/Offerletter"
         element={<OnBoardingOfferLetter />}
       />
-      <Route
+      {/* <Route
         path="/onboarding/resonancerequirement/resolved"
         element={<OnBoardingResolve />}
-      />
+      /> */}
       <Route
         path="/onboarding/employerequest"
         element={<OnBoardingEmReqAll />}
@@ -180,10 +180,10 @@ function App() {
         path="/OnBoardingPreJoiningSaves/:id"
         element={<OnBoardingInterviewSaves />}
       />
-      <Route path="/onboardingclosed" element={<OnBoardingClosedTab />} />
+      <Route path="/onboardingresolved" element={<OnBoardingResolvedTab />} />
       <Route
-        path="/OnBoardingClosedSaves/:id"
-        element={<OnBoardingClosedSaves />}
+        path="/OnBoardingResolvedSaves/:id"
+        element={<OnBoardingResolvSaves />}
       />
     </Routes>
   );

@@ -75,7 +75,7 @@ function OnBoardingInterviewSaves() {
           offerStatus,
           offerRLetterReleaseeDate,
 
-          status: "Pre Joining Compliance",
+          status: "PreJoiningCompliance",
         },
       );
 

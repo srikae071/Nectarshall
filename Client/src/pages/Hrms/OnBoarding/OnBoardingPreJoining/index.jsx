@@ -21,7 +21,7 @@ function OnBoardingPreJoining() {
         response.data.filter(
           (item) =>
             item.category === "Resonance Requirement" &&
-            item.status === "Pre-Joining",
+            item.status === "PreJoiningCompliance",
         ),
       );
     } catch (error) {

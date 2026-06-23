@@ -4,7 +4,7 @@ import HrmsLeftLayout from "../../../Hrmsleftlayout";
 import axios from "axios";
 import "./index.css";
 
-function OnBoardingClosedSaves() {
+function OnBoardingResolvesSaves() {
   const [showFullForm, setShowFullForm] = useState(false);
   const [formData, setFormData] = useState({
     caseId: "",
@@ -1225,4 +1225,4 @@ function OnBoardingClosedSaves() {
     </HrmsLeftLayout>
   );
 }
-export default OnBoardingClosedSaves;
+export default OnBoardingResolvesSaves;
