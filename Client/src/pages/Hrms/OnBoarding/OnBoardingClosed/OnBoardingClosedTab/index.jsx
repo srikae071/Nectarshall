@@ -1,10 +1,10 @@
-import HrmsLeftLayout from "../../Hrmsleftlayout/index.jsx";
+import HrmsLeftLayout from "../../../Hrmsleftlayout";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./index.css";
 
-function OnBoardingPreJoining() {
+function OnBoardingClosedTab() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -32,7 +32,7 @@ function OnBoardingPreJoining() {
   const navigate = useNavigate();
 
   const handleRowClick = (item) => {
-    navigate(`/OnBoardingPreJoiningSaves/${item._id}`);
+    navigate(`/OnBoardingClosedSaves/${item._id}`);
   };
   return (
     <HrmsLeftLayout>
@@ -86,4 +86,4 @@ function OnBoardingPreJoining() {
   );
 }
 
-export default OnBoardingPreJoining;
+export default OnBoardingClosedTab;

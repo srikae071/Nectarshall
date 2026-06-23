@@ -69,6 +69,9 @@ import Candidateform2 from "./pages/Hrms/OnBoarding/OnBoardingClinet/Candidatefo
 import OnBoardingComplianceSupplier from "./pages/Hrms/OnBoarding/OnBoardingSupplier/OnBoardingComplianceSupplier/indeex.jsx";
 import Interview from "./pages/Hrms/OnBoarding/Interview/index.jsx";
 import OnBoardingInterviewSaves from "./pages/Hrms/OnBoarding/OnBoardingInterviewSaves";
+import OnBoardingPreJoiningSaves from "./pages/Hrms/OnBoarding/OnBoardingPreJoining/OnBoardingPreJoiningSaves";
+import OnBoardingClosedTab from "./pages/Hrms/OnBoarding/OnBoardingClosed/OnBoardingClosedTab";
+import OnBoardingClosedSaves from "./pages/Hrms/OnBoarding/OnBoardingClosed/OnBoardingClosedSaves";
 function App() {
   return (
     <Routes>
@@ -172,6 +175,15 @@ function App() {
       <Route
         path="/OnBoardingInterviewSaves/:id"
         element={<OnBoardingInterviewSaves />}
+      />
+      <Route
+        path="/OnBoardingPreJoiningSaves/:id"
+        element={<OnBoardingInterviewSaves />}
+      />
+      <Route path="/onboardingclosed" element={<OnBoardingClosedTab />} />
+      <Route
+        path="/OnBoardingClosedSaves/:id"
+        element={<OnBoardingClosedSaves />}
       />
     </Routes>
   );

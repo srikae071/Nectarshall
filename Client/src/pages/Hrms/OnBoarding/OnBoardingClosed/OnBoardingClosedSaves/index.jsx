@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import HrmsLeftLayout from "../../Hrms/Hrmsleftlayout";
+import HrmsLeftLayout from "../../../Hrmsleftlayout";
 import axios from "axios";
 import "./index.css";
 
-function EmployeRequestSave() {
+function OnBoardingClosedSaves() {
   const [showFullForm, setShowFullForm] = useState(false);
   const [formData, setFormData] = useState({
     caseId: "",
@@ -62,6 +62,17 @@ function EmployeRequestSave() {
     status: "",
     employeeShortDescription: "",
     employeeDescription: "",
+    bankName: "",
+    bankAccount: "",
+    bsb: "",
+    taxFileNumber: "",
+    superFundName: "",
+    superMemberNumber: "",
+    longServiceLeaveId: "",
+    confidentialityAgreement: "",
+    contract: "",
+    handbookWhs: "",
+    handbookEmployment: "",
   });
 
   const handleChange = (e) => {
@@ -156,51 +167,51 @@ function EmployeRequestSave() {
       console.log(error);
     }
   };
-  const handleQualificationSave = async () => {
-    const allPassed =
-      formData.securityLicenceResult === "PASS" &&
-      formData.drivingLicenceResult === "PASS" &&
-      formData.firstAidResult === "PASS" &&
-      formData.cprResult === "PASS" &&
-      formData.workingWithChildrenResult === "PASS" &&
-      formData.trafficManagementResult === "PASS" &&
-      formData.whiteCardResult === "PASS" &&
-      formData.yellowCardResult === "PASS";
+  //   const handleQualificationSave = async () => {
+  //     const allPassed =
+  //       formData.securityLicenceResult === "PASS" &&
+  //       formData.drivingLicenceResult === "PASS" &&
+  //       formData.firstAidResult === "PASS" &&
+  //       formData.cprResult === "PASS" &&
+  //       formData.workingWithChildrenResult === "PASS" &&
+  //       formData.trafficManagementResult === "PASS" &&
+  //       formData.whiteCardResult === "PASS" &&
+  //       formData.yellowCardResult === "PASS";
 
-    if (!allPassed) {
-      alert("All qualifications must be PASS");
-      return;
-    }
+  //     if (!allPassed) {
+  //       alert("All qualifications must be PASS");
+  //       return;
+  //     }
 
-    try {
-      await axios.put(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
-        {
-          ...formData,
-          status: "Interview",
-        },
-      );
+  //     try {
+  //       await axios.put(
+  //         `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
+  //         {
+  //           ...formData,
+  //           status: "Interview",
+  //         },
+  //       );
 
-      alert("Interview section opened");
+  //       alert("Interview section opened");
 
-      fetchData();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  const handleSendEmail = async () => {
-    try {
-      await axios.post(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/send-email/${formData.caseId}`,
-      );
+  //       fetchData();
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   const handleSendEmail = async () => {
+  //     try {
+  //       await axios.post(
+  //         `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/send-email/${formData.caseId}`,
+  //       );
 
-      alert("Email Sent Successfully");
-    } catch (error) {
-      console.log(error.response?.data);
-      console.log(error.response?.status);
-      // console.log(error);
-    }
-  };
+  //       alert("Email Sent Successfully");
+  //     } catch (error) {
+  //       console.log(error.response?.data);
+  //       console.log(error.response?.status);
+  //       // console.log(error);
+  //     }
+  //   };
   // const handleFinalSave = async () => {
   //   if (!formData.firstName) {
   //     alert("First Name is mandatory");
@@ -452,15 +463,6 @@ function EmployeRequestSave() {
           {/* <button className="CreateBtn" onClick={handlePreliminarySave}>
             Save & Continue
           </button> */}
-          <div className="SectionActions">
-            <button className="CreateBtn" onClick={handleSendEmail}>
-              Send Email
-            </button>
-
-            <button className="CreateBtn" onClick={handleFinalSave}>
-              Save & Continue
-            </button>
-          </div>
         </div>
 
         {showFullForm && (
@@ -1119,11 +1121,11 @@ function EmployeRequestSave() {
                 </div>
               </div>
 
-              <div className="SectionActions">
+              {/* <div className="SectionActions">
                 <button className="CreateBtn" onClick={handleQualificationSave}>
                   Save Qualifications
                 </button>
-              </div>
+              </div> */}
             </div>
             {showReferenceSection && (
               <div className="SectionCard">
@@ -1176,17 +1178,51 @@ function EmployeRequestSave() {
                 </div>
               </div>
             )}
-            <div className="CreateFooter">
+            <div className="CreateField">
+              <label>Bank Name</label>
+              <input value={formData.bankName || ""} readOnly />
+            </div>
+
+            <div className="CreateField">
+              <label>Bank Account</label>
+              <input value={formData.bankAccount || ""} readOnly />
+            </div>
+
+            <div className="CreateField">
+              <label>BSB</label>
+              <input value={formData.bsb || ""} readOnly />
+            </div>
+
+            <div className="CreateField">
+              <label>Tax File Number</label>
+              <input value={formData.taxFileNumber || ""} readOnly />
+            </div>
+
+            <div className="CreateField">
+              <label>Super Fund Name</label>
+              <input value={formData.superFundName || ""} readOnly />
+            </div>
+
+            <div className="CreateField">
+              <label>Super Member Number</label>
+              <input value={formData.superMemberNumber || ""} readOnly />
+            </div>
+
+            <div className="CreateField">
+              <label>Long Service Leave ID</label>
+              <input value={formData.longServiceLeaveId || ""} readOnly />
+            </div>
+            {/* <div className="CreateFooter">
               <button className="CreateBtn" onClick={handleFinalSave}>
                 Submit
               </button>
-              {/* <button className="CreateBtn">Submit</button> */}
+
               <button className="CreateBtn">Cancel</button>
-            </div>
+            </div> */}
           </>
         )}
       </div>
     </HrmsLeftLayout>
   );
 }
-export default EmployeRequestSave;
+export default OnBoardingClosedSaves;

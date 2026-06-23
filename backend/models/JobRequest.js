@@ -108,6 +108,7 @@ const JobRequestSchema = new mongoose.Schema(
     trafficManagementCandidateForm: String,
     whiteCardCandidateForm: String,
     yellowCardCandidateForm: String,
+    offerRLetterReleaseeDate: Date,
   },
 
   {
