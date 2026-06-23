@@ -23,7 +23,7 @@ function OnBoardingOfferLetter() {
         response.data.filter(
           (item) =>
             // item.category === "Resonance Requirement" &&
-            item.status === "Offer Letter",
+            item.status === "OfferLetter",
         ),
       );
     } catch (error) {

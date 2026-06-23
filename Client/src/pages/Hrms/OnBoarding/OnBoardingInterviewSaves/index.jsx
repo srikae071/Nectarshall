@@ -267,7 +267,7 @@ function OnBoardingInterviewSaves() {
 
     let nextStatus = formData.status || "Open";
     if (formData.interview === "PASS") {
-      nextStatus = "Offer Letter";
+      nextStatus = "OfferLetter";
     }
 
     if (formData.interview === "FAIL") {
