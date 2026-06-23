@@ -49,7 +49,7 @@ function OnBoardingPreJoiningSaves() {
         {
           ...formData,
 
-          status: "Closed",
+          status: "Resolved",
         },
       );
 

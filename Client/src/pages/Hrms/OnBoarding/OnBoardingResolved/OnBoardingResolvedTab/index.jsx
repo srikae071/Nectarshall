@@ -21,7 +21,7 @@ function OnBoardingResolvedTab() {
         response.data.filter(
           (item) =>
             // item.category === "Resonance Requirement" &&
-            item.status === "Closed",
+            item.status === "Resolved",
         ),
       );
     } catch (error) {
