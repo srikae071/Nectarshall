@@ -677,6 +677,12 @@ function EmployeRequestSave() {
                         ? "ToggleActive"
                         : "ToggleBtn"
                     }
+                    onClick={() =>
+                      setFormData({
+                        ...formData,
+                        securityLicenceResult: "PASS",
+                      })
+                    }
                   >
                     PASS
                   </button>
@@ -687,6 +693,12 @@ function EmployeRequestSave() {
                       formData.securityLicenceResult === "FAIL"
                         ? "ToggleFail"
                         : "ToggleBtn"
+                    }
+                    onClick={() =>
+                      setFormData({
+                        ...formData,
+                        securityLicenceResult: "FAIL",
+                      })
                     }
                   >
                     FAIL
@@ -723,6 +735,12 @@ function EmployeRequestSave() {
                           ? "ToggleActive"
                           : "ToggleBtn"
                       }
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          drivingLicenceResult: "PASS",
+                        })
+                      }
                     >
                       PASS
                     </button>
@@ -733,6 +751,12 @@ function EmployeRequestSave() {
                         formData.drivingLicenceResult === "FAIL"
                           ? "ToggleFail"
                           : "ToggleBtn"
+                      }
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          drivingLicenceResult: "FAIL",
+                        })
                       }
                     >
                       FAIL
@@ -770,6 +794,12 @@ function EmployeRequestSave() {
                           ? "ToggleActive"
                           : "ToggleBtn"
                       }
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          firstAidResult: "PASS",
+                        })
+                      }
                     >
                       PASS
                     </button>
@@ -780,6 +810,12 @@ function EmployeRequestSave() {
                         formData.firstAidResult === "FAIL"
                           ? "ToggleFail"
                           : "ToggleBtn"
+                      }
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          firstAidResult: "FAIL",
+                        })
                       }
                     >
                       FAIL
@@ -817,6 +853,12 @@ function EmployeRequestSave() {
                           ? "ToggleActive"
                           : "ToggleBtn"
                       }
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          cprResult: "PASS",
+                        })
+                      }
                     >
                       PASS
                     </button>
@@ -827,6 +869,12 @@ function EmployeRequestSave() {
                         formData.cprResult === "FAIL"
                           ? "ToggleFail"
                           : "ToggleBtn"
+                      }
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          cprResult: "FAIL",
+                        })
                       }
                     >
                       FAIL
@@ -864,6 +912,12 @@ function EmployeRequestSave() {
                           ? "ToggleActive"
                           : "ToggleBtn"
                       }
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          workingWithChildrenResult: "PASS",
+                        })
+                      }
                     >
                       PASS
                     </button>
@@ -874,6 +928,12 @@ function EmployeRequestSave() {
                         formData.workingWithChildrenResult === "FAIL"
                           ? "ToggleFail"
                           : "ToggleBtn"
+                      }
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          workingWithChildrenResult: "FAIL",
+                        })
                       }
                     >
                       FAIL
@@ -911,6 +971,12 @@ function EmployeRequestSave() {
                           ? "ToggleActive"
                           : "ToggleBtn"
                       }
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          trafficManagementResult: "PASS",
+                        })
+                      }
                     >
                       PASS
                     </button>
@@ -921,6 +987,12 @@ function EmployeRequestSave() {
                         formData.trafficManagementResult === "FAIL"
                           ? "ToggleFail"
                           : "ToggleBtn"
+                      }
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          trafficManagementResult: "FAIL",
+                        })
                       }
                     >
                       FAIL
@@ -958,6 +1030,12 @@ function EmployeRequestSave() {
                           ? "ToggleActive"
                           : "ToggleBtn"
                       }
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          whiteCardResult: "PASS",
+                        })
+                      }
                     >
                       PASS
                     </button>
@@ -968,6 +1046,12 @@ function EmployeRequestSave() {
                         formData.whiteCardResult === "FAIL"
                           ? "ToggleFail"
                           : "ToggleBtn"
+                      }
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          whiteCardResult: "FAIL",
+                        })
                       }
                     >
                       FAIL
@@ -1005,6 +1089,12 @@ function EmployeRequestSave() {
                           ? "ToggleActive"
                           : "ToggleBtn"
                       }
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          yellowCardResult: "PASS",
+                        })
+                      }
                     >
                       PASS
                     </button>
@@ -1015,6 +1105,12 @@ function EmployeRequestSave() {
                         formData.yellowCardResult === "FAIL"
                           ? "ToggleFail"
                           : "ToggleBtn"
+                      }
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          yellowCardResult: "FAIL",
+                        })
                       }
                     >
                       FAIL
