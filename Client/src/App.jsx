@@ -72,6 +72,7 @@ import OnBoardingInterviewSaves from "./pages/Hrms/OnBoarding/OnBoardingIntervie
 import OnBoardingPreJoiningSaves from "./pages/Hrms/OnBoarding/OnBoardingPreJoining/OnBoardingPreJoiningSaves";
 import OnBoardingResolvedTab from "./pages/Hrms/OnBoarding/OnBoardingResolved/OnBoardingResolvedTab";
 import OnBoardingResolvSaves from "./pages/Hrms/OnBoarding/OnBoardingResolved/OnBoardingResolvedSaves";
+import OfferLetterSaves from "./pages/Hrms/OnBoarding/OnBoardingOfferLetter/OfferLetterSaves";
 function App() {
   return (
     <Routes>
@@ -150,7 +151,7 @@ function App() {
 
       <Route path="/onboarding/prejoining" element={<OnBoardingPreJoining />} />
       <Route
-        path="/onboarding/Offerletter"
+        path="/onboarding/Offerletter/"
         element={<OnBoardingOfferLetter />}
       />
       {/* <Route
@@ -178,13 +179,14 @@ function App() {
       />
       <Route
         path="/OnBoardingPreJoiningSaves/:id"
-        element={<OnBoardingInterviewSaves />}
+        element={<OnBoardingPreJoiningSaves />}
       />
       <Route path="/onboardingresolved" element={<OnBoardingResolvedTab />} />
       <Route
         path="/OnBoardingResolvedSaves/:id"
         element={<OnBoardingResolvSaves />}
       />
+      <Route path="/offerlettersaves/:id" element={<OfferLetterSaves />} />
     </Routes>
   );
 }

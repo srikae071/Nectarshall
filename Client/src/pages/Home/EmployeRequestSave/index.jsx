@@ -157,21 +157,6 @@ function EmployeRequestSave() {
     }
   };
   const handleQualificationSave = async () => {
-    const allPassed =
-      formData.securityLicenceResult === "PASS" &&
-      formData.drivingLicenceResult === "PASS" &&
-      formData.firstAidResult === "PASS" &&
-      formData.cprResult === "PASS" &&
-      formData.workingWithChildrenResult === "PASS" &&
-      formData.trafficManagementResult === "PASS" &&
-      formData.whiteCardResult === "PASS" &&
-      formData.yellowCardResult === "PASS";
-
-    if (!allPassed) {
-      alert("All qualifications must be PASS");
-      return;
-    }
-
     try {
       await axios.put(
         `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
@@ -181,9 +166,12 @@ function EmployeRequestSave() {
         },
       );
 
-      alert("Interview section opened");
+      setFormData({
+        ...formData,
+        status: "Interview",
+      });
 
-      fetchData();
+      alert("Status changed to Interview");
     } catch (error) {
       console.log(error);
     }
@@ -277,15 +265,13 @@ function EmployeRequestSave() {
     }
 
     let nextStatus = formData.status || "Open";
-
     if (formData.interview === "PASS") {
-      nextStatus = "Interview";
+      nextStatus = "Offer Letter";
     }
 
     if (formData.interview === "FAIL") {
-      nextStatus = "Closed";
+      nextStatus = "Interview";
     }
-
     try {
       await axios.put(
         `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,

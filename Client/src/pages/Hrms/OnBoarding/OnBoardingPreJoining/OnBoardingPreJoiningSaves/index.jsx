@@ -55,6 +55,8 @@ function OnBoardingPreJoiningSaves() {
       await axios.put(
         `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
         {
+          ...jobRequest,
+
           bankName,
           bankAccount,
           bsb,
@@ -62,10 +64,11 @@ function OnBoardingPreJoiningSaves() {
           superFundName,
           superMemberNumber,
           longServiceLeaveId,
-          confidentiality,
+
+          confidentialityAgreement: confidentiality,
           contract,
-          whs,
-          employment,
+          handbookWhs: whs,
+          handbookEmployment: employment,
 
           status: "Closed",
         },
@@ -79,7 +82,7 @@ function OnBoardingPreJoiningSaves() {
   return (
     <HrmsLeftLayout>
       <div className="OfferContainer">
-        <h2 className="OfferTitle">Interview</h2>
+        <h2 className="OfferTitle">Pre</h2>
 
         {/* Basic Details */}
         <div className="OfferRow">
@@ -120,7 +123,7 @@ function OnBoardingPreJoiningSaves() {
               <label>Bank Name *</label>
               <input
                 type="text"
-                value={jobRequest.bankName}
+                value={bankName}
                 // onChange={(e) => setBankName(e.target.value)}
               />
             </div>
@@ -136,7 +139,7 @@ function OnBoardingPreJoiningSaves() {
               <label>Bank Account *</label>
               <input
                 type="text"
-                value={jobRequest.bankAccount}
+                value={bankAccount}
                 onChange={(e) => setBankAccount(e.target.value)}
               />
             </div>
@@ -168,7 +171,7 @@ function OnBoardingPreJoiningSaves() {
               <label>Tax File Number *</label>
               <input
                 type="text"
-                value={taxFileNumber}
+                value={jobRequest.taxFileNumber}
                 onChange={(e) => setTaxFileNumber(e.target.value)}
               />
             </div>
@@ -184,7 +187,7 @@ function OnBoardingPreJoiningSaves() {
               <label>Superannuation Fund Name *</label>
               <input
                 type="text"
-                value={superFundName}
+                value={jobRequest.superFundName}
                 onChange={(e) => setSuperFundName(e.target.value)}
               />
             </div>
@@ -200,7 +203,7 @@ function OnBoardingPreJoiningSaves() {
               <label>Superannuation Member Number *</label>
               <input
                 type="text"
-                value={superMemberNumber}
+                value={jobRequest.superMemberNumber}
                 onChange={(e) => setSuperMemberNumber(e.target.value)}
               />
             </div>
@@ -216,7 +219,7 @@ function OnBoardingPreJoiningSaves() {
               <label>Long Service Leave ID Number</label>
               <input
                 type="text"
-                value={longServiceLeaveId}
+                value={jobRequest.longServiceLeaveId}
                 onChange={(e) => setLongServiceLeaveId(e.target.value)}
               />
             </div>

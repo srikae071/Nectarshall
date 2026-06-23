@@ -1178,39 +1178,65 @@ function OnBoardingResolvesSaves() {
                 </div>
               </div>
             )}
-            <div className="CreateField">
-              <label>Bank Name</label>
-              <input value={formData.bankName || ""} readOnly />
-            </div>
+            <div className="ResolvedSection">
+              <h3>Financial Information</h3>
 
-            <div className="CreateField">
-              <label>Bank Account</label>
-              <input value={formData.bankAccount || ""} readOnly />
-            </div>
+              <div className="ResolvedGrid">
+                <div className="ResolvedField">
+                  <label>Bank Name</label>
+                  <input type="text" value={formData.bankName || ""} readOnly />
+                </div>
 
-            <div className="CreateField">
-              <label>BSB</label>
-              <input value={formData.bsb || ""} readOnly />
-            </div>
+                <div className="ResolvedField">
+                  <label>Bank Account</label>
+                  <input
+                    type="text"
+                    value={formData.bankAccount || ""}
+                    readOnly
+                  />
+                </div>
 
-            <div className="CreateField">
-              <label>Tax File Number</label>
-              <input value={formData.taxFileNumber || ""} readOnly />
-            </div>
+                <div className="ResolvedField">
+                  <label>BSB</label>
+                  <input type="text" value={formData.bsb || ""} readOnly />
+                </div>
 
-            <div className="CreateField">
-              <label>Super Fund Name</label>
-              <input value={formData.superFundName || ""} readOnly />
-            </div>
+                <div className="ResolvedField">
+                  <label>Tax File Number</label>
+                  <input
+                    type="text"
+                    value={formData.taxFileNumber || ""}
+                    readOnly
+                  />
+                </div>
 
-            <div className="CreateField">
-              <label>Super Member Number</label>
-              <input value={formData.superMemberNumber || ""} readOnly />
-            </div>
+                <div className="ResolvedField">
+                  <label>Super Fund Name</label>
+                  <input
+                    type="text"
+                    value={formData.superFundName || ""}
+                    readOnly
+                  />
+                </div>
 
-            <div className="CreateField">
-              <label>Long Service Leave ID</label>
-              <input value={formData.longServiceLeaveId || ""} readOnly />
+                <div className="ResolvedField">
+                  <label>Super Member Number</label>
+                  <input
+                    type="text"
+                    value={formData.superMemberNumber || ""}
+                    readOnly
+                  />
+                </div>
+
+                <div className="ResolvedField">
+                  <label>Long Service Leave ID</label>
+                  <input
+                    type="text"
+                    value={formData.longServiceLeaveId || ""}
+                    readOnly
+                  />
+                </div>
+              </div>
             </div>
             {/* <div className="CreateFooter">
               <button className="CreateBtn" onClick={handleFinalSave}>

@@ -38,7 +38,7 @@ function Interview() {
     <HrmsLeftLayout>
       <div className="Openhome">
         <div>
-          <h3 className="openheading">PreJoining </h3>
+          <h3 className="openheading">Interview </h3>
 
           <table className="opentable">
             <thead className="opentablerow">

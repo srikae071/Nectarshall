@@ -20,7 +20,7 @@ function OnBoardingPreJoining() {
       setData(
         response.data.filter(
           (item) =>
-            item.category === "Resonance Requirement" &&
+            // item.category === "Resonance Requirement" &&
             item.status === "PreJoiningCompliance",
         ),
       );
@@ -38,7 +38,7 @@ function OnBoardingPreJoining() {
     <HrmsLeftLayout>
       <div className="Openhome">
         <div>
-          <h3 className="openheading">PreJoining </h3>
+          <h3 className="openheading">PreJoiningsss </h3>
 
           <table className="opentable">
             <thead className="opentablerow">

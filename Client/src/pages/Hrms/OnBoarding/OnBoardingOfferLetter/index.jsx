@@ -22,7 +22,7 @@ function OnBoardingOfferLetter() {
       setData(
         response.data.filter(
           (item) =>
-            item.category === "Resonance Requirement" &&
+            // item.category === "Resonance Requirement" &&
             item.status === "Offer Letter",
         ),
       );
@@ -34,7 +34,7 @@ function OnBoardingOfferLetter() {
   const navigate = useNavigate();
 
   const handleRowClick = (item) => {
-    navigate(`/onboarding-saves/${item._id}`);
+    navigate(`/offerlettersaves/${item._id}`);
   };
   return (
     <HrmsLeftLayout>

@@ -20,8 +20,8 @@ function OnBoardingResolvedTab() {
       setData(
         response.data.filter(
           (item) =>
-            item.category === "Resonance Requirement" &&
-            item.status === "Pre-Joining",
+            // item.category === "Resonance Requirement" &&
+            item.status === "Closed",
         ),
       );
     } catch (error) {
