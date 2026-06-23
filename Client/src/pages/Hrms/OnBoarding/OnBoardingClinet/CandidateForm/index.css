@@ -79,7 +79,25 @@
   gap: 10px;
   margin-top: 20px;
 }
+.ThankYouContainer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  text-align: center;
+}
 
+.ThankYouContainer h1 {
+  font-size: 36px;
+  margin-bottom: 15px;
+}
+
+.ThankYouContainer p {
+  font-size: 18px;
+  margin: 5px 0;
+}
 @media (max-width: 900px) {
   .OfferRow {
     flex-direction: column;

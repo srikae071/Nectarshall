@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import "./index.css";
 function Candidateform2() {
+  const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     offerStatus: "",
 
@@ -67,6 +68,7 @@ function Candidateform2() {
         `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/case/${id}`,
         {
           ...formData,
+          candidateCompleted: true,
           status: "PreJoiningCompliance",
         },
       );
@@ -79,6 +81,19 @@ function Candidateform2() {
       console.log(error);
     }
   };
+  if (submitted) {
+    return (
+      <div className="ThankYouContainer">
+        <h1>Thank You</h1>
+
+        <p>Your onboarding form has been submitted successfully.</p>
+
+        <p>
+          Our team will review your information and contact you if required.
+        </p>
+      </div>
+    );
+  }
   return (
     <div className="OfferContainer">
       <div className="OfferRow">

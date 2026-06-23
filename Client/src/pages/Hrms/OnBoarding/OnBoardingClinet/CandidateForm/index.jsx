@@ -5,6 +5,7 @@ import axios from "axios";
 import "./index.css";
 
 function CandidateForm() {
+  const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     caseId: "",
     requesterName: "",
@@ -141,12 +142,26 @@ function CandidateForm() {
           status: "Open",
         },
       );
+      setSubmitted(true);
 
       alert("Candidate Form Submitted Successfully");
     } catch (error) {
       console.log(error);
     }
   };
+  if (submitted) {
+    return (
+      <div className="ThankYouContainer">
+        <h1>Thank You</h1>
+
+        <p>Your onboarding form has been submitted successfully.</p>
+
+        <p>
+          Our team will review your information and contact you if required.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="CreateContainer">
