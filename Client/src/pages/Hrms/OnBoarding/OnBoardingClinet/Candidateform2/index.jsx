@@ -44,18 +44,38 @@ function Candidateform2() {
       console.log(error);
     }
   };
+  // const handleSubmit = async () => {
+  //   try {
+  //     await axios.put(
+  //       `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/case/${id}`,
+  //       {
+  //         ...formData,
+  //         status: "PreJoiningCompliance",
+  //       },
+  //     );
+
+  //     alert("Candidate Form 2 Submitted Successfully");
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
   const handleSubmit = async () => {
     try {
-      await axios.put(
+      console.log("CASE ID:", id);
+
+      const response = await axios.put(
         `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/case/${id}`,
         {
           ...formData,
-          status: "PreJoiningCompliance",
+          status: "Pre Joining Compliance",
         },
       );
 
+      console.log("UPDATE RESPONSE:", response.data);
+
       alert("Candidate Form 2 Submitted Successfully");
     } catch (error) {
+      console.log("ERROR:", error.response?.data);
       console.log(error);
     }
   };
