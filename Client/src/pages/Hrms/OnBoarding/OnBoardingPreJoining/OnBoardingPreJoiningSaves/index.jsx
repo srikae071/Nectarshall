@@ -171,7 +171,7 @@ function OnBoardingPreJoiningSaves() {
               <label>Tax File Number *</label>
               <input
                 type="text"
-                value={jobRequest.taxFileNumber}
+                value={taxFileNumber}
                 onChange={(e) => setTaxFileNumber(e.target.value)}
               />
             </div>
@@ -187,7 +187,7 @@ function OnBoardingPreJoiningSaves() {
               <label>Superannuation Fund Name *</label>
               <input
                 type="text"
-                value={jobRequest.superFundName}
+                value={superFundName}
                 onChange={(e) => setSuperFundName(e.target.value)}
               />
             </div>
@@ -203,7 +203,7 @@ function OnBoardingPreJoiningSaves() {
               <label>Superannuation Member Number *</label>
               <input
                 type="text"
-                value={jobRequest.superMemberNumber}
+                value={superMemberNumber}
                 onChange={(e) => setSuperMemberNumber(e.target.value)}
               />
             </div>
@@ -219,7 +219,7 @@ function OnBoardingPreJoiningSaves() {
               <label>Long Service Leave ID Number</label>
               <input
                 type="text"
-                value={jobRequest.longServiceLeaveId}
+                value={longServiceLeaveId}
                 onChange={(e) => setLongServiceLeaveId(e.target.value)}
               />
             </div>
