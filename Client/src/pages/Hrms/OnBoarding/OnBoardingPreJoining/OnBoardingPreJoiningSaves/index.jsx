@@ -36,7 +36,12 @@ function OnBoardingPreJoiningSaves() {
       console.error(error);
     }
   };
-
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
   const handleSubmit = async () => {
     try {
       await axios.put(
@@ -209,9 +214,16 @@ function OnBoardingPreJoiningSaves() {
                 <button
                   type="button"
                   className={
-                    confidentiality === "Pass" ? "ToggleActive" : "ToggleBtn"
+                    formData.confidentialityAgreement === "Pass"
+                      ? "ToggleActive"
+                      : "ToggleBtn"
                   }
-                  onChange={handleChange}
+                  onClick={() =>
+                    setFormData({
+                      ...formData,
+                      confidentialityAgreement: "Pass",
+                    })
+                  }
                 >
                   Pass
                 </button>
@@ -219,9 +231,16 @@ function OnBoardingPreJoiningSaves() {
                 <button
                   type="button"
                   className={
-                    confidentiality === "Fail" ? "ToggleFail" : "ToggleBtn"
+                    formData.confidentialityAgreement === "Fail"
+                      ? "ToggleFail"
+                      : "ToggleBtn"
                   }
-                  // onClick={() => setConfidentiality("Fail")}
+                  onClick={() =>
+                    setFormData({
+                      ...formData,
+                      confidentialityAgreement: "Fail",
+                    })
+                  }
                 >
                   Fail
                 </button>
@@ -241,16 +260,30 @@ function OnBoardingPreJoiningSaves() {
               <div className="ToggleGroup">
                 <button
                   type="button"
-                  className={contract === "Pass" ? "ToggleActive" : "ToggleBtn"}
-                  // onClick={() => setContract("Pass")}
+                  className={
+                    formData.contract === "Pass" ? "ToggleActive" : "ToggleBtn"
+                  }
+                  onClick={() =>
+                    setFormData({
+                      ...formData,
+                      contract: "Pass",
+                    })
+                  }
                 >
                   Pass
                 </button>
 
                 <button
                   type="button"
-                  className={contract === "Fail" ? "ToggleFail" : "ToggleBtn"}
-                  // onClick={() => setContract("Fail")}
+                  className={
+                    formData.contract === "Fail" ? "ToggleFail" : "ToggleBtn"
+                  }
+                  onClick={() =>
+                    setFormData({
+                      ...formData,
+                      contract: "Fail",
+                    })
+                  }
                 >
                   Fail
                 </button>
@@ -270,16 +303,32 @@ function OnBoardingPreJoiningSaves() {
               <div className="ToggleGroup">
                 <button
                   type="button"
-                  className={whs === "Pass" ? "ToggleActive" : "ToggleBtn"}
-                  // onClick={() => setWhs("Pass")}
+                  className={
+                    formData.handbookWhs === "Pass"
+                      ? "ToggleActive"
+                      : "ToggleBtn"
+                  }
+                  onClick={() =>
+                    setFormData({
+                      ...formData,
+                      handbookWhs: "Pass",
+                    })
+                  }
                 >
                   Pass
                 </button>
 
                 <button
                   type="button"
-                  className={whs === "Fail" ? "ToggleFail" : "ToggleBtn"}
-                  onClick={() => setWhs("Fail")}
+                  className={
+                    formData.handbookWhs === "Fail" ? "ToggleFail" : "ToggleBtn"
+                  }
+                  onClick={() =>
+                    setFormData({
+                      ...formData,
+                      handbookWhs: "Fail",
+                    })
+                  }
                 >
                   Fail
                 </button>
@@ -299,18 +348,34 @@ function OnBoardingPreJoiningSaves() {
               <div className="ToggleGroup">
                 <button
                   type="button"
-                  // className={
-                  //   employment === "Pass" ? "ToggleActive" : "ToggleBtn"
-                  // }
-                  // onClick={() => setEmployment("Pass")}
+                  className={
+                    formData.handbookEmployment === "Pass"
+                      ? "ToggleActive"
+                      : "ToggleBtn"
+                  }
+                  onClick={() =>
+                    setFormData({
+                      ...formData,
+                      handbookEmployment: "Pass",
+                    })
+                  }
                 >
                   Pass
                 </button>
 
                 <button
                   type="button"
-                  // className={employment === "Fail" ? "ToggleFail" : "ToggleBtn"}
-                  // onClick={() => setEmployment("Fail")}
+                  className={
+                    formData.handbookEmployment === "Fail"
+                      ? "ToggleFail"
+                      : "ToggleBtn"
+                  }
+                  onClick={() =>
+                    setFormData({
+                      ...formData,
+                      handbookEmployment: "Fail",
+                    })
+                  }
                 >
                   Fail
                 </button>

@@ -81,40 +81,40 @@ function CandidateForm() {
     });
   };
 
-  const handleCaseSave = () => {
-    if (!formData.requesterName) {
-      alert("Requester Name is mandatory");
-      return;
-    }
+  // const handleCaseSave = () => {
+  //   if (!formData.requesterName) {
+  //     alert("Requester Name is mandatory");
+  //     return;
+  //   }
 
-    if (!formData.department) {
-      alert("Department is mandatory");
-      return;
-    }
-  };
+  //   if (!formData.department) {
+  //     alert("Department is mandatory");
+  //     return;
+  //   }
+  // };
 
-  const handleQualificationSave = () => {};
-  const handleBarrierSave = () => {
-    if (!formData.modernSlavery) {
-      alert("Modern Slavery is mandatory");
-      return;
-    }
+  // const handleQualificationSave = () => {};
+  // const handleBarrierSave = () => {
+  //   if (!formData.modernSlavery) {
+  //     alert("Modern Slavery is mandatory");
+  //     return;
+  //   }
 
-    if (!formData.legalBarrier) {
-      alert("Legal Barrier is mandatory");
-      return;
-    }
+  //   if (!formData.legalBarrier) {
+  //     alert("Legal Barrier is mandatory");
+  //     return;
+  //   }
 
-    if (!formData.medicalLimitations) {
-      alert("Medical Limitations is mandatory");
-      return;
-    }
+  //   if (!formData.medicalLimitations) {
+  //     alert("Medical Limitations is mandatory");
+  //     return;
+  //   }
 
-    if (!formData.workRights) {
-      alert("Work Rights is mandatory");
-      return;
-    }
-  };
+  //   if (!formData.workRights) {
+  //     alert("Work Rights is mandatory");
+  //     return;
+  //   }
+  // };
 
   useEffect(() => {
     fetchData();
@@ -467,7 +467,7 @@ function CandidateForm() {
               value={formData.firstAidExpiry}
               onChange={handleChange}
             />
-            <div className="ToggleGroup">
+            {/* <div className="ToggleGroup">
               <button
                 type="button"
                 className={
@@ -501,7 +501,7 @@ function CandidateForm() {
               >
                 NO
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -526,7 +526,7 @@ function CandidateForm() {
               value={formData.cprExpiry}
               onChange={handleChange}
             />
-            <div className="ToggleGroup">
+            {/* <div className="ToggleGroup">
               <button
                 type="button"
                 className={
@@ -560,7 +560,7 @@ function CandidateForm() {
               >
                 NO
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -586,7 +586,7 @@ function CandidateForm() {
               onChange={handleChange}
             />
             <div className="ToggleGroup">
-              <button
+              {/* <button
                 type="button"
                 className={
                   formData.workingWithChildrenCandidateForm === "YES"
@@ -618,7 +618,7 @@ function CandidateForm() {
                 }
               >
                 NO
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
@@ -645,7 +645,7 @@ function CandidateForm() {
               onChange={handleChange}
             />
             <div className="ToggleGroup">
-              <button
+              {/* <button
                 type="button"
                 className={
                   formData.trafficManagementCandidateForm === "YES"
@@ -677,7 +677,7 @@ function CandidateForm() {
                 }
               >
                 NO
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
@@ -704,7 +704,7 @@ function CandidateForm() {
               onChange={handleChange}
             />
             <div className="ToggleGroup">
-              <button
+              {/* <button
                 type="button"
                 className={
                   formData.whiteCardCandidateForm === "YES"
@@ -736,7 +736,7 @@ function CandidateForm() {
                 }
               >
                 NO
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
@@ -763,7 +763,7 @@ function CandidateForm() {
               onChange={handleChange}
             />
             <div className="ToggleGroup">
-              <button
+              {/* <button
                 type="button"
                 className={
                   formData.yellowCardCandidateForm === "YES"
@@ -795,7 +795,7 @@ function CandidateForm() {
                 }
               >
                 NO
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
