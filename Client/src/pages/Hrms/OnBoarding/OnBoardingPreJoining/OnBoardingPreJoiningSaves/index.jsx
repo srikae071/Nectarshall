@@ -6,21 +6,20 @@ import axios from "axios";
 import "./index.css";
 
 function OnBoardingPreJoiningSaves() {
+  const [formData, setFormData] = useState({
+    bankAccount: "",
+    bankName: "",
+    bsb: "",
+    confidentialityAgreement: "",
+    contract: "",
+    handbookEmployment: "",
+    handbookWhs: "",
+    longServiceLeaveId: "",
+    superFundName: "",
+    taxFileNumber: "",
+    superMemberNumber: "",
+  });
   const { id } = useParams();
-
-  const [jobRequest, setJobRequest] = useState({});
-
-  const [confidentiality, setConfidentiality] = useState("");
-  const [contract, setContract] = useState("");
-  const [whs, setWhs] = useState("");
-  const [employment, setEmployment] = useState("");
-  const [bankName, setBankName] = useState("");
-  const [bankAccount, setBankAccount] = useState("");
-  const [bsb, setBsb] = useState("");
-  const [taxFileNumber, setTaxFileNumber] = useState("");
-  const [superFundName, setSuperFundName] = useState("");
-  const [superMemberNumber, setSuperMemberNumber] = useState("");
-  const [longServiceLeaveId, setLongServiceLeaveId] = useState("");
   useEffect(() => {
     fetchRequest();
   }, []);
@@ -32,19 +31,7 @@ function OnBoardingPreJoiningSaves() {
       );
       console.log(response.data);
 
-      setJobRequest(response.data);
-      setOfferStatus(response.data.offerStatus || "");
-      setConfidentiality(response.data.confidentialityAgreement || "");
-      setContract(response.data.contract || "");
-      setWhs(response.data.handbookWhs || "");
-      setEmployment(response.data.handbookEmployment || "");
-      setBankName(response.data.bankName || "");
-      setBankAccount(response.data.bankAccount || "");
-      setBsb(response.data.bsb || "");
-      setTaxFileNumber(response.data.taxFileNumber || "");
-      setSuperFundName(response.data.superFundName || "");
-      setSuperMemberNumber(response.data.superMemberNumber || "");
-      setLongServiceLeaveId(response.data.longServiceLeaveId || "");
+      setFormData(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -55,20 +42,7 @@ function OnBoardingPreJoiningSaves() {
       await axios.put(
         `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
         {
-          ...jobRequest,
-
-          bankName,
-          bankAccount,
-          bsb,
-          taxFileNumber,
-          superFundName,
-          superMemberNumber,
-          longServiceLeaveId,
-
-          confidentialityAgreement: confidentiality,
-          contract,
-          handbookWhs: whs,
-          handbookEmployment: employment,
+          ...formData,
 
           status: "Closed",
         },
@@ -88,24 +62,24 @@ function OnBoardingPreJoiningSaves() {
         <div className="OfferRow">
           <div className="OfferField">
             <label>Name</label>
-            <input value={jobRequest.requesterName || ""} readOnly />
+            <input value={formData.requesterName || ""} readOnly />
           </div>
 
           <div className="OfferField">
             <label>Case ID</label>
-            <input value={jobRequest.caseId || ""} readOnly />
+            <input value={formData.caseId || ""} readOnly />
           </div>
         </div>
 
         <div className="OfferRow">
           <div className="OfferField">
             <label>Department</label>
-            <input value={jobRequest.department || ""} readOnly />
+            <input value={formData.department || ""} readOnly />
           </div>
 
           <div className="OfferField">
             <label>Status</label>
-            <input value={jobRequest.status || ""} readOnly />
+            <input value={formData.status || ""} readOnly />
           </div>
         </div>
 
@@ -123,7 +97,7 @@ function OnBoardingPreJoiningSaves() {
               <label>Bank Name *</label>
               <input
                 type="text"
-                value={bankName}
+                value={formData.bankName}
                 // onChange={(e) => setBankName(e.target.value)}
               />
             </div>
@@ -139,8 +113,8 @@ function OnBoardingPreJoiningSaves() {
               <label>Bank Account *</label>
               <input
                 type="text"
-                value={bankAccount}
-                onChange={(e) => setBankAccount(e.target.value)}
+                value={formData.bankAccount}
+                onChange={handleChange}
               />
             </div>
 
@@ -153,11 +127,7 @@ function OnBoardingPreJoiningSaves() {
           <div className="OfferRow">
             <div className="OfferField">
               <label>BSB *</label>
-              <input
-                type="text"
-                value={bsb}
-                onChange={(e) => setBsb(e.target.value)}
-              />
+              <input type="text" value={formData.bsb} onChange={handleChange} />
             </div>
 
             <div className="OfferField">
@@ -171,8 +141,8 @@ function OnBoardingPreJoiningSaves() {
               <label>Tax File Number *</label>
               <input
                 type="text"
-                value={taxFileNumber}
-                onChange={(e) => setTaxFileNumber(e.target.value)}
+                value={formData.taxFileNumber}
+                onChange={handleChange}
               />
             </div>
 
@@ -187,8 +157,8 @@ function OnBoardingPreJoiningSaves() {
               <label>Superannuation Fund Name *</label>
               <input
                 type="text"
-                value={superFundName}
-                onChange={(e) => setSuperFundName(e.target.value)}
+                value={formData.superFundName}
+                onChange={handleChange}
               />
             </div>
 
@@ -203,8 +173,8 @@ function OnBoardingPreJoiningSaves() {
               <label>Superannuation Member Number *</label>
               <input
                 type="text"
-                value={superMemberNumber}
-                onChange={(e) => setSuperMemberNumber(e.target.value)}
+                value={formData.superMemberNumber}
+                onChange={handleChange}
               />
             </div>
 
@@ -219,8 +189,8 @@ function OnBoardingPreJoiningSaves() {
               <label>Long Service Leave ID Number</label>
               <input
                 type="text"
-                value={longServiceLeaveId}
-                onChange={(e) => setLongServiceLeaveId(e.target.value)}
+                value={formData.longServiceLeaveId}
+                onChange={handleChange}
               />
             </div>
           </div>
@@ -241,7 +211,7 @@ function OnBoardingPreJoiningSaves() {
                   className={
                     confidentiality === "Pass" ? "ToggleActive" : "ToggleBtn"
                   }
-                  onClick={() => setConfidentiality("Pass")}
+                  onChange={handleChange}
                 >
                   Pass
                 </button>
@@ -251,7 +221,7 @@ function OnBoardingPreJoiningSaves() {
                   className={
                     confidentiality === "Fail" ? "ToggleFail" : "ToggleBtn"
                   }
-                  onClick={() => setConfidentiality("Fail")}
+                  // onClick={() => setConfidentiality("Fail")}
                 >
                   Fail
                 </button>
@@ -272,7 +242,7 @@ function OnBoardingPreJoiningSaves() {
                 <button
                   type="button"
                   className={contract === "Pass" ? "ToggleActive" : "ToggleBtn"}
-                  onClick={() => setContract("Pass")}
+                  // onClick={() => setContract("Pass")}
                 >
                   Pass
                 </button>
@@ -280,7 +250,7 @@ function OnBoardingPreJoiningSaves() {
                 <button
                   type="button"
                   className={contract === "Fail" ? "ToggleFail" : "ToggleBtn"}
-                  onClick={() => setContract("Fail")}
+                  // onClick={() => setContract("Fail")}
                 >
                   Fail
                 </button>
@@ -301,7 +271,7 @@ function OnBoardingPreJoiningSaves() {
                 <button
                   type="button"
                   className={whs === "Pass" ? "ToggleActive" : "ToggleBtn"}
-                  onClick={() => setWhs("Pass")}
+                  // onClick={() => setWhs("Pass")}
                 >
                   Pass
                 </button>
@@ -329,18 +299,18 @@ function OnBoardingPreJoiningSaves() {
               <div className="ToggleGroup">
                 <button
                   type="button"
-                  className={
-                    employment === "Pass" ? "ToggleActive" : "ToggleBtn"
-                  }
-                  onClick={() => setEmployment("Pass")}
+                  // className={
+                  //   employment === "Pass" ? "ToggleActive" : "ToggleBtn"
+                  // }
+                  // onClick={() => setEmployment("Pass")}
                 >
                   Pass
                 </button>
 
                 <button
                   type="button"
-                  className={employment === "Fail" ? "ToggleFail" : "ToggleBtn"}
-                  onClick={() => setEmployment("Fail")}
+                  // className={employment === "Fail" ? "ToggleFail" : "ToggleBtn"}
+                  // onClick={() => setEmployment("Fail")}
                 >
                   Fail
                 </button>
