@@ -72,6 +72,7 @@ function Candidateform2() {
           status: "PreJoiningCompliance",
         },
       );
+      setSubmitted(true);
 
       console.log("UPDATE RESPONSE:", response.data);
 
@@ -251,7 +252,7 @@ function Candidateform2() {
             <label>Superannuation Member Number *</label>
             <input
               type="text"
-              name="longServiceLeaveId"
+              name="superMemberNumber"
               value={formData.superMemberNumber || ""}
               onChange={handleChange}
             />
