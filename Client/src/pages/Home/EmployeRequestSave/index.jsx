@@ -475,7 +475,7 @@ function EmployeRequestSave() {
                       })
                     }
                   >
-                    PASS
+                    Accept
                   </button>
 
                   <button
@@ -492,7 +492,7 @@ function EmployeRequestSave() {
                       })
                     }
                   >
-                    FAIL
+                    Reject
                   </button>
                 </div>
               </div>
@@ -516,7 +516,7 @@ function EmployeRequestSave() {
                       })
                     }
                   >
-                    PASS
+                    Accept
                   </button>
 
                   <button
@@ -533,7 +533,7 @@ function EmployeRequestSave() {
                       })
                     }
                   >
-                    FAIL
+                    Reject
                   </button>
                 </div>
               </div>
@@ -557,7 +557,7 @@ function EmployeRequestSave() {
                       })
                     }
                   >
-                    PASS
+                    Accept
                   </button>
 
                   <button
@@ -574,7 +574,7 @@ function EmployeRequestSave() {
                       })
                     }
                   >
-                    FAIL
+                    Reject
                   </button>
                 </div>
               </div>
@@ -598,7 +598,7 @@ function EmployeRequestSave() {
                       })
                     }
                   >
-                    PASS
+                    Accept
                   </button>
 
                   <button
@@ -615,7 +615,7 @@ function EmployeRequestSave() {
                       })
                     }
                   >
-                    FAIL
+                    Reject
                   </button>
                 </div>
 
@@ -672,7 +672,7 @@ function EmployeRequestSave() {
                       })
                     }
                   >
-                    PASS
+                    Accept
                   </button>
 
                   <button
@@ -689,7 +689,7 @@ function EmployeRequestSave() {
                       })
                     }
                   >
-                    FAIL
+                    Reject
                   </button>
                 </div>
               </div>
@@ -730,7 +730,7 @@ function EmployeRequestSave() {
                         })
                       }
                     >
-                      PASS
+                      Accept
                     </button>
 
                     <button
@@ -747,7 +747,7 @@ function EmployeRequestSave() {
                         })
                       }
                     >
-                      FAIL
+                      Reject
                     </button>
                   </div>
                 </div>
@@ -789,7 +789,7 @@ function EmployeRequestSave() {
                         })
                       }
                     >
-                      PASS
+                      Accept
                     </button>
 
                     <button
@@ -806,7 +806,7 @@ function EmployeRequestSave() {
                         })
                       }
                     >
-                      FAIL
+                      Reject
                     </button>
                   </div>
                 </div>
@@ -848,7 +848,7 @@ function EmployeRequestSave() {
                         })
                       }
                     >
-                      PASS
+                      Accept
                     </button>
 
                     <button
@@ -865,7 +865,7 @@ function EmployeRequestSave() {
                         })
                       }
                     >
-                      FAIL
+                      Reject
                     </button>
                   </div>
                 </div>
@@ -907,7 +907,7 @@ function EmployeRequestSave() {
                         })
                       }
                     >
-                      PASS
+                      Accept
                     </button>
 
                     <button
@@ -924,7 +924,7 @@ function EmployeRequestSave() {
                         })
                       }
                     >
-                      FAIL
+                      Reject
                     </button>
                   </div>
                 </div>
@@ -966,7 +966,7 @@ function EmployeRequestSave() {
                         })
                       }
                     >
-                      PASS
+                      Accept
                     </button>
 
                     <button
@@ -983,7 +983,7 @@ function EmployeRequestSave() {
                         })
                       }
                     >
-                      FAIL
+                      Reject
                     </button>
                   </div>
                 </div>
@@ -1025,7 +1025,7 @@ function EmployeRequestSave() {
                         })
                       }
                     >
-                      PASS
+                      Accept
                     </button>
 
                     <button
@@ -1042,7 +1042,7 @@ function EmployeRequestSave() {
                         })
                       }
                     >
-                      FAIL
+                      Reject
                     </button>
                   </div>
                 </div>
@@ -1084,7 +1084,7 @@ function EmployeRequestSave() {
                         })
                       }
                     >
-                      PASS
+                      Accept
                     </button>
 
                     <button
@@ -1101,7 +1101,7 @@ function EmployeRequestSave() {
                         })
                       }
                     >
-                      FAIL
+                      Reject
                     </button>
                   </div>
                 </div>
@@ -1135,7 +1135,7 @@ function EmployeRequestSave() {
                         })
                       }
                     >
-                      PASS
+                      Accept
                     </button>
 
                     <button
@@ -1152,7 +1152,7 @@ function EmployeRequestSave() {
                         })
                       }
                     >
-                      FAIL
+                      Reject
                     </button>
                   </div>
                 </div>
