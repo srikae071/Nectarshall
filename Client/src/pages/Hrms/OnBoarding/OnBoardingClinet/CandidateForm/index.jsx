@@ -786,7 +786,7 @@ function CandidateForm() {
                 className={
                   formData.yellowCardCandidateForm === "YES"
                     ? "ToggleActive"
-                    : "ToggleBtn"
+                    : "ToggleBtns"
                 }
                 onClick={() =>
                   setFormData({
