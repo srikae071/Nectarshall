@@ -78,6 +78,12 @@ function Home() {
       img: empreq,
       route: "/Resonancereq",
     },
+    {
+      title: "Exit",
+      desc: "A simple way to communicate HR issues",
+      img: empreq,
+      route: "/exit",
+    },
   ];
 
   return (

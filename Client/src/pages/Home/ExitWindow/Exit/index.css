@@ -130,6 +130,14 @@
   background: #fff;
   cursor: pointer;
 }
+.CreateField input[type="date"] {
+  width: 100%;
+  cursor: pointer;
+}
+
+.CreateField select {
+  cursor: pointer;
+}
 
 /* ---------------- */
 /* RESPONSIVE */

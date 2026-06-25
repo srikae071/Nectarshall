@@ -16,10 +16,7 @@ const JobRequestSchema = new mongoose.Schema(
       type: String,
       default: "Pending",
     },
-    department: {
-      type: String,
-      required: true,
-    },
+    department: String,
     impact: String,
     urgency: String,
     priority: String,
@@ -109,6 +106,10 @@ const JobRequestSchema = new mongoose.Schema(
     whiteCardCandidateForm: String,
     yellowCardCandidateForm: String,
     offerRLetterReleaseeDate: Date,
+
+    resignationDate: Date,
+    lastWorkingDay: Date,
+    resignationReason: String,
   },
 
   {

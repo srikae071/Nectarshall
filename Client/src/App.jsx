@@ -73,6 +73,8 @@ import OnBoardingPreJoiningSaves from "./pages/Hrms/OnBoarding/OnBoardingPreJoin
 import OnBoardingResolvedTab from "./pages/Hrms/OnBoarding/OnBoardingResolved/OnBoardingResolvedTab";
 import OnBoardingResolvSaves from "./pages/Hrms/OnBoarding/OnBoardingResolved/OnBoardingResolvedSaves";
 import OfferLetterSaves from "./pages/Hrms/OnBoarding/OnBoardingOfferLetter/OfferLetterSaves";
+import Exit from "./pages/Home/ExitWindow/Exit/index.jsx";
+import OffBoardingEmployesAll from "./pages/Hrms/Offbording/OffBoardingEmployesAll";
 function App() {
   return (
     <Routes>
@@ -187,6 +189,11 @@ function App() {
         element={<OnBoardingResolvSaves />}
       />
       <Route path="/offerlettersaves/:id" element={<OfferLetterSaves />} />
+      <Route path="/exit/" element={<Exit />} />
+      <Route
+        path="/offboarding/employerequest"
+        element={<OffBoardingEmployesAll />}
+      />
     </Routes>
   );
 }

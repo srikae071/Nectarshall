@@ -116,7 +116,7 @@ const menuData = [
               },
               {
                 label: "Employe Request",
-                path: "/onboarding/employerequest",
+                path: "/offboarding/employerequest",
               },
             ],
           },

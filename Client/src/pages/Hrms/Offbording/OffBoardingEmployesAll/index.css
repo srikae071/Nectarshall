@@ -1,0 +1,57 @@
+.Openhome {
+  /* padding: 15px; */
+  background: #e9e5e5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+.OpentableCard {
+  background: #e9e5e5;
+  border-radius: 8px;
+  padding: 15px;
+  border: 1px solid #3e3c3c;
+  flex: 1;
+  color: #000;
+  padding: 10px;
+}
+.opentablerow {
+  border: solid 1px #3e3c3c;
+  color: #000;
+}
+
+.openheading {
+  margin-bottom: 12px;
+  font-size: 16px;
+  color: #1f2937;
+  margin-left: 4px;
+}
+.opentable {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+.opentable th,
+.opentable td {
+  padding: 10px 14px;
+  border: 1px solid #dcdcdc;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.opentable th:nth-child(3),
+.opentable td:nth-child(3),
+.opentable th:nth-child(4),
+.opentable td:nth-child(4) {
+  width: 160px;
+}
+
+.opentable th:nth-child(5),
+.opentable td:nth-child(5) {
+  width: 220px;
+}
+
+.opentable tr:hover {
+  background: #f5f9ff;
+}

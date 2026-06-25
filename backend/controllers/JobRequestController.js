@@ -223,3 +223,24 @@ exports.sendCandidateForm2Email = async (req, res) => {
     });
   }
 };
+
+exports.getInterviewStats = async (req, res) => {
+  try {
+    const passCount = await JobRequest.countDocuments({
+      interview: "PASS",
+    });
+
+    const failCount = await JobRequest.countDocuments({
+      interview: "FAIL",
+    });
+
+    res.json({
+      passCount,
+      failCount,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
