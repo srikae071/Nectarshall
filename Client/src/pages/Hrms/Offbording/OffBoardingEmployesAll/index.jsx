@@ -20,7 +20,9 @@ function OffBoardingEmployesAll() {
       );
 
       const filteredData = response.data.filter(
-        (item) => item.category === "Offboarding" && item.status === "Open",
+        (item) =>
+          item.category === "Offboarding" &&
+          (item.status === "Open" || item.status === "Approved"),
       );
 
       setData(filteredData);

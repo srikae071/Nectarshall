@@ -55,9 +55,9 @@ function ItNavMain() {
                   <tr
                     key={item._id}
                     style={{ cursor: "pointer" }}
-                    onClick={() => navigate(`/hrms/itsaves/${item._id}`)}
+                    onClick={() => navigate(`/tasksaves/${item._id}`)}
                   >
-                    <td>{item.TaskID}</td>
+                    <td>{item.taskId}</td>
                     <td>{item.requesterName}</td>
                     <td>{item.resignationDate}</td>
                     <td>{item.lastWorkingDay}</td>

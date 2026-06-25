@@ -116,6 +116,9 @@ const JobRequestSchema = new mongoose.Schema(
       type: String,
       default: "Open",
     },
+    taskId: String,
+    laptopRecovered: String,
+    laptopWorkingCondition: String,
   },
 
   {

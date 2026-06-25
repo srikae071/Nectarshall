@@ -76,6 +76,7 @@ import OfferLetterSaves from "./pages/Hrms/OnBoarding/OnBoardingOfferLetter/Offe
 import Exit from "./pages/Home/ExitWindow/Exit/index.jsx";
 import OffBoardingEmployesAll from "./pages/Hrms/Offbording/OffBoardingEmployesAll";
 import OffBoardingSaves from "./pages/Hrms/Offbording/OffBoardingSaves/index.jsx";
+import TaskSaves from "./pages/NavItems/IT/ItRightSide/ItNavMain/TasksSaves/index.jsx";
 function App() {
   return (
     <Routes>
@@ -196,6 +197,7 @@ function App() {
         element={<OffBoardingEmployesAll />}
       />
       <Route path="/offboarding-saves/:id" element={<OffBoardingSaves />} />
+      <Route path="/tasksaves/:id" element={<TaskSaves />} />
     </Routes>
   );
 }

@@ -1,0 +1,77 @@
+.ITSContainer {
+  padding: 20px;
+  background: #e9e5e5;
+  min-height: 100vh;
+}
+
+.ITSCard {
+  background: #fff;
+  border-radius: 8px;
+  padding: 22px;
+  border: 1px solid #d8d8d8;
+}
+
+.ITSHeading {
+  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.ITSRow {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.ITSField {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.ITSField label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.ITSField input,
+.ITSField select {
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid #cfcfcf;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.ITSFooter {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ITSButton {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.ITSButton:hover {
+  background: #1d4ed8;
+}
+
+@media (max-width: 768px) {
+  .ITSRow {
+    flex-direction: column;
+  }
+
+  .ITSFooter {
+    justify-content: center;
+  }
+
+  .ITSButton {
+    width: 100%;
+  }
+}
