@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import axios from "axios";
+import CandiateFormNav from "./CandiateFormNav";
 import "./index.css";
 
 function CandidateForm() {
@@ -164,208 +165,210 @@ function CandidateForm() {
   }
 
   return (
-    <div className="CreateContainer">
-      <div className="SectionCard">
-        <h2>Requester Name: {formData.requesterName}</h2>
-        <h2>ID: {id}</h2>
-        <h3>2. Barriers To Employment (Self Declaration)</h3>
+    <>
+      <CandiateFormNav />
+      <div className="CreateContainer">
+        <div className="SectionCard">
+          <h2>Requester Name: {formData.requesterName}</h2>
+          <h2>ID: {id}</h2>
+          <h3>2. Barriers To Employment (Self Declaration)</h3>
 
-        {/* Modern Slavery */}
-        <div className="BarrierRow">
-          <label>Modern Slavery *</label>
+          {/* Modern Slavery */}
+          <div className="BarrierRow">
+            <label>Modern Slavery *</label>
 
-          <div className="ToggleGroup">
-            <button
-              type="button"
-              className={
-                formData.modernSlaveryCandidateForm === "YES"
-                  ? "ToggleActive"
-                  : "ToggleBtn"
-              }
-              onClick={() =>
-                setFormData({
-                  ...formData,
-                  modernSlaveryCandidateForm: "YES",
-                })
-              }
-            >
-              YES
-            </button>
+            <div className="ToggleGroup">
+              <button
+                type="button"
+                className={
+                  formData.modernSlaveryCandidateForm === "YES"
+                    ? "ToggleActive"
+                    : "ToggleBtn"
+                }
+                onClick={() =>
+                  setFormData({
+                    ...formData,
+                    modernSlaveryCandidateForm: "YES",
+                  })
+                }
+              >
+                YES
+              </button>
 
-            <button
-              type="button"
-              className={
-                formData.modernSlaveryCandidateForm === "NO"
-                  ? "ToggleFail"
-                  : "ToggleBtn"
-              }
-              onClick={() =>
-                setFormData({
-                  ...formData,
-                  modernSlaveryCandidateForm: "NO",
-                })
-              }
-            >
-              NO
-            </button>
-          </div>
-        </div>
-
-        {/* Legal Barrier */}
-        <div className="BarrierRow">
-          <label>Legal Barrier *</label>
-
-          <div className="ToggleGroup">
-            <button
-              type="button"
-              className={
-                formData.legalBarrierCandidateForm === "YES"
-                  ? "ToggleActive"
-                  : "ToggleBtn"
-              }
-              onClick={() =>
-                setFormData({
-                  ...formData,
-                  legalBarrierCandidateForm: "YES",
-                })
-              }
-            >
-              YES
-            </button>
-
-            <button
-              type="button"
-              className={
-                formData.legalBarrierCandidateForm === "NO"
-                  ? "ToggleFail"
-                  : "ToggleBtn"
-              }
-              onClick={() =>
-                setFormData({
-                  ...formData,
-                  legalBarrierCandidateForm: "NO",
-                })
-              }
-            >
-              NO
-            </button>
-          </div>
-        </div>
-
-        {/* Medical Limitations */}
-        <div className="BarrierRow">
-          <label>Medical Limitations *</label>
-
-          <div className="ToggleGroup">
-            <button
-              type="button"
-              className={
-                formData.medicalLimitationsCandidateForm === "YES"
-                  ? "ToggleActive"
-                  : "ToggleBtn"
-              }
-              onClick={() =>
-                setFormData({
-                  ...formData,
-                  medicalLimitationsCandidateForm: "YES",
-                })
-              }
-            >
-              YES
-            </button>
-
-            <button
-              type="button"
-              className={
-                formData.medicalLimitationsCandidateForm === "NO"
-                  ? "ToggleFail"
-                  : "ToggleBtn"
-              }
-              onClick={() =>
-                setFormData({
-                  ...formData,
-                  medicalLimitationsCandidateForm: "NO",
-                })
-              }
-            >
-              NO
-            </button>
-          </div>
-        </div>
-
-        {/* Work Rights */}
-        <div className="BarrierRow">
-          <label>Work Rights *</label>
-
-          <div className="ToggleGroup">
-            <button
-              type="button"
-              className={
-                formData.workRightsCandidateForm === "YES"
-                  ? "ToggleActive"
-                  : "ToggleBtn"
-              }
-              onClick={() =>
-                setFormData({
-                  ...formData,
-                  workRightsCandidateForm: "YES",
-                })
-              }
-            >
-              YES
-            </button>
-
-            <button
-              type="button"
-              className={
-                formData.workRightsCandidateForm === "NO"
-                  ? "ToggleFail"
-                  : "ToggleBtn"
-              }
-              onClick={() =>
-                setFormData({
-                  ...formData,
-                  workRightsCandidateForm: "NO",
-                })
-              }
-            >
-              NO
-            </button>
+              <button
+                type="button"
+                className={
+                  formData.modernSlaveryCandidateForm === "NO"
+                    ? "ToggleFail"
+                    : "ToggleBtn"
+                }
+                onClick={() =>
+                  setFormData({
+                    ...formData,
+                    modernSlaveryCandidateForm: "NO",
+                  })
+                }
+              >
+                NO
+              </button>
+            </div>
           </div>
 
-          <input
-            type="file"
-            className="DocumentUpload"
-            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-          />
+          {/* Legal Barrier */}
+          <div className="BarrierRow">
+            <label>Legal Barrier *</label>
+
+            <div className="ToggleGroup">
+              <button
+                type="button"
+                className={
+                  formData.legalBarrierCandidateForm === "YES"
+                    ? "ToggleActive"
+                    : "ToggleBtn"
+                }
+                onClick={() =>
+                  setFormData({
+                    ...formData,
+                    legalBarrierCandidateForm: "YES",
+                  })
+                }
+              >
+                YES
+              </button>
+
+              <button
+                type="button"
+                className={
+                  formData.legalBarrierCandidateForm === "NO"
+                    ? "ToggleFail"
+                    : "ToggleBtn"
+                }
+                onClick={() =>
+                  setFormData({
+                    ...formData,
+                    legalBarrierCandidateForm: "NO",
+                  })
+                }
+              >
+                NO
+              </button>
+            </div>
+          </div>
+
+          {/* Medical Limitations */}
+          <div className="BarrierRow">
+            <label>Medical Limitations *</label>
+
+            <div className="ToggleGroup">
+              <button
+                type="button"
+                className={
+                  formData.medicalLimitationsCandidateForm === "YES"
+                    ? "ToggleActive"
+                    : "ToggleBtn"
+                }
+                onClick={() =>
+                  setFormData({
+                    ...formData,
+                    medicalLimitationsCandidateForm: "YES",
+                  })
+                }
+              >
+                YES
+              </button>
+
+              <button
+                type="button"
+                className={
+                  formData.medicalLimitationsCandidateForm === "NO"
+                    ? "ToggleFail"
+                    : "ToggleBtn"
+                }
+                onClick={() =>
+                  setFormData({
+                    ...formData,
+                    medicalLimitationsCandidateForm: "NO",
+                  })
+                }
+              >
+                NO
+              </button>
+            </div>
+          </div>
+
+          {/* Work Rights */}
+          <div className="BarrierRow">
+            <label>Work Rights *</label>
+
+            <div className="ToggleGroup">
+              <button
+                type="button"
+                className={
+                  formData.workRightsCandidateForm === "YES"
+                    ? "ToggleActive"
+                    : "ToggleBtn"
+                }
+                onClick={() =>
+                  setFormData({
+                    ...formData,
+                    workRightsCandidateForm: "YES",
+                  })
+                }
+              >
+                YES
+              </button>
+
+              <button
+                type="button"
+                className={
+                  formData.workRightsCandidateForm === "NO"
+                    ? "ToggleFail"
+                    : "ToggleBtn"
+                }
+                onClick={() =>
+                  setFormData({
+                    ...formData,
+                    workRightsCandidateForm: "NO",
+                  })
+                }
+              >
+                NO
+              </button>
+            </div>
+
+            <input
+              type="file"
+              className="DocumentUpload"
+              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+            />
+          </div>
+
+          <div className="SectionActions"></div>
         </div>
+        <div className="SectionCard">
+          <h3>3. Qualifications</h3>
 
-        <div className="SectionActions"></div>
-      </div>
-      <div className="SectionCard">
-        <h3>3. Qualifications</h3>
+          {/* Security Licence */}
+          <div className="QualificationRow">
+            <input
+              type="text"
+              placeholder="Licence Number"
+              name="securityLicence"
+              value={formData.securityLicence}
+              onChange={handleChange}
+            />
 
-        {/* Security Licence */}
-        <div className="QualificationRow">
-          <input
-            type="text"
-            placeholder="Licence Number"
-            name="securityLicence"
-            value={formData.securityLicence}
-            onChange={handleChange}
-          />
+            <input type="file" />
 
-          <input type="file" />
+            <input
+              type="date"
+              name="securityLicenceExpiry"
+              value={formData.securityLicenceExpiry}
+              onChange={handleChange}
+            />
 
-          <input
-            type="date"
-            name="securityLicenceExpiry"
-            value={formData.securityLicenceExpiry}
-            onChange={handleChange}
-          />
-
-          <div className="ToggleGroup">
-            {/* <button
+            <div className="ToggleGroup">
+              {/* <button
               type="button"
               className={
                 formData.securityLicenceCandidateForm === "YES"
@@ -398,32 +401,32 @@ function CandidateForm() {
             >
               NO
             </button> */}
+            </div>
           </div>
-        </div>
 
-        {/* Driving Licence */}
-        <div className="QualificationCard">
-          <h4>Driving Licence</h4>
+          {/* Driving Licence */}
+          <div className="QualificationCard">
+            <h4>Driving Licence</h4>
 
-          <div className="QualificationRow">
-            <input
-              type="text"
-              placeholder="Licence Number"
-              name="drivingLicence"
-              value={formData.drivingLicence}
-              onChange={handleChange}
-            />
+            <div className="QualificationRow">
+              <input
+                type="text"
+                placeholder="Licence Number"
+                name="drivingLicence"
+                value={formData.drivingLicence}
+                onChange={handleChange}
+              />
 
-            <input type="file" />
+              <input type="file" />
 
-            <input
-              type="date"
-              name="drivingLicenceExpiry"
-              value={formData.drivingLicenceExpiry}
-              onChange={handleChange}
-            />
+              <input
+                type="date"
+                name="drivingLicenceExpiry"
+                value={formData.drivingLicenceExpiry}
+                onChange={handleChange}
+              />
 
-            {/* <div className="ToggleGroup">
+              {/* <div className="ToggleGroup">
               <button
                 type="button"
                 className={
@@ -458,31 +461,31 @@ function CandidateForm() {
                 NO
               </button>
             </div> */}
+            </div>
           </div>
-        </div>
 
-        {/* First Aid */}
-        <div className="QualificationCard">
-          <h4>First Aid</h4>
+          {/* First Aid */}
+          <div className="QualificationCard">
+            <h4>First Aid</h4>
 
-          <div className="QualificationRow">
-            <input
-              type="text"
-              placeholder="Certificate Number"
-              name="firstAid"
-              value={formData.firstAid}
-              onChange={handleChange}
-            />
+            <div className="QualificationRow">
+              <input
+                type="text"
+                placeholder="Certificate Number"
+                name="firstAid"
+                value={formData.firstAid}
+                onChange={handleChange}
+              />
 
-            <input type="file" />
+              <input type="file" />
 
-            <input
-              type="date"
-              name="firstAidExpiry"
-              value={formData.firstAidExpiry}
-              onChange={handleChange}
-            />
-            {/* <div className="ToggleGroup">
+              <input
+                type="date"
+                name="firstAidExpiry"
+                value={formData.firstAidExpiry}
+                onChange={handleChange}
+              />
+              {/* <div className="ToggleGroup">
               <button
                 type="button"
                 className={
@@ -517,31 +520,31 @@ function CandidateForm() {
                 NO
               </button>
             </div> */}
+            </div>
           </div>
-        </div>
 
-        {/* CPR */}
-        <div className="QualificationCard">
-          <h4>CPR</h4>
+          {/* CPR */}
+          <div className="QualificationCard">
+            <h4>CPR</h4>
 
-          <div className="QualificationRow">
-            <input
-              type="text"
-              placeholder="Certificate Number"
-              name="cpr"
-              value={formData.cpr}
-              onChange={handleChange}
-            />
+            <div className="QualificationRow">
+              <input
+                type="text"
+                placeholder="Certificate Number"
+                name="cpr"
+                value={formData.cpr}
+                onChange={handleChange}
+              />
 
-            <input type="file" />
+              <input type="file" />
 
-            <input
-              type="date"
-              name="cprExpiry"
-              value={formData.cprExpiry}
-              onChange={handleChange}
-            />
-            {/* <div className="ToggleGroup">
+              <input
+                type="date"
+                name="cprExpiry"
+                value={formData.cprExpiry}
+                onChange={handleChange}
+              />
+              {/* <div className="ToggleGroup">
               <button
                 type="button"
                 className={
@@ -576,32 +579,32 @@ function CandidateForm() {
                 NO
               </button>
             </div> */}
+            </div>
           </div>
-        </div>
 
-        {/* Working With Children Check */}
-        <div className="QualificationCard">
-          <h4>Working With Children Check</h4>
+          {/* Working With Children Check */}
+          <div className="QualificationCard">
+            <h4>Working With Children Check</h4>
 
-          <div className="QualificationRow">
-            <input
-              type="text"
-              placeholder="Check Number"
-              name="workingWithChildren"
-              value={formData.workingWithChildren}
-              onChange={handleChange}
-            />
+            <div className="QualificationRow">
+              <input
+                type="text"
+                placeholder="Check Number"
+                name="workingWithChildren"
+                value={formData.workingWithChildren}
+                onChange={handleChange}
+              />
 
-            <input type="file" />
+              <input type="file" />
 
-            <input
-              type="date"
-              name="workingWithChildrenExpiry"
-              value={formData.workingWithChildrenExpiry}
-              onChange={handleChange}
-            />
-            <div className="ToggleGroup">
-              {/* <button
+              <input
+                type="date"
+                name="workingWithChildrenExpiry"
+                value={formData.workingWithChildrenExpiry}
+                onChange={handleChange}
+              />
+              <div className="ToggleGroup">
+                {/* <button
                 type="button"
                 className={
                   formData.workingWithChildrenCandidateForm === "YES"
@@ -634,33 +637,33 @@ function CandidateForm() {
               >
                 NO
               </button> */}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Traffic Management */}
-        <div className="QualificationCard">
-          <h4>Traffic Management</h4>
+          {/* Traffic Management */}
+          <div className="QualificationCard">
+            <h4>Traffic Management</h4>
 
-          <div className="QualificationRow">
-            <input
-              type="text"
-              placeholder="Certificate Number"
-              name="trafficManagement"
-              value={formData.trafficManagement}
-              onChange={handleChange}
-            />
+            <div className="QualificationRow">
+              <input
+                type="text"
+                placeholder="Certificate Number"
+                name="trafficManagement"
+                value={formData.trafficManagement}
+                onChange={handleChange}
+              />
 
-            <input type="file" />
+              <input type="file" />
 
-            <input
-              type="date"
-              name="trafficManagementExpiry"
-              value={formData.trafficManagementExpiry}
-              onChange={handleChange}
-            />
-            <div className="ToggleGroup">
-              {/* <button
+              <input
+                type="date"
+                name="trafficManagementExpiry"
+                value={formData.trafficManagementExpiry}
+                onChange={handleChange}
+              />
+              <div className="ToggleGroup">
+                {/* <button
                 type="button"
                 className={
                   formData.trafficManagementCandidateForm === "YES"
@@ -693,33 +696,33 @@ function CandidateForm() {
               >
                 NO
               </button> */}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* White Card */}
-        <div className="QualificationCard">
-          <h4>White Card</h4>
+          {/* White Card */}
+          <div className="QualificationCard">
+            <h4>White Card</h4>
 
-          <div className="QualificationRow">
-            <input
-              type="text"
-              placeholder="White Card Number"
-              name="whiteCard"
-              value={formData.whiteCard}
-              onChange={handleChange}
-            />
+            <div className="QualificationRow">
+              <input
+                type="text"
+                placeholder="White Card Number"
+                name="whiteCard"
+                value={formData.whiteCard}
+                onChange={handleChange}
+              />
 
-            <input type="file" />
+              <input type="file" />
 
-            <input
-              type="date"
-              name="whiteCardExpiry"
-              value={formData.whiteCardExpiry}
-              onChange={handleChange}
-            />
-            <div className="ToggleGroup">
-              {/* <button
+              <input
+                type="date"
+                name="whiteCardExpiry"
+                value={formData.whiteCardExpiry}
+                onChange={handleChange}
+              />
+              <div className="ToggleGroup">
+                {/* <button
                 type="button"
                 className={
                   formData.whiteCardCandidateForm === "YES"
@@ -752,33 +755,33 @@ function CandidateForm() {
               >
                 NO
               </button> */}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Yellow Card */}
-        <div className="QualificationCard">
-          <h4>Yellow Card</h4>
+          {/* Yellow Card */}
+          <div className="QualificationCard">
+            <h4>Yellow Card</h4>
 
-          <div className="QualificationRow">
-            <input
-              type="text"
-              placeholder="Yellow Card Number"
-              name="yellowCard"
-              value={formData.yellowCard}
-              onChange={handleChange}
-            />
+            <div className="QualificationRow">
+              <input
+                type="text"
+                placeholder="Yellow Card Number"
+                name="yellowCard"
+                value={formData.yellowCard}
+                onChange={handleChange}
+              />
 
-            <input type="file" />
+              <input type="file" />
 
-            <input
-              type="date"
-              name="yellowCardExpiry"
-              value={formData.yellowCardExpiry}
-              onChange={handleChange}
-            />
-            <div className="ToggleGroup">
-              {/* <button
+              <input
+                type="date"
+                name="yellowCardExpiry"
+                value={formData.yellowCardExpiry}
+                onChange={handleChange}
+              />
+              <div className="ToggleGroup">
+                {/* <button
                 type="button"
                 className={
                   formData.yellowCardCandidateForm === "YES"
@@ -811,21 +814,22 @@ function CandidateForm() {
               >
                 NO
               </button> */}
+              </div>
             </div>
           </div>
+
+          <div className="SectionActions"></div>
         </div>
 
-        <div className="SectionActions"></div>
+        <div className="CreateFooter">
+          <button className="CreateBtn" onClick={handleFinalSave}>
+            Submit
+          </button>
+          {/* <button className="CreateBtn">Submit</button> */}
+          <button className="CreateBtn">Cancel</button>
+        </div>
       </div>
-
-      <div className="CreateFooter">
-        <button className="CreateBtn" onClick={handleFinalSave}>
-          Submit
-        </button>
-        {/* <button className="CreateBtn">Submit</button> */}
-        <button className="CreateBtn">Cancel</button>
-      </div>
-    </div>
+    </>
   );
 }
 export default CandidateForm;

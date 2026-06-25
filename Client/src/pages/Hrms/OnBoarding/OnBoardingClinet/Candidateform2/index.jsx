@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import axios from "axios";
+import CandiateFormNav from "../CandidateForm/CandiateFormNav";
 import "./index.css";
 function Candidateform2() {
   const [submitted, setSubmitted] = useState(false);
@@ -96,197 +97,201 @@ function Candidateform2() {
     );
   }
   return (
-    <div className="OfferContainer">
-      <div className="OfferRow">
-        <div className="OfferField">
-          <label>Name</label>
-          <input value={formData.requesterName || ""} readOnly />
-        </div>
-
-        <div className="OfferField">
-          <label>Case ID</label>
-          <input value={formData.caseId || ""} readOnly />
-        </div>
-      </div>
-
-      <div className="SectionBlock">
-        <h3>Offer</h3>
-
+    <>
+      <CandiateFormNav />
+      <div className="OfferContainer">
         <div className="OfferRow">
           <div className="OfferField">
-            <label>Offer Status *</label>
+            <label>Name</label>
+            <input value={formData.requesterName || ""} readOnly />
+          </div>
 
-            <div className="ToggleGroup">
-              <button
-                type="button"
-                className={
-                  formData.offerStatus === "Accept"
-                    ? "ToggleActive"
-                    : "ToggleBtn"
-                }
-                onClick={() =>
-                  setFormData({
-                    ...formData,
-                    offerStatus: "Accept",
-                  })
-                }
-              >
-                Accept
-              </button>
-              <button
-                type="button"
-                className={
-                  formData.offerStatus === "Reject" ? "ToggleFail" : "ToggleBtn"
-                }
-                onClick={() =>
-                  setFormData({
-                    ...formData,
-                    offerStatus: "Reject",
-                  })
-                }
-              >
-                Reject
-              </button>
+          <div className="OfferField">
+            <label>Case ID</label>
+            <input value={formData.caseId || ""} readOnly />
+          </div>
+        </div>
+
+        <div className="SectionBlock">
+          <h3>Offer</h3>
+
+          <div className="OfferRow">
+            <div className="OfferField">
+              <label>Offer Status *</label>
+
+              <div className="ToggleGroup">
+                <button
+                  type="button"
+                  className={
+                    formData.offerStatus === "Accept"
+                      ? "ToggleActive"
+                      : "ToggleBtn"
+                  }
+                  onClick={() =>
+                    setFormData({
+                      ...formData,
+                      offerStatus: "Accept",
+                    })
+                  }
+                >
+                  Accept
+                </button>
+                <button
+                  type="button"
+                  className={
+                    formData.offerStatus === "Reject"
+                      ? "ToggleFail"
+                      : "ToggleBtn"
+                  }
+                  onClick={() =>
+                    setFormData({
+                      ...formData,
+                      offerStatus: "Reject",
+                    })
+                  }
+                >
+                  Reject
+                </button>
+              </div>
+            </div>
+
+            <div className="OfferField">
+              <label>Offer Letter *</label>
+              <input type="file" />
+            </div>
+          </div>
+        </div>
+
+        {/* FINANCIALS */}
+
+        <div className="SectionBlock">
+          <h3>Financials</h3>
+
+          <div className="OfferRow">
+            <div className="OfferField">
+              <label>Bank Name *</label>
+              <input
+                type="text"
+                name="bankName"
+                value={formData.bankName || ""}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="OfferField">
+              <label>Document *</label>
+              <input type="file" />
             </div>
           </div>
 
-          <div className="OfferField">
-            <label>Offer Letter *</label>
-            <input type="file" />
-          </div>
-        </div>
-      </div>
+          <div className="OfferRow">
+            <div className="OfferField">
+              <label>Bank Account *</label>
+              <input
+                type="text"
+                name="bankAccount"
+                value={formData.bankAccount || ""}
+                onChange={handleChange}
+              />
+            </div>
 
-      {/* FINANCIALS */}
-
-      <div className="SectionBlock">
-        <h3>Financials</h3>
-
-        <div className="OfferRow">
-          <div className="OfferField">
-            <label>Bank Name *</label>
-            <input
-              type="text"
-              name="bankName"
-              value={formData.bankName || ""}
-              onChange={handleChange}
-            />
+            <div className="OfferField">
+              <label>Document *</label>
+              <input type="file" />
+            </div>
           </div>
 
-          <div className="OfferField">
-            <label>Document *</label>
-            <input type="file" />
-          </div>
-        </div>
+          <div className="OfferRow">
+            <div className="OfferField">
+              <label>BSB *</label>
+              <input
+                type="text"
+                name="bsb"
+                value={formData.bsb || ""}
+                onChange={handleChange}
+              />
+            </div>
 
-        <div className="OfferRow">
-          <div className="OfferField">
-            <label>Bank Account *</label>
-            <input
-              type="text"
-              name="bankAccount"
-              value={formData.bankAccount || ""}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="OfferField">
-            <label>Document *</label>
-            <input type="file" />
-          </div>
-        </div>
-
-        <div className="OfferRow">
-          <div className="OfferField">
-            <label>BSB *</label>
-            <input
-              type="text"
-              name="bsb"
-              value={formData.bsb || ""}
-              onChange={handleChange}
-            />
+            <div className="OfferField">
+              <label>Document *</label>
+              <input type="file" />
+            </div>
           </div>
 
-          <div className="OfferField">
-            <label>Document *</label>
-            <input type="file" />
-          </div>
-        </div>
+          <div className="OfferRow">
+            <div className="OfferField">
+              <label>Tax File Number *</label>
+              <input
+                type="text"
+                name="taxFileNumber"
+                value={formData.taxFileNumber || ""}
+                onChange={handleChange}
+              />
+            </div>
 
-        <div className="OfferRow">
-          <div className="OfferField">
-            <label>Tax File Number *</label>
-            <input
-              type="text"
-              name="taxFileNumber"
-              value={formData.taxFileNumber || ""}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="OfferField">
-            <label>Document *</label>
-            <input type="file" />
-          </div>
-        </div>
-
-        <div className="OfferRow">
-          <div className="OfferField">
-            <label>Superannuation Fund Name *</label>
-            <input
-              type="text"
-              name="superFundName"
-              value={formData.superFundName || ""}
-              onChange={handleChange}
-            />
+            <div className="OfferField">
+              <label>Document *</label>
+              <input type="file" />
+            </div>
           </div>
 
-          <div className="OfferField">
-            <label>Document *</label>
-            <input type="file" />
-          </div>
-        </div>
+          <div className="OfferRow">
+            <div className="OfferField">
+              <label>Superannuation Fund Name *</label>
+              <input
+                type="text"
+                name="superFundName"
+                value={formData.superFundName || ""}
+                onChange={handleChange}
+              />
+            </div>
 
-        <div className="OfferRow">
-          <div className="OfferField">
-            <label>Superannuation Member Number *</label>
-            <input
-              type="text"
-              name="superMemberNumber"
-              value={formData.superMemberNumber || ""}
-              onChange={handleChange}
-            />
+            <div className="OfferField">
+              <label>Document *</label>
+              <input type="file" />
+            </div>
           </div>
 
-          <div className="OfferField">
-            <label>Document *</label>
-            <input type="file" />
+          <div className="OfferRow">
+            <div className="OfferField">
+              <label>Superannuation Member Number *</label>
+              <input
+                type="text"
+                name="superMemberNumber"
+                value={formData.superMemberNumber || ""}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="OfferField">
+              <label>Document *</label>
+              <input type="file" />
+            </div>
+          </div>
+
+          <div className="OfferRow">
+            <div className="OfferField">
+              <label>Long Service Leave ID Number</label>
+              <input
+                type="text"
+                name="longServiceLeaveId"
+                value={formData.longServiceLeaveId || ""}
+                onChange={handleChange}
+              />
+            </div>
           </div>
         </div>
 
-        <div className="OfferRow">
-          <div className="OfferField">
-            <label>Long Service Leave ID Number</label>
-            <input
-              type="text"
-              name="longServiceLeaveId"
-              value={formData.longServiceLeaveId || ""}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-      </div>
+        {/* COMPLIANCE DOCUMENTS */}
 
-      {/* COMPLIANCE DOCUMENTS */}
+        <div className="SectionBlock">
+          <h3>Compliance Documents</h3>
 
-      <div className="SectionBlock">
-        <h3>Compliance Documents</h3>
+          <div className="OfferRow">
+            <div className="OfferField">
+              <label>Confidentiality Agreement *</label>
 
-        <div className="OfferRow">
-          <div className="OfferField">
-            <label>Confidentiality Agreement *</label>
-
-            {/* <div className="ToggleGroup">
+              {/* <div className="ToggleGroup">
               <button
                 type="button"
                 className={
@@ -321,19 +326,19 @@ function Candidateform2() {
                 Fail
               </button>
             </div> */}
+            </div>
+
+            <div className="OfferField">
+              <label>Document *</label>
+              <input type="file" />
+            </div>
           </div>
 
-          <div className="OfferField">
-            <label>Document *</label>
-            <input type="file" />
-          </div>
-        </div>
+          <div className="OfferRow">
+            <div className="OfferField">
+              <label>Contract *</label>
 
-        <div className="OfferRow">
-          <div className="OfferField">
-            <label>Contract *</label>
-
-            {/* <div className="ToggleGroup">
+              {/* <div className="ToggleGroup">
               <button
                 type="button"
                 className={
@@ -364,19 +369,19 @@ function Candidateform2() {
                 Fail
               </button>
             </div> */}
+            </div>
+
+            <div className="OfferField">
+              <label>Document *</label>
+              <input type="file" />
+            </div>
           </div>
 
-          <div className="OfferField">
-            <label>Document *</label>
-            <input type="file" />
-          </div>
-        </div>
+          <div className="OfferRow">
+            <div className="OfferField">
+              <label>Handbook WHS *</label>
 
-        <div className="OfferRow">
-          <div className="OfferField">
-            <label>Handbook WHS *</label>
-
-            {/* <div className="ToggleGroup">
+              {/* <div className="ToggleGroup">
               <button
                 type="button"
                 className={
@@ -407,19 +412,19 @@ function Candidateform2() {
                 Fail
               </button>
             </div> */}
+            </div>
+
+            <div className="OfferField">
+              <label>Document *</label>
+              <input type="file" />
+            </div>
           </div>
 
-          <div className="OfferField">
-            <label>Document *</label>
-            <input type="file" />
-          </div>
-        </div>
+          <div className="OfferRow">
+            <div className="OfferField">
+              <label>Handbook Employment *</label>
 
-        <div className="OfferRow">
-          <div className="OfferField">
-            <label>Handbook Employment *</label>
-
-            {/* <div className="ToggleGroup">
+              {/* <div className="ToggleGroup">
               <button
                 type="button"
                 className={
@@ -454,23 +459,24 @@ function Candidateform2() {
                 Fail
               </button>
             </div> */}
-          </div>
+            </div>
 
-          <div className="OfferField">
-            <label>Document *</label>
-            <input type="file" />
+            <div className="OfferField">
+              <label>Document *</label>
+              <input type="file" />
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="OfferFooter">
-        <button className="CreateBtn">Save</button>
-        <button className="CreateBtn" onClick={handleSubmit}>
-          Submit
-        </button>
-        <button className="CreateBtn">Cancel</button>
+        <div className="OfferFooter">
+          <button className="CreateBtn">Save</button>
+          <button className="CreateBtn" onClick={handleSubmit}>
+            Submit
+          </button>
+          <button className="CreateBtn">Cancel</button>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

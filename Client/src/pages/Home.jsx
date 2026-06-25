@@ -10,8 +10,9 @@ import orgImg from "../images/orhanizationpolicies.jfif";
 import askItImg from "../images/askit.jfif";
 import askHrImg from "../images/askhr.jfif";
 import corosolimg from "../images/corosolimg.jpg";
-import resonanceimg from "../images/resonance-ltd-logo-png_seeklogo-549517.png";
-import empreq from "../images/empreq.png";
+
+import empreq from "../images/emloyereq.jpg";
+import offboarding from "../images/offboarding.jpg";
 
 function Home() {
   const navigate = useNavigate();
@@ -81,7 +82,7 @@ function Home() {
     {
       title: "Exit",
       desc: "A simple way to communicate HR issues",
-      img: empreq,
+      img: offboarding,
       route: "/exit",
     },
   ];
@@ -204,21 +205,21 @@ function Home() {
           </div>
         ))}
       </div> */}
-      <div className="services">
+      <div className="HomeServices">
         {services.map((item, index) => (
           <div
-            className="card"
+            className="HomeCard"
             key={index}
             onClick={() => item.route && navigate(item.route)}
           >
             <div
-              className="card-img"
+              className="HomeCardImage"
               style={{ backgroundImage: `url(${item.img})` }}
             />
 
-            <div className="card-content">
-              <h3>{item.title}</h3>
-              <p>{item.desc}</p>
+            <div className="HomeCardContent">
+              <h3 className="HomeCardTitle">{item.title}</h3>
+              <p className="HomeCardDescription">{item.desc}</p>
             </div>
           </div>
         ))}

@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import ItLeftSide from "../../../ItLeftSide";
 import "./index.css";
 
 function TaskSaves() {
   const { id } = useParams();
-
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     taskId: "",
     laptopRecovered: "",
@@ -42,7 +43,7 @@ function TaskSaves() {
         `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
         formData,
       );
-
+      navigate("/");
       alert("IT Updated Successfully");
 
       fetchTask();
