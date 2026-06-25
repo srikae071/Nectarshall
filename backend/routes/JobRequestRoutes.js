@@ -12,6 +12,7 @@ const {
   sendCandidateEmail,
   sendCandidateForm2Email,
   getInterviewStats,
+  createITTask,
 } = require("../controllers/jobRequestController");
 
 router.post("/", createJobRequest);
@@ -24,4 +25,5 @@ router.put("/:id", updateJobRequest);
 router.post("/send-email/:caseId", sendCandidateEmail);
 router.post("/send-candidate-form2/:caseId", sendCandidateForm2Email);
 router.get("/interview-stats", getInterviewStats);
+router.post("/create-it-task/:id", createITTask);
 module.exports = router;

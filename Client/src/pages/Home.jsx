@@ -97,9 +97,9 @@ function Home() {
           <a
             role="button"
             tabIndex={0}
-            onClick={() => navigate("/it")}
+            onClick={() => navigate("/it-all")}
             onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") navigate("/it");
+              if (e.key === "Enter" || e.key === " ") navigate("/it-all");
             }}
           >
             IT

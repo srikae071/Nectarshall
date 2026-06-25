@@ -30,7 +30,7 @@ function OffBoardingEmployesAll() {
   };
 
   const handleRowClick = (item) => {
-    navigate(`/employee-request-save/${item._id}`);
+    navigate(`/offboarding-saves/${item._id}`);
   };
 
   return (

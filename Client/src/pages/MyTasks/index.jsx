@@ -7,6 +7,7 @@ import "./index.css";
 function ApprovalTable() {
   const [data, setData] = useState([]);
   const [offboardingData, setOffboardingData] = useState([]);
+  const [taskCount, setTaskCount] = useState(0);
 
   useEffect(() => {
     fetchLeaves();
@@ -62,7 +63,6 @@ function ApprovalTable() {
       console.log(error);
     }
   };
-
   const approveOffboarding = async (id) => {
     try {
       await axios.put(
@@ -83,153 +83,144 @@ function ApprovalTable() {
       <MyTasksNavBar />
 
       <div className="approval-container">
-        <h2 className="approval-title">Request Approval List</h2>
+        {data.length > 0 && (
+          <>
+            <h2 className="approval-title">Request Approval List</h2>
 
-        <div className="table-wrapper">
-          <table className="MyTaskTable">
-            <thead>
-              <tr className="MyTaskTableRow">
-                <th className="MyTaskTableHeader">Record No</th>
-                <th className="MyTaskTableHeader">Employee</th>
-                <th className="MyTaskTableHeader">Leave Type</th>
-                <th className="MyTaskTableHeader">Start Date</th>
-                <th className="MyTaskTableHeader">End Date</th>
-                <th className="MyTaskTableHeader">Days</th>
-                <th className="MyTaskTableHeader">Half Day</th>
-                {/* <th className="MyTaskTableHeader">Description</th> */}
-                <th className="MyTaskTableHeader">Approve</th>
-                <th className="MyTaskTableHeader">Reject</th>
-                <th className="MyTaskTableHeader">Comment</th>
-              </tr>
-            </thead>
+            <div className="table-wrapper">
+              <table className="MyTaskTable">
+                <thead>
+                  <tr className="MyTaskTableRow">
+                    <th className="MyTaskTableHeader">Record No</th>
+                    <th className="MyTaskTableHeader">Employee</th>
+                    <th className="MyTaskTableHeader">Leave Type</th>
+                    <th className="MyTaskTableHeader">Start Date</th>
+                    <th className="MyTaskTableHeader">End Date</th>
+                    <th className="MyTaskTableHeader">Days</th>
+                    <th className="MyTaskTableHeader">Half Day</th>
+                    <th className="MyTaskTableHeader">Approve</th>
+                    <th className="MyTaskTableHeader">Reject</th>
+                    <th className="MyTaskTableHeader">Comment</th>
+                  </tr>
+                </thead>
 
-            <tbody>
-              {data.length > 0 ? (
-                data.map((item) => (
-                  <tr className="MyTaskTableRow" key={item._id}>
-                    <td className="MyTaskTableCell">{item.leaveNumber}</td>
+                <tbody>
+                  {data.map((item) => (
+                    <tr className="MyTaskTableRow" key={item._id}>
+                      <td className="MyTaskTableCell">{item.leaveNumber}</td>
+                      <td className="MyTaskTableCell">{item.employeeName}</td>
+                      <td className="MyTaskTableCell">{item.leaveType}</td>
+                      <td className="MyTaskTableCell">{item.startDate}</td>
+                      <td className="MyTaskTableCell">{item.endDate}</td>
+                      <td className="MyTaskTableCell MyTaskCenter">
+                        {item.totalLeaves}
+                      </td>
+                      <td className="MyTaskTableCell MyTaskCenter">
+                        {item.halfDay ? "Yes" : "No"}
+                      </td>
 
-                    <td className="MyTaskTableCell">{item.employeeName}</td>
-
-                    <td className="MyTaskTableCell">{item.leaveType}</td>
-
-                    <td className="MyTaskTableCell">{item.startDate}</td>
-
-                    <td className="MyTaskTableCell">{item.endDate}</td>
-
-                    <td className="MyTaskTableCell MyTaskCenter">
-                      {item.totalLeaves}
-                    </td>
-
-                    <td className="MyTaskTableCell MyTaskCenter">
-                      {item.halfDay ? "Yes" : "No"}
-                    </td>
-
-                    <td className="MyTaskTableCell MyTaskCenter">
-                      {item.status === "Approved" ? (
-                        <button className="approved-btn">Approved</button>
-                      ) : (
+                      <td className="MyTaskTableCell MyTaskCenter">
                         <button
                           className="approve-btn"
                           onClick={() => approveLeave(item._id)}
                         >
                           Approve
                         </button>
-                      )}
-                    </td>
+                      </td>
 
-                    <td className="MyTaskTableCell MyTaskCenter">
-                      <button
-                        className="delete-btn"
-                        onClick={() => rejectLeave(item._id)}
-                      >
-                        Reject
-                      </button>
-                    </td>
+                      <td className="MyTaskTableCell MyTaskCenter">
+                        <button
+                          className="delete-btn"
+                          onClick={() => rejectLeave(item._id)}
+                        >
+                          Reject
+                        </button>
+                      </td>
 
-                    <td className="MyTaskTableCell">
-                      <input
-                        type="text"
-                        placeholder="Comment..."
-                        className="comment-input"
-                      />
-                    </td>
+                      <td className="MyTaskTableCell">
+                        <input
+                          type="text"
+                          placeholder="Comment..."
+                          className="comment-input"
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+        {offboardingData.length > 0 && (
+          <div className="approval-section">
+            <h2 className="approval-title">
+              Offboarding Employee Approval List
+            </h2>
+
+            <div className="table-wrapper">
+              <table className="MyTaskTable">
+                <thead>
+                  <tr>
+                    <th>Case ID</th>
+                    <th>Requester</th>
+                    <th>Date of Resignation</th>
+                    <th>Last Working Day</th>
+                    <th>Resignation Reason</th>
+                    <th>Confirm Date</th>
+                    <th>Approve</th>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="10" className="NoDataCell">
-                    No leave requests available
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div className="approval-section">
-        <h2 className="approval-title">Offboarding Employee Approval List</h2>
+                </thead>
 
-        <div className="table-wrapper">
-          <table className="MyTaskTable">
-            <thead>
-              <tr>
-                <th>Case ID</th>
-                <th>Requester</th>
-                <th>Date of Resignation</th>
-                <th>Last Working Day</th>
-                <th>Resignation Reason</th>
-                <th>Confirm Date</th>
-                <th>Approve</th>
-              </tr>
-            </thead>
+                <tbody>
+                  {offboardingData.length > 0 ? (
+                    offboardingData.map((item) => (
+                      <tr key={item._id}>
+                        <td>{item.caseId}</td>
 
-            <tbody>
-              {offboardingData.length > 0 ? (
-                offboardingData.map((item) => (
-                  <tr key={item._id}>
-                    <td>{item.caseId}</td>
+                        <td>{item.requesterName}</td>
 
-                    <td>{item.requesterName}</td>
+                        <td>
+                          {item.resignationDate
+                            ? new Date(
+                                item.resignationDate,
+                              ).toLocaleDateString()
+                            : ""}
+                        </td>
 
-                    <td>
-                      {item.resignationDate
-                        ? new Date(item.resignationDate).toLocaleDateString()
-                        : ""}
-                    </td>
+                        <td>
+                          {item.lastWorkingDay
+                            ? new Date(item.lastWorkingDay).toLocaleDateString()
+                            : ""}
+                        </td>
 
-                    <td>
-                      {item.lastWorkingDay
-                        ? new Date(item.lastWorkingDay).toLocaleDateString()
-                        : ""}
-                    </td>
+                        <td>{item.resignationReason}</td>
 
-                    <td>{item.resignationReason}</td>
+                        <td>
+                          <input type="date" className="confirm-date" />
+                        </td>
 
-                    <td>
-                      <input type="date" className="confirm-date" />
-                    </td>
-
-                    <td>
-                      <button
-                        className="approve-btn"
-                        onClick={() => approveOffboarding(item._id)}
-                      >
-                        Approve
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="7" className="NoDataCell">
-                    No Offboarding Requests
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+                        <td>
+                          <button
+                            className="approve-btn"
+                            onClick={() => approveOffboarding(item._id)}
+                          >
+                            Approve
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="7" className="NoDataCell">
+                        No Offboarding Requests
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

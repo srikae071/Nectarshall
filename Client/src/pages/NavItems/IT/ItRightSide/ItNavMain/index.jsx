@@ -16,13 +16,16 @@ function ItNavMain() {
   const fetchRequests = async () => {
     try {
       const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests",
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests",
       );
-      console.log(response.data);
 
-      setData(response.data);
+      const filtered = response.data.filter(
+        (item) => item.taskType === "IT Clearance",
+      );
 
-      setData(response.data);
+      setData(filtered);
+
+      console.log(filtered);
     } catch (error) {
       console.log(error);
     }
@@ -32,16 +35,16 @@ function ItNavMain() {
     <ItLeftSide>
       <div className="Openhome">
         <div>
-          <h3 className="openheading">IT</h3>
+          <h3 className="openheading">All IT Tasks</h3>
 
           <table className="opentable">
             <thead>
               <tr>
-                <th>Incident ID</th>
+                <th>Task ID</th>
                 <th>Requester</th>
-                <th>Requester For</th>
-                <th>Category</th>
-                <th>Sub Category</th>
+                <th>Resignation Date</th>
+                <th>Last Working Day</th>
+                <th>Resignation Reason</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -54,12 +57,12 @@ function ItNavMain() {
                     style={{ cursor: "pointer" }}
                     onClick={() => navigate(`/hrms/itsaves/${item._id}`)}
                   >
-                    <td>{item.incidentNumber || "N/A"}</td>
-                    <td>{item.requester || item.requesterName}</td>
-                    <td>{item.requesterFor || "N/A"}</td>
-                    <td>{item.category || "N/A"}</td>
-                    <td>{item.subCategory || "N/A"}</td>
-                    <td>{item.status || "Open"}</td>
+                    <td>{item.TaskID}</td>
+                    <td>{item.requesterName}</td>
+                    <td>{item.resignationDate}</td>
+                    <td>{item.lastWorkingDay}</td>
+                    <td>{item.resignationReason}</td>
+                    <td>{item.status}</td>
                   </tr>
                 ))
               ) : (

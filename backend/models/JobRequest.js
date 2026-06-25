@@ -110,6 +110,12 @@ const JobRequestSchema = new mongoose.Schema(
     resignationDate: Date,
     lastWorkingDay: Date,
     resignationReason: String,
+    taskId: String,
+    taskType: String,
+    taskStatus: {
+      type: String,
+      default: "Open",
+    },
   },
 
   {

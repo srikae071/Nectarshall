@@ -123,7 +123,26 @@ body {
   outline: none;
   border-color: #888;
 }
+.approval-section {
+  margin-top: 45px;
+}
 
+.confirm-date {
+  width: 150px;
+  padding: 6px 8px;
+  border: 1px solid #cfcaca;
+  border-radius: 4px;
+  background: white;
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.MyTaskTable {
+  min-width: 1100px;
+}
 @media (max-width: 768px) {
   .approval-container {
     padding: 10px;

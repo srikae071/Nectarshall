@@ -75,6 +75,7 @@ import OnBoardingResolvSaves from "./pages/Hrms/OnBoarding/OnBoardingResolved/On
 import OfferLetterSaves from "./pages/Hrms/OnBoarding/OnBoardingOfferLetter/OfferLetterSaves";
 import Exit from "./pages/Home/ExitWindow/Exit/index.jsx";
 import OffBoardingEmployesAll from "./pages/Hrms/Offbording/OffBoardingEmployesAll";
+import OffBoardingSaves from "./pages/Hrms/Offbording/OffBoardingSaves/index.jsx";
 function App() {
   return (
     <Routes>
@@ -124,7 +125,7 @@ function App() {
       <Route path="/hrms/hrsaves/:id" element={<HRSaves />} />
       <Route path="/hrms/hrsavescases" element={<HRSavesCases />} />
       <Route path="/my-tickets" element={<MyTickets />} />
-      <Route path="/it" element={<ItNavMain />} />
+      <Route path="/it-all" element={<ItNavMain />} />
       <Route path="/it/create-new" element={<ITCreateNew />} />
       <Route path="/it/open" element={<ItOpen />} />
       <Route path="/it/resolved" element={<ItResolved />} />
@@ -194,6 +195,7 @@ function App() {
         path="/offboarding/employerequest"
         element={<OffBoardingEmployesAll />}
       />
+      <Route path="/offboarding-saves/:id" element={<OffBoardingSaves />} />
     </Routes>
   );
 }

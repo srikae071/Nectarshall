@@ -7,7 +7,23 @@ import ItNavbar from "../../IT/ItNavBar";
 
 const menuData = [
   {
-    title: "IT",
+    title: "Incidents",
+    items: [
+      {
+        label: "All",
+        path: "/it-all",
+      },
+      { label: "Create New", path: "/it/create-new" },
+      { label: "Open", path: "/it/open" },
+      { label: "Resolved", path: "/it/resolved" },
+      { label: "Assigned to me", path: "/it/assigned-to-me" },
+      { label: "Closed", path: "/it/closed" },
+      { label: "Work In Progress", path: "/it/work-in-progress" },
+      { label: "Pending", path: "/it/pending  " },
+    ],
+  },
+  {
+    title: "Requests",
     items: [
       {
         label: "All",

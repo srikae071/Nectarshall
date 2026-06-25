@@ -244,3 +244,38 @@ exports.getInterviewStats = async (req, res) => {
     });
   }
 };
+exports.createITTask = async (req, res) => {
+  try {
+    const request = await JobRequest.findById(req.params.id);
+
+    if (!request) {
+      return res.status(404).json({
+        message: "Record not found",
+      });
+    }
+
+    const lastTask = await JobRequest.findOne({
+      taskId: { $exists: true },
+    }).sort({ taskId: -1 });
+
+    let nextNumber = 1;
+
+    if (lastTask?.taskId) {
+      nextNumber = parseInt(lastTask.taskId.replace("TSK", "")) + 1;
+    }
+
+    request.taskId = `TSK${String(nextNumber).padStart(3, "0")}`;
+
+    request.taskType = "IT Clearance";
+
+    request.taskStatus = "Open";
+
+    await request.save();
+
+    res.json(request);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
