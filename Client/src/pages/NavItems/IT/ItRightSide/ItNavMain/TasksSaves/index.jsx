@@ -12,6 +12,7 @@ function TaskSaves() {
     taskId: "",
     laptopRecovered: "",
     laptopWorkingCondition: "",
+    ItTAskStatus: "",
   });
 
   useEffect(() => {
@@ -59,9 +60,8 @@ function TaskSaves() {
           <h2 className="ITSHeading">IT Recovery</h2>
 
           <div className="ITSRow">
-            <div className="ITSField">
+            <div className="ITSField ITSTaskIdField">
               <label>Task ID</label>
-
               <input value={formData.taskId || ""} readOnly />
             </div>
           </div>
@@ -76,8 +76,8 @@ function TaskSaves() {
                 onChange={handleChange}
               >
                 <option value="">Select</option>
-                <option>Yes</option>
-                <option>No</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
               </select>
             </div>
 
@@ -90,8 +90,25 @@ function TaskSaves() {
                 onChange={handleChange}
               >
                 <option value="">Select</option>
-                <option>Yes</option>
-                <option>No</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+
+            <div className="ITSField">
+              <label>Task Status</label>
+
+              <select
+                name="ItTAskStatus"
+                value={formData.ItTAskStatus || ""}
+                onChange={handleChange}
+              >
+                <option value="">Select</option>
+                <option value="Open">Open</option>
+                <option value="Closed">Closed</option>
+                <option value="Pending">Pending</option>
+                <option value="Assigned to me">Assigned to me</option>
+                <option value="Resolved">Resolved</option>
               </select>
             </div>
           </div>

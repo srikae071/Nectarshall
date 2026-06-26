@@ -119,6 +119,7 @@ const JobRequestSchema = new mongoose.Schema(
     taskId: String,
     laptopRecovered: String,
     laptopWorkingCondition: String,
+    ItTAskStatus: String,
   },
 
   {

@@ -62,7 +62,7 @@ function ItNavMain() {
                     <td>{item.resignationDate}</td>
                     <td>{item.lastWorkingDay}</td>
                     <td>{item.resignationReason}</td>
-                    <td>{item.status}</td>
+                    <td>{item.ItTAskStatus || "Open"}</td>
                   </tr>
                 ))
               ) : (

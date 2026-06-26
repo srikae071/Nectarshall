@@ -61,6 +61,20 @@
 .ITSButton:hover {
   background: #1d4ed8;
 }
+.ITSTaskIdField {
+  width: 180px;
+}
+
+.ITSField {
+  flex: 1;
+  min-width: 220px;
+}
+
+.ITSField input,
+.ITSField select {
+  width: 100%;
+  box-sizing: border-box;
+}
 
 @media (max-width: 768px) {
   .ITSRow {

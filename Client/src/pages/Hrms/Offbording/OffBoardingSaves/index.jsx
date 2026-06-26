@@ -145,10 +145,31 @@ function OffBoardingSaves() {
             <h3 className="OBSTaskHeading">Offboarding Clearance Tasks</h3>
 
             <div className="OBSTaskCard" onClick={openITTask}>
-              <div>
-                <h4 className="OBSTaskTitle">Task 1</h4>
+              <div className="OBSTaskGrid">
+                <div className="OBSTaskInfo">
+                  <div className="OBSTaskTitle">Task 1 - IT Clearance</div>
+                </div>
 
-                <p className="OBSTaskSubTitle">IT Clearance</p>
+                <div className="OBSTaskItem">
+                  <label>Status</label>
+                  <span className="OBSStatus">
+                    {formData.ItTAskStatus || "Open"}
+                  </span>
+                </div>
+
+                <div className="OBSTaskItem">
+                  <label>Laptop Recovered</label>
+                  <span className="OBSTaskValue">
+                    {formData.laptopRecovered || "N/A"}
+                  </span>
+                </div>
+
+                <div className="OBSTaskItem">
+                  <label>Working Condition</label>
+                  <span className="OBSTaskValue">
+                    {formData.laptopWorkingCondition || "N/A"}
+                  </span>
+                </div>
               </div>
             </div>
 
