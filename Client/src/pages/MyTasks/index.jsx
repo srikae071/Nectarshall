@@ -7,7 +7,6 @@ import "./index.css";
 function ApprovalTable() {
   const [data, setData] = useState([]);
   const [offboardingData, setOffboardingData] = useState([]);
-  const [taskCount, setTaskCount] = useState(0);
 
   useEffect(() => {
     fetchLeaves();
@@ -39,7 +38,30 @@ function ApprovalTable() {
       console.log(error);
     }
   };
+  const fetchPendingLeaves = async () => {
+    try {
+      const [leaveResponse, offboardingResponse] = await Promise.all([
+        axios.get(
+          "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves",
+        ),
+        axios.get(
+          "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests",
+        ),
+      ]);
 
+      const pendingLeaves = leaveResponse.data.filter(
+        (item) => item.status === "Pending",
+      ).length;
+
+      const pendingOffboarding = offboardingResponse.data.filter(
+        (item) => item.category === "Offboarding" && item.status === "Open",
+      ).length;
+
+      setPendingCount(pendingLeaves + pendingOffboarding);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const approveLeave = async (id) => {
     try {
       await axios.put(
@@ -51,18 +73,29 @@ function ApprovalTable() {
       console.log(error);
     }
   };
-
-  const rejectLeave = async (id) => {
+  const deleteOffboarding = async (id) => {
     try {
-      await axios.put(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves/reject/${id}`,
+      await axios.delete(
+        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
       );
 
-      fetchLeaves();
+      fetchOffboarding();
     } catch (error) {
       console.log(error);
     }
   };
+
+  // const rejectLeave = async (id) => {
+  //   try {
+  //     await axios.put(
+  //       `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves/reject/${id}`,
+  //     );
+
+  //     fetchLeaves();
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
   const approveOffboarding = async (id) => {
     try {
       await axios.put(
@@ -119,21 +152,21 @@ function ApprovalTable() {
                         {item.halfDay ? "Yes" : "No"}
                       </td>
 
-                      <td className="MyTaskTableCell MyTaskCenter">
+                      <td>
                         <button
                           className="approve-btn"
-                          onClick={() => approveLeave(item._id)}
+                          onClick={() => approveOffboarding(item._id)}
                         >
                           Approve
                         </button>
                       </td>
 
-                      <td className="MyTaskTableCell MyTaskCenter">
+                      <td>
                         <button
                           className="delete-btn"
-                          onClick={() => rejectLeave(item._id)}
+                          onClick={() => deleteOffboarding(item._id)}
                         >
-                          Reject
+                          Delete
                         </button>
                       </td>
 
@@ -168,6 +201,7 @@ function ApprovalTable() {
                     <th>Resignation Reason</th>
                     <th>Confirm Date</th>
                     <th>Approve</th>
+                    <th>Delete</th>
                   </tr>
                 </thead>
 

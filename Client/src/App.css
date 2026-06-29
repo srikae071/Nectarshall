@@ -79,6 +79,32 @@ body {
   gap: 15px;
   flex-wrap: wrap;
 }
+.MyTaskNotificationWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+.MyTaskNotificationBadge {
+  position: absolute;
+  top: -10px;
+  right: -14px;
+
+  min-width: 20px;
+  height: 20px;
+
+  background: red;
+  color: white;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 12px;
+  font-weight: bold;
+}
 @media (max-width: 768px) {
   .navbar {
     padding: 10px 15px;

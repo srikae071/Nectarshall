@@ -161,7 +161,7 @@ function Home() {
           >
             <a>MY TASK</a>
 
-            {/* <span className="MyTaskNotificationBadge">{pendingCount}</span> */}
+            <span className="MyTaskNotificationBadge">{pendingCount}</span>
           </div>
           <a role="button" tabIndex={0} onClick={() => navigate("/my-tickets")}>
             MY TICKETS
