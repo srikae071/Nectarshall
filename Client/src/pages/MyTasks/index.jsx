@@ -85,17 +85,17 @@ function ApprovalTable() {
     }
   };
 
-  // const rejectLeave = async (id) => {
-  //   try {
-  //     await axios.put(
-  //       `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves/reject/${id}`,
-  //     );
+  const rejectLeave = async (id) => {
+    try {
+      await axios.put(
+        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves/reject/${id}`,
+      );
 
-  //     fetchLeaves();
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+      fetchLeaves();
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const approveOffboarding = async (id) => {
     try {
       await axios.put(
@@ -155,7 +155,7 @@ function ApprovalTable() {
                       <td>
                         <button
                           className="approve-btn"
-                          onClick={() => approveOffboarding(item._id)}
+                          onClick={() => approveLeave(item._id)}
                         >
                           Approve
                         </button>
@@ -164,7 +164,7 @@ function ApprovalTable() {
                       <td>
                         <button
                           className="delete-btn"
-                          onClick={() => deleteOffboarding(item._id)}
+                          onClick={() => rejectLeave(item._id)}
                         >
                           Delete
                         </button>
@@ -239,6 +239,15 @@ function ApprovalTable() {
                             onClick={() => approveOffboarding(item._id)}
                           >
                             Approve
+                          </button>
+                        </td>
+
+                        <td>
+                          <button
+                            className="delete-btn"
+                            onClick={() => deleteOffboarding(item._id)}
+                          >
+                            Delete
                           </button>
                         </td>
                       </tr>

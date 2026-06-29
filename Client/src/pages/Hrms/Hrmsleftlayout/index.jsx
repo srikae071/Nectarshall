@@ -38,7 +38,7 @@ const menuData = [
             icon: "📄",
           },
           {
-            label: "Resonence Requirement",
+            label: "Employe",
             children: [
               {
                 label: "All",
@@ -56,22 +56,21 @@ const menuData = [
                 label: "Employe Request",
                 path: "/onboarding/employerequest",
               },
+              {
+                label: "Pre-Joining Compilence",
+                path: "/onboarding/prejoining",
+              },
+              {
+                label: "Interview",
+                path: "/onboarding/Interview",
+              },
+              {
+                label: "Offer Letter",
+                path: "/onboarding/Offerletter",
+              },
             ],
           },
         ],
-      },
-
-      {
-        label: "Pre-Joining Compilence",
-        path: "/onboarding/prejoining",
-      },
-      {
-        label: "Interview",
-        path: "/onboarding/Interview",
-      },
-      {
-        label: "Offer Letter",
-        path: "/onboarding/Offerletter",
       },
 
       {
@@ -100,7 +99,7 @@ const menuData = [
             // icon: "📄",
           },
           {
-            label: "Resonence Requirement",
+            label: "Employe",
             children: [
               {
                 label: "All",
@@ -119,6 +118,18 @@ const menuData = [
                 path: "/offboarding/employerequest",
               },
             ],
+          },
+        ],
+      },
+
+      {
+        label: "Supplier",
+        // icon: "📁",
+        children: [
+          {
+            label: "Onbording Compilence",
+            path: "/supplier/onboardingcompilence",
+            // icon: "📄",
           },
         ],
       },

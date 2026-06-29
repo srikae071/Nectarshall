@@ -22,15 +22,42 @@ function Home() {
     fetchPendingLeaves();
   }, []);
 
+  // const fetchPendingLeaves = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves",
+  //     );
+
+  //     const pending = response.data.filter((item) => item.status === "Pending");
+
+  //     setPendingCount(pending.length);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
   const fetchPendingLeaves = async () => {
     try {
-      const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves",
-      );
+      const [leaveResponse, jobResponse] = await Promise.all([
+        axios.get(
+          "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves",
+        ),
+        axios.get(
+          "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests",
+        ),
+      ]);
 
-      const pending = response.data.filter((item) => item.status === "Pending");
+      const pendingLeaves = leaveResponse.data.filter(
+        (item) => item.status === "Pending",
+      ).length;
 
-      setPendingCount(pending.length);
+      const pendingOffboarding = jobResponse.data.filter(
+        (item) => item.category === "Offboarding" && item.status === "Open",
+      ).length;
+
+      setPendingCount(pendingLeaves + pendingOffboarding);
+
+      console.log("Pending Leaves:", pendingLeaves);
+      console.log("Pending Offboarding:", pendingOffboarding);
     } catch (error) {
       console.log(error);
     }

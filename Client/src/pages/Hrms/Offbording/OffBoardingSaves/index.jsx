@@ -177,10 +177,10 @@ function OffBoardingSaves() {
               className="OBSTaskCard"
               onClick={() => navigate(`/offboarding/finance-clearance/${id}`)}
             >
-              <div>
-                <h4 className="OBSTaskTitle">Task 2</h4>
-
-                <p className="OBSTaskSubTitle">Finance Clearance</p>
+              <div className="OBSTaskGrid">
+                <div className="OBSTaskInfo">
+                  <div className="OBSTaskTitle">Task 2 - Finance Clearance</div>
+                </div>
               </div>
             </div>
 
@@ -188,12 +188,24 @@ function OffBoardingSaves() {
               className="OBSTaskCard"
               onClick={() => navigate(`/offboarding/admin-clearance/${id}`)}
             >
-              <div>
-                <h4 className="OBSTaskTitle">Task 3</h4>
-
-                <p className="OBSTaskSubTitle">Admin Clearance</p>
+              <div className="OBSTaskGrid">
+                <div className="OBSTaskInfo">
+                  <div className="OBSTaskTitle">Task 3 - Admin Clearance</div>
+                </div>
               </div>
             </div>
+            {formData.ItTAskStatus === "Closed" && (
+              <div
+                className="OBSTaskCard"
+                onClick={() => navigate(`/offboarding/hr-clearance/${id}`)}
+              >
+                <div className="OBSTaskGrid">
+                  <div className="OBSTaskInfo">
+                    <div className="OBSTaskTitle">Task 4 - HR Clearance</div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
