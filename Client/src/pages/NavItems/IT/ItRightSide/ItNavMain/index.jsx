@@ -16,16 +16,9 @@ function ItNavMain() {
   const fetchRequests = async () => {
     try {
       const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests",
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests",
       );
-
-      const filtered = response.data.filter(
-        (item) => item.taskType === "IT Clearance",
-      );
-
-      setData(filtered);
-
-      console.log(filtered);
+      setData(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -35,16 +28,15 @@ function ItNavMain() {
     <ItLeftSide>
       <div className="Openhome">
         <div>
-          <h3 className="openheading">All IT Tasks</h3>
+          <h3 className="openheading">IT Tasks</h3>
 
           <table className="opentable">
             <thead>
               <tr>
-                <th>Task ID</th>
+                <th>Incident ID</th>
                 <th>Requester</th>
-                <th>Resignation Date</th>
-                <th>Last Working Day</th>
-                <th>Resignation Reason</th>
+                <th>Department</th>
+                <th>Category</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -55,19 +47,18 @@ function ItNavMain() {
                   <tr
                     key={item._id}
                     style={{ cursor: "pointer" }}
-                    onClick={() => navigate(`/tasksaves/${item._id}`)}
+                    onClick={() => navigate(`/hrms/itsaves/${item._id}`)}
                   >
-                    <td>{item.taskId}</td>
-                    <td>{item.requesterName}</td>
-                    <td>{item.resignationDate}</td>
-                    <td>{item.lastWorkingDay}</td>
-                    <td>{item.resignationReason}</td>
-                    <td>{item.ItTAskStatus || "Open"}</td>
+                    <td>{item.incidentNumber}</td>
+                    <td>{item.requester}</td>
+                    <td>{item.department}</td>
+                    <td>{item.category}</td>
+                    <td>{item.status}</td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="6" style={{ textAlign: "center" }}>
+                  <td colSpan="5" style={{ textAlign: "center" }}>
                     No Records Found
                   </td>
                 </tr>

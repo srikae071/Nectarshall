@@ -61,7 +61,7 @@ import OnBoardingSaves from "./pages/Hrms/OnBoarding/OnBoardingEmployee/OnBoardi
 import ResonanceMain from "./pages/Home/Resonance/ResonanceMain/index.jsx";
 import OnBoardingPreJoining from "./pages/Hrms/OnBoarding/OnBoardingPreJoining/index.jsx";
 import OnBoardingOfferLetter from "./pages/Hrms/OnBoarding/OnBoardingOfferLetter/index.jsx";
-
+import OpMainPage from "./pages/OrganisationPolicies/OpMainPage";
 import OnBoardingEmReqAll from "./pages/Hrms/OnBoarding/OnBoardingEmpReqAll/index.jsx";
 import EmployeeRequestSave from "./pages/Home/EmployeRequestSave/index.jsx";
 import CandidateForm from "./pages/Hrms/OnBoarding/OnBoardingClinet/CandidateForm";
@@ -95,7 +95,7 @@ function App() {
       <Route path="/hrms/assigned-cases" element={<Assingtome />} />
       {/* <Route path="/onboarding/clint" element={<OnboardingCompliance />} /> */}
 
-      <Route path="/organisation-policies" element={<OrganisationPolicies />} />
+      <Route path="/organisation-policies" element={<OpMainPage />} />
       <Route path="/schedule" element={<Schedule />} />
       <Route path="/timesheets" element={<TimeSheat />} />
       <Route path="/employe-sites" element={<Employeesites />} />

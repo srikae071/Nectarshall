@@ -1,11 +1,13 @@
 import "../../../App.jsx";
+import "./index.css";
 import { useNavigate } from "react-router-dom";
 import logo from "../../../images/logo.png";
 import leaveImg from "../../../images/leavemanagement.jfif";
 import payrollImg from "../../../images/payrools.jfif";
 import rosterImg from "../../../images/roster.jfif";
 
-function OrganisationPolicies() {
+function OpMainPage() {
+  console.log(leaveImg);
   const navigate = useNavigate();
 
   const services = [
@@ -30,51 +32,31 @@ function OrganisationPolicies() {
   ];
 
   return (
-    <div>
+    <div className="OPPage">
       <div className="navbar">
         <div className="logo">
-          <img src={logo} className="logoimage" onClick={() => navigate("/")} />
+          <img
+            src={logo}
+            className="logoimage"
+            alt="Logo"
+            onClick={() => navigate("/")}
+          />
         </div>
       </div>
 
-      {/* <div className="services">
+      <div className="OPServices">
         {services.map((item, index) => (
           <div
-            className="card"
-            key={index}
-            onClick={() => {
-              if (item.title === "Leaves Management") {
-                console.log("Navigating to Leave Request");
-                navigate("/leave-request");
-              } else if (item.title === "Payrolls") {
-                console.log("Navigating to Payroll");
-                navigate("/payroll");
-              }
-            }}
-          >
-            <div
-              className="card-img"
-              style={{ backgroundImage: `url(${item.img})` }}
-            ></div>
-            <h3>{item.title}</h3>
-            <p>{item.desc}</p>
-          </div>
-        ))}
-      </div> */}
-      <div className="services">
-        {services.map((item, index) => (
-          <div
-            className="card"
+            className="OPCard"
             key={index}
             onClick={() => item.route && navigate(item.route)}
           >
-            <div
-              className="card-img"
-              style={{ backgroundImage: `url(${item.img})` }}
-            ></div>
+            <img src={item.img} alt={item.title} className="OPCardImage" />
 
-            <h3>{item.title}</h3>
-            <p>{item.desc}</p>
+            <div className="OPCardContent">
+              <h3 className="OPCardTitle">{item.title}</h3>
+              <p className="OPCardDescription">{item.desc}</p>
+            </div>
           </div>
         ))}
       </div>
@@ -82,4 +64,4 @@ function OrganisationPolicies() {
   );
 }
 
-export default OrganisationPolicies;
+export default OpMainPage;
