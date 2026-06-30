@@ -31,7 +31,10 @@ const JobRequestSchema = new mongoose.Schema(
     legalBarrier: String,
     medicalLimitations: String,
     workRights: String,
-
+    modernSlaveryResult: String,
+    legalBarrierResult: String,
+    medicalLimitationsResult: String,
+    workRightsResult: String,
     securityLicence: String,
     securityLicenceExpiry: Date,
 

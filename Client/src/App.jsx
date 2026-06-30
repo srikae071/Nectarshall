@@ -77,6 +77,8 @@ import Exit from "./pages/Home/ExitWindow/Exit/index.jsx";
 import OffBoardingEmployesAll from "./pages/Hrms/Offbording/OffBoardingEmployesAll";
 import OffBoardingSaves from "./pages/Hrms/Offbording/OffBoardingSaves/index.jsx";
 import TaskSaves from "./pages/NavItems/IT/ItRightSide/ItNavMain/TasksSaves/index.jsx";
+import HrReqAll from "./pages/NavItems/IT/ItRightSide/HrRequests/HrReqAll";
+import OnBoardingCompTab from "./pages/Hrms/OnBoarding/OnBoardingClinet/OnBoardingCompliance/OnBoardngCompTab";
 function App() {
   return (
     <Routes>
@@ -198,6 +200,8 @@ function App() {
       />
       <Route path="/offboarding-saves/:id" element={<OffBoardingSaves />} />
       <Route path="/tasksaves/:id" element={<TaskSaves />} />
+      <Route path="/hrreq-all" element={<HrReqAll />} />
+      <Route path="/client-complience" element={<OnBoardingCompTab />} />
     </Routes>
   );
 }

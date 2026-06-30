@@ -27,7 +27,7 @@ const menuData = [
     items: [
       {
         label: "All",
-        path: "/it",
+        path: "/hrreq-all",
       },
       { label: "Create New", path: "/it/create-new" },
       { label: "Open", path: "/it/open" },

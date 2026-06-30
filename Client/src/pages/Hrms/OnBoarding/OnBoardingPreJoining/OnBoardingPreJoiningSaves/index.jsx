@@ -61,18 +61,17 @@ function OnBoardingPreJoiningSaves() {
   return (
     <HrmsLeftLayout>
       <div className="OfferContainer">
-        <h2 className="OfferTitle">Pre</h2>
+        <h2 className="OfferTitle">Pre Joining Compliance</h2>
 
         {/* Basic Details */}
         <div className="OfferRow">
           <div className="OfferField">
-            <label>Name</label>
-            <input value={formData.requesterName || ""} readOnly />
-          </div>
-
-          <div className="OfferField">
             <label>Case ID</label>
             <input value={formData.caseId || ""} readOnly />
+          </div>
+          <div className="OfferField">
+            <label>Name</label>
+            <input value={formData.requesterName || ""} readOnly />
           </div>
         </div>
 
@@ -198,6 +197,10 @@ function OnBoardingPreJoiningSaves() {
                 onChange={handleChange}
               />
             </div>
+            <div className="OfferField">
+              <label>Document *</label>
+              <input type="file" />
+            </div>
           </div>
         </div>
 
@@ -225,7 +228,7 @@ function OnBoardingPreJoiningSaves() {
                     })
                   }
                 >
-                  Pass
+                  Accept
                 </button>
 
                 <button
@@ -242,7 +245,7 @@ function OnBoardingPreJoiningSaves() {
                     })
                   }
                 >
-                  Fail
+                  Reject
                 </button>
               </div>
             </div>
@@ -270,7 +273,7 @@ function OnBoardingPreJoiningSaves() {
                     })
                   }
                 >
-                  Pass
+                  Accept
                 </button>
 
                 <button
@@ -285,7 +288,7 @@ function OnBoardingPreJoiningSaves() {
                     })
                   }
                 >
-                  Fail
+                  Reject
                 </button>
               </div>
             </div>
@@ -315,7 +318,7 @@ function OnBoardingPreJoiningSaves() {
                     })
                   }
                 >
-                  Pass
+                  Accept
                 </button>
 
                 <button
@@ -330,7 +333,7 @@ function OnBoardingPreJoiningSaves() {
                     })
                   }
                 >
-                  Fail
+                  Reject
                 </button>
               </div>
             </div>
@@ -360,7 +363,7 @@ function OnBoardingPreJoiningSaves() {
                     })
                   }
                 >
-                  Pass
+                  Accept
                 </button>
 
                 <button
@@ -377,7 +380,7 @@ function OnBoardingPreJoiningSaves() {
                     })
                   }
                 >
-                  Fail
+                  Reject
                 </button>
               </div>
             </div>

@@ -25,7 +25,10 @@ function EmployeRequestSave() {
     legalBarrier: "",
     medicalLimitations: "",
     workRights: "",
-
+    modernSlaveryResult: "",
+    legalBarrierResult: "",
+    medicalLimitationsResult: "",
+    workRightsResult: "",
     securityLicence: "",
     securityLicenceExpiry: "",
 
@@ -457,21 +460,34 @@ function EmployeRequestSave() {
               <h3>2. Barriers To Employment (Self Declaration)</h3>
 
               {/* Modern Slavery */}
+              {/* Modern Slavery */}
               <div className="BarrierRow">
                 <label>Modern Slavery *</label>
 
+                {/* Candidate Answer */}
+                <span
+                  className={
+                    formData.modernSlaveryCandidateForm === "Yes"
+                      ? "CandidateAnswerYes"
+                      : "CandidateAnswerNo"
+                  }
+                >
+                  {formData.modernSlaveryCandidateForm}
+                </span>
+
+                {/* HR Decision */}
                 <div className="ToggleGroup">
                   <button
                     type="button"
                     className={
-                      formData.modernSlavery === "PASS"
+                      formData.modernSlaveryResult === "PASS"
                         ? "ToggleActive"
                         : "ToggleBtn"
                     }
                     onClick={() =>
                       setFormData({
                         ...formData,
-                        modernSlavery: "PASS",
+                        modernSlaveryResult: "PASS",
                       })
                     }
                   >
@@ -481,14 +497,14 @@ function EmployeRequestSave() {
                   <button
                     type="button"
                     className={
-                      formData.modernSlavery === "FAIL"
+                      formData.modernSlaveryResult === "FAIL"
                         ? "ToggleFail"
                         : "ToggleBtn"
                     }
                     onClick={() =>
                       setFormData({
                         ...formData,
-                        modernSlavery: "FAIL",
+                        modernSlaveryResult: "FAIL",
                       })
                     }
                   >
@@ -496,23 +512,35 @@ function EmployeRequestSave() {
                   </button>
                 </div>
               </div>
-
+              {/* Legal Barrier */}
               {/* Legal Barrier */}
               <div className="BarrierRow">
                 <label>Legal Barrier *</label>
 
+                {/* Candidate Answer */}
+                <span
+                  className={
+                    formData.legalBarrierCandidateForm === "Yes"
+                      ? "CandidateAnswerYes"
+                      : "CandidateAnswerNo"
+                  }
+                >
+                  {formData.legalBarrierCandidateForm}
+                </span>
+
+                {/* HR Decision */}
                 <div className="ToggleGroup">
                   <button
                     type="button"
                     className={
-                      formData.legalBarrier === "PASS"
+                      formData.legalBarrierResult === "PASS"
                         ? "ToggleActive"
                         : "ToggleBtn"
                     }
                     onClick={() =>
                       setFormData({
                         ...formData,
-                        legalBarrier: "PASS",
+                        legalBarrierResult: "PASS",
                       })
                     }
                   >
@@ -522,14 +550,14 @@ function EmployeRequestSave() {
                   <button
                     type="button"
                     className={
-                      formData.legalBarrier === "FAIL"
+                      formData.legalBarrierResult === "FAIL"
                         ? "ToggleFail"
                         : "ToggleBtn"
                     }
                     onClick={() =>
                       setFormData({
                         ...formData,
-                        legalBarrier: "FAIL",
+                        legalBarrierResult: "FAIL",
                       })
                     }
                   >
@@ -539,21 +567,34 @@ function EmployeRequestSave() {
               </div>
 
               {/* Medical Limitations */}
+              {/* Medical Limitations */}
               <div className="BarrierRow">
                 <label>Medical Limitations *</label>
 
+                {/* Candidate Answer */}
+                <span
+                  className={
+                    formData.medicalLimitationsCandidateForm === "Yes"
+                      ? "CandidateAnswerYes"
+                      : "CandidateAnswerNo"
+                  }
+                >
+                  {formData.medicalLimitationsCandidateForm}
+                </span>
+
+                {/* HR Decision */}
                 <div className="ToggleGroup">
                   <button
                     type="button"
                     className={
-                      formData.medicalLimitations === "PASS"
+                      formData.medicalLimitationsResult === "PASS"
                         ? "ToggleActive"
                         : "ToggleBtn"
                     }
                     onClick={() =>
                       setFormData({
                         ...formData,
-                        medicalLimitations: "PASS",
+                        medicalLimitationsResult: "PASS",
                       })
                     }
                   >
@@ -563,14 +604,14 @@ function EmployeRequestSave() {
                   <button
                     type="button"
                     className={
-                      formData.medicalLimitations === "FAIL"
+                      formData.medicalLimitationsResult === "FAIL"
                         ? "ToggleFail"
                         : "ToggleBtn"
                     }
                     onClick={() =>
                       setFormData({
                         ...formData,
-                        medicalLimitations: "FAIL",
+                        medicalLimitationsResult: "FAIL",
                       })
                     }
                   >
@@ -580,21 +621,34 @@ function EmployeRequestSave() {
               </div>
 
               {/* Work Rights */}
+              {/* Work Rights */}
               <div className="BarrierRow">
                 <label>Work Rights *</label>
 
+                {/* Candidate Answer */}
+                <span
+                  className={
+                    formData.workRightsCandidateForm === "Yes"
+                      ? "CandidateAnswerYes"
+                      : "CandidateAnswerNo"
+                  }
+                >
+                  {formData.workRightsCandidateForm}
+                </span>
+
+                {/* HR Decision */}
                 <div className="ToggleGroup">
                   <button
                     type="button"
                     className={
-                      formData.workRights === "PASS"
+                      formData.workRightsResult === "PASS"
                         ? "ToggleActive"
                         : "ToggleBtn"
                     }
                     onClick={() =>
                       setFormData({
                         ...formData,
-                        workRights: "PASS",
+                        workRightsResult: "PASS",
                       })
                     }
                   >
@@ -604,26 +658,20 @@ function EmployeRequestSave() {
                   <button
                     type="button"
                     className={
-                      formData.workRights === "FAIL"
+                      formData.workRightsResult === "FAIL"
                         ? "ToggleFail"
                         : "ToggleBtn"
                     }
                     onClick={() =>
                       setFormData({
                         ...formData,
-                        workRights: "FAIL",
+                        workRightsResult: "FAIL",
                       })
                     }
                   >
                     Reject
                   </button>
                 </div>
-
-                <input
-                  type="file"
-                  className="DocumentUpload"
-                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                />
               </div>
 
               <div className="SectionActions">
@@ -648,7 +696,18 @@ function EmployeRequestSave() {
                     onChange={handleChange}
                   />
 
-                  <input type="file" />
+                  {formData.securityLicenceDocument ? (
+                    <a
+                      href={formData.securityLicenceDocument}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="UploadedDocument"
+                    >
+                      View Document
+                    </a>
+                  ) : (
+                    <span className="NoDocument"></span>
+                  )}
 
                   <input
                     type="date"
@@ -707,7 +766,18 @@ function EmployeRequestSave() {
                     onChange={handleChange}
                   />
 
-                  <input type="file" />
+                  {formData.drivingLicenceDocument ? (
+                    <a
+                      href={formData.drivingLicenceDocument}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="UploadedDocument"
+                    >
+                      View Document
+                    </a>
+                  ) : (
+                    <span className="NoDocument"></span>
+                  )}
 
                   <input
                     type="date"
@@ -765,8 +835,18 @@ function EmployeRequestSave() {
                     value={formData.firstAid}
                     onChange={handleChange}
                   />
-
-                  <input type="file" />
+                  {formData.firstAidDocument ? (
+                    <a
+                      href={formData.firstAidDocument}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="UploadedDocument"
+                    >
+                      View Document
+                    </a>
+                  ) : (
+                    <span className="NoDocument"></span>
+                  )}
 
                   <input
                     type="date"
@@ -824,8 +904,18 @@ function EmployeRequestSave() {
                     value={formData.cpr}
                     onChange={handleChange}
                   />
-
-                  <input type="file" />
+                  {formData.cprDocument ? (
+                    <a
+                      href={formData.cprDocument}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="UploadedDocument"
+                    >
+                      View Document
+                    </a>
+                  ) : (
+                    <span className="NoDocument"></span>
+                  )}
 
                   <input
                     type="date"
@@ -884,8 +974,18 @@ function EmployeRequestSave() {
                     onChange={handleChange}
                   />
 
-                  <input type="file" />
-
+                  {formData.workingWithChildrenDocument ? (
+                    <a
+                      href={formData.workingWithChildrenDocument}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="UploadedDocument"
+                    >
+                      View Document
+                    </a>
+                  ) : (
+                    <span className="NoDocument"></span>
+                  )}
                   <input
                     type="date"
                     name="workingWithChildrenExpiry"
@@ -943,7 +1043,18 @@ function EmployeRequestSave() {
                     onChange={handleChange}
                   />
 
-                  <input type="file" />
+                  {formData.trafficManagementDocument ? (
+                    <a
+                      href={formData.trafficManagementDocument}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="UploadedDocument"
+                    >
+                      View Document
+                    </a>
+                  ) : (
+                    <span className="NoDocument"></span>
+                  )}
 
                   <input
                     type="date"
@@ -1002,7 +1113,18 @@ function EmployeRequestSave() {
                     onChange={handleChange}
                   />
 
-                  <input type="file" />
+                  {formData.whiteCardDocument ? (
+                    <a
+                      href={formData.whiteCardDocument}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="UploadedDocument"
+                    >
+                      View Document
+                    </a>
+                  ) : (
+                    <span className="NoDocument"></span>
+                  )}
 
                   <input
                     type="date"
@@ -1061,7 +1183,18 @@ function EmployeRequestSave() {
                     onChange={handleChange}
                   />
 
-                  <input type="file" />
+                  {formData.yellowCardDocument ? (
+                    <a
+                      href={formData.yellowCardDocument}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="UploadedDocument"
+                    >
+                      View Document
+                    </a>
+                  ) : (
+                    <span className="NoDocument"></span>
+                  )}
 
                   <input
                     type="date"

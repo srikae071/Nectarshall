@@ -33,46 +33,48 @@ const menuData = [
         // icon: "📁",
         children: [
           {
-            label: "Onbording Compilence",
+            label: "Client OnBoarding",
             path: "/Client/onboarding-compliance",
-            icon: "📄",
           },
           {
-            label: "Employe",
-            children: [
-              {
-                label: "All",
-                path: "/onboarding/resonancerequirement/all",
-              },
-              {
-                label: "Create New",
-                path: "/onboarding/resonancerequirement/createnew",
-              },
-              {
-                label: "Resolve",
-                path: "/onboardingresolved",
-              },
-              {
-                label: "Employe Request",
-                path: "/onboarding/employerequest",
-              },
-              {
-                label: "Pre-Joining Compilence",
-                path: "/onboarding/prejoining",
-              },
-              {
-                label: "Interview",
-                path: "/onboarding/Interview",
-              },
-              {
-                label: "Offer Letter",
-                path: "/onboarding/Offerletter",
-              },
-            ],
+            label: "All",
+            path: "/client-complience",
           },
         ],
       },
-
+      {
+        label: "Employe",
+        children: [
+          {
+            label: "All",
+            path: "/onboarding/resonancerequirement/all",
+          },
+          {
+            label: "Create New",
+            path: "/onboarding/resonancerequirement/createnew",
+          },
+          {
+            label: "Resolve",
+            path: "/onboardingresolved",
+          },
+          {
+            label: "Employe Request",
+            path: "/onboarding/employerequest",
+          },
+          {
+            label: "Pre-Joining Compilence",
+            path: "/onboarding/prejoining",
+          },
+          {
+            label: "Interview",
+            path: "/onboarding/Interview",
+          },
+          {
+            label: "Offer Letter",
+            path: "/onboarding/Offerletter",
+          },
+        ],
+      },
       {
         label: "Supplier",
         // icon: "📁",

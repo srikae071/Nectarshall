@@ -119,40 +119,17 @@ function Candidateform2() {
             <div className="OfferField">
               <label>Offer Status *</label>
 
-              <div className="ToggleGroup">
-                <button
-                  type="button"
-                  className={
-                    formData.offerStatus === "Accept"
-                      ? "ToggleActive"
-                      : "ToggleBtn"
-                  }
-                  onClick={() =>
-                    setFormData({
-                      ...formData,
-                      offerStatus: "Accept",
-                    })
-                  }
-                >
-                  Accept
-                </button>
-                <button
-                  type="button"
-                  className={
-                    formData.offerStatus === "Reject"
-                      ? "ToggleFail"
-                      : "ToggleBtn"
-                  }
-                  onClick={() =>
-                    setFormData({
-                      ...formData,
-                      offerStatus: "Reject",
-                    })
-                  }
-                >
-                  Reject
-                </button>
-              </div>
+              {formData.offerStatus === "Accept" && (
+                <span className="ToggleActive">Accept</span>
+              )}
+
+              {formData.offerStatus === "Reject" && (
+                <span className="ToggleFail">Reject</span>
+              )}
+
+              {!formData.offerStatus && (
+                <span className="ToggleBtn">Pending</span>
+              )}
             </div>
 
             <div className="OfferField">

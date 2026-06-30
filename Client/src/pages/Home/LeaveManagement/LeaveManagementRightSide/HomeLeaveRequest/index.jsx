@@ -1,7 +1,7 @@
 // import { useState } from "react";
 import axios from "axios";
 import LeaveManagementLeftSide from "./../../LeaveManagementLeftSide";
-
+import { useNavigate } from "react-router-dom";
 import "./index.css";
 import { useState } from "react";
 
@@ -14,28 +14,7 @@ function HomeLeaveRequest() {
   const [leaveType, setLeaveType] = useState("");
   const [requester, setRequester] = useState("");
   const [requesterFor, setRequesterFor] = useState("");
-  const handleSave = async () => {
-    try {
-      await axios.post(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves/create",
-        {
-          requester,
-          requesterFor,
-          startDate,
-          leaveType,
-          endDate,
-          totalLeaves: calculateLeaves(),
-          halfDay,
-          description,
-        },
-      );
-
-      alert("Leave Request Saved Successfully");
-    } catch (error) {
-      console.log(error);
-      alert("Error Saving Leave Request");
-    }
-  };
+  const navigate = useNavigate();
   const calculateLeaves = () => {
     if (!startDate || !endDate) return "";
 
@@ -47,6 +26,66 @@ function HomeLeaveRequest() {
     const totalDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
     return halfDay ? totalDays / 2 : totalDays;
+  };
+  const handleSave = async () => {
+    try {
+      const leaveAllocation = {
+        "Casual Leave": 5,
+        "Sick Leave": 10,
+        "Paid Leave": 15,
+        "Maternity Leave": 20,
+        "Paternity Leave": 12,
+      };
+
+      const allocated = leaveAllocation[leaveType] || 0;
+
+      const response = await axios.get(
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves",
+      );
+
+      const approvedLeaves = response.data.filter(
+        (item) => item.leaveType === leaveType && item.status === "Approved",
+      );
+
+      const consumed = approvedLeaves.reduce(
+        (sum, item) => sum + Number(item.totalLeaves || 0),
+        0,
+      );
+
+      const balance = allocated - consumed;
+      const requestedLeaves = Number(calculateLeaves());
+
+      if (requestedLeaves > balance) {
+        alert(
+          "Sorry! Your leave balance has been exhausted. Please apply for another leave type if available.",
+        );
+
+        navigate("/");
+
+        return;
+      }
+
+      await axios.post(
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves/create",
+        {
+          requester,
+          requesterFor,
+          startDate,
+          leaveType,
+          endDate,
+          totalLeaves: requestedLeaves,
+          halfDay,
+          description,
+        },
+      );
+
+      alert("Leave Request Saved Successfully");
+
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+      alert("Error Saving Leave Request");
+    }
   };
   return (
     <LeaveManagementLeftSide>
