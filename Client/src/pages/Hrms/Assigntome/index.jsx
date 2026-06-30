@@ -1,18 +1,30 @@
 import HrmsLeftLayout from "../Hrmsleftlayout";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
 import "./index.css";
 
-const data = [
-  { id: 102, name: "Sumit Jain", dept: "IT", category: "Tax", status: "Open" },
-  {
-    id: 103,
-    name: "Saumya Singh",
-    dept: "Operations",
-    category: "Compensation",
-    status: "Resolved",
-  },
-];
-
 function Assigntome() {
+  const [data, setData] = useState([]);
+  const navigate = useNavigate();
+  useEffect(() => {
+    fetchAssingtomecases();
+  }, []);
+
+  const fetchAssingtomecases = async () => {
+    try {
+      const response = await axios.get(
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/hrrequests",
+      );
+
+      const openCases = response.data.filter((item) => item.status === "Open");
+
+      setData(openCases);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <HrmsLeftLayout>
       <div className="Openhome">
@@ -22,22 +34,30 @@ function Assigntome() {
           <table className="opentable">
             <thead className="opentablerow">
               <tr className="opentablerow">
-                <th className="opentablerow">Case ID</th>
-                <th className="opentablerow">Requester Name</th>
-                <th className="opentablerow">Department</th>
-                <th className="opentablerow">Category</th>
-                <th className="opentablerow">Status</th>
+                <th>Incident ID</th>
+                <th>Requester</th>
+                <th>Requester For</th>
+                <th>Category</th>
+                <th>Sub Category</th>
+                <th>Status</th>
               </tr>
             </thead>
 
             <tbody className="opentablerow">
               {data.map((item) => (
-                <tr className="opentablerow" key={item.id}>
-                  <td className="opentablerow">{item.id}</td>
-                  <td className="opentablerow">{item.name}</td>
-                  <td className="opentablerow">{item.dept}</td>
-                  <td className="opentablerow">{item.category}</td>
-                  <td className="opentablerow">{item.status}</td>
+                <tr
+                  className="opentablerow"
+                  key={item.id}
+                  key={item._id}
+                  style={{ cursor: "pointer" }}
+                  onClick={() => navigate(`/hrms/HRsaves/${item._id}`)}
+                >
+                  <td>{item.incidentNumber || "N/A"}</td>
+                  <td>{item.requester || "N/A"}</td>
+                  <td>{item.requesterFor || "N/A"}</td>
+                  <td>{item.category || "N/A"}</td>
+                  <td>{item.subCategory || "N/A"}</td>
+                  <td>{item.status || "Open"}</td>
                 </tr>
               ))}
             </tbody>

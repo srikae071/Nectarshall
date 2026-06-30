@@ -1,11 +1,12 @@
 import HrmsLeftLayout from "../Hrmsleftlayout";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import "./index.css";
 
 function Resolved() {
   const [data, setData] = useState([]);
-
+  const navigate = useNavigate();
   useEffect(() => {
     fetchOpenCases();
   }, []);
@@ -35,26 +36,34 @@ function Resolved() {
           <table className="opentable">
             <thead className="opentablerow">
               <tr className="opentablerow">
-                <th className="opentablerow">Incident ID</th>
+                {/* <th className="opentablerow">Incident ID</th>
                 <th className="opentablerow">Requester</th>
                 <th className="opentablerow">Department</th>
                 <th className="opentablerow">Category</th>
-                <th className="opentablerow">Status</th>
+                <th className="opentablerow">Status</th> */}
+                <th>Incident ID</th>
+                <th>Requester</th>
+                <th>Requester For</th>
+                <th>Category</th>
+                <th>Sub Category</th>
+                <th>Status</th>
               </tr>
             </thead>
 
             <tbody className="opentablerow">
               {data.map((item) => (
-                <tr className="opentablerow" key={item._id}>
-                  <td className="opentablerow">{item.incidentNumber}</td>
-
-                  <td className="opentablerow">{item.requester}</td>
-
-                  <td className="opentablerow">IT</td>
-
-                  <td className="opentablerow">{item.category}</td>
-
-                  <td className="opentablerow">{item.status}</td>
+                <tr
+                  className="opentablerow"
+                  key={item._id}
+                  style={{ cursor: "pointer" }}
+                  onClick={() => navigate(`/hrms/HRsaves/${item._id}`)}
+                >
+                  <td>{item.incidentNumber || "N/A"}</td>
+                  <td>{item.requester || "N/A"}</td>
+                  <td>{item.requesterFor || "N/A"}</td>
+                  <td>{item.category || "N/A"}</td>
+                  <td>{item.subCategory || "N/A"}</td>
+                  <td>{item.status || "Open"}</td>
                 </tr>
               ))}
             </tbody>

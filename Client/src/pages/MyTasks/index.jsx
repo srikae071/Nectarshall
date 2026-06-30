@@ -125,7 +125,8 @@ function ApprovalTable() {
                 <thead>
                   <tr className="MyTaskTableRow">
                     <th className="MyTaskTableHeader">Record No</th>
-                    <th className="MyTaskTableHeader">Employee</th>
+                    <th className="MyTaskTableHeader">Requester</th>
+                    <th className="MyTaskTableHeader">Requester For</th>
                     <th className="MyTaskTableHeader">Leave Type</th>
                     <th className="MyTaskTableHeader">Start Date</th>
                     <th className="MyTaskTableHeader">End Date</th>
@@ -141,7 +142,8 @@ function ApprovalTable() {
                   {data.map((item) => (
                     <tr className="MyTaskTableRow" key={item._id}>
                       <td className="MyTaskTableCell">{item.leaveNumber}</td>
-                      <td className="MyTaskTableCell">{item.employeeName}</td>
+                      <td className="MyTaskTableCell">{item.requester}</td>
+                      <td className="MyTaskTableCell">{item.requesterFor}</td>
                       <td className="MyTaskTableCell">{item.leaveType}</td>
                       <td className="MyTaskTableCell">{item.startDate}</td>
                       <td className="MyTaskTableCell">{item.endDate}</td>
@@ -152,7 +154,7 @@ function ApprovalTable() {
                         {item.halfDay ? "Yes" : "No"}
                       </td>
 
-                      <td>
+                      <td className="MyTaskTableCell MyTaskCenter">
                         <button
                           className="approve-btn"
                           onClick={() => approveLeave(item._id)}
@@ -161,10 +163,91 @@ function ApprovalTable() {
                         </button>
                       </td>
 
-                      <td>
+                      <td className="MyTaskTableCell MyTaskCenter">
                         <button
                           className="delete-btn"
                           onClick={() => rejectLeave(item._id)}
+                        >
+                          Delete
+                        </button>
+                      </td>
+
+                      <td className="MyTaskTableCell MyTaskCenter">
+                        <input
+                          type="text"
+                          placeholder="Comment..."
+                          className="comment-input"
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+        {offboardingData.length > 0 && (
+          <>
+            <h2 className="approval-title">
+              Offboarding Employee Approval List
+            </h2>
+
+            <div className="table-wrapper">
+              <table className="MyTaskTable">
+                <thead>
+                  <tr className="MyTaskTableRow">
+                    <th className="MyTaskTableHeader">Case ID</th>
+                    <th className="MyTaskTableHeader">Requester</th>
+                    <th className="MyTaskTableHeader">Resignation Date</th>
+                    <th className="MyTaskTableHeader">Last Working Day</th>
+                    <th className="MyTaskTableHeader">Resignation Reason</th>
+                    <th className="MyTaskTableHeader">Confirm Date</th>
+                    <th className="MyTaskTableHeader">Approve</th>
+                    <th className="MyTaskTableHeader">Delete</th>
+                    <th className="MyTaskTableHeader">Comment</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {offboardingData.map((item) => (
+                    <tr className="MyTaskTableRow" key={item._id}>
+                      <td className="MyTaskTableCell">{item.caseId}</td>
+
+                      <td className="MyTaskTableCell">{item.requesterName}</td>
+
+                      <td className="MyTaskTableCell">
+                        {item.resignationDate
+                          ? new Date(item.resignationDate).toLocaleDateString()
+                          : ""}
+                      </td>
+
+                      <td className="MyTaskTableCell">
+                        {item.lastWorkingDay
+                          ? new Date(item.lastWorkingDay).toLocaleDateString()
+                          : ""}
+                      </td>
+
+                      <td className="MyTaskTableCell">
+                        {item.resignationReason}
+                      </td>
+
+                      <td className="MyTaskTableCell">
+                        <input type="date" className="confirm-date" />
+                      </td>
+
+                      <td className="MyTaskTableCell MyTaskCenter">
+                        <button
+                          className="approve-btn"
+                          onClick={() => approveOffboarding(item._id)}
+                        >
+                          Approve
+                        </button>
+                      </td>
+
+                      <td className="MyTaskTableCell MyTaskCenter">
+                        <button
+                          className="delete-btn"
+                          onClick={() => deleteOffboarding(item._id)}
                         >
                           Delete
                         </button>
@@ -183,86 +266,6 @@ function ApprovalTable() {
               </table>
             </div>
           </>
-        )}
-        {offboardingData.length > 0 && (
-          <div className="approval-section">
-            <h2 className="approval-title">
-              Offboarding Employee Approval List
-            </h2>
-
-            <div className="table-wrapper">
-              <table className="MyTaskTable">
-                <thead>
-                  <tr>
-                    <th>Case ID</th>
-                    <th>Requester</th>
-                    <th>Date of Resignation</th>
-                    <th>Last Working Day</th>
-                    <th>Resignation Reason</th>
-                    <th>Confirm Date</th>
-                    <th>Approve</th>
-                    <th>Delete</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {offboardingData.length > 0 ? (
-                    offboardingData.map((item) => (
-                      <tr key={item._id}>
-                        <td>{item.caseId}</td>
-
-                        <td>{item.requesterName}</td>
-
-                        <td>
-                          {item.resignationDate
-                            ? new Date(
-                                item.resignationDate,
-                              ).toLocaleDateString()
-                            : ""}
-                        </td>
-
-                        <td>
-                          {item.lastWorkingDay
-                            ? new Date(item.lastWorkingDay).toLocaleDateString()
-                            : ""}
-                        </td>
-
-                        <td>{item.resignationReason}</td>
-
-                        <td>
-                          <input type="date" className="confirm-date" />
-                        </td>
-
-                        <td>
-                          <button
-                            className="approve-btn"
-                            onClick={() => approveOffboarding(item._id)}
-                          >
-                            Approve
-                          </button>
-                        </td>
-
-                        <td>
-                          <button
-                            className="delete-btn"
-                            onClick={() => deleteOffboarding(item._id)}
-                          >
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="7" className="NoDataCell">
-                        No Offboarding Requests
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
         )}
       </div>
     </>

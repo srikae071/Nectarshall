@@ -1,136 +1,58 @@
-/* PAGE WRAPPER (for footer control) */
-.LeaveRequestPage {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-/* MAIN CONTAINER */
-.LeaveRequestContainer {
-  flex: 1;
-  padding: 10px 20px;
-  background: #e9e5e5;
-}
-
-/* TITLE */
-.LeaveRequestTitle {
-  font-size: 18px;
-  margin-bottom: 15px;
-}
-
-/* ROW (3 FIELDS) */
 .LeaveRequestRow {
   display: flex;
   gap: 30px;
-  margin-bottom: 12px;
+  margin-bottom: 18px;
 }
 
-/* FIELD */
 .LeaveRequestField {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex: 1;
 }
 
-/* LABEL */
 .LeaveRequestField label {
-  min-width: 15px;
-  font-size: 13px;
+  width: 105px;
+  font-size: 14px;
+  margin-right: 10px;
 }
 
-/* INPUT */
 .LeaveRequestInput {
-  flex: 1;
-  padding: 5px;
+  width: 145px;
+  height: 32px;
+  padding: 5px 8px;
   border: 1px solid #000;
+  box-sizing: border-box;
 }
 
-/* TEXTAREA */
-.LeaveRequestFull {
-  display: flex;
-  flex-direction: column;
-  margin-top: 10px;
+.LeaveRequestSmallInput {
+  width: 90px;
+}
+
+.HalfDayField {
+  margin-left: 50px;
+}
+
+.LeaveRequestCheckbox {
+  width: 18px;
+  height: 18px;
+}
+
+.LeaveRequestDescription {
+  margin-top: 15px;
+}
+
+.LeaveRequestDescription label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .LeaveRequestTextarea {
   width: 100%;
-  height: 70px;
+  height: 90px;
   border: 1px solid #000;
-  /* padding: 6px; */
+  padding: 8px;
   resize: none;
-  margin-top: -6px;
-}
-
-/* HALF DAY */
-.LeaveRequestHalfDay {
-  justify-content: flex-start;
-  margin-left: 212px;
-}
-
-/* CHECKBOX */
-.LeaveRequestCheckbox {
-  width: 16px;
-  height: 16px;
-}
-
-/* ACTIONS */
-.LeaveRequestActions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 15px;
-}
-/* shrink only this field */
-.LeaveRequestSmallField {
-  flex: 0 0 180px; /* fixed smaller width */
-}
-
-/* optional: make input itself tighter */
-.LeaveRequestSmallField .LeaveRequestInput {
-  max-width: 127px;
-  padding: 4px;
-}
-/* BUTTONS */
-.LeaveRequestSave,
-.LeaveRequestCancel {
-  padding: 6px 14px;
-  border: 1px solid #000;
-  background: #fff;
-  cursor: pointer;
-}
-
-/* FOOTER (ALWAYS BOTTOM) */
-.LeaveRequestFooter {
-  text-align: center;
-  padding: 10px;
-  font-size: 12px;
-  border-top: 1px solid #ccc;
-}
-.leqreason {
-  margin-right: 1155px;
-  color: #000;
-}
-/* ---------------- */
-/* RESPONSIVE */
-/* ---------------- */
-
-@media (max-width: 900px) {
-  .LeaveRequestRow {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .LeaveRequestField {
-    width: 100%;
-  }
-
-  .LeaveRequestActions {
-    flex-direction: column;
-  }
-
-  .LeaveRequestSave,
-  .LeaveRequestCancel {
-    width: 100%;
-  }
+  box-sizing: border-box;
+  margin-top: 45px;
 }

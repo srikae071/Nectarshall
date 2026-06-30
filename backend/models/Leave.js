@@ -10,6 +10,8 @@ const LeaveSchema = new mongoose.Schema(
     totalLeaves: Number,
     halfDay: Boolean,
     description: String,
+    requester: String,
+    requesterFor: String,
 
     status: {
       type: String,

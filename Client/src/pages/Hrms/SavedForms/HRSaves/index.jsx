@@ -14,6 +14,7 @@ function HRSaves() {
     caseId: "",
     requesterName: "",
     category: "",
+    subCategory: "",
     urgency: "",
     shortDescription: "",
     description: "",
@@ -37,6 +38,7 @@ function HRSaves() {
           requesterName: response.data.requesterName || "",
           requesterFor: response.data.requesterFor || "",
           category: response.data.category || "",
+          subCategory: response.data.subCategory || "",
           urgency: response.data.urgency || "",
           shortDescription: response.data.shortDescription || "",
           description: response.data.description || "",
@@ -122,16 +124,52 @@ function HRSaves() {
           </div>
 
           <div className="CreateField">
-            <label>Sub Status</label>
-            <select name="subStatus">
-              <option value="">Select Sub Status</option>
+            <label>Category</label>
+            <select
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+            >
+              <option value="">Select</option>
+              <option value="Leave Request">Leave Request</option>
+              <option value="Payroll Query">Payroll Query</option>
+              <option value="Employee Relations">Employee Relations</option>
             </select>
           </div>
-
           <div className="CreateField">
-            <label>Category</label>
-            <select name="category">
-              <option>Payroll</option>
+            <label>Sub Category</label>
+            <select
+              name="subCategory"
+              value={formData.subCategory}
+              onChange={handleChange}
+            >
+              <option value="">Select</option>
+
+              {formData.category === "Leave Request" && (
+                <>
+                  <option value="Sick Leave">Sick Leave</option>
+                  <option value="Casual Leave">Casual Leave</option>
+                  <option value="Earned Leave">Earned Leave</option>
+                </>
+              )}
+
+              {formData.category === "Payroll Query" && (
+                <>
+                  <option value="Salary Issue">Salary Issue</option>
+                  <option value="Tax Query">Tax Query</option>
+                  <option value="Bonus Query">Bonus Query</option>
+                </>
+              )}
+
+              {formData.category === "Employee Relations" && (
+                <>
+                  <option value="Conflict Resolution">
+                    Conflict Resolution
+                  </option>
+                  <option value="Grievance">Grievance</option>
+                  <option value="Feedback">Feedback</option>
+                </>
+              )}
             </select>
           </div>
         </div>

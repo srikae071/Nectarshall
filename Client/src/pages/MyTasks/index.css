@@ -34,7 +34,7 @@ body {
   font-size: 13px;
   font-weight: 600;
   padding: 10px;
-  text-align: left;
+  text-align: center;
   border: 1px solid #cfcaca;
 }
 
@@ -143,6 +143,15 @@ body {
 .MyTaskTable {
   min-width: 1100px;
 }
+.MyTaskCenter {
+  text-align: center;
+}
+
+.MyTaskCenter .comment-input {
+  margin: 0 auto;
+  display: block;
+}
+
 @media (max-width: 768px) {
   .approval-container {
     padding: 10px;
