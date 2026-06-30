@@ -79,6 +79,7 @@ import OffBoardingSaves from "./pages/Hrms/Offbording/OffBoardingSaves/index.jsx
 import TaskSaves from "./pages/NavItems/IT/ItRightSide/ItNavMain/TasksSaves/index.jsx";
 import HrReqAll from "./pages/NavItems/IT/ItRightSide/HrRequests/HrReqAll";
 import OnBoardingCompTab from "./pages/Hrms/OnBoarding/OnBoardingClinet/OnBoardingCompliance/OnBoardngCompTab";
+import ReqClosed from "./pages/NavItems/IT/ItRightSide/HrRequests/ReqClosed";
 function App() {
   return (
     <Routes>
@@ -202,6 +203,7 @@ function App() {
       <Route path="/tasksaves/:id" element={<TaskSaves />} />
       <Route path="/hrreq-all" element={<HrReqAll />} />
       <Route path="/client-complience" element={<OnBoardingCompTab />} />
+      <Route path="/Requests/closed-tasks" element={<ReqClosed />} />
     </Routes>
   );
 }

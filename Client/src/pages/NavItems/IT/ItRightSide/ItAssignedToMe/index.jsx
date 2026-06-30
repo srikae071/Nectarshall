@@ -12,7 +12,7 @@ const data = [
     status: "Resolved",
   },
 ];
-const navigate = useNavigate();
+
 function ItAssignedToMe() {
   return (
     <ItLeftSide>

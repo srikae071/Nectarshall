@@ -1,9 +1,11 @@
 import ItLeftSide from "../../ItLeftSide";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "./index.css";
 
 function ItClosed() {
+  const navigate = useNavigate();
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -44,19 +46,27 @@ function ItClosed() {
             </thead>
 
             <tbody className="opentablerow">
-              {data.map((item) => (
-                <tr className="opentablerow" key={item._id}>
-                  <td className="opentablerow">{item.incidentNumber}</td>
-
-                  <td className="opentablerow">{item.requester}</td>
-
-                  <td className="opentablerow">IT</td>
-
-                  <td className="opentablerow">{item.category}</td>
-
-                  <td className="opentablerow">{item.status}</td>
+              {data.length > 0 ? (
+                data.map((item) => (
+                  <tr
+                    key={item._id}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => navigate(`/hrms/itsaves/${item._id}`)}
+                  >
+                    <td>{item.incidentNumber}</td>
+                    <td>{item.requester}</td>
+                    <td>{item.department}</td>
+                    <td>{item.category}</td>
+                    <td>{item.status}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5" style={{ textAlign: "center" }}>
+                    No Records Found
+                  </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
