@@ -145,6 +145,7 @@ function App() {
         path="/onboarding/resonancerequirement/all"
         element={<OnBoardingResonanceRequirementsAll />}
       />
+      {/* ll */}
       <Route
         path="/onboarding/resonancerequirement/createnew"
         element={<OnBoardingResonanceRequirementsCreateNew />}
