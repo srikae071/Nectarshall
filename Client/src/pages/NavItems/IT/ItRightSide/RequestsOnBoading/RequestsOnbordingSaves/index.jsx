@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import ItLeftSide from "../../../../IT/ItLeftSide   ";
+import ItLeftSide from "../../../ItLeftSide";
 import "./index.css";
 
 function RequestOnboardingSaves() {

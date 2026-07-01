@@ -45,7 +45,7 @@ const menuData = [
           { label: "Create New", path: "/Requests/open-tasks" },
           { label: "Open", path: "/offboarding/open" },
           { label: "Resolved", path: "/offboarding/resolved" },
-          { label: "Closed", path: "/offboarding/closed" },
+          { label: "Closed", path: "/Requests/closed-tasks" },
           {
             label: "Work In Progress",
             path: "/offboarding/work-in-progress",
