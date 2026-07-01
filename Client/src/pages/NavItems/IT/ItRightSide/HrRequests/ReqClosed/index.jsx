@@ -63,7 +63,7 @@ function ReqClosed() {
                     <td>{item.resignationDate}</td>
                     <td>{item.lastWorkingDay}</td>
                     <td>{item.resignationReason}</td>
-                    <td>{item.ItTAskStatus || "Open"}</td>
+                    <td>{item.taskStatus}</td>
                   </tr>
                 ))
               ) : (
