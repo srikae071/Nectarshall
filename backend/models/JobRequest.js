@@ -9,7 +9,7 @@ const JobRequestSchema = new mongoose.Schema(
     },
 
     requesterName: String,
-    department: String,
+
     category: String,
 
     status: {
@@ -113,7 +113,7 @@ const JobRequestSchema = new mongoose.Schema(
     resignationDate: Date,
     lastWorkingDay: Date,
     resignationReason: String,
-    taskId: String,
+
     taskType: String,
     taskStatus: {
       type: String,
@@ -123,6 +123,32 @@ const JobRequestSchema = new mongoose.Schema(
     laptopRecovered: String,
     laptopWorkingCondition: String,
     ItTAskStatus: String,
+
+    onboardingTaskId: {
+      type: String,
+      default: "",
+    },
+
+    onboardingStatus: {
+      type: String,
+      default: "Pending",
+    },
+
+    azureAccountCreated: {
+      type: String,
+      default: false,
+    },
+
+    laptopIssued: {
+      type: String,
+      default: false,
+    },
+
+    onboardingCompleted: {
+      type: String,
+      default: false,
+    },
+    requestonbordingstatus: String,
   },
 
   {

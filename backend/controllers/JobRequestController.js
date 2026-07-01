@@ -86,13 +86,36 @@ exports.getJobRequestByCaseId = async (req, res) => {
 
 exports.updateJobRequest = async (req, res) => {
   try {
-    const updated = await JobRequest.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true },
-    );
+    const request = await JobRequest.findById(req.params.id);
 
-    res.json(updated);
+    if (!request) {
+      return res.status(404).json({
+        message: "Record not found",
+      });
+    }
+
+    // Update all fields sent from frontend
+    Object.assign(request, req.body);
+
+    // Generate Onboarding Task ID only when status becomes Resolved
+    if (request.status === "Resolved" && !request.onboardingTaskId) {
+      const lastTask = await JobRequest.findOne({
+        onboardingTaskId: { $regex: "^ONBTSK" },
+      }).sort({ createdAt: -1 });
+
+      let nextNumber = 1;
+
+      if (lastTask && lastTask.onboardingTaskId) {
+        nextNumber =
+          parseInt(lastTask.onboardingTaskId.replace("ONBTSK", "")) + 1;
+      }
+
+      request.onboardingTaskId = `ONBTSK${String(nextNumber).padStart(3, "0")}`;
+    }
+
+    await request.save();
+
+    res.json(request);
   } catch (error) {
     res.status(500).json({
       message: error.message,

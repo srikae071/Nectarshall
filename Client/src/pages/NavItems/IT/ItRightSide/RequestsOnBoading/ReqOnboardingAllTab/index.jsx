@@ -1,10 +1,10 @@
-import HrmsLeftLayout from "../../../Hrmsleftlayout";
+import ItLeftSide from "../../../ItLeftSide";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./index.css";
 
-function OnBoardingResolvedTab() {
+function ReqOnboardingAllTab() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -35,7 +35,7 @@ function OnBoardingResolvedTab() {
     navigate(`/OnBoardingResolvedSaves/${item._id}`);
   };
   return (
-    <HrmsLeftLayout>
+    <ItLeftSide>
       <div className="Openhome">
         <div>
           <h3 className="openheading">Resolved </h3>
@@ -43,6 +43,8 @@ function OnBoardingResolvedTab() {
           <table className="opentable">
             <thead className="opentablerow">
               <tr className="opentablerow">
+                <th className="opentablerow">Task ID</th>
+
                 <th className="opentablerow">Case ID</th>
                 <th className="opentablerow">Requester Name</th>
                 <th className="opentablerow">Department</th>
@@ -66,6 +68,7 @@ function OnBoardingResolvedTab() {
                     onClick={() => handleRowClick(item)}
                     style={{ cursor: "pointer" }}
                   >
+                    <td className="opentablerow">{item.taskId}</td>
                     <td className="opentablerow">{item.caseId}</td>
                     <td className="opentablerow">{item.requesterName}</td>
                     <td className="opentablerow">{item.department}</td>
@@ -82,8 +85,8 @@ function OnBoardingResolvedTab() {
           © Copyright 2023 Enhance Services - All Rights Reserved.
         </div> */}
       </div>
-    </HrmsLeftLayout>
+    </ItLeftSide>
   );
 }
 
-export default OnBoardingResolvedTab;
+export default ReqOnboardingAllTab;

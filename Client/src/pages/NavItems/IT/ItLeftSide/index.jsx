@@ -9,33 +9,50 @@ const menuData = [
   {
     title: "Incidents",
     items: [
-      {
-        label: "All",
-        path: "/it-all",
-      },
+      { label: "All", path: "/it-all" },
       { label: "Create New", path: "/it/create-new" },
       { label: "Open", path: "/it/open" },
       { label: "Resolved", path: "/it/resolved" },
-      // { label: "Assigned to me", path: "/it/assigned-to-me" },
       { label: "Closed", path: "/it/closed" },
       { label: "Work In Progress", path: "/it/work-in-progress" },
-      { label: "Pending", path: "/it/pending  " },
+      { label: "Pending", path: "/it/pending" },
     ],
   },
+
   {
     title: "Requests",
-    items: [
+    children: [
       {
-        label: "All",
-        path: "/hrreq-all",
+        title: "Onboarding Request",
+        items: [
+          { label: "All", path: "/requests-onboarding-all" },
+          { label: "Create New", path: "/onboarding/create-new" },
+          { label: "Open", path: "/onboarding/open" },
+          { label: "Resolved", path: "/onboarding/resolved" },
+          { label: "Closed", path: "/onboarding/closed" },
+          {
+            label: "Work In Progress",
+            path: "/onboarding/work-in-progress",
+          },
+          { label: "Pending", path: "/onboarding/pending" },
+        ],
       },
-      { label: "Create New", path: "/it/create-new" },
-      { label: "Open", path: "/Requests/open-tasks" },
-      { label: "Resolved", path: "/it/resolved" },
-      // { label: "Assigned to me", path: "/it/assigned-to-me" },
-      { label: "Closed", path: "/Requests/closed-tasks" },
-      { label: "Work In Progress", path: "/it/work-in-progress" },
-      { label: "Pending", path: "/it/pending  " },
+
+      {
+        title: "Offboarding Request",
+        items: [
+          { label: "All", path: "/it-all" },
+          { label: "Create New", path: "/Requests/open-tasks" },
+          { label: "Open", path: "/offboarding/open" },
+          { label: "Resolved", path: "/offboarding/resolved" },
+          { label: "Closed", path: "/offboarding/closed" },
+          {
+            label: "Work In Progress",
+            path: "/offboarding/work-in-progress",
+          },
+          { label: "Pending", path: "/offboarding/pending" },
+        ],
+      },
     ],
   },
 ];
@@ -177,14 +194,28 @@ function ItLeftSide({ children }) {
               </div>
               {openMenus[index] && (
                 <div className="submenu">
-                  {menu.items.map((item, i) => (
-                    <MenuItem
-                      key={i}
-                      item={item}
-                      expandedMenus={expandedMenus}
-                      setExpandedMenus={setExpandedMenus}
-                    />
-                  ))}
+                  {menu.items &&
+                    menu.items.map((item, i) => (
+                      <MenuItem
+                        key={i}
+                        item={item}
+                        expandedMenus={expandedMenus}
+                        setExpandedMenus={setExpandedMenus}
+                      />
+                    ))}
+
+                  {menu.children &&
+                    menu.children.map((child, i) => (
+                      <MenuItem
+                        key={i}
+                        item={{
+                          label: child.title,
+                          children: child.items,
+                        }}
+                        expandedMenus={expandedMenus}
+                        setExpandedMenus={setExpandedMenus}
+                      />
+                    ))}
                 </div>
               )}
             </div>

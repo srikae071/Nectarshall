@@ -39,7 +39,7 @@ function HRSavesCases() {
               <tr>
                 <th>Incident ID</th>
                 <th>Requester</th>
-                <th>Requester For</th>
+                <th>Requested For</th>
                 <th>Category</th>
                 <th>Sub Category</th>
                 <th>Status</th>

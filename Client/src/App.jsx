@@ -82,6 +82,9 @@ import OnBoardingCompTab from "./pages/Hrms/OnBoarding/OnBoardingClinet/OnBoardi
 import ReqClosed from "./pages/NavItems/IT/ItRightSide/HrRequests/ReqClosed";
 import OffBoardingClosed from "./pages/Hrms/Offbording/OffBoardingClosed/index.jsx";
 import ReqOpen from "./pages/NavItems/IT/ItRightSide/HrRequests/ReqOpen/index.jsx";
+import LeaveManagementAll from "./pages/Hrms/LeaveManagementAll/index.jsx";
+import ReqOnboardingAllTab from "./pages/NavItems/IT/ItRightSide/RequestsOnBoading/ReqOnboardingAllTab/index.jsx";
+import RequestOnboardingSaves from "./pages/NavItems/IT/ItRightSide/RequestsOnBoading/RequestsOnbordingSaves/index.jsx";
 function App() {
   return (
     <Routes>
@@ -209,6 +212,15 @@ function App() {
       <Route path="/Requests/closed-tasks" element={<ReqClosed />} />
       <Route path="/offboarding-closed" element={<OffBoardingClosed />} />
       <Route path="/Requests/open-tasks" element={<ReqOpen />} />
+      <Route path="/leave-management-all" element={<LeaveManagementAll />} />
+      <Route
+        path="/requests-onboarding-all"
+        element={<ReqOnboardingAllTab />}
+      />
+      <Route
+        path="requests-onboarding-saves/:id"
+        element={<RequestOnboardingSaves />}
+      />
     </Routes>
   );
 }

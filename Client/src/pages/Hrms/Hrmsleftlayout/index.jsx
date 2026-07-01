@@ -18,6 +18,7 @@ const menuData = [
   {
     title: "Leave Management",
     items: [
+      { label: "All", path: "/leave-management-all" },
       { label: "Leave Request", path: "/leave-request" },
       { label: "Leave Balance", path: "/leave-balance" },
       { label: "Leave Calendar", path: "/leave-calendar" },
