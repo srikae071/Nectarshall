@@ -133,20 +133,19 @@ const JobRequestSchema = new mongoose.Schema(
       type: String,
       default: "Pending",
     },
+    onboardingCompleted: {
+      type: Boolean,
+      default: null,
+    },
 
     azureAccountCreated: {
-      type: String,
-      default: false,
+      type: Boolean,
+      default: null,
     },
 
     laptopIssued: {
-      type: String,
-      default: false,
-    },
-
-    onboardingCompleted: {
-      type: String,
-      default: false,
+      type: Boolean,
+      default: null,
     },
     requestonbordingstatus: String,
   },

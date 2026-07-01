@@ -37,9 +37,26 @@ function RequestOnboardingSaves() {
         ...response.data,
         onboardingStatus: response.data.onboardingStatus || "Open",
         onboardingSubStatus: response.data.onboardingSubStatus || "",
-        onboardingCompleted: response.data.onboardingCompleted ?? null,
-        azureAccountCreated: response.data.azureAccountCreated ?? null,
-        laptopIssued: response.data.laptopIssued ?? null,
+        onboardingCompleted:
+          response.data.onboardingCompleted === "true"
+            ? true
+            : response.data.onboardingCompleted === "false"
+              ? false
+              : null,
+
+        azureAccountCreated:
+          response.data.azureAccountCreated === "true"
+            ? true
+            : response.data.azureAccountCreated === "false"
+              ? false
+              : null,
+
+        laptopIssued:
+          response.data.laptopIssued === "true"
+            ? true
+            : response.data.laptopIssued === "false"
+              ? false
+              : null,
       });
     } catch (err) {
       console.log(err);
