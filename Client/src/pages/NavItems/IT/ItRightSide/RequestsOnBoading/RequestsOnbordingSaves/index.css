@@ -1,0 +1,172 @@
+.ROSContainer {
+  background: #dbd3d3;
+  padding: 28px;
+  min-height: 100vh;
+}
+
+.ROSTitle {
+  font-size: 30px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 30px;
+}
+
+.ROSRow {
+  display: flex;
+  gap: 35px;
+  margin-bottom: 25px;
+}
+
+.ROSField {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.ROSField label {
+  font-size: 17px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 8px;
+}
+
+.ROSField input,
+.ROSField select {
+  height: 48px;
+  border: 0.8px solid #050505;
+  border-radius: 10px;
+  padding: 0 12px;
+  font-size: 15px;
+  outline: none;
+  background: #e2dede;
+  transition: all 0.25s ease;
+}
+
+.ROSField input:focus,
+.ROSField select:focus {
+  border-color: #010101;
+  box-shadow: 0 0 8px rgba(37, 99, 235, 0.2);
+}
+
+.ROSToggleSection {
+  display: flex;
+  gap: 30px;
+  margin-top: 35px;
+  margin-bottom: 35px;
+}
+
+.ROSToggleCard {
+  flex: 1;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 22px;
+  border: 1px solid #dbe3ef;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.ROSToggleCard label {
+  display: block;
+  font-size: 17px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 18px;
+}
+
+.ROSToggleGroup {
+  display: flex;
+  gap: 15px;
+}
+
+.ROSToggleBtn {
+  width: 90px;
+  height: 42px;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #374151;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.25s;
+}
+
+.ROSToggleBtn:hover {
+  background: #f3f4f6;
+}
+
+.ROSActive {
+  width: 90px;
+  height: 42px;
+  border: none;
+  background: #16a34a;
+  color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.ROSNo {
+  width: 90px;
+  height: 42px;
+  border: none;
+  background: #dc2626;
+  color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.ROSFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 18px;
+  margin-top: 40px;
+}
+
+.ROSButton {
+  width: 140px;
+  height: 46px;
+  border: none;
+  border-radius: 10px;
+  background: #ffffff;
+  color: rgb(11, 11, 11);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.ROSButton:hover {
+  background: #1d4ed8;
+}
+
+.ROSButtonCancel {
+  width: 140px;
+  height: 46px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: white;
+  color: #374151;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.ROSButtonCancel:hover {
+  background: #f3f4f6;
+}
+
+@media screen and (max-width: 1100px) {
+  .ROSRow {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .ROSToggleSection {
+    flex-direction: column;
+  }
+
+  .ROSFooter {
+    justify-content: center;
+  }
+}

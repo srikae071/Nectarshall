@@ -32,7 +32,7 @@ function ReqOnboardingAllTab() {
   const navigate = useNavigate();
 
   const handleRowClick = (item) => {
-    navigate(`/OnBoardingResolvedSaves/${item._id}`);
+    navigate(`/requests-onboarding-saves/${item._id}`);
   };
   return (
     <ItLeftSide>
@@ -68,7 +68,7 @@ function ReqOnboardingAllTab() {
                     onClick={() => handleRowClick(item)}
                     style={{ cursor: "pointer" }}
                   >
-                    <td className="opentablerow">{item.taskId}</td>
+                    <td className="opentablerow">{item.onboardingTaskId}</td>
                     <td className="opentablerow">{item.caseId}</td>
                     <td className="opentablerow">{item.requesterName}</td>
                     <td className="opentablerow">{item.department}</td>

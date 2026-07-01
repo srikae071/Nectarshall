@@ -23,8 +23,22 @@ const allColumns = [
   { key: "description", label: "Description" },
   { key: "status", label: "Status" },
   { key: "comment", label: "Comment" },
+  { key: "leaveBalance", label: "Leave Balance" },
 ];
 
+const leaveAllocation = {
+  "Casual Leave": 5,
+  "Sick Leave": 10,
+  "Paid Leave": 15,
+  "Maternity Leave": 20,
+  "Paternity Leave": 12,
+};
+
+const getLeaveBalance = (item) => {
+  const allocated = leaveAllocation[item.leaveType] || 0;
+
+  return allocated - Number(item.totalLeaves || 0);
+};
 function LeaveManagementAll() {
   const [data, setData] = useState([]);
   const [search, setSearch] = useState("");
@@ -87,7 +101,7 @@ function LeaveManagementAll() {
     <HrmsLeftLayout>
       <div className="LMAHome">
         <div className="LMATopSection">
-          <h2 className="LMAHeading">All Leaves</h2>
+          <h2 className="LMAHeading">Employe Leaves</h2>
 
           <div className="LMARightSection">
             <div className="LMASearchBox">
@@ -174,6 +188,9 @@ function LeaveManagementAll() {
                 {visibleColumns.includes("status") && <td>{item.status}</td>}
 
                 {visibleColumns.includes("comment") && <td>{item.comment}</td>}
+                {visibleColumns.includes("leaveBalance") && (
+                  <td>{getLeaveBalance(item)}</td>
+                )}
               </tr>
             ))}
           </tbody>
