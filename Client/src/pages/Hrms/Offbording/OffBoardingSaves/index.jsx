@@ -40,13 +40,29 @@ function OffBoardingSaves() {
       [e.target.name]: e.target.value,
     });
   };
+  // const openITTask = async () => {
+  //   try {
+  //     await axios.post(
+  //       `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/create-it-task/${id}`,
+  //     );
+
+  //     navigate("/hrreq-all");
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
   const openITTask = async () => {
+    console.log("Clicked Task 1");
+
     try {
       await axios.post(
         `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/create-it-task/${id}`,
       );
 
-      navigate("/it-all");
+      console.log("Navigating to /hrreq-all");
+
+      navigate("/hrreq-all");
     } catch (error) {
       console.log(error);
     }

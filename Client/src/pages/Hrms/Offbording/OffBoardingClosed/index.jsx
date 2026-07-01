@@ -1,46 +1,51 @@
+import HrmsLeftLayout from "../../../Hrms/Hrmsleftlayout/index.jsx";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import ItLeftSide from "../../../ItLeftSide";
 import "./index.css";
-// const data = [...];
 
-function ReqOpen() {
+function OffBoardingClosed() {
   const [data, setData] = useState([]);
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchRequests();
+    fetchData();
   }, []);
 
-  const fetchRequests = async () => {
+  const fetchData = async () => {
     try {
       const response = await axios.get(
         "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests",
       );
 
-      const filtered = response.data.filter(
-        (item) => item.taskType === "IT Clearance",
+      const filteredData = response.data.filter(
+        (item) =>
+          item.category === "Offboarding" &&
+          item.ItTAskStatus === "Closed" &&
+          (item.status === "Open" || item.status === "Approved"),
       );
 
-      setData(filtered);
-
-      console.log(filtered);
+      setData(filteredData);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
+  const handleRowClick = (item) => {
+    navigate(`/offboarding-saves/${item._id}`);
+  };
+
   return (
-    <ItLeftSide>
+    <HrmsLeftLayout>
+      ``
       <div className="Openhome">
         <div>
-          <h3 className="openheading">Requests</h3>
-
+          <h3 className="openheading">Closed</h3>
           <table className="opentable">
             <thead>
-              <tr>
-                <th>Task ID</th>
+              <tr className="opentablerow">
+                <th>Case ID</th>
                 <th>Requester</th>
                 <th>Resignation Date</th>
                 <th>Last Working Day</th>
@@ -50,34 +55,34 @@ function ReqOpen() {
             </thead>
 
             <tbody>
-              {data.length > 0 ? (
-                data.map((item) => (
-                  <tr
-                    key={item._id}
-                    style={{ cursor: "pointer" }}
-                    onClick={() => navigate(`/tasksaves/${item._id}`)}
-                  >
-                    <td>{item.taskId}</td>
-                    <td>{item.requesterName}</td>
-                    <td>{item.resignationDate}</td>
-                    <td>{item.lastWorkingDay}</td>
-                    <td>{item.resignationReason}</td>
-                    <td>{item.ItTAskStatus || "Open"}</td>
-                  </tr>
-                ))
-              ) : (
+              {data.length === 0 ? (
                 <tr>
                   <td colSpan="6" style={{ textAlign: "center" }}>
                     No Records Found
                   </td>
                 </tr>
+              ) : (
+                data.map((item) => (
+                  <tr
+                    key={item._id}
+                    onClick={() => handleRowClick(item)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <td>{item.caseId}</td>
+                    <td>{item.requesterName}</td>
+                    <td>{item.resignationDate}</td>
+                    <td>{item.lastWorkingDay}</td>
+                    <td>{item.resignationReason}</td>
+                    <td>{item.status}</td>
+                  </tr>
+                ))
               )}
             </tbody>
           </table>
         </div>
       </div>
-    </ItLeftSide>
+    </HrmsLeftLayout>
   );
 }
 
-export default ReqOpen;
+export default OffBoardingClosed;

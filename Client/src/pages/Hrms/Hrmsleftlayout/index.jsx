@@ -80,8 +80,13 @@ const menuData = [
         // icon: "📁",
         children: [
           {
-            label: "Onbording Compilence",
+            label: "Supplier OnBoarding",
             path: "/supplier/onboardingcompilence",
+            // icon: "📄",
+          },
+          {
+            label: "All",
+            path: "/client-complience",
             // icon: "📄",
           },
         ],
@@ -100,30 +105,29 @@ const menuData = [
             path: "/onb",
             // icon: "📄",
           },
+        ],
+      },
+      {
+        label: "Employe",
+        children: [
           {
-            label: "Employe",
-            children: [
-              {
-                label: "All",
-                path: "/onboarding/resonancerequirement/all",
-              },
-              {
-                label: "Create New",
-                path: "/onboarding/resonancerequirement/createnew",
-              },
-              {
-                label: "Resolve",
-                path: "/onboarding/resonancerequirement/resolved",
-              },
-              {
-                label: "Employe Request",
-                path: "/offboarding/employerequest",
-              },
-            ],
+            label: "All",
+            path: "/onboarding/resonancerequirement/all",
+          },
+          {
+            label: "Create New",
+            path: "/onboarding/resonancerequirement/createnew",
+          },
+          {
+            label: "Closed",
+            path: "/offboarding-closed",
+          },
+          {
+            label: "Employe Request",
+            path: "/offboarding/employerequest",
           },
         ],
       },
-
       {
         label: "Supplier",
         // icon: "📁",
