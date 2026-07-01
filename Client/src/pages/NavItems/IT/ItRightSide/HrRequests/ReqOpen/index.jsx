@@ -21,6 +21,7 @@ function ReqOpen() {
 
       const filtered = response.data.filter(
         (item) => item.taskType === "IT Clearance",
+        (item) => item.taskStatus === "Open",
       );
 
       setData(filtered);

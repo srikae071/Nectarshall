@@ -21,7 +21,7 @@ function ReqClosed() {
 
       const filtered = response.data.filter(
         (item) =>
-          item.taskType === "IT Clearance" && item.ItTAskStatus === "Closed",
+          item.taskType === "IT Clearance" && item.taskStatus === "Closed",
       );
 
       setData(filtered);

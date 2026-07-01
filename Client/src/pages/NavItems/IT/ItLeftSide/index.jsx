@@ -30,7 +30,7 @@ const menuData = [
         path: "/hrreq-all",
       },
       { label: "Create New", path: "/it/create-new" },
-      { label: "Open", path: "/it/open" },
+      { label: "Open", path: "/Requests/open-tasks" },
       { label: "Resolved", path: "/it/resolved" },
       // { label: "Assigned to me", path: "/it/assigned-to-me" },
       { label: "Closed", path: "/Requests/closed-tasks" },

@@ -81,6 +81,7 @@ import HrReqAll from "./pages/NavItems/IT/ItRightSide/HrRequests/HrReqAll";
 import OnBoardingCompTab from "./pages/Hrms/OnBoarding/OnBoardingClinet/OnBoardingCompliance/OnBoardngCompTab";
 import ReqClosed from "./pages/NavItems/IT/ItRightSide/HrRequests/ReqClosed";
 import OffBoardingClosed from "./pages/Hrms/Offbording/OffBoardingClosed/index.jsx";
+import ReqOpen from "./pages/NavItems/IT/ItRightSide/HrRequests/ReqOpen/index.jsx";
 function App() {
   return (
     <Routes>
@@ -207,6 +208,7 @@ function App() {
       <Route path="/client-complience" element={<OnBoardingCompTab />} />
       <Route path="/Requests/closed-tasks" element={<ReqClosed />} />
       <Route path="/offboarding-closed" element={<OffBoardingClosed />} />
+      <Route path="/Requests/open-tasks" element={<ReqOpen />} />
     </Routes>
   );
 }

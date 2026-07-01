@@ -12,7 +12,7 @@ function TaskSaves() {
     taskId: "",
     laptopRecovered: "",
     laptopWorkingCondition: "",
-    ItTAskStatus: "",
+    taskStatus: "",
   });
 
   useEffect(() => {
@@ -99,8 +99,8 @@ function TaskSaves() {
               <label>Task Status</label>
 
               <select
-                name="ItTAskStatus"
-                value={formData.ItTAskStatus || ""}
+                name="taskStatus"
+                value={formData.taskStatus || ""}
                 onChange={handleChange}
               >
                 <option value="">Select</option>

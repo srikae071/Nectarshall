@@ -168,9 +168,7 @@ function OffBoardingSaves() {
 
                 <div className="OBSTaskItem">
                   <label>Status</label>
-                  <span className="OBSStatus">
-                    {formData.ItTAskStatus || "Open"}
-                  </span>
+                  <span className="OBSStatus">{formData.taskStatus}</span>
                 </div>
 
                 <div className="OBSTaskItem">

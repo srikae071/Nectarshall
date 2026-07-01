@@ -21,9 +21,8 @@ function OffBoardingClosed() {
 
       const filteredData = response.data.filter(
         (item) =>
-          item.category === "Offboarding" &&
-          item.ItTAskStatus === "Closed" &&
-          (item.status === "Open" || item.status === "Approved"),
+          item.category === "Offboarding" && item.taskStatus === "Closed",
+        // (item.status === "Open" || item.status === "Approved"),
       );
 
       setData(filteredData);
@@ -38,7 +37,6 @@ function OffBoardingClosed() {
 
   return (
     <HrmsLeftLayout>
-      ``
       <div className="Openhome">
         <div>
           <h3 className="openheading">Closed</h3>
@@ -51,6 +49,7 @@ function OffBoardingClosed() {
                 <th>Last Working Day</th>
                 <th>Resignation Reason</th>
                 <th>Status</th>
+                <th>Task Status</th>
               </tr>
             </thead>
 
@@ -74,6 +73,7 @@ function OffBoardingClosed() {
                     <td>{item.lastWorkingDay}</td>
                     <td>{item.resignationReason}</td>
                     <td>{item.status}</td>
+                    <td>{item.taskStatus}</td>
                   </tr>
                 ))
               )}
