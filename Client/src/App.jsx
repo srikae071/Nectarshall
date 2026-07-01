@@ -85,6 +85,7 @@ import ReqOpen from "./pages/NavItems/IT/ItRightSide/HrRequests/ReqOpen/index.js
 import LeaveManagementAll from "./pages/Hrms/LeaveManagementAll/index.jsx";
 import ReqOnboardingAllTab from "./pages/NavItems/IT/ItRightSide/RequestsOnBoading/ReqOnboardingAllTab/index.jsx";
 import RequestOnboardingSaves from "./pages/NavItems/IT/ItRightSide/RequestsOnBoading/RequestsOnbordingSaves/index.jsx";
+import ReqOnboardingResolvedTab from "./pages/NavItems/IT/ItRightSide/RequestsOnBoading/ReqOnBoardingResolvedTab/index.jsx";
 function App() {
   return (
     <Routes>
@@ -220,6 +221,10 @@ function App() {
       <Route
         path="requests-onboarding-saves/:id"
         element={<RequestOnboardingSaves />}
+      />
+      <Route
+        path="/requests-onboarding-resolved"
+        element={<ReqOnboardingResolvedTab />}
       />
     </Routes>
   );

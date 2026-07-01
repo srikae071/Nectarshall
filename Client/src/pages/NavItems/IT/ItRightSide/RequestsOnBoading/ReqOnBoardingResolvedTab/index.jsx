@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import "./index.css";
 
-function ReqOnboardingAllTab() {
+function ReqOnboardingResolvedTab() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ function ReqOnboardingAllTab() {
         response.data.filter(
           (item) =>
             // item.category === "Resonance Requirement" &&
-            item.status === "Resolved",
+            item.onboardingStatus === "Resolved",
         ),
       );
     } catch (error) {
@@ -89,4 +89,4 @@ function ReqOnboardingAllTab() {
   );
 }
 
-export default ReqOnboardingAllTab;
+export default ReqOnboardingResolvedTab;

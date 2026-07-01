@@ -18,9 +18,9 @@ function RequestOnboardingSaves() {
     onboardingStatus: "Open",
     onboardingSubStatus: "",
 
-    onboardingCompleted: false,
-    azureAccountCreated: false,
-    laptopIssued: false,
+    onboardingCompleted: null,
+    azureAccountCreated: null,
+    laptopIssued: null,
   });
 
   useEffect(() => {
@@ -32,14 +32,14 @@ function RequestOnboardingSaves() {
       const response = await axios.get(
         `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
       );
-
+      console.log(response.data);
       setFormData({
         ...response.data,
         onboardingStatus: response.data.onboardingStatus || "Open",
         onboardingSubStatus: response.data.onboardingSubStatus || "",
-        onboardingCompleted: response.data.onboardingCompleted || false,
-        azureAccountCreated: response.data.azureAccountCreated || false,
-        laptopIssued: response.data.laptopIssued || false,
+        onboardingCompleted: response.data.onboardingCompleted ?? null,
+        azureAccountCreated: response.data.azureAccountCreated ?? null,
+        laptopIssued: response.data.laptopIssued ?? null,
       });
     } catch (err) {
       console.log(err);
@@ -62,9 +62,16 @@ function RequestOnboardingSaves() {
 
   const handleSubmit = async () => {
     try {
+      const updatedData = {
+        ...formData,
+      };
+
+      if (updatedData.onboardingCompleted === true) {
+        updatedData.onboardingStatus = "Resolved";
+      }
       await axios.put(
         `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
-        formData,
+        updatedData,
       );
 
       alert("Saved Successfully");
@@ -149,7 +156,9 @@ function RequestOnboardingSaves() {
             <div className="ROSToggleGroup">
               <button
                 className={
-                  formData.onboardingCompleted ? "ROSActive" : "ROSToggleBtn"
+                  formData.onboardingCompleted === true
+                    ? "ROSActive"
+                    : "ROSToggleBtn"
                 }
                 onClick={() => toggleBoolean("onboardingCompleted", true)}
                 type="button"
@@ -159,7 +168,9 @@ function RequestOnboardingSaves() {
 
               <button
                 className={
-                  !formData.onboardingCompleted ? "ROSNo" : "ROSToggleBtn"
+                  formData.onboardingCompleted === false
+                    ? "ROSNo"
+                    : "ROSToggleBtn"
                 }
                 onClick={() => toggleBoolean("onboardingCompleted", false)}
                 type="button"
@@ -175,7 +186,9 @@ function RequestOnboardingSaves() {
             <div className="ROSToggleGroup">
               <button
                 className={
-                  formData.azureAccountCreated ? "ROSActive" : "ROSToggleBtn"
+                  formData.azureAccountCreated === true
+                    ? "ROSActive"
+                    : "ROSToggleBtn"
                 }
                 onClick={() => toggleBoolean("azureAccountCreated", true)}
                 type="button"
@@ -185,7 +198,9 @@ function RequestOnboardingSaves() {
 
               <button
                 className={
-                  !formData.azureAccountCreated ? "ROSNo" : "ROSToggleBtn"
+                  formData.azureAccountCreated === false
+                    ? "ROSNo"
+                    : "ROSToggleBtn"
                 }
                 onClick={() => toggleBoolean("azureAccountCreated", false)}
                 type="button"
@@ -200,7 +215,9 @@ function RequestOnboardingSaves() {
 
             <div className="ROSToggleGroup">
               <button
-                className={formData.laptopIssued ? "ROSActive" : "ROSToggleBtn"}
+                className={
+                  formData.laptopIssued === true ? "ROSActive" : "ROSToggleBtn"
+                }
                 onClick={() => toggleBoolean("laptopIssued", true)}
                 type="button"
               >
@@ -208,7 +225,9 @@ function RequestOnboardingSaves() {
               </button>
 
               <button
-                className={!formData.laptopIssued ? "ROSNo" : "ROSToggleBtn"}
+                className={
+                  formData.laptopIssued === false ? "ROSNo" : "ROSToggleBtn"
+                }
                 onClick={() => toggleBoolean("laptopIssued", false)}
                 type="button"
               >

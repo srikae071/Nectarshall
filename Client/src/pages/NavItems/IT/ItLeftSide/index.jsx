@@ -28,7 +28,7 @@ const menuData = [
           { label: "All", path: "/requests-onboarding-all" },
           { label: "Create New", path: "/onboarding/create-new" },
           { label: "Open", path: "/onboarding/open" },
-          { label: "Resolved", path: "/onboarding/resolved" },
+          { label: "Resolved", path: "/requests-onboarding-resolved" },
           { label: "Closed", path: "/onboarding/closed" },
           {
             label: "Work In Progress",
