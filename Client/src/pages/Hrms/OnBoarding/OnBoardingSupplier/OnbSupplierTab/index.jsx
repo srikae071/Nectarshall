@@ -3,6 +3,7 @@ import TableLayout1 from "../../../../../components/Layouts/TableLayouts/TableLa
 
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import "./index.css";
 
 function OnBoardingSupplierTab() {
   const defaultColumns = [
