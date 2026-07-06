@@ -1,5 +1,5 @@
 import { useState } from "react";
-import CncLeftLayout from "../../../../CNC/CNCLeftLayout";
+import CncLeftLayout from "../../../../Cnc/CncLeftLayout";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
