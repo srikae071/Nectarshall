@@ -42,3 +42,17 @@ exports.createBoarding = async (req, res) => {
     });
   }
 };
+
+exports.getAllBoardings = async (req, res) => {
+  try {
+    const boardings = await Boarding.find().sort({ createdAt: -1 });
+
+    res.status(200).json(boardings);
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      message: "Error fetching boardings",
+    });
+  }
+};

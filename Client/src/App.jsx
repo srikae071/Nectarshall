@@ -88,6 +88,7 @@ import RequestOnboardingSaves from "./pages/NavItems/IT/ItRightSide/RequestsOnBo
 import ReqOnboardingResolvedTab from "./pages/NavItems/IT/ItRightSide/RequestsOnBoading/ReqOnBoardingResolvedTab/index.jsx";
 import RegularForm from "./components/Layouts/FormLayouts/RegularForm/index.jsx";
 import OffboardingSupplierForm from "./pages/Hrms/Offbording/Supplier/OffBoaedingSuplierForm/index.jsx";
+import OnBoardingSupplierTab from "./pages/Hrms/OnBoarding/OnBoardingSupplier/OnbSupplierTab/index.jsx";
 function App() {
   return (
     <Routes>
@@ -233,6 +234,7 @@ function App() {
         path="/offboarding-supplier-form"
         element={<OffboardingSupplierForm />}
       />
+      <Route path="/onboarding-supplier" element={<OnBoardingSupplierTab />} />
     </Routes>
   );
 }

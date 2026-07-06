@@ -33,7 +33,7 @@ const menuData = [
           },
           {
             label: "All",
-            path: "/client-complience",
+            path: "/onboarding-supplier",
             // icon: "📄",
           },
         ],
