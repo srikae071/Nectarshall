@@ -1,4 +1,4 @@
-import CncLeftLayout from "../../../CNC/CNCLeftLayout";
+import CncLeftLayout from "../../../Cnc/CncLeftLayout";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";

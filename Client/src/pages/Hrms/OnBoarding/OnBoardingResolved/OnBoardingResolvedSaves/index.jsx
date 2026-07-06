@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import CncLeftLayout from "../../../../CNC/CNCLeftLayout";
+import CncLeftLayout from "../../../../Cnc/CncLeftLayout";
 import axios from "axios";
 import "./index.css";
 
