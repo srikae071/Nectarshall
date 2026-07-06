@@ -1,4 +1,4 @@
-import HrmsLeftLayout from "../../../../Hrmsleftlayout";
+import CncLeftLayout from "../../../../../Cnc/CncLeftLayout";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -34,7 +34,7 @@ function OnBoardingCompTab() {
   };
 
   return (
-    <HrmsLeftLayout>
+    <CncLeftLayout>
       <div className="Openhome">
         <div>
           <h3 className="openheading">Onboarding Client Compliance</h3>
@@ -78,7 +78,7 @@ function OnBoardingCompTab() {
           </table>
         </div>
       </div>
-    </HrmsLeftLayout>
+    </CncLeftLayout>
   );
 }
 

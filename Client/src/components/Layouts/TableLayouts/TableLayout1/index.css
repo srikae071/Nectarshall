@@ -1,0 +1,133 @@
+.table-layout-page {
+  padding: 20px;
+  background: #f5f6fa;
+  min-height: 100vh;
+}
+
+.table-layout-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.table-layout-header h2 {
+  font-size: 28px;
+  color: #222;
+  font-weight: 600;
+}
+
+.table-layout-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.table-search-box {
+  display: flex;
+  align-items: center;
+  width: 300px;
+  background: #fff;
+  border: 1px solid #d7d7d7;
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+.table-search-box input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  background: transparent;
+}
+
+.table-search-icon {
+  margin-right: 10px;
+  color: #666;
+}
+
+.table-setting-wrapper {
+  position: relative;
+}
+
+.table-setting-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: #f26b3a;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.table-setting-btn:hover {
+  background: #dd5b2d;
+}
+
+.table-setting-dropdown {
+  position: absolute;
+  right: 0;
+  top: 45px;
+  width: 220px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  padding: 10px;
+}
+
+.table-layout-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.common-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.common-table thead {
+  background: #2c2c2c;
+}
+
+.common-table th {
+  color: #fff;
+  padding: 14px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.common-table td {
+  padding: 13px;
+  border-bottom: 1px solid #ececec;
+  font-size: 14px;
+}
+
+.common-table tbody tr:nth-child(even) {
+  background: #fafafa;
+}
+
+.common-table tbody tr:hover {
+  background: #fff4ef;
+}
+
+@media (max-width: 900px) {
+  .table-layout-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .table-layout-right {
+    width: 100%;
+  }
+
+  .table-search-box {
+    width: 100%;
+  }
+}

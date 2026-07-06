@@ -1,4 +1,4 @@
-import HrmsLeftLayout from "../../Hrmsleftlayout/index.jsx";
+import CncLeftLayout from "../../../Cnc/CncLeftLayout";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -35,7 +35,7 @@ function OnBoardingPreJoining() {
     navigate(`/OnBoardingPreJoiningSaves/${item._id}`);
   };
   return (
-    <HrmsLeftLayout>
+    <CncLeftLayout>
       <div className="Openhome">
         <div>
           <h3 className="openheading">Pre Joining Compilence </h3>
@@ -82,7 +82,7 @@ function OnBoardingPreJoining() {
           © Copyright 2023 Enhance Services - All Rights Reserved.
         </div> */}
       </div>
-    </HrmsLeftLayout>
+    </CncLeftLayout>
   );
 }
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import HrmsLeftLayout from "../../../Hrms/Hrmsleftlayout";
+import CncLeftLayout from "../../../CNC/CNCLeftLayout";
 import axios from "axios";
 import "./index.css";
 
@@ -83,7 +83,7 @@ function OffBoardingSaves() {
     }
   };
   return (
-    <HrmsLeftLayout>
+    <CncLeftLayout>
       <div className="OBSContainer">
         <div className="OBSCard">
           <h3 className="OBSHeading">Offboarding Employee Details</h3>
@@ -223,7 +223,7 @@ function OffBoardingSaves() {
           </div>
         )}
       </div>
-    </HrmsLeftLayout>
+    </CncLeftLayout>
   );
 }
 

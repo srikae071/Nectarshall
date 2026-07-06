@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-
+import RegularForm from "../../../components/Layouts/FormLayouts/RegularForm";
 import HrmsLeftLayout from "../Hrmsleftlayout";
 
 import "./index.css";
@@ -48,183 +48,171 @@ function CreateCase() {
   };
   return (
     <HrmsLeftLayout>
-      <div className="CreateContainer">
-        <h2 className="CreateTitle">Create New Case</h2>
-
-        {/* ROW 1 */}
-        <div className="CreateRow">
-          <div className="CreateField">
-            <label>Case ID</label>
-            <input
-              name="caseId"
-              value={formData.caseId}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="CreateField">
-            <label>Requester Name</label>
-            <input
-              name="requesterName"
-              value={formData.requesterName}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="CreateField">
-            <label>Department</label>
-            <select
-              name="department"
-              value={formData.department}
-              onChange={handleChange}
-            >
-              <option>IT</option>
-            </select>
-          </div>
+      <RegularForm
+        title="Create New Case"
+        onSave={handleSave}
+        onCancel={() => {}}
+      >
+        <div className="form-row">
+          <label className="form-label">Case ID</label>
+          <input
+            className="form-input"
+            name="caseId"
+            value={formData.caseId}
+            onChange={handleChange}
+          />
         </div>
 
-        {/* ROW 2 */}
-        <div className="CreateRow">
-          <div className="CreateField">
-            <label>Status</label>
-
-            <select
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-            >
-              <option value="">Select Status</option>
-              <option value="Open">Open</option>
-              <option value="Work In Progress">Work In Progress</option>
-              <option value="Pending">Pending</option>
-              <option value="Resolved">Resolved</option>
-              <option value="Closed">Closed</option>
-            </select>
-          </div>
-
-          <div className="CreateField">
-            <label>Sub Status</label>
-            <select
-              name="subStatus"
-              value={formData.subStatus}
-              onChange={handleChange}
-              disabled={formData.status !== "Pending"}
-            >
-              <option value="">Select Sub Status</option>
-
-              {subStatusOptions[formData.status]?.map((item, index) => (
-                <option key={index} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="CreateField">
-            <label>Category</label>
-            <select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-            >
-              <option>Payroll</option>
-            </select>
-          </div>
+        <div className="form-row">
+          <label className="form-label">Requester Name</label>
+          <input
+            className="form-input"
+            name="requesterName"
+            value={formData.requesterName}
+            onChange={handleChange}
+          />
         </div>
 
-        {/* ROW 3 */}
-        <div className="CreateRow">
-          <div className="CreateField">
-            <label>Assignment Group</label>
-            <input
-              name="assignmentGroup"
-              value={formData.assignmentGroup}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="CreateField">
-            <label>Assign To</label>
-            <input
-              name="assignTo"
-              value={formData.assignTo}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="CreateField">
-            <label>Impact</label>
-
-            <select
-              name="impact"
-              value={formData.impact}
-              onChange={handleChange}
-            >
-              <option value="">Select</option>
-              <option>High</option>
-              <option>Medium</option>
-              <option>Low</option>
-            </select>
-          </div>
+        <div className="form-row">
+          <label className="form-label">Department</label>
+          <select
+            className="form-select"
+            name="department"
+            value={formData.department}
+            onChange={handleChange}
+          >
+            <option>IT</option>
+          </select>
         </div>
 
-        {/* ROW 4 */}
-        <div className="CreateRow">
-          <div className="CreateField">
-            <label>Urgency</label>
-
-            <select
-              name="urgency"
-              value={formData.urgency}
-              onChange={handleChange}
-            >
-              <option value="">Select</option>
-              <option>High</option>
-              <option>Medium</option>
-              <option>Low</option>
-            </select>
-          </div>
-
-          <div className="CreateField">
-            <label>Priority</label>
-            <input
-              name="priority"
-              value={formData.priority}
-              onChange={handleChange}
-            />
-          </div>
+        <div className="form-row">
+          <label className="form-label">Status</label>
+          <select
+            className="form-select"
+            name="status"
+            value={formData.status}
+            onChange={handleChange}
+          >
+            <option value="">Select Status</option>
+            <option value="Open">Open</option>
+            <option value="Work In Progress">Work In Progress</option>
+            <option value="Pending">Pending</option>
+            <option value="Resolved">Resolved</option>
+            <option value="Closed">Closed</option>
+          </select>
         </div>
 
-        {/* TEXTAREAS */}
-        <div className="CreateTextareaGroup">
-          <label>Short Description</label>
+        <div className="form-row">
+          <label className="form-label">Sub Status</label>
+          <select
+            className="form-select"
+            name="subStatus"
+            value={formData.subStatus}
+            onChange={handleChange}
+            disabled={formData.status !== "Pending"}
+          >
+            <option value="">Select Sub Status</option>
+
+            {subStatusOptions[formData.status]?.map((item, index) => (
+              <option key={index} value={item}>
+                {item}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="form-row">
+          <label className="form-label">Category</label>
+          <select
+            className="form-select"
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
+          >
+            <option>Payroll</option>
+          </select>
+        </div>
+
+        <div className="form-row">
+          <label className="form-label">Assignment Group</label>
+          <input
+            className="form-input"
+            name="assignmentGroup"
+            value={formData.assignmentGroup}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="form-row">
+          <label className="form-label">Assign To</label>
+          <input
+            className="form-input"
+            name="assignTo"
+            value={formData.assignTo}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="form-row">
+          <label className="form-label">Impact</label>
+          <select
+            className="form-select"
+            name="impact"
+            value={formData.impact}
+            onChange={handleChange}
+          >
+            <option value="">Select</option>
+            <option>High</option>
+            <option>Medium</option>
+            <option>Low</option>
+          </select>
+        </div>
+
+        <div className="form-row">
+          <label className="form-label">Urgency</label>
+          <select
+            className="form-select"
+            name="urgency"
+            value={formData.urgency}
+            onChange={handleChange}
+          >
+            <option value="">Select</option>
+            <option>High</option>
+            <option>Medium</option>
+            <option>Low</option>
+          </select>
+        </div>
+
+        <div className="form-row">
+          <label className="form-label">Priority</label>
+          <input
+            className="form-input"
+            name="priority"
+            value={formData.priority}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="form-row form-full">
+          <label className="form-label">Short Description</label>
           <textarea
-            className="CreateTextarea CreateShortTextarea"
+            className="form-short-textarea"
             name="shortDescription"
             value={formData.shortDescription}
             onChange={handleChange}
-          ></textarea>
+          />
         </div>
 
-        <div className="CreateTextareaGroup">
-          <label>Description</label>
+        <div className="form-row form-full">
+          <label className="form-label">Description</label>
           <textarea
-            className="CreateTextarea CreateDescriptionTextarea"
+            className="form-description-textarea"
             name="description"
             value={formData.description}
             onChange={handleChange}
-          ></textarea>
+          />
         </div>
-
-        {/* BUTTONS */}
-        <div className="CreateFooter">
-          <button className="CreateBtn" onClick={handleSave}>
-            Save
-          </button>
-          <button className="CreateBtn">Submit</button>
-          <button className="CreateBtn">Cancel</button>
-        </div>
-      </div>
+      </RegularForm>
     </HrmsLeftLayout>
   );
 }

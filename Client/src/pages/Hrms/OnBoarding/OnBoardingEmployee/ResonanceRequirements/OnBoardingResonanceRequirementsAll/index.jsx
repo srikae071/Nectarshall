@@ -1,4 +1,5 @@
-import HrmsLeftLayout from "../../../../Hrmsleftlayout/index.jsx";
+// import CncLeftLayout from "../../../../../Cnc/CncLeftLayout";
+import HrmsLeftLayout from "../../../../Hrmsleftlayout";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";

@@ -1,63 +1,40 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./index.css";
-import HrmsNavbar from "../HrmsNavbar";
+import CncNavBar from "../CncNavBar";
 
 const menuData = [
-  {
-    title: "Case Management",
-    items: [
-      // { label: "All", path: "/hrms" },
-      { label: "All", path: "/hrms/hrsavescases" },
-      { label: "Create New", path: "/hrms/createnew" },
-      { label: "Open", path: "/hrms/open" },
-      { label: "Resolved", path: "/hrms/resolved-cases" },
-      { label: "Assign to Me", path: "/hrms/assigned-cases" },
-    ],
-  },
-  {
-    title: "Leave Management",
-    items: [
-      { label: "All", path: "/leave-management-all" },
-      { label: "Leave Request", path: "/leave-request" },
-      { label: "Leave Balance", path: "/leave-balance" },
-      { label: "Leave Calendar", path: "/leave-calendar" },
-      { label: "Leave Status", path: "/leave-status" },
-    ],
-  },
   {
     title: "Onboarding",
     items: [
       {
-        label: "Employe",
+        label: "Client",
+        // icon: "📁",
         children: [
           {
+            label: "Client OnBoarding",
+            path: "/Client/onboarding-compliance",
+          },
+          {
             label: "All",
-            path: "/onboarding/resonancerequirement/all",
+            path: "/client-complience",
+          },
+        ],
+      },
+
+      {
+        label: "Supplier",
+        // icon: "📁",
+        children: [
+          {
+            label: "Supplier OnBoarding",
+            path: "/supplier/onboardingcompilence",
+            // icon: "📄",
           },
           {
-            label: "Create New",
-            path: "/onboarding/resonancerequirement/createnew",
-          },
-          {
-            label: "Resolve",
-            path: "/onboardingresolved",
-          },
-          {
-            label: "Employe Request",
-            path: "/onboarding/employerequest",
-          },
-          {
-            label: "Pre-Joining Compilence",
-            path: "/onboarding/prejoining",
-          },
-          {
-            label: "Interview",
-            path: "/onboarding/Interview",
-          },
-          {
-            label: "Offer Letter",
-            path: "/onboarding/Offerletter",
+            label: "All",
+            path: "/client-complience",
+            // icon: "📄",
           },
         ],
       },
@@ -67,34 +44,28 @@ const menuData = [
     title: "Offboarding",
     items: [
       {
-        label: "Employe",
+        label: "Client",
+        // icon: "📁",
         children: [
           {
-            label: "All",
-            path: "/onboarding/resonancerequirement/all",
-          },
-          {
-            label: "Create New",
-            path: "/onboarding/resonancerequirement/createnew",
-          },
-          {
-            label: "Closed",
-            path: "/offboarding-closed",
-          },
-          {
-            label: "Employe Request",
-            path: "/offboarding/employerequest",
+            label: "OffBoarding Compilence",
+            path: "/onb",
+            // icon: "📄",
           },
         ],
       },
-    ],
-  },
 
-  {
-    title: "Training and Development",
-    items: [
-      { label: "All", path: "/hrms" },
-      { label: "Create New", path: "/hrms/createnew" },
+      {
+        label: "Supplier",
+        // icon: "📁",
+        children: [
+          {
+            label: "Offbording Compilence",
+            path: "/offboarding-supplier-form",
+            // icon: "📄",
+          },
+        ],
+      },
     ],
   },
 ];
@@ -167,7 +138,7 @@ const MenuItem = ({ item, level = 0, expandedMenus, setExpandedMenus }) => {
   );
 };
 /* ================= MAIN LAYOUT ================= */
-function HrmsLeftLayout({ children }) {
+function CncLeftLayout({ children }) {
   const [openMenus, setOpenMenus] = useState(() => {
     const saved = localStorage.getItem("hrms-open-menus");
 
@@ -225,7 +196,7 @@ function HrmsLeftLayout({ children }) {
       onMouseMove={resize}
       onMouseUp={stopResize}
     >
-      <HrmsNavbar />
+      <CncNavBar />
 
       <div className="mainLayout">
         <div className="hrmssidebar" style={{ width: sidebarWidth }}>
@@ -274,4 +245,4 @@ function HrmsLeftLayout({ children }) {
     </div>
   );
 }
-export default HrmsLeftLayout;
+export default CncLeftLayout;

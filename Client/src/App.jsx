@@ -86,6 +86,8 @@ import LeaveManagementAll from "./pages/Hrms/LeaveManagementAll/index.jsx";
 import ReqOnboardingAllTab from "./pages/NavItems/IT/ItRightSide/RequestsOnBoading/ReqOnboardingAllTab/index.jsx";
 import RequestOnboardingSaves from "./pages/NavItems/IT/ItRightSide/RequestsOnBoading/RequestsOnbordingSaves/index.jsx";
 import ReqOnboardingResolvedTab from "./pages/NavItems/IT/ItRightSide/RequestsOnBoading/ReqOnBoardingResolvedTab/index.jsx";
+import RegularForm from "./components/Layouts/FormLayouts/RegularForm/index.jsx";
+import OffboardingSupplierForm from "./pages/Hrms/Offbording/Supplier/OffBoaedingSuplierForm/index.jsx";
 function App() {
   return (
     <Routes>
@@ -225,6 +227,11 @@ function App() {
       <Route
         path="/requests-onboarding-resolved"
         element={<ReqOnboardingResolvedTab />}
+      />
+      <Route path="/regular-form" element={<RegularForm />} />
+      <Route
+        path="/offboarding-supplier-form"
+        element={<OffboardingSupplierForm />}
       />
     </Routes>
   );

@@ -1,4 +1,4 @@
-import HrmsLeftLayout from "../../../Hrms/Hrmsleftlayout/index.jsx";
+import CncLeftLayout from "../../../Cnc/CncLeftLayout";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -34,7 +34,7 @@ function OnBoardingEmpAll() {
   };
 
   return (
-    <HrmsLeftLayout>
+    <CncLeftLayout>
       <div className="Openhome">
         <div>
           <h3 className="openheading">Employee Requests</h3>
@@ -78,7 +78,7 @@ function OnBoardingEmpAll() {
           </table>
         </div>
       </div>
-    </HrmsLeftLayout>
+    </CncLeftLayout>
   );
 }
 

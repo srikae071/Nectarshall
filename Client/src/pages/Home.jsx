@@ -125,6 +125,27 @@ function Home() {
           <a
             role="button"
             tabIndex={0}
+            onClick={() => navigate("/regular-form")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") navigate("/regular-form");
+            }}
+          >
+            test
+          </a>
+          <a
+            role="button"
+            tabIndex={0}
+            onClick={() => navigate("/onboarding/employerequest")}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ")
+                navigate("/onboarding/employerequest");
+            }}
+          >
+            C&C
+          </a>
+          <a
+            role="button"
+            tabIndex={0}
             onClick={() => navigate("/it-all")}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") navigate("/it-all");

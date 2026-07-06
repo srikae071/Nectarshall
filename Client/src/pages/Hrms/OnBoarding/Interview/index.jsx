@@ -1,4 +1,4 @@
-import HrmsLeftLayout from "../../../Hrms/Hrmsleftlayout";
+import CncLeftLayout from "../../../Cnc/CncLeftLayout";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -35,7 +35,7 @@ function Interview() {
     navigate(`/OnBoardingInterviewSaves/${item._id}`);
   };
   return (
-    <HrmsLeftLayout>
+    <CncLeftLayout>
       <div className="Openhome">
         <div>
           <h3 className="openheading">Interview </h3>
@@ -82,7 +82,7 @@ function Interview() {
           © Copyright 2023 Enhance Services - All Rights Reserved.
         </div> */}
       </div>
-    </HrmsLeftLayout>
+    </CncLeftLayout>
   );
 }
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import HrmsLeftLayout from "../../../Hrms/Hrmsleftlayout";
+import CncLeftLayout from "../../../Cnc/CncLeftLayout";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
@@ -294,7 +294,7 @@ function OnBoardingInterviewSaves() {
     }
   };
   return (
-    <HrmsLeftLayout>
+    <CncLeftLayout>
       <div className="CreateContainer">
         <div className="SectionCard">
           <h3>1. Preliminary Information</h3>
@@ -1174,7 +1174,7 @@ function OnBoardingInterviewSaves() {
           </>
         )}
       </div>
-    </HrmsLeftLayout>
+    </CncLeftLayout>
   );
 }
 

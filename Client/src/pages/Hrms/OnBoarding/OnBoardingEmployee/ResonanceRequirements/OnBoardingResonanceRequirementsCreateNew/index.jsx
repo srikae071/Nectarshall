@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 
-import HrmsLeftLayout from "../../../../Hrmsleftlayout/index.jsx";
+import CncLeftLayout from "../../../../../Cnc/CncLeftLayout";
 
 import "./index.css";
 
@@ -169,7 +169,7 @@ function OnBoardingResonanceRequirementsCreateNew() {
     }
   };
   return (
-    <HrmsLeftLayout>
+    <CncLeftLayout>
       <div className="CreateContainer">
         <h2 className="CreateTitle">Create New Case</h2>
 
@@ -814,7 +814,7 @@ function OnBoardingResonanceRequirementsCreateNew() {
           <button className="CreateBtn">Cancel</button>
         </div>
       </div>
-    </HrmsLeftLayout>
+    </CncLeftLayout>
   );
 }
 

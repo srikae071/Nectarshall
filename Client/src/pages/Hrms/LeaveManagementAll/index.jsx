@@ -1,4 +1,5 @@
 import HrmsLeftLayout from "../Hrmsleftlayout";
+import TableLayout1 from "../../../components/Layouts/TableLayouts/TableLayout1";
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { FiSettings, FiSearch } from "react-icons/fi";
@@ -90,112 +91,44 @@ function LeaveManagementAll() {
   );
 
   const toggleColumn = (key) => {
+    // Don't allow default columns to be removed
+    if (defaultColumns.includes(key)) {
+      return;
+    }
+
     if (visibleColumns.includes(key)) {
       setVisibleColumns(visibleColumns.filter((col) => col !== key));
     } else {
       setVisibleColumns([...visibleColumns, key]);
     }
   };
-
   return (
     <HrmsLeftLayout>
-      <div className="LMAHome">
-        <div className="LMATopSection">
-          <h2 className="LMAHeading">Employe Leaves</h2>
-
-          <div className="LMARightSection">
-            <div className="LMASearchBox">
-              <FiSearch className="LMASearchIcon" />
-
+      <TableLayout1
+        title="Employee Leaves"
+        search={search}
+        setSearch={setSearch}
+        showSettings={showSettings}
+        setShowSettings={setShowSettings}
+        settingsRef={settingsRef}
+        settingsContent={allColumns
+          .filter((col) => !defaultColumns.includes(col.key))
+          .map((col) => (
+            <label key={col.key} className="LMACheckbox">
               <input
-                type="text"
-                placeholder="Search Employee..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                type="checkbox"
+                checked={visibleColumns.includes(col.key)}
+                onChange={() => toggleColumn(col.key)}
               />
-            </div>
-
-            <div className="LMASettingWrapper" ref={settingsRef}>
-              <button
-                className="LMASettingButton"
-                onClick={() => setShowSettings(!showSettings)}
-              >
-                <FiSettings />
-              </button>
-
-              {showSettings && (
-                <div className="LMADropdown">
-                  {allColumns.map((column) => (
-                    <label key={column.key} className="LMACheckbox">
-                      <input
-                        type="checkbox"
-                        checked={visibleColumns.includes(column.key)}
-                        onChange={() => toggleColumn(column.key)}
-                      />
-                      {column.label}
-                    </label>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <table className="LMATable">
-          <thead>
-            <tr>
-              {allColumns
-                .filter((col) => visibleColumns.includes(col.key))
-                .map((col) => (
-                  <th key={col.key}>{col.label}</th>
-                ))}
-            </tr>
-          </thead>
-
-          <tbody>
-            {filteredData.map((item) => (
-              <tr key={item._id}>
-                {visibleColumns.includes("leaveNumber") && (
-                  <td>{item.leaveNumber}</td>
-                )}
-
-                {visibleColumns.includes("employeeName") && (
-                  <td>{item.requester}</td>
-                )}
-
-                {visibleColumns.includes("leaveType") && (
-                  <td>{item.leaveType}</td>
-                )}
-
-                {visibleColumns.includes("startDate") && (
-                  <td>{item.startDate}</td>
-                )}
-
-                {visibleColumns.includes("endDate") && <td>{item.endDate}</td>}
-
-                {visibleColumns.includes("totalLeaves") && (
-                  <td>{item.totalLeaves}</td>
-                )}
-
-                {visibleColumns.includes("halfDay") && (
-                  <td>{item.halfDay ? "Yes" : "No"}</td>
-                )}
-
-                {visibleColumns.includes("description") && (
-                  <td>{item.description}</td>
-                )}
-
-                {visibleColumns.includes("status") && <td>{item.status}</td>}
-
-                {visibleColumns.includes("comment") && <td>{item.comment}</td>}
-                {visibleColumns.includes("leaveBalance") && (
-                  <td>{getLeaveBalance(item)}</td>
-                )}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+              {col.label}
+            </label>
+          ))}
+        headers={allColumns.filter((col) => visibleColumns.includes(col.key))}
+      >
+        {filteredData.map((item) => (
+          <tr key={item._id}>{/* Your td elements */}</tr>
+        ))}
+      </TableLayout1>
     </HrmsLeftLayout>
   );
 }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import HrmsLeftLayout from "../../../Hrmsleftlayout";
+import CncLeftLayout from "../../../../CNC/CNCLeftLayout";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
@@ -59,7 +59,7 @@ function OnBoardingPreJoiningSaves() {
     }
   };
   return (
-    <HrmsLeftLayout>
+    <CncLeftLayout>
       <div className="OfferContainer">
         <h2 className="OfferTitle">Pre Joining Compliance</h2>
 
@@ -400,7 +400,7 @@ function OnBoardingPreJoiningSaves() {
           <button className="CreateBtn">Cancel</button>
         </div>
       </div>
-    </HrmsLeftLayout>
+    </CncLeftLayout>
   );
 }
 

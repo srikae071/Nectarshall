@@ -1,4 +1,4 @@
-import HrmsLeftLayout from "../../../Hrms/Hrmsleftlayout/index.jsx";
+import CncLeftLayout from "../../../CNC/CNCLeftLayout";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -36,7 +36,7 @@ function OffBoardingEmployesAll() {
   };
 
   return (
-    <HrmsLeftLayout>
+    <CncLeftLayout>
       <div className="Openhome">
         <div>
           <h3 className="openheading">Offboarding Requests</h3>
@@ -79,7 +79,7 @@ function OffBoardingEmployesAll() {
           </table>
         </div>
       </div>
-    </HrmsLeftLayout>
+    </CncLeftLayout>
   );
 }
 
