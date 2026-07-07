@@ -22,7 +22,7 @@ exports.createBoarding = async (req, res) => {
 
       clientId,
 
-      category: "Supplier Onboarding",
+      category: req.body.category,
     });
 
     await boarding.save();
