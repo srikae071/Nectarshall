@@ -8,6 +8,25 @@ function OnBoardingCompliance() {
   const [expanded, setExpanded] = useState(false);
 
   const [activeTab, setActiveTab] = useState("Client Contract Deliverables");
+  const [formData, setFormData] = useState({
+    clientId: "",
+
+    companyName: "",
+    abn: "",
+    acn: "",
+    address: "",
+    companyAddress: "",
+    companyPhone: "",
+    managingAgentName: "",
+    managingAgentEmail: "",
+    email: "",
+    contactNumber: "",
+    onboardingDate: "",
+    validTill: "",
+    type: "Adhoc",
+    shortDescription: "",
+    description: "",
+  });
   const [contractDeliverables, setContractDeliverables] = useState([
     {
       contractId: "",
@@ -18,18 +37,28 @@ function OnBoardingCompliance() {
       siteMobile: "",
       contractState: "Active",
       comments: "",
+      attachment: null,
     },
   ]);
-
   const [financialDetails, setFinancialDetails] = useState([
     {
       invoiceDate: "",
       invoiceNumber: "",
       billingCycle: "Monthly",
-      financialComments: "",
+      comments: "",
+
+      attachment: null,
     },
   ]);
-  const handleContractChange = (index, e) => {
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleDeliverableChange = (index, e) => {
     const { name, value } = e.target;
 
     const updated = [...contractDeliverables];
@@ -47,9 +76,10 @@ function OnBoardingCompliance() {
 
     setFinancialDetails(updated);
   };
-  const addContract = () => {
+  const addDeliverable = () => {
     setContractDeliverables([
       ...contractDeliverables,
+
       {
         contractId: "",
         siteName: "",
@@ -62,104 +92,83 @@ function OnBoardingCompliance() {
       },
     ]);
   };
+  const removeDeliverable = (index) => {
+    if (index === 0) return;
+
+    const updated = contractDeliverables.filter((_, i) => i !== index);
+
+    setContractDeliverables(updated);
+  };
   const addFinancial = () => {
     setFinancialDetails([
       ...financialDetails,
+
       {
         invoiceDate: "",
         invoiceNumber: "",
         billingCycle: "Monthly",
-        financialComments: "",
+        comments: "",
       },
     ]);
   };
 
-  const removeContract = (index) => {
-    if (index === 0) return; // Don't remove the first form
-
+  const handleDeliverableAttachment = (index, e) => {
     const updated = [...contractDeliverables];
-    updated.splice(index, 1);
+
+    updated[index].attachment = e.target.files[0];
 
     setContractDeliverables(updated);
   };
-
-  const removeFinancial = (index) => {
-    if (index === 0) return; // Don't remove the first form
-
+  const handleFinancialAttachment = (index, e) => {
     const updated = [...financialDetails];
-    updated.splice(index, 1);
+
+    updated[index].attachment = e.target.files[0];
 
     setFinancialDetails(updated);
   };
-  const [formData, setFormData] = useState({
-    companyName: "",
-    abn: "",
-    acn: "",
+  const removeFinancial = (index) => {
+    if (index === 0) return;
 
-    emailaddress: "",
-    companyAddress: "",
-    companyPhone: "",
+    const updated = financialDetails.filter((_, i) => i !== index);
 
-    spocName: "",
-    spocNumber: "",
-    spocemailaddres: "",
-
-    onboardingDate: "",
-    validtill: "",
-
-    type: "Adhoc",
-
-    shortDescription: "",
-    description: "",
-    contractId: "",
-    siteName: "",
-    siteAddress: "",
-    siteManagerName: "",
-    siteEmail: "",
-    siteMobile: "",
-    contractState: "Active",
-    comments: "",
-
-    invoiceDate: "",
-    invoiceNumber: "",
-    billingCycle: "Monthly",
-    financialComments: "",
-  });
-
-  // const [showClientDeliverables, setShowClientDeliverables] = useState(false);
-  // const [showFinancialDetails, setshowFinancialDetails] = useState(false);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFinancialDetails(updated);
   };
 
   const handleSave = async () => {
     try {
       await axios.post(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/compliance/create",
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding/create",
         {
           ...formData,
-          category: "Onboarding Client Compliance",
-          clientContractDeliverables: contractDeliverables,
-
-          financialDetails: financialDetails,
+          category: "Client Onboarding",
+          contractDeliverables,
+          financialDetails,
         },
       );
 
-      alert("Compliance Saved Successfully");
+      alert("Supplier Onboarding Saved Successfully");
     } catch (error) {
-      console.log(error);
-      alert("Error Saving Compliance");
+      console.error(error);
+      alert("Error Saving Supplier Onboarding");
     }
   };
+
   return (
     <CncLeftLayout>
-      <RegularForm title="Client Details" onSave={handleSave}>
+      <RegularForm
+        title="Onboarding Compliance"
+        onSave={handleSave}
+        onCancel={() => {}}
+      >
+        <div className="form-row">
+          <label className="form-label">Client ID</label>
+          <input
+            className="form-input"
+            name="clientId"
+            value={formData.clientId}
+            onChange={handleChange}
+          />
+        </div>
         <div className="form-row">
           <label className="form-label">Company Name</label>
           <input
@@ -169,6 +178,7 @@ function OnBoardingCompliance() {
             onChange={handleChange}
           />
         </div>
+
         <div className="form-row">
           <label className="form-label">ABN</label>
           <input
@@ -178,6 +188,7 @@ function OnBoardingCompliance() {
             onChange={handleChange}
           />
         </div>
+
         <div className="form-row">
           <label className="form-label">ACN</label>
           <input
@@ -187,15 +198,17 @@ function OnBoardingCompliance() {
             onChange={handleChange}
           />
         </div>
+
         <div className="form-row">
-          <label className="form-label">Email Address</label>
+          <label className="form-label">Address</label>
           <input
             className="form-input"
-            name="emailaddress"
-            value={formData.emailaddress}
+            name="address"
+            value={formData.address}
             onChange={handleChange}
           />
         </div>
+
         <div className="form-row">
           <label className="form-label">Company Address</label>
           <input
@@ -205,6 +218,7 @@ function OnBoardingCompliance() {
             onChange={handleChange}
           />
         </div>
+
         <div className="form-row">
           <label className="form-label">Company Phone</label>
           <input
@@ -214,33 +228,47 @@ function OnBoardingCompliance() {
             onChange={handleChange}
           />
         </div>
+
         <div className="form-row">
-          <label className="form-label">SPOC Name</label>
+          <label className="form-label">Managing Agent Name</label>
           <input
             className="form-input"
-            name="spocName"
-            value={formData.spocName}
+            name="managingAgentName"
+            value={formData.managingAgentName}
             onChange={handleChange}
           />
         </div>
+
         <div className="form-row">
-          <label className="form-label">SPOC Number</label>
+          <label className="form-label">Managing Agent Email</label>
           <input
             className="form-input"
-            name="spocNumber"
-            value={formData.spocNumber}
+            name="managingAgentEmail"
+            value={formData.managingAgentEmail}
             onChange={handleChange}
           />
         </div>
+
         <div className="form-row">
-          <label className="form-label">SPOC Email</label>
+          <label className="form-label">Email</label>
           <input
             className="form-input"
-            name="spocemailaddres"
-            value={formData.spocemailaddres}
+            name="email"
+            value={formData.email}
             onChange={handleChange}
           />
         </div>
+
+        <div className="form-row">
+          <label className="form-label">Contact Number</label>
+          <input
+            className="form-input"
+            name="contactNumber"
+            value={formData.contactNumber}
+            onChange={handleChange}
+          />
+        </div>
+
         <div className="form-row">
           <label className="form-label">Onboarding Date</label>
           <input
@@ -251,16 +279,18 @@ function OnBoardingCompliance() {
             onChange={handleChange}
           />
         </div>
+
         <div className="form-row">
           <label className="form-label">Valid Till</label>
           <input
             type="date"
             className="form-input"
-            name="validtill"
-            value={formData.validtill}
+            name="validTill"
+            value={formData.validTill}
             onChange={handleChange}
           />
         </div>
+
         <div className="form-row">
           <label className="form-label">Type</label>
           <select
@@ -269,10 +299,11 @@ function OnBoardingCompliance() {
             value={formData.type}
             onChange={handleChange}
           >
-            <option value="Adhoc">Adhoc</option>
-            <option value="Contractual">Contractual</option>
+            <option>Adhoc</option>
+            <option>Contractual</option>
           </select>
         </div>
+
         <div className="form-row form-full">
           <label className="form-label">Short Description</label>
           <textarea
@@ -282,6 +313,7 @@ function OnBoardingCompliance() {
             onChange={handleChange}
           />
         </div>
+
         <div className="form-row form-full">
           <label className="form-label">Description</label>
           <textarea
@@ -330,29 +362,19 @@ function OnBoardingCompliance() {
               </div>
 
               <div className="deliverable-body">
+                {/* ===========================
+             CLIENT CONTRACT TAB
+        ============================ */}
+
                 {activeTab === "Client Contract Deliverables" && (
                   <>
-                    <div className="deliverable-add-wrapper">
-                      <button
-                        type="button"
-                        className="deliverable-add"
-                        onClick={addContract}
-                      >
-                        +
-                      </button>
-                    </div>
-
                     {contractDeliverables.map((item, index) => (
                       <div className="deliverable-form" key={index}>
-                        <div className="deliverable-title">
-                          Contract Deliverable {index + 1}
-                        </div>
                         {index > 0 && (
-                          <div className="deliverable-remove-wrapper">
+                          <div className="deliverable-remove">
                             <button
                               type="button"
-                              className="deliverable-remove"
-                              onClick={() => removeContract(index)}
+                              onClick={() => removeDeliverable(index)}
                             >
                               Cancel This
                             </button>
@@ -367,7 +389,9 @@ function OnBoardingCompliance() {
                               type="text"
                               name="contractId"
                               value={item.contractId}
-                              onChange={(e) => handleContractChange(index, e)}
+                              onChange={(e) =>
+                                handleDeliverableChange(index, e)
+                              }
                             />
                           </div>
 
@@ -378,7 +402,9 @@ function OnBoardingCompliance() {
                               type="text"
                               name="siteName"
                               value={item.siteName}
-                              onChange={(e) => handleContractChange(index, e)}
+                              onChange={(e) =>
+                                handleDeliverableChange(index, e)
+                              }
                             />
                           </div>
                         </div>
@@ -391,7 +417,9 @@ function OnBoardingCompliance() {
                               type="text"
                               name="siteAddress"
                               value={item.siteAddress}
-                              onChange={(e) => handleContractChange(index, e)}
+                              onChange={(e) =>
+                                handleDeliverableChange(index, e)
+                              }
                             />
                           </div>
 
@@ -402,7 +430,9 @@ function OnBoardingCompliance() {
                               type="text"
                               name="siteManagerName"
                               value={item.siteManagerName}
-                              onChange={(e) => handleContractChange(index, e)}
+                              onChange={(e) =>
+                                handleDeliverableChange(index, e)
+                              }
                             />
                           </div>
                         </div>
@@ -415,7 +445,9 @@ function OnBoardingCompliance() {
                               type="email"
                               name="siteEmail"
                               value={item.siteEmail}
-                              onChange={(e) => handleContractChange(index, e)}
+                              onChange={(e) =>
+                                handleDeliverableChange(index, e)
+                              }
                             />
                           </div>
 
@@ -426,7 +458,9 @@ function OnBoardingCompliance() {
                               type="text"
                               name="siteMobile"
                               value={item.siteMobile}
-                              onChange={(e) => handleContractChange(index, e)}
+                              onChange={(e) =>
+                                handleDeliverableChange(index, e)
+                              }
                             />
                           </div>
                         </div>
@@ -443,7 +477,7 @@ function OnBoardingCompliance() {
                                   value="Active"
                                   checked={item.contractState === "Active"}
                                   onChange={(e) =>
-                                    handleContractChange(index, e)
+                                    handleDeliverableChange(index, e)
                                   }
                                 />
                                 Active
@@ -456,7 +490,7 @@ function OnBoardingCompliance() {
                                   value="Inactive"
                                   checked={item.contractState === "Inactive"}
                                   onChange={(e) =>
-                                    handleContractChange(index, e)
+                                    handleDeliverableChange(index, e)
                                   }
                                 />
                                 Inactive
@@ -471,45 +505,60 @@ function OnBoardingCompliance() {
                           <textarea
                             name="comments"
                             value={item.comments}
-                            onChange={(e) => handleContractChange(index, e)}
+                            onChange={(e) => handleDeliverableChange(index, e)}
                           />
                         </div>
+                        <div className="deliverable-field">
+                          <label>Attachment</label>
 
-                        <hr className="deliverable-divider" />
+                          <input
+                            type="file"
+                            onChange={(e) =>
+                              handleDeliverableAttachment(index, e)
+                            }
+                          />
+                        </div>
                       </div>
                     ))}
+
+                    <div className="deliverable-add">
+                      <button type="button" onClick={addDeliverable}>
+                        + Add Contract
+                      </button>
+                    </div>
                   </>
                 )}
 
+                {/* ===========================
+             FINANCIAL TAB
+        ============================ */}
+
                 {activeTab === "Financial Details" && (
                   <>
-                    <div className="deliverable-add-wrapper">
-                      <button
-                        type="button"
-                        className="deliverable-add"
-                        onClick={addFinancial}
-                      >
-                        +
-                      </button>
-                    </div>
-
                     {financialDetails.map((item, index) => (
                       <div className="deliverable-form" key={index}>
-                        <div className="deliverable-title">
-                          Financial Detail {index + 1}
-                        </div>
                         {index > 0 && (
-                          <div className="deliverable-remove-wrapper">
+                          <div className="deliverable-remove">
                             <button
                               type="button"
-                              className="deliverable-remove"
                               onClick={() => removeFinancial(index)}
                             >
                               Cancel This
                             </button>
                           </div>
                         )}
+
                         <div className="deliverable-row">
+                          <div className="deliverable-field">
+                            <label>Contract ID</label>
+
+                            <input
+                              type="text"
+                              name="contractId"
+                              value={item.contractId}
+                              onChange={(e) => handleFinancialChange(index, e)}
+                            />
+                          </div>
                           <div className="deliverable-field">
                             <label>Invoice Date</label>
 
@@ -542,9 +591,9 @@ function OnBoardingCompliance() {
                               value={item.billingCycle}
                               onChange={(e) => handleFinancialChange(index, e)}
                             >
-                              <option value="Weekly">Weekly</option>
-                              <option value="Monthly">Monthly</option>
-                              <option value="Quarterly">Quarterly</option>
+                              <option>Weekly</option>
+                              <option>Monthly</option>
+                              <option>Quarterly</option>
                             </select>
                           </div>
                         </div>
@@ -553,15 +602,29 @@ function OnBoardingCompliance() {
                           <label>Comments</label>
 
                           <textarea
-                            name="financialComments"
-                            value={item.financialComments}
+                            name="comments"
+                            value={item.comments}
                             onChange={(e) => handleFinancialChange(index, e)}
                           />
                         </div>
+                        <div className="deliverable-field">
+                          <label>Attachment</label>
 
-                        <hr className="deliverable-divider" />
+                          <input
+                            type="file"
+                            onChange={(e) =>
+                              handleFinancialAttachment(index, e)
+                            }
+                          />
+                        </div>
                       </div>
                     ))}
+
+                    <div className="deliverable-add">
+                      <button type="button" onClick={addFinancial}>
+                        + Add Financial Details
+                      </button>
+                    </div>
                   </>
                 )}
               </div>

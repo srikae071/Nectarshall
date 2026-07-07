@@ -1,133 +1,178 @@
-.table-layout-page {
-  padding: 20px;
-  background: #f5f6fa;
+.TL1Container {
+  padding: 30px;
+  background: #e9e5e5;
   min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.table-layout-header {
+.TL1TopBar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-}
-
-.table-layout-header h2 {
-  font-size: 28px;
-  color: #222;
-  font-weight: 600;
-}
-
-.table-layout-right {
-  display: flex;
-  align-items: center;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
   gap: 15px;
 }
 
-.table-search-box {
+.TL1Heading {
+  font-size: 28px;
+  font-weight: 700;
+  color: #070b11;
+  margin: 0;
+}
+
+.TL1Right {
   display: flex;
   align-items: center;
-  width: 300px;
+  gap: 16px;
+}
+
+.TL1SearchBox {
+  display: flex;
+  align-items: center;
+  width: 320px;
   background: #fff;
-  border: 1px solid #d7d7d7;
-  border-radius: 6px;
-  padding: 8px 12px;
+  border-radius: 10px;
+  padding: 10px 15px;
+  border: 1px solid #d9e2ef;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
 }
 
-.table-search-box input {
-  flex: 1;
-  border: none;
-  outline: none;
-  font-size: 14px;
-  background: transparent;
-}
-
-.table-search-icon {
+.TL1SearchIcon {
+  color: #6c757d;
   margin-right: 10px;
-  color: #666;
-}
-
-.table-setting-wrapper {
-  position: relative;
-}
-
-.table-setting-btn {
-  width: 40px;
-  height: 40px;
-  border: none;
-  background: #f26b3a;
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
   font-size: 18px;
 }
 
-.table-setting-btn:hover {
-  background: #dd5b2d;
-}
-
-.table-setting-dropdown {
-  position: absolute;
-  right: 0;
-  top: 45px;
-  width: 220px;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
-  padding: 10px;
-}
-
-.table-layout-card {
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-}
-
-.common-table {
+.TL1SearchBox input {
   width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+}
+
+.TL1SettingWrapper {
+  position: relative;
+}
+
+.TL1SettingButton {
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 12px;
+  background: rgb(243, 239, 239);
+  cursor: pointer;
+  font-size: 22px;
+  color: #2e2e2e;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  transition: 0.3s;
+  animation: TL1Rotate 4s linear infinite;
+}
+
+.TL1SettingButton:hover {
+  transform: scale(1.08);
+}
+
+@keyframes TL1Rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  15% {
+    transform: rotate(30deg);
+  }
+
+  30% {
+    transform: rotate(-30deg);
+  }
+
+  45% {
+    transform: rotate(25deg);
+  }
+
+  60% {
+    transform: rotate(-25deg);
+  }
+
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.TL1Dropdown {
+  position: absolute;
+  top: 58px;
+  right: 0;
+  width: 250px;
+  max-height: 350px;
+  overflow-y: auto;
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+}
+
+.TL1Checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.TL1Checkbox input {
+  width: 17px;
+  height: 17px;
+  accent-color: #2563eb;
+}
+
+.TL1TableContainer {
+  width: 100%;
+  overflow-x: auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+}
+
+.TL1Table {
+  width: 100%;
+  min-width: 900px;
   border-collapse: collapse;
 }
 
-.common-table thead {
-  background: #2c2c2c;
+.TL1Table thead {
+  background: #2e2e2e;
 }
 
-.common-table th {
-  color: #fff;
-  padding: 14px;
+.TL1Table th {
+  color: white;
+  padding: 16px;
   text-align: left;
   font-size: 14px;
   font-weight: 600;
+  white-space: nowrap;
 }
 
-.common-table td {
-  padding: 13px;
-  border-bottom: 1px solid #ececec;
+.TL1Table td {
+  padding: 15px;
+  border-bottom: 1px solid #edf2f7;
   font-size: 14px;
+  color: #334155;
+  white-space: nowrap;
 }
 
-.common-table tbody tr:nth-child(even) {
-  background: #fafafa;
+.TL1Table tbody tr {
+  transition: 0.25s;
 }
 
-.common-table tbody tr:hover {
-  background: #fff4ef;
+.TL1Table tbody tr:hover {
+  background: #f5f5f5;
 }
 
-@media (max-width: 900px) {
-  .table-layout-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-  }
-
-  .table-layout-right {
-    width: 100%;
-  }
-
-  .table-search-box {
-    width: 100%;
-  }
+.TL1Table tbody tr:last-child td {
+  border-bottom: none;
 }

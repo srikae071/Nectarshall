@@ -152,46 +152,11 @@ function OnBoardingComplianceSupplier() {
       alert("Error Saving Supplier Onboarding");
     }
   };
-  const handleContractSave = async (item) => {
-    try {
-      await axios.post(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding/create",
-        {
-          ...formData,
-          category: "Supplier Onboarding",
-          contractDeliverables: [item],
-          financialDetails: [],
-        },
-      );
 
-      alert("Contract Details Saved Successfully");
-    } catch (error) {
-      console.error(error);
-      alert("Error Saving Contract Details");
-    }
-  };
-  const handleFinancialSave = async (item) => {
-    try {
-      await axios.post(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding/create",
-        {
-          ...formData,
-          category: "Supplier Onboarding",
-          contractDeliverables: [],
-          financialDetails: [item],
-        },
-      );
-
-      alert("Financial Details Saved Successfully");
-    } catch (error) {
-      console.error(error);
-      alert("Error Saving Financial Details");
-    }
-  };
   return (
     <CncLeftLayout>
       <RegularForm
-        title="Onboarding Compliance"
+        title="Onboarding Supplier"
         onSave={handleSave}
         onCancel={() => {}}
       >
@@ -553,14 +518,6 @@ function OnBoardingComplianceSupplier() {
                             }
                           />
                         </div>
-                        <div className="deliverable-save">
-                          <button
-                            type="button"
-                            onClick={() => handleContractSave(item)}
-                          >
-                            Save
-                          </button>
-                        </div>
                       </div>
                     ))}
 
@@ -659,14 +616,6 @@ function OnBoardingComplianceSupplier() {
                               handleFinancialAttachment(index, e)
                             }
                           />
-                        </div>
-                        <div className="deliverable-save">
-                          <button
-                            type="button"
-                            onClick={() => handleFinancialSave(item)}
-                          >
-                            Save
-                          </button>
                         </div>
                       </div>
                     ))}

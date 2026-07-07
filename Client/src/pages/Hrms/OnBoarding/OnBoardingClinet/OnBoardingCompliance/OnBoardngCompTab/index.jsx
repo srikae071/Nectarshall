@@ -1,85 +1,133 @@
 import CncLeftLayout from "../../../../../Cnc/CncLeftLayout";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import TableLayout1 from "../../../../../../components/Layouts/TableLayouts/TableLayout1";
+
+import { useState, useEffect } from "react";
 import axios from "axios";
 import "./index.css";
 
-function OnBoardingCompTab() {
-  const [data, setData] = useState([]);
+function OnBoardingSupplierTab() {
+  const defaultColumns = [
+    "clientId",
+    "companyName",
+    "emailAddress",
+    "onboardingDate",
+    "validTill",
+    "status",
+  ];
 
-  const navigate = useNavigate();
+  const allColumns = [
+    { key: "clientId", label: "Client ID" },
+    { key: "companyName", label: "Company Name" },
+    { key: "emailAddress", label: "Email Address" },
+    { key: "onboardingDate", label: "Onboarding Date" },
+    { key: "validTill", label: "Valid Till" },
+    { key: "status", label: "Status" },
+
+    { key: "abn", label: "ABN" },
+    { key: "acn", label: "ACN" },
+    { key: "companyAddress", label: "Company Address" },
+    { key: "companyPhone", label: "Company Phone" },
+    { key: "managingAgentName", label: "Managing Agent Name" },
+    { key: "managingAgentEmail", label: "Managing Agent Email" },
+    { key: "managingAgentNumber", label: "Managing Agent Number" },
+    { key: "shortDescription", label: "Short Description" },
+    { key: "description", label: "Description" },
+  ];
+
+  const [data, setData] = useState([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
-    fetchData();
+    fetchBoarding();
   }, []);
 
-  const fetchData = async () => {
+  const fetchBoarding = async () => {
     try {
       const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/compliance",
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding",
       );
 
-      const filteredData = response.data.filter(
-        (item) => item.category === "Onboarding Client Compliance",
+      setData(
+        response.data.filter((item) => item.category === "Client Onboarding"),
       );
-
-      setData(filteredData);
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   };
 
-  const handleRowClick = (item) => {
-    navigate(`/onboarding-compliance-save/${item._id}`);
-  };
+  const filteredData = data.filter((item) =>
+    item.clientId?.toLowerCase().includes(search.toLowerCase()),
+  );
 
   return (
     <CncLeftLayout>
-      <div className="Openhome">
-        <div>
-          <h3 className="openheading">Onboarding Client Compliance</h3>
+      <TableLayout1
+        title="Supplier Onboarding"
+        storageKey="boardingColumns"
+        search={search}
+        setSearch={setSearch}
+        defaultColumns={defaultColumns}
+        allColumns={allColumns}
+      >
+        {(visibleColumns) =>
+          filteredData.map((item) => (
+            <tr key={item._id}>
+              {visibleColumns.includes("clientId") && <td>{item.clientId}</td>}
 
-          <table className="opentable">
-            <thead>
-              <tr className="opentablerow">
-                <th>Case ID</th>
-                <th>Company Name</th>
-                <th>Email Address</th>
-                <th>Onboarding Date</th>
-                <th>Valid Till</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {data.length === 0 ? (
-                <tr>
-                  <td colSpan="6" style={{ textAlign: "center" }}>
-                    No Records Found
-                  </td>
-                </tr>
-              ) : (
-                data.map((item) => (
-                  <tr
-                    key={item._id}
-                    onClick={() => handleRowClick(item)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <td>{item.complianceNumber}</td>
-                    <td>{item.companyName}</td>
-                    <td>{item.emailaddress}</td>
-                    <td>{item.onboardingDate}</td>
-                    <td>{item.validtill}</td>
-                    <td>{item.status}</td>
-                  </tr>
-                ))
+              {visibleColumns.includes("companyName") && (
+                <td>{item.companyName}</td>
               )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+
+              {visibleColumns.includes("emailAddress") && (
+                <td>{item.managingAgentName}</td>
+              )}
+
+              {visibleColumns.includes("onboardingDate") && (
+                <td>{item.onboardingDate?.slice(0, 10)}</td>
+              )}
+
+              {visibleColumns.includes("validTill") && (
+                <td>{item.validTill?.slice(0, 10)}</td>
+              )}
+
+              {visibleColumns.includes("status") && <td>{item.status}</td>}
+              {visibleColumns.includes("abn") && <td>{item.abn}</td>}
+
+              {visibleColumns.includes("acn") && <td>{item.acn}</td>}
+
+              {visibleColumns.includes("companyAddress") && (
+                <td>{item.companyAddress}</td>
+              )}
+
+              {visibleColumns.includes("companyPhone") && (
+                <td>{item.companyPhone}</td>
+              )}
+
+              {visibleColumns.includes("managingAgentName") && (
+                <td>{item.managingAgentName}</td>
+              )}
+
+              {visibleColumns.includes("managingAgentEmail") && (
+                <td>{item.managingAgentEmail}</td>
+              )}
+
+              {visibleColumns.includes("managingAgentNumber") && (
+                <td>{item.managingAgentNumber}</td>
+              )}
+
+              {visibleColumns.includes("shortDescription") && (
+                <td>{item.shortDescription}</td>
+              )}
+
+              {visibleColumns.includes("description") && (
+                <td>{item.description}</td>
+              )}
+            </tr>
+          ))
+        }
+      </TableLayout1>
     </CncLeftLayout>
   );
 }
 
-export default OnBoardingCompTab;
+export default OnBoardingSupplierTab;
