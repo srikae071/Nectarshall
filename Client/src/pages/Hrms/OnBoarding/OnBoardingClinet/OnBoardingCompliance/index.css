@@ -416,10 +416,44 @@
   font-size: 13px;
 }
 
+.deliverable-percentage {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.deliverable-percentage input {
+  flex: 1;
+}
+
+.deliverable-percentage span {
+  font-size: 15px;
+  font-weight: 600;
+  color: #444;
+}
 .deliverable-remove button:hover {
   background: #b72d3a;
 }
 
+.deliverable-percentage-field {
+  width: 260px;
+  margin-top: 18px;
+}
+
+.deliverable-percentage {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.deliverable-percentage input {
+  width: 100px;
+}
+
+.deliverable-percentage span {
+  font-weight: 600;
+  font-size: 15px;
+}
 /* ==========================
    RESPONSIVE
 ========================== */
@@ -433,6 +467,32 @@
     width: 100%;
     margin-left: 0;
   }
+}
+.deliverable-scope {
+  width: 100%;
+  min-height: 60px;
+  padding: 12px;
+  border: 1px solid #d5d5d5;
+  border-radius: 6px;
+  resize: vertical;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.deliverable-comment textarea {
+  width: 100%;
+  resize: vertical;
+  padding: 12px;
+  border: 1px solid #d5d5d5;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+.deliverable-scope:focus,
+.deliverable-comments:focus {
+  border-color: #f26b3a;
 }
 @media (max-width: 900px) {
   .deliverable-container {

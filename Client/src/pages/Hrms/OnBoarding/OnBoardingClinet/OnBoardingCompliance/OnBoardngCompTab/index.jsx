@@ -20,7 +20,7 @@ function OnBoardingSupplierTab() {
     { key: "companyName", label: "Company Name" },
     { key: "emailAddress", label: "Email Address" },
     { key: "onboardingDate", label: "Onboarding Date" },
-    { key: "validTill", label: "Valid Till" },
+
     { key: "status", label: "Status" },
 
     { key: "abn", label: "ABN" },
@@ -62,7 +62,7 @@ function OnBoardingSupplierTab() {
   return (
     <CncLeftLayout>
       <TableLayout1
-        title="Supplier Onboarding"
+        title="Client Onboarding"
         storageKey="boardingColumns"
         search={search}
         setSearch={setSearch}
@@ -84,10 +84,6 @@ function OnBoardingSupplierTab() {
 
               {visibleColumns.includes("onboardingDate") && (
                 <td>{item.onboardingDate?.slice(0, 10)}</td>
-              )}
-
-              {visibleColumns.includes("validTill") && (
-                <td>{item.validTill?.slice(0, 10)}</td>
               )}
 
               {visibleColumns.includes("status") && <td>{item.status}</td>}

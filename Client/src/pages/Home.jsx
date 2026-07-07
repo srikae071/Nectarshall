@@ -10,9 +10,9 @@ import orgImg from "../images/orhanizationpolicies.jfif";
 import askItImg from "../images/askit.jfif";
 import askHrImg from "../images/askhr.jfif";
 import corosolimg from "../images/corosolimg.jpg";
-
 import empreq from "../images/emloyereq.jpg";
 import offboarding from "../images/offboarding.jpg";
+import busineseng from "../images/businesseng.avif";
 
 function Home() {
   const navigate = useNavigate();
@@ -22,19 +22,6 @@ function Home() {
     fetchPendingLeaves();
   }, []);
 
-  // const fetchPendingLeaves = async () => {
-  //   try {
-  //     const response = await axios.get(
-  //       "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves",
-  //     );
-
-  //     const pending = response.data.filter((item) => item.status === "Pending");
-
-  //     setPendingCount(pending.length);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
   const fetchPendingLeaves = async () => {
     try {
       const [leaveResponse, jobResponse] = await Promise.all([
@@ -112,6 +99,12 @@ function Home() {
       img: offboarding,
       route: "/exit",
     },
+    {
+      title: "Business Engagement",
+      desc: "A simple way to communicate HR issues",
+      img: busineseng,
+      route: "/business-engagement",
+    },
   ];
 
   return (
@@ -135,10 +128,10 @@ function Home() {
           <a
             role="button"
             tabIndex={0}
-            onClick={() => navigate("/onboarding/employerequest")}
+            onClick={() => navigate("/Client/onboarding-compliance")}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ")
-                navigate("/onboarding/employerequest");
+                navigate("/Client/onboarding-compliance");
             }}
           >
             C&C
@@ -146,9 +139,10 @@ function Home() {
           <a
             role="button"
             tabIndex={0}
-            onClick={() => navigate("/it-all")}
+            onClick={() => navigate("/Client/onboarding-compliance")}
             onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") navigate("/it-all");
+              if (e.key === "Enter" || e.key === " ")
+                navigate("/Client/onboarding-compliance");
             }}
           >
             IT
@@ -186,7 +180,6 @@ function Home() {
           >
             HRMS
           </a>
-
           {/* <a
             role="button"
             tabIndex={0}
@@ -197,7 +190,6 @@ function Home() {
           >
             MY TASK
           </a> */}
-
           <div
             className="MyTaskNotificationWrapper"
             role="button"
@@ -208,7 +200,6 @@ function Home() {
             }}
           >
             <a>MY TASK</a>
-
             <span className="MyTaskNotificationBadge">{pendingCount}</span>
           </div>
           <a role="button" tabIndex={0} onClick={() => navigate("/my-tickets")}>
@@ -217,10 +208,8 @@ function Home() {
           <div className="profile">👤</div>
         </div>
       </div>
-
       <div className="navbarbgc">
         <img src={corosolimg} className="hero-img" />
-
         <div className="hero-content">
           <div className="search-box">
             <input placeholder="What are you looking for?" />

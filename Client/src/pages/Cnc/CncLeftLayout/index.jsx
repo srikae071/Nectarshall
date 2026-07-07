@@ -68,6 +68,17 @@ const menuData = [
       },
     ],
   },
+  {
+    title: "Business Engagement",
+    items: [
+      // { label: "All", path: "/hrms" },
+      { label: "All", path: "" },
+      { label: "Create New", path: "" },
+      { label: "Open", path: "" },
+      { label: "Resolved", path: "" },
+      { label: "Assign to Me", path: "" },
+    ],
+  },
 ];
 
 const MenuItem = ({ item, level = 0, expandedMenus, setExpandedMenus }) => {

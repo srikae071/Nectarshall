@@ -56,3 +56,44 @@ exports.getAllBoardings = async (req, res) => {
     });
   }
 };
+exports.getBoardingById = async (req, res) => {
+  try {
+    const boarding = await Boarding.findById(req.params.id);
+
+    if (!boarding) {
+      return res.status(404).json({
+        success: false,
+        message: "Boarding not found",
+      });
+    }
+
+    res.status(200).json(boarding);
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+exports.updateBoarding = async (req, res) => {
+  try {
+    const boarding = await Boarding.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Boarding Updated Successfully",
+      data: boarding,
+    });
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};

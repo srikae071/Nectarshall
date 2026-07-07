@@ -10,7 +10,7 @@ function OnBoardingComplianceSupplier() {
   const [activeTab, setActiveTab] = useState("Client Contract Deliverables");
   const [formData, setFormData] = useState({
     clientId: "",
-
+    Type: "",
     companyName: "",
     abn: "",
     acn: "",
@@ -161,6 +161,20 @@ function OnBoardingComplianceSupplier() {
         onCancel={() => {}}
       >
         <div className="form-row">
+          <label className="form-label">Type</label>
+
+          <select
+            className="form-input"
+            name="type"
+            value={formData.type}
+            onChange={handleChange}
+          >
+            <option value="">Select Type</option>
+            <option value="Vendor">Vendor</option>
+            <option value="Subcontractor">Sub-Contractor</option>
+          </select>
+        </div>
+        <div className="form-row">
           <label className="form-label">Client ID</label>
           <input
             className="form-input"
@@ -169,6 +183,7 @@ function OnBoardingComplianceSupplier() {
             onChange={handleChange}
           />
         </div>
+
         <div className="form-row">
           <label className="form-label">Company Name</label>
           <input

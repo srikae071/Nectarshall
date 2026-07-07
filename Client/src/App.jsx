@@ -21,9 +21,7 @@ import PreAll from "../src/pages/Hrms/Employee/PreJoiningCompliance/PreAll/index
 import PreEmployeeCreateNew from "../src/pages/Hrms/Employee/PreJoiningCompliance/PreEmployeeCreateNew/index.jsx";
 import PreEmployeeResolved from "../src/pages/Hrms/Employee/PreJoiningCompliance/PreEmployeeResolved/index.jsx";
 import OfferLetter from "../src/pages/Hrms/Employee/OfferLetter/index.jsx";
-// import DashboardLayout from "./pages/Dashboard/DashboardLayout";
 import Schedule from "./pages/Dashboard/DashboardRightLayout/Schedule/index.jsx";
-
 import TimeSheat from "./pages/Dashboard/DashboardRightLayout/TimeSheat";
 import Employeesites from "./pages/Dashboard/DashboardRightLayout/Employessites/index.jsx";
 import Reportss from "./pages/Dashboard/DashboardRightLayout/Reportss/index.jsx";
@@ -57,7 +55,7 @@ import OnBoardingCompliance from "./pages/Hrms/OnBoarding/OnBoardingClinet/OnBoa
 import OnBoardingResonanceRequirementsAll from "./pages/Hrms/OnBoarding/OnBoardingEmployee/ResonanceRequirements/OnBoardingResonanceRequirementsAll/index.jsx";
 import OnBoardingResonanceRequirementsCreateNew from "./pages/Hrms/OnBoarding/OnBoardingEmployee/ResonanceRequirements/OnBoardingResonanceRequirementsCreateNew/index.jsx";
 import OnBoardingResonanceRequirementsResolve from "./pages/Hrms/OnBoarding/OnBoardingEmployee/ResonanceRequirements/OnBoardingResonanceRequirementsResolve/index.jsx";
-import OnBoardingSaves from "./pages/Hrms/OnBoarding/OnBoardingEmployee/OnBoardingSaves/index.jsx";
+// import OnBoardingSaves from "./pages/Hrms/OnBoarding/OnBoardingEmployee/OnBoardingSaves/index.jsx";
 import ResonanceMain from "./pages/Home/Resonance/ResonanceMain/index.jsx";
 import OnBoardingPreJoining from "./pages/Hrms/OnBoarding/OnBoardingPreJoining/index.jsx";
 import OnBoardingOfferLetter from "./pages/Hrms/OnBoarding/OnBoardingOfferLetter/index.jsx";
@@ -89,6 +87,8 @@ import ReqOnboardingResolvedTab from "./pages/NavItems/IT/ItRightSide/RequestsOn
 import RegularForm from "./components/Layouts/FormLayouts/RegularForm/index.jsx";
 import OffboardingSupplierForm from "./pages/Hrms/Offbording/Supplier/OffBoaedingSuplierForm/index.jsx";
 import OnBoardingSupplierTab from "./pages/Hrms/OnBoarding/OnBoardingSupplier/OnbSupplierTab/index.jsx";
+import BusinessEngagement from "./pages/Cnc/CncRightSide/BusinessEngagement/index.jsx";
+import OnBoardingSaves from "./pages/Hrms/OnBoarding/CncOnBoardingSaves/OnboardingSaves";
 function App() {
   return (
     <Routes>
@@ -104,7 +104,6 @@ function App() {
       <Route path="/hrms/resolved-cases" element={<Resolved />} />
       <Route path="/hrms/assigned-cases" element={<Assingtome />} />
       {/* <Route path="/onboarding/clint" element={<OnboardingCompliance />} /> */}
-
       <Route path="/organisation-policies" element={<OpMainPage />} />
       <Route path="/schedule" element={<Schedule />} />
       <Route path="/timesheets" element={<TimeSheat />} />
@@ -114,7 +113,6 @@ function App() {
       <Route path="/main-dashboard" element={<MainDashboard />} />
       <Route path="/ask-for-it" element={<MainAFI />} />
       <Route path="/ask-for-hr" element={<AskForHrMainPage />} />
-
       <Route path="/PatrolingSchedule" element={<PatrollingSchedule />} />
       <Route
         path="/PatrollingMainDashboard"
@@ -165,7 +163,6 @@ function App() {
       /> */}
       <Route path="/onboarding-saves/:id" element={<OnBoardingSaves />} />
       <Route path="/Resonancereq" element={<ResonanceMain />} />
-
       <Route path="/onboarding/prejoining" element={<OnBoardingPreJoining />} />
       <Route
         path="/onboarding/Offerletter/"
@@ -235,6 +232,7 @@ function App() {
         element={<OffboardingSupplierForm />}
       />
       <Route path="/onboarding-supplier" element={<OnBoardingSupplierTab />} />
+      <Route path="/business-engagement" element={<BusinessEngagement />} />
     </Routes>
   );
 }

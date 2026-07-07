@@ -1,16 +1,18 @@
-import CncLeftLayout from "../../../../Cnc/CncLeftLayout";
-import RegularForm from "../../../../../components/Layouts/FormLayouts/RegularForm/index.jsx";
-import { useState } from "react";
 import axios from "axios";
+import CncLeftLayout from "../../../../Cnc/CncLeftLayout";
+import RegularForm from "../../../../../components/Layouts/FormLayouts/RegularForm";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+
 import "./index.css";
 
-function OnBoardingCompliance() {
+function OnBoardingSaves() {
+  const { id } = useParams();
   const [expanded, setExpanded] = useState(false);
-
   const [activeTab, setActiveTab] = useState("Client Contract Deliverables");
   const [formData, setFormData] = useState({
     clientId: "",
-
+    Type: "",
     companyName: "",
     abn: "",
     acn: "",
@@ -22,7 +24,7 @@ function OnBoardingCompliance() {
     email: "",
     contactNumber: "",
     onboardingDate: "",
-
+    validTill: "",
     type: "Adhoc",
     shortDescription: "",
     description: "",
@@ -38,16 +40,11 @@ function OnBoardingCompliance() {
       contractState: "Active",
       comments: "",
       attachment: null,
-      ContractStartDate: "",
-      ContractEndtDate: "",
-      ContractValidDate: "",
     },
   ]);
   const [financialDetails, setFinancialDetails] = useState([
     {
       invoiceDate: "",
-      invoicingentity: "",
-      invoicingFrequency: "",
       invoiceNumber: "",
       billingCycle: "Monthly",
       comments: "",
@@ -55,6 +52,46 @@ function OnBoardingCompliance() {
       attachment: null,
     },
   ]);
+  const fetchBoarding = async () => {
+    try {
+      const response = await axios.get(
+        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding/${id}`,
+      );
+
+      const data = response.data;
+      console.log(response.data);
+      setFormData({
+        clientId: data.clientId || "",
+        type: data.type || "",
+        companyName: data.companyName || "",
+        abn: data.abn || "",
+        acn: data.acn || "",
+        address: data.address || "",
+        companyAddress: data.companyAddress || "",
+        companyPhone: data.companyPhone || "",
+        managingAgentName: data.managingAgentName || "",
+        managingAgentEmail: data.managingAgentEmail || "",
+        email: data.email || "",
+        contactNumber: data.contactNumber || "",
+        onboardingDate: data.onboardingDate?.slice(0, 10) || "",
+        validTill: data.validTill?.slice(0, 10) || "",
+        shortDescription: data.shortDescription || "",
+        description: data.description || "",
+      });
+
+      setContractDeliverables(data.contractDeliverables || []);
+
+      setFinancialDetails(data.financialDetails || []);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    if (id) {
+      fetchBoarding();
+    }
+  }, [id]);
 
   const handleChange = (e) => {
     setFormData({
@@ -141,30 +178,42 @@ function OnBoardingCompliance() {
 
   const handleSave = async () => {
     try {
-      await axios.post(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding/create",
+      await axios.put(
+        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding/${id}`,
         {
           ...formData,
-          category: "Client Onboarding",
           contractDeliverables,
           financialDetails,
         },
       );
 
-      alert("Client Onboarding Saved Successfully");
+      alert("Supplier Updated Successfully");
     } catch (error) {
-      console.error(error);
-      alert("Error Saving Supplier Onboarding");
+      console.log(error);
+      alert("Update Failed");
     }
   };
-
   return (
     <CncLeftLayout>
       <RegularForm
-        title="Onboarding Compliance"
+        title="Onboarding Supplier"
         onSave={handleSave}
         onCancel={() => {}}
       >
+        <div className="form-row">
+          <label className="form-label">Type</label>
+
+          <select
+            className="form-input"
+            name="type"
+            value={formData.type}
+            onChange={handleChange}
+          >
+            <option value="">Select Type</option>
+            <option value="Vendor">Vendor</option>
+            <option value="Subcontractor">Sub-Contractor</option>
+          </select>
+        </div>
         <div className="form-row">
           <label className="form-label">Client ID</label>
           <input
@@ -174,6 +223,7 @@ function OnBoardingCompliance() {
             onChange={handleChange}
           />
         </div>
+
         <div className="form-row">
           <label className="form-label">Company Name</label>
           <input
@@ -281,6 +331,17 @@ function OnBoardingCompliance() {
             className="form-input"
             name="onboardingDate"
             value={formData.onboardingDate}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="form-row">
+          <label className="form-label">Valid Till</label>
+          <input
+            type="date"
+            className="form-input"
+            name="validTill"
+            value={formData.validTill}
             onChange={handleChange}
           />
         </div>
@@ -444,42 +505,6 @@ function OnBoardingCompliance() {
                               }
                             />
                           </div>
-                          <div className="deliverable-field">
-                            <label>Contact Start Date</label>
-
-                            <input
-                              type="text"
-                              name="siteMobile"
-                              value={item.ContractStartDate}
-                              onChange={(e) =>
-                                handleDeliverableChange(index, e)
-                              }
-                            />
-                          </div>
-                          <div className="deliverable-field">
-                            <label>Contact End Date</label>
-
-                            <input
-                              type="text"
-                              name="siteMobile"
-                              value={item.ContractEndtDate}
-                              onChange={(e) =>
-                                handleDeliverableChange(index, e)
-                              }
-                            />
-                          </div>
-                          <div className="deliverable-field">
-                            <label>Contact Valid Date</label>
-
-                            <input
-                              type="text"
-                              name="siteMobile"
-                              value={item.ContractValidDate}
-                              onChange={(e) =>
-                                handleDeliverableChange(index, e)
-                              }
-                            />
-                          </div>
 
                           <div className="deliverable-field">
                             <label>Site Mobile Number</label>
@@ -530,21 +555,9 @@ function OnBoardingCompliance() {
                         </div>
 
                         <div className="deliverable-comment">
-                          <label>Scope of Work</label>
-
-                          <textarea
-                            className="deliverable-scope"
-                            name="scopeOfWork"
-                            value={item.scopeOfWork}
-                            onChange={(e) => handleDeliverableChange(index, e)}
-                          />
-                        </div>
-
-                        <div className="deliverable-comment">
                           <label>Comments</label>
 
                           <textarea
-                            className="deliverable-comments"
                             name="comments"
                             value={item.comments}
                             onChange={(e) => handleDeliverableChange(index, e)}
@@ -611,26 +624,20 @@ function OnBoardingCompliance() {
                               onChange={(e) => handleFinancialChange(index, e)}
                             />
                           </div>
+
                           <div className="deliverable-field">
-                            <label>Invoicing Entity</label>
+                            <label>Invoice Number</label>
 
                             <input
                               type="text"
-                              name="invoiceingEntity"
-                              value={item.invoicingentity}
+                              name="invoiceNumber"
+                              value={item.invoiceNumber}
                               onChange={(e) => handleFinancialChange(index, e)}
                             />
                           </div>
-                          <div className="deliverable-field">
-                            <label>Invoicing Frequency</label>
+                        </div>
 
-                            <input
-                              type="text"
-                              name="invoiceDate"
-                              value={item.invoicingFrequency}
-                              onChange={(e) => handleFinancialChange(index, e)}
-                            />
-                          </div>
+                        <div className="deliverable-row">
                           <div className="deliverable-field">
                             <label>Billing Cycle</label>
 
@@ -644,78 +651,7 @@ function OnBoardingCompliance() {
                               <option>Quarterly</option>
                             </select>
                           </div>
-
-                          <div className="deliverable-field">
-                            <label>Invoice Number</label>
-
-                            <input
-                              type="text"
-                              name="invoiceNumber"
-                              value={item.invoiceNumber}
-                              onChange={(e) => handleFinancialChange(index, e)}
-                            />
-                          </div>
                         </div>
-                        <div className="deliverable-row">
-                          <div className="deliverable-field">
-                            <label>Annual Increase</label>
-
-                            <div className="deliverable-radio-group">
-                              <label>
-                                <input
-                                  type="radio"
-                                  name={`annualIncrease-${index}`}
-                                  checked={item.annualIncrease === "Yes"}
-                                  onChange={() =>
-                                    handleFinancialChange(index, {
-                                      target: {
-                                        name: "annualIncrease",
-                                        value: "Yes",
-                                      },
-                                    })
-                                  }
-                                />
-                                Yes
-                              </label>
-
-                              <label>
-                                <input
-                                  type="radio"
-                                  name={`annualIncrease-${index}`}
-                                  checked={item.annualIncrease === "No"}
-                                  onChange={() =>
-                                    handleFinancialChange(index, {
-                                      target: {
-                                        name: "annualIncrease",
-                                        value: "No",
-                                      },
-                                    })
-                                  }
-                                />
-                                No
-                              </label>
-                            </div>
-                          </div>
-                        </div>
-                        {item.annualIncrease === "Yes" && (
-                          <div className="deliverable-field deliverable-percentage-field">
-                            <label>Annual Increase Percentage</label>
-
-                            <div className="deliverable-percentage">
-                              <input
-                                type="number"
-                                name="annualIncreasePercentage"
-                                value={item.annualIncreasePercentage}
-                                onChange={(e) =>
-                                  handleFinancialChange(index, e)
-                                }
-                                placeholder="7.74"
-                              />
-
-                              <span>%</span>
-                            </div>
-                          </div>
-                        )}
 
                         <div className="deliverable-comment">
                           <label>Comments</label>
@@ -755,4 +691,4 @@ function OnBoardingCompliance() {
   );
 }
 
-export default OnBoardingCompliance;
+export default OnBoardingSaves;
