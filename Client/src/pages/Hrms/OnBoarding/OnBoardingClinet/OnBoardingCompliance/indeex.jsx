@@ -146,7 +146,7 @@ function OnBoardingCompliance() {
         },
       );
 
-      alert("Supplier Onboarding Saved Successfully");
+      alert("Client Onboarding Saved Successfully");
     } catch (error) {
       console.error(error);
       alert("Error Saving Supplier Onboarding");

@@ -3,7 +3,6 @@ const BoardingSchema = new mongoose.Schema(
   {
     category: {
       type: String,
-      default: "Supplier Onboarding",
     },
 
     clientId: String,
