@@ -13,7 +13,7 @@ import Createnew from "../src/pages/Hrms/Createnew/index.jsx";
 import Open from "./pages/Hrms/Open/index.jsx";
 import Resolved from "../src/pages/Hrms/Resolved/index.jsx";
 import Assingtome from "../src/pages/Hrms/Assigntome/index.jsx";
-// import OnboardingCompliance from "../src/pages/Hrms/OnboardingCompliance/indeex.jsx";
+
 import All from "../src/pages/Hrms/Employee/ResourceRequirement/All/index.jsx";
 import EmployeeCreateNew from "../src/pages/Hrms/Employee/ResourceRequirement/EmployeeCreateNew/index.jsx";
 import EmployeeResolved from "../src/pages/Hrms/Employee/ResourceRequirement/EmployeeResolved/index.jsx";
@@ -64,7 +64,7 @@ import OnBoardingEmReqAll from "./pages/Hrms/OnBoarding/OnBoardingEmpReqAll/inde
 import EmployeeRequestSave from "./pages/Home/EmployeRequestSave/index.jsx";
 import CandidateForm from "./pages/Hrms/OnBoarding/OnBoardingClinet/CandidateForm";
 import Candidateform2 from "./pages/Hrms/OnBoarding/OnBoardingClinet/Candidateform2";
-import OnBoardingComplianceSupplier from "./pages/Hrms/OnBoarding/OnBoardingSupplier/OnBoardingComplianceSupplier/indeex.jsx";
+import OnBoardingComplianceSupplier from "./pages/Hrms/OnBoarding/OnBoardingSupplier/OnBoardingComplianceSupplier/index.jsx";
 import Interview from "./pages/Hrms/OnBoarding/Interview/index.jsx";
 import OnBoardingInterviewSaves from "./pages/Hrms/OnBoarding/OnBoardingInterviewSaves";
 import OnBoardingPreJoiningSaves from "./pages/Hrms/OnBoarding/OnBoardingPreJoining/OnBoardingPreJoiningSaves";

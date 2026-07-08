@@ -6,6 +6,8 @@ const BoardingSchema = new mongoose.Schema(
     },
 
     clientId: String,
+    SupplierId: String,
+    BusinessId: String,
     Type: String,
     companyName: String,
     requester: String,

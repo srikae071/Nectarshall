@@ -10,6 +10,7 @@ function OnBoardingSaves() {
   const { id } = useParams();
   const [expanded, setExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState("Client Contract Deliverables");
+  const [pageTitle, setPageTitle] = useState("");
   const [formData, setFormData] = useState({
     clientId: "",
     Type: "",
@@ -28,6 +29,7 @@ function OnBoardingSaves() {
     type: "Adhoc",
     shortDescription: "",
     description: "",
+    category: "",
   });
   const [contractDeliverables, setContractDeliverables] = useState([
     {
@@ -59,7 +61,13 @@ function OnBoardingSaves() {
       );
 
       const data = response.data;
-      console.log(response.data);
+      const titleMap = {
+        "Supplier Onboarding": "Onboarding Supplier",
+        "Client Onboarding": "Onboarding Client",
+        Home: "Business Management",
+      };
+
+      setPageTitle(titleMap[data.category] || "Onboarding");
       setFormData({
         clientId: data.clientId || "",
         type: data.type || "",
@@ -77,6 +85,7 @@ function OnBoardingSaves() {
         validTill: data.validTill?.slice(0, 10) || "",
         shortDescription: data.shortDescription || "",
         description: data.description || "",
+        category: data.category || "",
       });
 
       setContractDeliverables(data.contractDeliverables || []);
@@ -195,11 +204,7 @@ function OnBoardingSaves() {
   };
   return (
     <CncLeftLayout>
-      <RegularForm
-        title="Onboarding Supplier"
-        onSave={handleSave}
-        onCancel={() => {}}
-      >
+      <RegularForm title={pageTitle} onSave={handleSave} onCancel={() => {}}>
         <div className="form-row">
           <label className="form-label">Type</label>
 

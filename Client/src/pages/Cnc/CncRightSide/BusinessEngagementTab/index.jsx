@@ -8,11 +8,11 @@ function BusinessEngagementTab() {
 
   const allColumns = [
     {
-      key: "requesterName",
+      key: "requester",
       label: "Requester Name",
     },
     {
-      key: "requester",
+      key: "requesterFor",
       label: "Requester",
     },
   ];
@@ -56,12 +56,12 @@ function BusinessEngagementTab() {
         {(visibleColumns) =>
           filteredData.map((item) => (
             <tr key={item._id}>
-              {visibleColumns.includes("requesterName") && (
-                <td>{item.requesterName}</td>
-              )}
-
               {visibleColumns.includes("requester") && (
                 <td>{item.requester}</td>
+              )}
+
+              {visibleColumns.includes("requesterFor") && (
+                <td>{item.requesterFor}</td>
               )}
             </tr>
           ))

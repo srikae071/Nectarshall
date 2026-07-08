@@ -9,7 +9,7 @@ function OnBoardingCompliance() {
 
   const [activeTab, setActiveTab] = useState("Client Contract Deliverables");
   const [formData, setFormData] = useState({
-    clientId: "",
+    SupplierId: "",
 
     companyName: "",
     abn: "",
@@ -205,31 +205,11 @@ function OnBoardingCompliance() {
         </div>
 
         <div className="form-row">
-          <label className="form-label">Address</label>
-          <input
-            className="form-input"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="form-row">
           <label className="form-label">Company Address</label>
           <input
             className="form-input"
             name="companyAddress"
             value={formData.companyAddress}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="form-row">
-          <label className="form-label">Company Phone</label>
-          <input
-            className="form-input"
-            name="companyPhone"
-            value={formData.companyPhone}
             onChange={handleChange}
           />
         </div>
@@ -250,16 +230,6 @@ function OnBoardingCompliance() {
             className="form-input"
             name="managingAgentEmail"
             value={formData.managingAgentEmail}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="form-row">
-          <label className="form-label">Email</label>
-          <input
-            className="form-input"
-            name="email"
-            value={formData.email}
             onChange={handleChange}
           />
         </div>

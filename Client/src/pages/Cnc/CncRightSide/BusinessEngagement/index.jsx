@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
@@ -7,11 +8,26 @@ import "./index.css";
 
 function BusinessEngagement() {
   const [formData, setFormData] = useState({
+    businessId: "",
+    clientId: "",
+
     requester: "",
     requesterFor: "",
 
+    type: "",
+    companyName: "",
+    abn: "",
+    acn: "",
+    companyAddress: "",
+    companyPhone: "",
+    managingAgentName: "",
+    managingAgentEmail: "",
+
+    shortDescription: "",
     description: "",
-    workNotes: "",
+    CompanyAddress: "",
+
+    category: "Home",
   });
 
   const { id } = useParams();
@@ -42,11 +58,6 @@ function BusinessEngagement() {
       fetchRequest();
     }
   }, [id]);
-  const subCategoryOptions = {
-    Network: ["Router", "LAN", "WAN"],
-    Application: ["Zoho", "Guard House", "Light House"],
-    "Desk Side Support": ["Laptop Issue", "Printer Issue", "System Slow"],
-  };
 
   const handleChange = (e) => {
     console.log("name:", e.target.name, "value:", e.target.value);
@@ -71,7 +82,7 @@ function BusinessEngagement() {
 
       console.log(response.data);
       navigate("/"); // Home page route
-      alert("IT Request Saved Successfully");
+      alert("Business Request Saved Successfully");
 
       setFormData({
         requester: "",
@@ -108,6 +119,66 @@ function BusinessEngagement() {
             <input
               name="requesterFor"
               value={formData.requesterFor}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="CreateField">
+            <label>Company Name</label>
+
+            <input
+              name="companyName"
+              value={formData.companyName}
+              onChange={handleChange}
+            />
+          </div>
+        </div>
+        <div className="CreateRow">
+          <div className="CreateField">
+            <label>ABN</label>
+
+            <input name="abn" value={formData.abn} onChange={handleChange} />
+          </div>
+
+          <div className="CreateField">
+            <label>ACN</label>
+
+            <input name="acn" value={formData.acn} onChange={handleChange} />
+          </div>
+          <div className="CreateField">
+            <label>Company Address</label>
+
+            <input
+              name="companyAddress"
+              value={formData.companyAddress}
+              onChange={handleChange}
+            />
+          </div>
+        </div>
+        <div className="CreateRow">
+          <div className="CreateField">
+            <label>Managing Agent Name</label>
+
+            <input
+              name="managingAgentName"
+              value={formData.managingAgentName}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="CreateField">
+            <label>Managing Agent Email</label>
+
+            <input
+              name="managingAgentEmail"
+              value={formData.managingAgentEmail}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="CreateField">
+            <label>Company Address</label>
+
+            <input
+              name="CompanyAddress"
+              value={formData.CompanyAddress}
               onChange={handleChange}
             />
           </div>
