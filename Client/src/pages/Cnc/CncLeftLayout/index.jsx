@@ -72,7 +72,7 @@ const menuData = [
     title: "Business Engagement",
     items: [
       // { label: "All", path: "/hrms" },
-      { label: "All", path: "" },
+      { label: "All", path: "/Business-EngagementTab" },
       { label: "Create New", path: "" },
       { label: "Open", path: "" },
       { label: "Resolved", path: "" },

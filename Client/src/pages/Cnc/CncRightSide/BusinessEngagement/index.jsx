@@ -62,10 +62,10 @@ function BusinessEngagement() {
       console.log("Sending:", formData);
 
       const response = await axios.post(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests/create",
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/Boarding/create",
         {
           ...formData,
-          requestType: "IT",
+          category: "Home",
         },
       );
 

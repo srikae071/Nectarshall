@@ -8,7 +8,8 @@ const BoardingSchema = new mongoose.Schema(
     clientId: String,
     Type: String,
     companyName: String,
-
+    requester: String,
+    requesterFor: String,
     abn: String,
 
     acn: String,

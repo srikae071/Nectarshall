@@ -89,6 +89,7 @@ import OffboardingSupplierForm from "./pages/Hrms/Offbording/Supplier/OffBoaedin
 import OnBoardingSupplierTab from "./pages/Hrms/OnBoarding/OnBoardingSupplier/OnbSupplierTab/index.jsx";
 import BusinessEngagement from "./pages/Cnc/CncRightSide/BusinessEngagement/index.jsx";
 import OnBoardingSaves from "./pages/Hrms/OnBoarding/CncOnBoardingSaves/OnboardingSaves";
+import BusinessEngagementTab from "./pages/Cnc/CncRightSide/BusinessEngagementTab";
 function App() {
   return (
     <Routes>
@@ -233,6 +234,10 @@ function App() {
       />
       <Route path="/onboarding-supplier" element={<OnBoardingSupplierTab />} />
       <Route path="/business-engagement" element={<BusinessEngagement />} />
+      <Route
+        path="/Business-EngagementTab"
+        element={<BusinessEngagementTab />}
+      />
     </Routes>
   );
 }

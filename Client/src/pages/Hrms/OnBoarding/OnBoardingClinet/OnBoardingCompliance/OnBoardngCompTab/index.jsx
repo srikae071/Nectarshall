@@ -1,11 +1,12 @@
 import CncLeftLayout from "../../../../../Cnc/CncLeftLayout";
 import TableLayout1 from "../../../../../../components/Layouts/TableLayouts/TableLayout1";
-
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./index.css";
 
 function OnBoardingSupplierTab() {
+  const navigate = useNavigate();
   const defaultColumns = [
     "clientId",
     "companyName",
@@ -71,7 +72,11 @@ function OnBoardingSupplierTab() {
       >
         {(visibleColumns) =>
           filteredData.map((item) => (
-            <tr key={item._id}>
+            <tr
+              key={item._id}
+              style={{ cursor: "pointer" }}
+              onClick={() => navigate(`/onboarding-saves/${item._id}`)}
+            >
               {visibleColumns.includes("clientId") && <td>{item.clientId}</td>}
 
               {visibleColumns.includes("companyName") && (
