@@ -35,9 +35,7 @@ function BusinessEngagementTab() {
         "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding",
       );
 
-      setData(response.data.filter((item) => item.category === "Home"));
-      console.log(response.data);
-      console.log(response.data.filter((item) => item.category === "Home"));
+      setData(response.data.filter((item) => item.category === "Request"));
     } catch (error) {
       console.log(error);
     }

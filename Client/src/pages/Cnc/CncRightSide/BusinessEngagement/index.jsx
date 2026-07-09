@@ -26,7 +26,7 @@ function BusinessEngagement() {
     shortDescription: "",
     description: "",
     CompanyAddress: "",
-
+    status: "",
     category: "Home",
   });
 
@@ -76,7 +76,8 @@ function BusinessEngagement() {
         "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/Boarding/create",
         {
           ...formData,
-          category: "Home",
+          category: "Request",
+          status: "open",
         },
       );
 

@@ -278,7 +278,7 @@ function OnBoardingComplianceSupplier() {
             <option value="Resolved">Resolved</option>
             <option value="Closed">Closed</option>
           </select>
-        </div>{" "}
+        </div>
         <div className="form-row">
           <label className="form-label">Valid Till</label>
           <input
@@ -331,7 +331,7 @@ function OnBoardingComplianceSupplier() {
                 }
                 onClick={() => setActiveTab("Client Contract Deliverables")}
               >
-                Client Contract Deliverables
+                Supplier Contract Deliverables
               </button>
 
               <button

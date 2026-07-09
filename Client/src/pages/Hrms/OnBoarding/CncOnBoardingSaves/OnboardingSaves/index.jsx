@@ -65,7 +65,7 @@ function OnBoardingSaves() {
       const titleMap = {
         "Supplier Onboarding": "Onboarding Supplier",
         "Client Onboarding": "Onboarding Client",
-        Home: "Business Management",
+        Request: "Business Management",
       };
 
       setPageTitle(titleMap[data.category] || "Onboarding");
