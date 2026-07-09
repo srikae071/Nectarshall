@@ -13,18 +13,27 @@ function TableLayout1({
 }) {
   const [showSettings, setShowSettings] = useState(false);
 
-  const [visibleColumns, setVisibleColumns] = useState(() => {
-    const saved = localStorage.getItem(storageKey);
-
-    return saved ? JSON.parse(saved) : defaultColumns;
-  });
+  const [visibleColumns, setVisibleColumns] = useState(defaultColumns);
 
   const settingsRef = useRef(null);
 
+  // Load columns from localStorage or use defaults
+  useEffect(() => {
+    const saved = localStorage.getItem(storageKey);
+
+    if (saved) {
+      setVisibleColumns(JSON.parse(saved));
+    } else {
+      setVisibleColumns(defaultColumns);
+    }
+  }, [storageKey, defaultColumns]);
+
+  // Save selected columns
   useEffect(() => {
     localStorage.setItem(storageKey, JSON.stringify(visibleColumns));
   }, [visibleColumns, storageKey]);
 
+  // Close settings popup
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (settingsRef.current && !settingsRef.current.contains(event.target)) {
@@ -83,7 +92,6 @@ function TableLayout1({
                         checked={visibleColumns.includes(column.key)}
                         onChange={() => toggleColumn(column.key)}
                       />
-
                       {column.label}
                     </label>
                   ))}

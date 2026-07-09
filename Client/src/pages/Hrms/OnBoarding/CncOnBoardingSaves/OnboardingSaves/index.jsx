@@ -30,6 +30,7 @@ function OnBoardingSaves() {
     shortDescription: "",
     description: "",
     category: "",
+    status: "",
   });
   const [contractDeliverables, setContractDeliverables] = useState([
     {
@@ -350,6 +351,21 @@ function OnBoardingSaves() {
             onChange={handleChange}
           />
         </div>
+        <div className="form-row">
+          <label className="form-label">Status</label>
+
+          <select
+            className="form-select"
+            name="status"
+            value={formData.status}
+            onChange={handleChange}
+          >
+            <option value="Open">Open</option>
+            <option value="Work In Progress">Work In Progress</option>
+            <option value="Resolved">Resolved</option>
+            <option value="Closed">Closed</option>
+          </select>
+        </div>
 
         <div className="form-row">
           <label className="form-label">Type</label>
@@ -393,303 +409,287 @@ function OnBoardingSaves() {
             </button>
           </div>
 
-          {expanded && (
-            <>
-              <div className="deliverable-tabs">
-                <button
-                  type="button"
-                  className={
-                    activeTab === "Client Contract Deliverables"
-                      ? "deliverable-tab active"
-                      : "deliverable-tab"
-                  }
-                  onClick={() => setActiveTab("Client Contract Deliverables")}
-                >
-                  Client Contract Deliverables
-                </button>
+          <>
+            <div className="deliverable-tabs">
+              <button
+                type="button"
+                className={
+                  activeTab === "Client Contract Deliverables"
+                    ? "deliverable-tab active"
+                    : "deliverable-tab"
+                }
+                onClick={() => setActiveTab("Client Contract Deliverables")}
+              >
+                Client Contract Deliverables
+              </button>
 
-                <button
-                  type="button"
-                  className={
-                    activeTab === "Financial Details"
-                      ? "deliverable-tab active"
-                      : "deliverable-tab"
-                  }
-                  onClick={() => setActiveTab("Financial Details")}
-                >
-                  Financial Details
-                </button>
-              </div>
+              <button
+                type="button"
+                className={
+                  activeTab === "Financial Details"
+                    ? "deliverable-tab active"
+                    : "deliverable-tab"
+                }
+                onClick={() => setActiveTab("Financial Details")}
+              >
+                Financial Details
+              </button>
+            </div>
 
-              <div className="deliverable-body">
-                {/* ===========================
+            <div className="deliverable-body">
+              {/* ===========================
              CLIENT CONTRACT TAB
         ============================ */}
 
-                {activeTab === "Client Contract Deliverables" && (
-                  <>
-                    {contractDeliverables.map((item, index) => (
-                      <div className="deliverable-form" key={index}>
-                        {index > 0 && (
-                          <div className="deliverable-remove">
-                            <button
-                              type="button"
-                              onClick={() => removeDeliverable(index)}
-                            >
-                              Cancel This
-                            </button>
-                          </div>
-                        )}
-
-                        <div className="deliverable-row">
-                          <div className="deliverable-field">
-                            <label>Contract ID</label>
-
-                            <input
-                              type="text"
-                              name="contractId"
-                              value={item.contractId}
-                              onChange={(e) =>
-                                handleDeliverableChange(index, e)
-                              }
-                            />
-                          </div>
-
-                          <div className="deliverable-field">
-                            <label>Site Name</label>
-
-                            <input
-                              type="text"
-                              name="siteName"
-                              value={item.siteName}
-                              onChange={(e) =>
-                                handleDeliverableChange(index, e)
-                              }
-                            />
-                          </div>
+              {activeTab === "Client Contract Deliverables" && (
+                <>
+                  {contractDeliverables.map((item, index) => (
+                    <div className="deliverable-form" key={index}>
+                      {index > 0 && (
+                        <div className="deliverable-remove">
+                          <button
+                            type="button"
+                            onClick={() => removeDeliverable(index)}
+                          >
+                            Cancel This
+                          </button>
                         </div>
+                      )}
 
-                        <div className="deliverable-row">
-                          <div className="deliverable-field">
-                            <label>Site Address</label>
+                      <div className="deliverable-row">
+                        <div className="deliverable-field">
+                          <label>Contract ID</label>
 
-                            <input
-                              type="text"
-                              name="siteAddress"
-                              value={item.siteAddress}
-                              onChange={(e) =>
-                                handleDeliverableChange(index, e)
-                              }
-                            />
-                          </div>
-
-                          <div className="deliverable-field">
-                            <label>Site Manager Name</label>
-
-                            <input
-                              type="text"
-                              name="siteManagerName"
-                              value={item.siteManagerName}
-                              onChange={(e) =>
-                                handleDeliverableChange(index, e)
-                              }
-                            />
-                          </div>
-                        </div>
-
-                        <div className="deliverable-row">
-                          <div className="deliverable-field">
-                            <label>Site Email ID</label>
-
-                            <input
-                              type="email"
-                              name="siteEmail"
-                              value={item.siteEmail}
-                              onChange={(e) =>
-                                handleDeliverableChange(index, e)
-                              }
-                            />
-                          </div>
-
-                          <div className="deliverable-field">
-                            <label>Site Mobile Number</label>
-
-                            <input
-                              type="text"
-                              name="siteMobile"
-                              value={item.siteMobile}
-                              onChange={(e) =>
-                                handleDeliverableChange(index, e)
-                              }
-                            />
-                          </div>
-                        </div>
-
-                        <div className="deliverable-row">
-                          <div className="deliverable-field">
-                            <label>Contract State</label>
-
-                            <div className="deliverable-radio-group">
-                              <label>
-                                <input
-                                  type="radio"
-                                  name="contractState"
-                                  value="Active"
-                                  checked={item.contractState === "Active"}
-                                  onChange={(e) =>
-                                    handleDeliverableChange(index, e)
-                                  }
-                                />
-                                Active
-                              </label>
-
-                              <label>
-                                <input
-                                  type="radio"
-                                  name="contractState"
-                                  value="Inactive"
-                                  checked={item.contractState === "Inactive"}
-                                  onChange={(e) =>
-                                    handleDeliverableChange(index, e)
-                                  }
-                                />
-                                Inactive
-                              </label>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="deliverable-comment">
-                          <label>Comments</label>
-
-                          <textarea
-                            name="comments"
-                            value={item.comments}
+                          <input
+                            type="text"
+                            name="contractId"
+                            value={item.contractId}
                             onChange={(e) => handleDeliverableChange(index, e)}
                           />
                         </div>
+
                         <div className="deliverable-field">
-                          <label>Attachment</label>
+                          <label>Site Name</label>
 
                           <input
-                            type="file"
-                            onChange={(e) =>
-                              handleDeliverableAttachment(index, e)
-                            }
+                            type="text"
+                            name="siteName"
+                            value={item.siteName}
+                            onChange={(e) => handleDeliverableChange(index, e)}
                           />
                         </div>
                       </div>
-                    ))}
 
-                    <div className="deliverable-add">
-                      <button type="button" onClick={addDeliverable}>
-                        + Add Contract
-                      </button>
+                      <div className="deliverable-row">
+                        <div className="deliverable-field">
+                          <label>Site Address</label>
+
+                          <input
+                            type="text"
+                            name="siteAddress"
+                            value={item.siteAddress}
+                            onChange={(e) => handleDeliverableChange(index, e)}
+                          />
+                        </div>
+
+                        <div className="deliverable-field">
+                          <label>Site Manager Name</label>
+
+                          <input
+                            type="text"
+                            name="siteManagerName"
+                            value={item.siteManagerName}
+                            onChange={(e) => handleDeliverableChange(index, e)}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="deliverable-row">
+                        <div className="deliverable-field">
+                          <label>Site Email ID</label>
+
+                          <input
+                            type="email"
+                            name="siteEmail"
+                            value={item.siteEmail}
+                            onChange={(e) => handleDeliverableChange(index, e)}
+                          />
+                        </div>
+
+                        <div className="deliverable-field">
+                          <label>Site Mobile Number</label>
+
+                          <input
+                            type="text"
+                            name="siteMobile"
+                            value={item.siteMobile}
+                            onChange={(e) => handleDeliverableChange(index, e)}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="deliverable-row">
+                        <div className="deliverable-field">
+                          <label>Contract State</label>
+
+                          <div className="deliverable-radio-group">
+                            <label>
+                              <input
+                                type="radio"
+                                name="contractState"
+                                value="Active"
+                                checked={item.contractState === "Active"}
+                                onChange={(e) =>
+                                  handleDeliverableChange(index, e)
+                                }
+                              />
+                              Active
+                            </label>
+
+                            <label>
+                              <input
+                                type="radio"
+                                name="contractState"
+                                value="Inactive"
+                                checked={item.contractState === "Inactive"}
+                                onChange={(e) =>
+                                  handleDeliverableChange(index, e)
+                                }
+                              />
+                              Inactive
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="deliverable-comment">
+                        <label>Comments</label>
+
+                        <textarea
+                          name="comments"
+                          value={item.comments}
+                          onChange={(e) => handleDeliverableChange(index, e)}
+                        />
+                      </div>
+                      <div className="deliverable-field">
+                        <label>Attachment</label>
+
+                        <input
+                          type="file"
+                          onChange={(e) =>
+                            handleDeliverableAttachment(index, e)
+                          }
+                        />
+                      </div>
                     </div>
-                  </>
-                )}
+                  ))}
 
-                {/* ===========================
+                  <div className="deliverable-add">
+                    <button type="button" onClick={addDeliverable}>
+                      + Add Contract
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {/* ===========================
              FINANCIAL TAB
         ============================ */}
 
-                {activeTab === "Financial Details" && (
-                  <>
-                    {financialDetails.map((item, index) => (
-                      <div className="deliverable-form" key={index}>
-                        {index > 0 && (
-                          <div className="deliverable-remove">
-                            <button
-                              type="button"
-                              onClick={() => removeFinancial(index)}
-                            >
-                              Cancel This
-                            </button>
-                          </div>
-                        )}
-
-                        <div className="deliverable-row">
-                          <div className="deliverable-field">
-                            <label>Contract ID</label>
-
-                            <input
-                              type="text"
-                              name="contractId"
-                              value={item.contractId}
-                              onChange={(e) => handleFinancialChange(index, e)}
-                            />
-                          </div>
-                          <div className="deliverable-field">
-                            <label>Invoice Date</label>
-
-                            <input
-                              type="date"
-                              name="invoiceDate"
-                              value={item.invoiceDate}
-                              onChange={(e) => handleFinancialChange(index, e)}
-                            />
-                          </div>
-
-                          <div className="deliverable-field">
-                            <label>Invoice Number</label>
-
-                            <input
-                              type="text"
-                              name="invoiceNumber"
-                              value={item.invoiceNumber}
-                              onChange={(e) => handleFinancialChange(index, e)}
-                            />
-                          </div>
+              {activeTab === "Financial Details" && (
+                <>
+                  {financialDetails.map((item, index) => (
+                    <div className="deliverable-form" key={index}>
+                      {index > 0 && (
+                        <div className="deliverable-remove">
+                          <button
+                            type="button"
+                            onClick={() => removeFinancial(index)}
+                          >
+                            Cancel This
+                          </button>
                         </div>
+                      )}
 
-                        <div className="deliverable-row">
-                          <div className="deliverable-field">
-                            <label>Billing Cycle</label>
+                      <div className="deliverable-row">
+                        <div className="deliverable-field">
+                          <label>Contract ID</label>
 
-                            <select
-                              name="billingCycle"
-                              value={item.billingCycle}
-                              onChange={(e) => handleFinancialChange(index, e)}
-                            >
-                              <option>Weekly</option>
-                              <option>Monthly</option>
-                              <option>Quarterly</option>
-                            </select>
-                          </div>
-                        </div>
-
-                        <div className="deliverable-comment">
-                          <label>Comments</label>
-
-                          <textarea
-                            name="comments"
-                            value={item.comments}
+                          <input
+                            type="text"
+                            name="contractId"
+                            value={item.contractId}
                             onChange={(e) => handleFinancialChange(index, e)}
                           />
                         </div>
                         <div className="deliverable-field">
-                          <label>Attachment</label>
+                          <label>Invoice Date</label>
 
                           <input
-                            type="file"
-                            onChange={(e) =>
-                              handleFinancialAttachment(index, e)
-                            }
+                            type="date"
+                            name="invoiceDate"
+                            value={item.invoiceDate}
+                            onChange={(e) => handleFinancialChange(index, e)}
+                          />
+                        </div>
+
+                        <div className="deliverable-field">
+                          <label>Invoice Number</label>
+
+                          <input
+                            type="text"
+                            name="invoiceNumber"
+                            value={item.invoiceNumber}
+                            onChange={(e) => handleFinancialChange(index, e)}
                           />
                         </div>
                       </div>
-                    ))}
 
-                    <div className="deliverable-add">
-                      <button type="button" onClick={addFinancial}>
-                        + Add Financial Details
-                      </button>
+                      <div className="deliverable-row">
+                        <div className="deliverable-field">
+                          <label>Billing Cycle</label>
+
+                          <select
+                            name="billingCycle"
+                            value={item.billingCycle}
+                            onChange={(e) => handleFinancialChange(index, e)}
+                          >
+                            <option>Weekly</option>
+                            <option>Monthly</option>
+                            <option>Quarterly</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="deliverable-comment">
+                        <label>Comments</label>
+
+                        <textarea
+                          name="comments"
+                          value={item.comments}
+                          onChange={(e) => handleFinancialChange(index, e)}
+                        />
+                      </div>
+                      <div className="deliverable-field">
+                        <label>Attachment</label>
+
+                        <input
+                          type="file"
+                          onChange={(e) => handleFinancialAttachment(index, e)}
+                        />
+                      </div>
                     </div>
-                  </>
-                )}
-              </div>
-            </>
-          )}
+                  ))}
+
+                  <div className="deliverable-add">
+                    <button type="button" onClick={addFinancial}>
+                      + Add Financial Details
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </>
         </div>
       </RegularForm>
     </CncLeftLayout>

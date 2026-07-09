@@ -25,6 +25,7 @@ function OnBoardingComplianceSupplier() {
     type: "Adhoc",
     shortDescription: "",
     description: "",
+    status: "",
   });
   const [contractDeliverables, setContractDeliverables] = useState([
     {
@@ -180,7 +181,6 @@ function OnBoardingComplianceSupplier() {
             <option value="Subcontractor">Sub-Contractor</option>
           </select>
         </div>
-
         <div className="form-row">
           <label className="form-label">Company Name</label>
           <input
@@ -190,7 +190,6 @@ function OnBoardingComplianceSupplier() {
             onChange={handleChange}
           />
         </div>
-
         <div className="form-row">
           <label className="form-label">ABN</label>
           <input
@@ -200,7 +199,6 @@ function OnBoardingComplianceSupplier() {
             onChange={handleChange}
           />
         </div>
-
         <div className="form-row">
           <label className="form-label">ACN</label>
           <input
@@ -210,7 +208,6 @@ function OnBoardingComplianceSupplier() {
             onChange={handleChange}
           />
         </div>
-
         <div className="form-row">
           <label className="form-label">Address</label>
           <input
@@ -220,7 +217,6 @@ function OnBoardingComplianceSupplier() {
             onChange={handleChange}
           />
         </div>
-
         <div className="form-row">
           <label className="form-label">Company Address</label>
           <input
@@ -230,7 +226,6 @@ function OnBoardingComplianceSupplier() {
             onChange={handleChange}
           />
         </div>
-
         <div className="form-row">
           <label className="form-label">Company Phone</label>
           <input
@@ -240,7 +235,6 @@ function OnBoardingComplianceSupplier() {
             onChange={handleChange}
           />
         </div>
-
         <div className="form-row">
           <label className="form-label">Managing Agent Name</label>
           <input
@@ -250,7 +244,6 @@ function OnBoardingComplianceSupplier() {
             onChange={handleChange}
           />
         </div>
-
         <div className="form-row">
           <label className="form-label">Managing Agent Email</label>
           <input
@@ -260,7 +253,6 @@ function OnBoardingComplianceSupplier() {
             onChange={handleChange}
           />
         </div>
-
         <div className="form-row">
           <label className="form-label">Email</label>
           <input
@@ -270,7 +262,6 @@ function OnBoardingComplianceSupplier() {
             onChange={handleChange}
           />
         </div>
-
         <div className="form-row">
           <label className="form-label">Contact Number</label>
           <input
@@ -280,7 +271,6 @@ function OnBoardingComplianceSupplier() {
             onChange={handleChange}
           />
         </div>
-
         <div className="form-row">
           <label className="form-label">Onboarding Date</label>
           <input
@@ -291,7 +281,21 @@ function OnBoardingComplianceSupplier() {
             onChange={handleChange}
           />
         </div>
+        <div className="form-row">
+          <label className="form-label">Status</label>
 
+          <select
+            className="form-select"
+            name="status"
+            value={formData.status}
+            onChange={handleChange}
+          >
+            <option value="Open">Open</option>
+            <option value="Work In Progress">Work In Progress</option>
+            <option value="Resolved">Resolved</option>
+            <option value="Closed">Closed</option>
+          </select>
+        </div>{" "}
         <div className="form-row">
           <label className="form-label">Valid Till</label>
           <input
@@ -302,7 +306,6 @@ function OnBoardingComplianceSupplier() {
             onChange={handleChange}
           />
         </div>
-
         <div className="form-row">
           <label className="form-label">Type</label>
           <select
@@ -315,7 +318,6 @@ function OnBoardingComplianceSupplier() {
             <option>Contractual</option>
           </select>
         </div>
-
         <div className="form-row form-full">
           <label className="form-label">Short Description</label>
           <textarea
@@ -325,7 +327,6 @@ function OnBoardingComplianceSupplier() {
             onChange={handleChange}
           />
         </div>
-
         <div className="form-row form-full">
           <label className="form-label">Description</label>
           <textarea

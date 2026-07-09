@@ -37,7 +37,10 @@ const BoardingSchema = new mongoose.Schema(
     shortDescription: String,
 
     description: String,
-
+    status: {
+      type: String,
+      default: "Open",
+    },
     contractDeliverables: [
       {
         contractId: String,

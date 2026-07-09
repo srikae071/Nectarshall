@@ -7,22 +7,19 @@ function BusinessEngagementTab() {
   const defaultColumns = ["clientId", "requester", "requesterFor", "abn"];
   const navigate = useNavigate();
   const allColumns = [
-    {
-      key: "clientId",
-      label: "Client ID",
-    },
-    {
-      key: "requester",
-      label: "Requester Name",
-    },
-    {
-      key: "requesterFor",
-      label: "Requester For",
-    },
-    {
-      key: "abn",
-      label: "ABN",
-    },
+    { key: "clientId", label: "Client ID" },
+    { key: "requester", label: "Requester Name" },
+    { key: "requesterFor", label: "Requester For" },
+    { key: "abn", label: "ABN" },
+
+    { key: "companyName", label: "Company Name" },
+    { key: "acn", label: "ACN" },
+    { key: "companyAddress", label: "Company Address" },
+    { key: "companyPhone", label: "Company Phone" },
+    { key: "managingAgentName", label: "Managing Agent Name" },
+    { key: "managingAgentEmail", label: "Managing Agent Email" },
+    { key: "shortDescription", label: "Short Description" },
+    { key: "description", label: "Description" },
   ];
 
   const [search, setSearch] = useState("");
@@ -39,6 +36,8 @@ function BusinessEngagementTab() {
       );
 
       setData(response.data.filter((item) => item.category === "Home"));
+      console.log(response.data);
+      console.log(response.data.filter((item) => item.category === "Home"));
     } catch (error) {
       console.log(error);
     }
@@ -47,10 +46,12 @@ function BusinessEngagementTab() {
 
   const filteredData = data.filter(
     (item) =>
-      item.requesterName?.toLowerCase().includes(search.toLowerCase()) ||
-      item.requester?.toLowerCase().includes(search.toLowerCase()),
+      item.clientId?.toLowerCase().includes(search.toLowerCase()) ||
+      item.requester?.toLowerCase().includes(search.toLowerCase()) ||
+      item.requesterFor?.toLowerCase().includes(search.toLowerCase()) ||
+      item.abn?.toLowerCase().includes(search.toLowerCase()),
   );
-
+  console.log(filteredData);
   return (
     <CncLeftLayout>
       <TableLayout1
