@@ -19,7 +19,8 @@ const BoardingSchema = new mongoose.Schema(
     emailAddress: String,
 
     companyAddress: String,
-
+    SupplierAgentName: String,
+    SupplierAgentEmail: String,
     companyPhone: String,
 
     managingAgentName: String,
@@ -37,6 +38,7 @@ const BoardingSchema = new mongoose.Schema(
     shortDescription: String,
 
     description: String,
+    supplierType: String,
     status: {
       type: String,
       default: "Open",

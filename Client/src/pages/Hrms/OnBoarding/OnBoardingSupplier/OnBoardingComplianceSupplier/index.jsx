@@ -13,11 +13,10 @@ function OnBoardingComplianceSupplier() {
     companyName: "",
     abn: "",
     acn: "",
-    address: "",
     companyAddress: "",
     companyPhone: "",
-    managingAgentName: "",
-    managingAgentEmail: "",
+    SupplierAgentName: "",
+    SupplierAgentEmail: "",
     email: "",
     contactNumber: "",
     onboardingDate: "",
@@ -26,6 +25,7 @@ function OnBoardingComplianceSupplier() {
     shortDescription: "",
     description: "",
     status: "",
+    supplierType: "",
   });
   const [contractDeliverables, setContractDeliverables] = useState([
     {
@@ -141,6 +141,7 @@ function OnBoardingComplianceSupplier() {
           category: "Supplier Onboarding",
           contractDeliverables,
           financialDetails,
+          status: "Open",
         },
       );
 
@@ -209,15 +210,6 @@ function OnBoardingComplianceSupplier() {
           />
         </div>
         <div className="form-row">
-          <label className="form-label">Address</label>
-          <input
-            className="form-input"
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="form-row">
           <label className="form-label">Company Address</label>
           <input
             className="form-input"
@@ -236,29 +228,20 @@ function OnBoardingComplianceSupplier() {
           />
         </div>
         <div className="form-row">
-          <label className="form-label">Managing Agent Name</label>
+          <label className="form-label">Supplier Agent Name</label>
           <input
             className="form-input"
-            name="managingAgentName"
-            value={formData.managingAgentName}
+            name="SupplierAgentName"
+            value={formData.SupplierAgentEmail}
             onChange={handleChange}
           />
         </div>
         <div className="form-row">
-          <label className="form-label">Managing Agent Email</label>
+          <label className="form-label">Supplier Agent Email</label>
           <input
             className="form-input"
-            name="managingAgentEmail"
-            value={formData.managingAgentEmail}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="form-row">
-          <label className="form-label">Email</label>
-          <input
-            className="form-input"
-            name="email"
-            value={formData.email}
+            name="SupplierAgentEmail"
+            value={formData.SupplierAgentEmail}
             onChange={handleChange}
           />
         </div>
