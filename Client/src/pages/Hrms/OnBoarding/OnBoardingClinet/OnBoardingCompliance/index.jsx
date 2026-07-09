@@ -1,4 +1,4 @@
-import CncLeftLayout from "../../../../Cnc/CncLeftLayout";
+import CncLeftLayout from "../../../../Cnc/CncLeftLayout/index.jsx";
 import RegularForm from "../../../../../components/Layouts/FormLayouts/RegularForm/index.jsx";
 import { useState } from "react";
 import axios from "axios";

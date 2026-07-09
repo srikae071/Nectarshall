@@ -51,7 +51,7 @@ import ItAssignedToMe from "./pages/NavItems/IT/ItRightSide/ItAssignedToMe/index
 import ItClosed from "./pages/NavItems/IT/ItRightSide/ItClosed/index.jsx";
 import ItPending from "./pages/NavItems/IT/ItRightSide/ItPending/index.jsx";
 import ItWorkInProgress from "./pages/NavItems/IT/ItRightSide/ItWorkInProgress/index.jsx";
-import OnBoardingCompliance from "./pages/Hrms/OnBoarding/OnBoardingClinet/OnBoardingCompliance/indeex.jsx";
+import OnBoardingCompliance from "./pages/Hrms/OnBoarding/OnBoardingClinet/OnBoardingCompliance/index.jsx";
 import OnBoardingResonanceRequirementsAll from "./pages/Hrms/OnBoarding/OnBoardingEmployee/ResonanceRequirements/OnBoardingResonanceRequirementsAll/index.jsx";
 import OnBoardingResonanceRequirementsCreateNew from "./pages/Hrms/OnBoarding/OnBoardingEmployee/ResonanceRequirements/OnBoardingResonanceRequirementsCreateNew/index.jsx";
 import OnBoardingResonanceRequirementsResolve from "./pages/Hrms/OnBoarding/OnBoardingEmployee/ResonanceRequirements/OnBoardingResonanceRequirementsResolve/index.jsx";

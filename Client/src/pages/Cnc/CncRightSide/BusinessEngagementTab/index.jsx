@@ -2,18 +2,26 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import CncLeftLayout from "../../CncLeftLayout";
 import TableLayout1 from "../../../../components/Layouts/TableLayouts/TableLayout1";
-
+import { useNavigate } from "react-router-dom";
 function BusinessEngagementTab() {
-  const defaultColumns = ["requesterName", "requester"];
-
+  const defaultColumns = ["clientId", "requester", "requesterFor", "abn"];
+  const navigate = useNavigate();
   const allColumns = [
+    {
+      key: "clientId",
+      label: "Client ID",
+    },
     {
       key: "requester",
       label: "Requester Name",
     },
     {
       key: "requesterFor",
-      label: "Requester",
+      label: "Requester For",
+    },
+    {
+      key: "abn",
+      label: "ABN",
     },
   ];
 
@@ -55,7 +63,13 @@ function BusinessEngagementTab() {
       >
         {(visibleColumns) =>
           filteredData.map((item) => (
-            <tr key={item._id}>
+            <tr
+              key={item._id}
+              style={{ cursor: "pointer" }}
+              onClick={() => navigate(`/onboarding-saves/${item._id}`)}
+            >
+              {visibleColumns.includes("clientId") && <td>{item.clientId}</td>}
+
               {visibleColumns.includes("requester") && (
                 <td>{item.requester}</td>
               )}
@@ -63,6 +77,8 @@ function BusinessEngagementTab() {
               {visibleColumns.includes("requesterFor") && (
                 <td>{item.requesterFor}</td>
               )}
+
+              {visibleColumns.includes("abn") && <td>{item.abn}</td>}
             </tr>
           ))
         }
