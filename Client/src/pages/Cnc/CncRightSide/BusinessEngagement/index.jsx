@@ -77,7 +77,7 @@ function BusinessEngagement() {
         {
           ...formData,
           category: "Request",
-          status: "open",
+          status: "Open",
         },
       );
 
@@ -171,15 +171,6 @@ function BusinessEngagement() {
             <input
               name="managingAgentEmail"
               value={formData.managingAgentEmail}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="CreateField">
-            <label>Company Address</label>
-
-            <input
-              name="CompanyAddress"
-              value={formData.CompanyAddress}
               onChange={handleChange}
             />
           </div>

@@ -74,9 +74,13 @@ const menuData = [
       // { label: "All", path: "/hrms" },
       { label: "All", path: "/Business-EngagementTab" },
       { label: "Create New", path: "" },
-      { label: "Open", path: "" },
-      { label: "Resolved", path: "" },
-      { label: "Assign to Me", path: "" },
+      { label: "Open", path: "/Business-Engagement-open" },
+      {
+        label: "Work In Progress",
+        path: "/Business-Engagement-work-in-progress",
+      },
+      { label: "Resolved", path: "/Business-Engagement-resolved" },
+      { label: "Closed", path: "/Business-Engagement-closed" },
     ],
   },
 ];

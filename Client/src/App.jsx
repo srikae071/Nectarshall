@@ -90,6 +90,11 @@ import OnBoardingSupplierTab from "./pages/Hrms/OnBoarding/OnBoardingSupplier/On
 import BusinessEngagement from "./pages/Cnc/CncRightSide/BusinessEngagement/index.jsx";
 import OnBoardingSaves from "./pages/Hrms/OnBoarding/CncOnBoardingSaves/OnboardingSaves";
 import BusinessEngagementTab from "./pages/Cnc/CncRightSide/BusinessEngagementTab";
+import BEOpen from "./pages/Cnc/CncRightSide/BEOpen";
+import BEResolved from "./pages/Cnc/CncRightSide/BEResolved";
+import BEClosed from "./pages/Cnc/CncRightSide/BEClosed/index.jsx";
+import BEWorkInProgress from "./pages/Cnc/CncRightSide/BEWorkInProgress";
+// import BEWorkInProgress from "./pages/Cnc/CncRightSide/BEWorkInProgress";
 function App() {
   return (
     <Routes>
@@ -237,6 +242,13 @@ function App() {
       <Route
         path="/Business-EngagementTab"
         element={<BusinessEngagementTab />}
+      />
+      <Route path="/Business-Engagement-open" element={<BEOpen />} />
+      <Route path="/Business-Engagement-resolved" element={<BEResolved />} />
+      <Route path="/Business-Engagement-closed" element={<BEClosed />} />
+      <Route
+        path="/Business-Engagement-work-in-progress"
+        element={<BEWorkInProgress />}
       />
     </Routes>
   );

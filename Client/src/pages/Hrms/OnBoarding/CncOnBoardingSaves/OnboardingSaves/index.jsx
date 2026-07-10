@@ -87,6 +87,7 @@ function OnBoardingSaves() {
         shortDescription: data.shortDescription || "",
         description: data.description || "",
         category: data.category || "",
+        status: data.status || "Open",
       });
 
       setContractDeliverables(data.contractDeliverables || []);

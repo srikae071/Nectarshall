@@ -3,7 +3,7 @@ import axios from "axios";
 import CncLeftLayout from "../../CncLeftLayout";
 import TableLayout1 from "../../../../components/Layouts/TableLayouts/TableLayout1";
 import { useNavigate } from "react-router-dom";
-function BusinessEngagementTab() {
+function BEResolved() {
   const defaultColumns = ["clientId", "requester", "requesterFor", "status"];
   const navigate = useNavigate();
   const allColumns = [
@@ -36,7 +36,11 @@ function BusinessEngagementTab() {
         "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding",
       );
 
-      setData(response.data.filter((item) => item.category === "Request"));
+      setData(
+        response.data.filter(
+          (item) => item.category === "Request" && item.status == "Resolved",
+        ),
+      );
     } catch (error) {
       console.log(error);
     }
@@ -118,4 +122,4 @@ function BusinessEngagementTab() {
   );
 }
 
-export default BusinessEngagementTab;
+export default BEResolved;
