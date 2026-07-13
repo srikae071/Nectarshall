@@ -19,6 +19,15 @@ const menuData = [
             label: "All",
             path: "/client-complience",
           },
+          { label: "Open", path: "/onboaeding-complience/Open" },
+          {
+            label: "Work In Progress",
+            path: "/onboaeding-complience/work-in-progress",
+          },
+          {
+            label: "On Boarded",
+            path: "/onboaeding-complience/On-Boarded",
+          },
         ],
       },
 

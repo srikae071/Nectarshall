@@ -1,0 +1,125 @@
+/* Page */
+
+.table2-page {
+  padding: 25px;
+}
+
+/* Header */
+
+.table2-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.table2-header h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Buttons */
+
+.table2-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.table2-save-btn {
+  padding: 9px 22px;
+  background: #d95b2d;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.table2-save-btn:hover {
+  background: #bf4c21;
+}
+
+.table2-cancel-btn {
+  padding: 9px 22px;
+  background: #fff;
+  color: #333;
+  border: 1px solid #cfcfcf;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.table2-cancel-btn:hover {
+  background: #f4f4f4;
+}
+
+/* Card */
+
+.table2-card {
+  background: #f6f5f5;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 25px;
+}
+
+/* Grid */
+
+.table2-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 40px;
+}
+
+/* Field */
+
+.table2-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.table2-label {
+  width: 170px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #444;
+}
+
+.table2-input,
+.table2-select {
+  flex: 1;
+  height: 38px;
+  border: 1px solid #000000;
+  border-radius: 5px;
+  padding: 0 10px;
+  font-size: 14px;
+  outline: none;
+}
+
+.table2-input:focus,
+.table2-select:focus {
+  border-color: #d95b2d;
+}
+
+/* Full Width */
+
+.table2-full {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.table2-textarea {
+  flex: 1;
+  min-height: 90px;
+  border: 1px solid #000000;
+  border-radius: 5px;
+  padding: 10px;
+  resize: vertical;
+  font-size: 14px;
+}
+
+.table2-textarea:focus {
+  border-color: #d95b2d;
+}

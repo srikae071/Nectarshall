@@ -90,9 +90,38 @@ function OnBoardingSaves() {
         status: data.status || "Open",
       });
 
-      setContractDeliverables(data.contractDeliverables || []);
+      setContractDeliverables(
+        data.contractDeliverables && data.contractDeliverables.length > 0
+          ? data.contractDeliverables
+          : [
+              {
+                contractId: "",
+                siteName: "",
+                siteAddress: "",
+                siteManagerName: "",
+                siteEmail: "",
+                siteMobile: "",
+                contractState: "Active",
+                comments: "",
+                attachment: null,
+              },
+            ],
+      );
 
-      setFinancialDetails(data.financialDetails || []);
+      setFinancialDetails(
+        data.financialDetails && data.financialDetails.length > 0
+          ? data.financialDetails
+          : [
+              {
+                contractId: "",
+                invoiceDate: "",
+                invoiceNumber: "",
+                billingCycle: "Monthly",
+                comments: "",
+                attachment: null,
+              },
+            ],
+      );
     } catch (err) {
       console.log(err);
     }
@@ -198,7 +227,7 @@ function OnBoardingSaves() {
         },
       );
 
-      alert("Supplier Updated Successfully");
+      alert("Saved Successfully");
     } catch (error) {
       console.log(error);
       alert("Update Failed");
@@ -207,6 +236,15 @@ function OnBoardingSaves() {
   return (
     <CncLeftLayout>
       <RegularForm title={pageTitle} onSave={handleSave} onCancel={() => {}}>
+        <div className="form-row">
+          <label className="form-label">Client ID</label>
+          <input
+            className="form-input"
+            name="clientId"
+            value={formData.clientId}
+            onChange={handleChange}
+          />
+        </div>
         <div className="form-row">
           <label className="form-label">Type</label>
 
@@ -220,15 +258,6 @@ function OnBoardingSaves() {
             <option value="Vendor">Vendor</option>
             <option value="Subcontractor">Sub-Contractor</option>
           </select>
-        </div>
-        <div className="form-row">
-          <label className="form-label">Client ID</label>
-          <input
-            className="form-input"
-            name="clientId"
-            value={formData.clientId}
-            onChange={handleChange}
-          />
         </div>
 
         <div className="form-row">
@@ -311,7 +340,7 @@ function OnBoardingSaves() {
           />
         </div>
 
-        <div className="form-row">
+        {/* <div className="form-row">
           <label className="form-label">Email</label>
           <input
             className="form-input"
@@ -319,7 +348,7 @@ function OnBoardingSaves() {
             value={formData.email}
             onChange={handleChange}
           />
-        </div>
+        </div> */}
 
         <div className="form-row">
           <label className="form-label">Contact Number</label>
@@ -365,6 +394,7 @@ function OnBoardingSaves() {
             <option value="Work In Progress">Work In Progress</option>
             <option value="Resolved">Resolved</option>
             <option value="Closed">Closed</option>
+            <option value="On Boarded">On Boarded</option>
           </select>
         </div>
 
@@ -405,9 +435,9 @@ function OnBoardingSaves() {
             className="deliverable-header"
             onClick={() => setExpanded(!expanded)}
           >
-            <button type="button" className="deliverable-toggle">
+            {/* <button type="button" className="deliverable-toggle">
               {expanded ? "-" : "+"}
-            </button>
+            </button> */}
           </div>
 
           <>

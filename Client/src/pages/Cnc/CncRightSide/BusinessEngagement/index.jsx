@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import BusinessEngagementNavBar from "../../CncRightSide/BusinessEngagementNav";
+import TableLayout2 from "../../../../components/Layouts/TableLayouts/TableLayout2";
 
 import "./index.css";
 
@@ -76,7 +77,7 @@ function BusinessEngagement() {
         "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/Boarding/create",
         {
           ...formData,
-          category: "Request",
+          category: "Client Onboarding",
           status: "Open",
         },
       );
@@ -103,129 +104,118 @@ function BusinessEngagement() {
     <>
       <BusinessEngagementNavBar />
 
-      <div className="CreateContainer">
-        {/* ROW 1 */}
-        <div className="CreateRow">
-          <div className="CreateField">
-            <label>Requester</label>
-            <input
-              name="requester"
-              value={formData.requester}
-              onChange={handleChange}
-            />
-          </div>
+      <TableLayout2 onSave={handleSave} onCancel={() => {}}>
+        <div className="table2-field">
+          <label className="table2-label">Requester</label>
 
-          <div className="CreateField">
-            <label>Requester For</label>
-            <input
-              name="requesterFor"
-              value={formData.requesterFor}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="CreateField">
-            <label>Company Name</label>
-
-            <input
-              name="companyName"
-              value={formData.companyName}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-        <div className="CreateRow">
-          <div className="CreateField">
-            <label>ABN</label>
-
-            <input name="abn" value={formData.abn} onChange={handleChange} />
-          </div>
-
-          <div className="CreateField">
-            <label>ACN</label>
-
-            <input name="acn" value={formData.acn} onChange={handleChange} />
-          </div>
-          <div className="CreateField">
-            <label>Company Address</label>
-
-            <input
-              name="companyAddress"
-              value={formData.companyAddress}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-        <div className="CreateRow">
-          <div className="CreateField">
-            <label>Managing Agent Name</label>
-
-            <input
-              name="managingAgentName"
-              value={formData.managingAgentName}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="CreateField">
-            <label>Managing Agent Email</label>
-
-            <input
-              name="managingAgentEmail"
-              value={formData.managingAgentEmail}
-              onChange={handleChange}
-            />
-          </div>
+          <input
+            className="table2-input"
+            name="requester"
+            value={formData.requester}
+            onChange={handleChange}
+          />
         </div>
 
-        {/* ROW 2 */}
+        <div className="table2-field">
+          <label className="table2-label">Requested For</label>
 
-        {/* SHORT DESCRIPTION */}
-        <div className="CreateTextareaGroup">
-          <label>Short Description</label>
+          <input
+            className="table2-input"
+            name="requestedFor"
+            value={formData.requesterFor}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="table2-field">
+          <label className="table2-label">Company Name</label>
+
+          <input
+            className="table2-input"
+            name="companyName"
+            value={formData.companyName}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="table2-field">
+          <label className="table2-label">ABN</label>
+
+          <input
+            className="table2-input"
+            name="abn"
+            value={formData.abn}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="table2-field">
+          <label className="table2-label">ACN</label>
+
+          <input
+            className="table2-input"
+            name="acn"
+            value={formData.acn}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="table2-field">
+          <label className="table2-label">Company Address</label>
+
+          <input
+            className="table2-input"
+            name="companyAddress"
+            value={formData.companyAddress}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="table2-field">
+          <label className="table2-label">Managing Agent Name</label>
+
+          <input
+            className="table2-input"
+            name="managingAgentName"
+            value={formData.managingAgentName}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="table2-field">
+          <label className="table2-label">Managing Agent Email</label>
+
+          <input
+            className="table2-input"
+            name="managingAgentEmail"
+            value={formData.managingAgentEmail}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="table2-full">
+          <label className="table2-label">Short Description</label>
 
           <textarea
-            className="CreateTextarea shortTextarea"
+            className="table2-textarea"
             name="shortDescription"
             value={formData.shortDescription}
             onChange={handleChange}
           />
         </div>
 
-        {/* DESCRIPTION */}
-        {/* DESCRIPTION */}
-        <div className="CreateTextareaGroup">
-          <label>Description</label>
+        <div className="table2-full">
+          <label className="table2-label">Description</label>
 
           <textarea
-            className="CreateTextarea CreateDescriptionTextarea"
+            className="table2-textarea"
             name="description"
             value={formData.description}
             onChange={handleChange}
             placeholder="Enter detailed description..."
           />
         </div>
-
-        {/* WORK NOTES */}
-        {/* <div className="CreateTextareaGroup">
-          <label>Work Notes</label>
-
-          <textarea
-            className="CreateTextarea CreateWorkNotesTextarea"
-            name="workNotes"
-            value={formData.workNotes || ""}
-            onChange={handleChange}
-            placeholder="Add work notes..."
-          />
-        </div> */}
-
-        {/* BUTTONS */}
-        <div className="CreateFooter">
-          <button className="CreateBtn" onClick={handleSave}>
-            Save
-          </button>
-
-          <button className="CreateBtn">Cancel</button>
-        </div>
-      </div>
+      </TableLayout2>
     </>
   );
 }

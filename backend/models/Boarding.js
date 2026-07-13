@@ -39,6 +39,10 @@ const BoardingSchema = new mongoose.Schema(
 
     description: String,
     supplierType: String,
+    operationsClientApproved: {
+      type: Boolean,
+      default: false,
+    },
     status: {
       type: String,
       default: "Open",

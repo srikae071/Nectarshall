@@ -1,0 +1,41 @@
+.operationsApprovalRow td {
+  background: #fff;
+  border-top: none;
+  padding: 8px 20px 15px;
+}
+
+.operationsApprovalBox {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.approveBtn {
+  background: #28a745;
+  color: #fff;
+  border: none;
+  padding: 7px 18px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.rejectBtn {
+  background: #dc3545;
+  color: #fff;
+  border: none;
+  padding: 7px 18px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.approvedText {
+  color: #28a745;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.rejectedText {
+  color: #dc3545;
+  font-weight: 700;
+  font-size: 15px;
+}

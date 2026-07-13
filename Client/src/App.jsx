@@ -94,6 +94,10 @@ import BEOpen from "./pages/Cnc/CncRightSide/BEOpen";
 import BEResolved from "./pages/Cnc/CncRightSide/BEResolved";
 import BEClosed from "./pages/Cnc/CncRightSide/BEClosed/index.jsx";
 import BEWorkInProgress from "./pages/Cnc/CncRightSide/BEWorkInProgress";
+import OnbCWorkInProgress from "./pages/Hrms/OnBoarding/OnBoardingClinet/OnBoardingCompliance/OnbCWorkInProgress";
+import OnbCOnBoarded from "./pages/Hrms/OnBoarding/OnBoardingClinet/OnBoardingCompliance/OnbCOnBoarded";
+import OnbCOpen from "./pages/Hrms/OnBoarding/OnBoardingClinet/OnBoardingCompliance/OnbCOpen";
+import OprationsClientOnbTab from "./pages/Dashboard/DashboardRightLayout/OprationsClientOnbTab";
 // import BEWorkInProgress from "./pages/Cnc/CncRightSide/BEWorkInProgress";
 function App() {
   return (
@@ -249,6 +253,19 @@ function App() {
       <Route
         path="/Business-Engagement-work-in-progress"
         element={<BEWorkInProgress />}
+      />
+      <Route
+        path="/onboaeding-complience/work-in-progress"
+        element={<OnbCWorkInProgress />}
+      />
+      <Route
+        path="/onboaeding-complience/On-Boarded"
+        element={<OnbCOnBoarded />}
+      />
+      <Route path="/onboaeding-complience/Open" element={<OnbCOpen />} />
+      <Route
+        path="/Operations-Complience/All"
+        element={<OprationsClientOnbTab />}
       />
     </Routes>
   );

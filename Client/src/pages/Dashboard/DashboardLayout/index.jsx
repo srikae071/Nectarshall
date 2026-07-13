@@ -4,7 +4,9 @@ import React, { useState } from "react";
 import "./index.css";
 import DashbordNavbar from "../DashbordNavbar/index.jsx";
 import { EmployeeContext } from "../DashboardRightLayout/EmployeeContext.js";
+// const [openOnboarding, setOpenOnboarding] = useState(false);
 function DashboardLayout({ children }) {
+  const [openOnboarding, setOpenOnboarding] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const [employeeTrigger, setEmployeeTrigger] = useState(0);
@@ -153,6 +155,64 @@ function DashboardLayout({ children }) {
             onClick={() => navigate("/incidents")}
           >
             📌 Incidents
+          </div>
+          {/* ONBOARDING CLIENT */}
+          <div className="menuBlock">
+            <div
+              className="submenuItem toggleHeader"
+              onClick={() => setOpenOnboarding(!openOnboarding)}
+            >
+              <span>👤 On Boarding Client</span>
+              <span>{openOnboarding ? "-" : "+"}</span>
+            </div>
+
+            {openOnboarding && (
+              <div className="submenuDropdown">
+                <div
+                  className={`submenuItem ${
+                    location.pathname === "/Operations-Complience/All"
+                      ? "active"
+                      : ""
+                  }`}
+                  onClick={() => navigate("/Operations-Complience/All")}
+                >
+                  📋 All
+                </div>
+
+                <div
+                  className={`submenuItem ${
+                    location.pathname === "/onboarding-client-open"
+                      ? "active"
+                      : ""
+                  }`}
+                  onClick={() => navigate("/onboarding-client-open")}
+                >
+                  🟢 Open
+                </div>
+
+                <div
+                  className={`submenuItem ${
+                    location.pathname === "/onboarding-client-pending"
+                      ? "active"
+                      : ""
+                  }`}
+                  onClick={() => navigate("/onboarding-client-pending")}
+                >
+                  🟡 Pending
+                </div>
+
+                <div
+                  className={`submenuItem ${
+                    location.pathname === "/onboarding-client-new"
+                      ? "active"
+                      : ""
+                  }`}
+                  onClick={() => navigate("/onboarding-client-new")}
+                >
+                  ➕ New Client
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

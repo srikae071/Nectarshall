@@ -3,9 +3,9 @@ import TableLayout1 from "../../../../../../components/Layouts/TableLayouts/Tabl
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import "./index.css";
+// import "./index.css";
 
-function OnBoardingSupplierTab() {
+function OnbCWorkInProgress() {
   const navigate = useNavigate();
   const defaultColumns = ["clientId", "companyName", "emailAddress", "status"];
 
@@ -41,7 +41,11 @@ function OnBoardingSupplierTab() {
       );
 
       setData(
-        response.data.filter((item) => item.category === "Client Onboarding"),
+        response.data.filter(
+          (item) =>
+            item.category === "Client Onboarding" &&
+            item.status === "Work In Progress",
+        ),
       );
     } catch (error) {
       console.log(error);
@@ -123,4 +127,4 @@ function OnBoardingSupplierTab() {
   );
 }
 
-export default OnBoardingSupplierTab;
+export default OnbCWorkInProgress;
