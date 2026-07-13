@@ -123,3 +123,32 @@
 .table2-textarea:focus {
   border-color: #d95b2d;
 }
+.table2-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.table2-attachment-btn {
+  background: #bccbea;
+  color: #0e0d0d;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.table2-attachment-btn:hover {
+  background: #ec6707;
+}
+
+.table2-attachment-name {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  color: #444;
+}

@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 // import { useContext } from "react";
 import { EmployeeContext } from "../EmployeeContext.js";
+
 import "./index.css";
 import DashboardLayout from "../../DashboardLayout/index.jsx";
 
@@ -9,6 +11,7 @@ function Schedule() {
   // const [showCalendar, setShowCalendar] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [popup, setPopup] = useState(null);
+  const [siteNames, setSiteNames] = useState([]);
   // const getDateKey = (date) => {
   //   return new Date(date).toISOString().split("T")[0];
   // };
@@ -33,6 +36,7 @@ function Schedule() {
     position: "",
     role: "",
     note: "",
+    siteName: "",
     selectedDate: "",
   });
 
@@ -89,7 +93,33 @@ function Schedule() {
       endDate: dateKey,
     });
   };
+  useEffect(() => {
+    const fetchSiteNames = async () => {
+      try {
+        const response = await axios.get(
+          "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding",
+        );
 
+        const sites = [];
+
+        response.data.forEach((item) => {
+          if (item.contractDeliverables?.length > 0) {
+            item.contractDeliverables.forEach((contract) => {
+              if (contract.siteAddress) {
+                sites.push(contract.siteAddress);
+              }
+            });
+          }
+        });
+
+        setSiteNames(sites);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchSiteNames();
+  }, []);
   // const handleSave = () => {
   //   if (!formData.start || !formData.end) {
   //     alert("Start and End time required");
@@ -406,6 +436,25 @@ function Schedule() {
                     <div className="charCount">
                       {(formData.note || "").length}/1000
                     </div>
+                    <label>Site Name</label>
+
+                    <select
+                      value={formData.siteName}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          siteName: e.target.value,
+                        })
+                      }
+                    >
+                      <option value="">Select Site</option>
+
+                      {siteNames.map((site, index) => (
+                        <option key={index} value={site}>
+                          {site}
+                        </option>
+                      ))}
+                    </select>
                     <div className="mapSection">
                       <a
                         href="https://www.google.com/maps?q=17.3850,78.4867"

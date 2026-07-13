@@ -1,5 +1,6 @@
 import axios from "axios";
 import CncLeftLayout from "../../../../Cnc/CncLeftLayout";
+import DashboardLayout from "../../../../Dashboard/DashboardLayout";
 import RegularForm from "../../../../../components/Layouts/FormLayouts/RegularForm";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
@@ -31,10 +32,12 @@ function OnBoardingSaves() {
     description: "",
     category: "",
     status: "",
+    attachment: "",
+    operationsClientApproved: "",
   });
   const [contractDeliverables, setContractDeliverables] = useState([
     {
-      contractId: "",
+      contractId: "CNT-001",
       siteName: "",
       siteAddress: "",
       siteManagerName: "",
@@ -88,6 +91,7 @@ function OnBoardingSaves() {
         description: data.description || "",
         category: data.category || "",
         status: data.status || "Open",
+        attachment: data.attachment || "",
       });
 
       setContractDeliverables(
@@ -159,11 +163,12 @@ function OnBoardingSaves() {
     setFinancialDetails(updated);
   };
   const addDeliverable = () => {
+    const nextNumber = contractDeliverables.length + 1;
+
     setContractDeliverables([
       ...contractDeliverables,
-
       {
-        contractId: "",
+        contractId: `CNT-${String(nextNumber).padStart(3, "0")}`,
         siteName: "",
         siteAddress: "",
         siteManagerName: "",
@@ -171,6 +176,7 @@ function OnBoardingSaves() {
         siteMobile: "",
         contractState: "Active",
         comments: "",
+        attachment: "",
       },
     ]);
   };
@@ -193,7 +199,45 @@ function OnBoardingSaves() {
       },
     ]);
   };
+  const handleApprove = async () => {
+    try {
+      await axios.put(
+        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding/${id}`,
+        {
+          operationsClientApproved: true,
+        },
+      );
 
+      setFormData((prev) => ({
+        ...prev,
+        operationsClientApproved: true,
+      }));
+
+      alert("Approved Successfully");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleReject = async () => {
+    try {
+      await axios.put(
+        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding/${id}`,
+        {
+          operationsClientApproved: false,
+        },
+      );
+
+      setFormData((prev) => ({
+        ...prev,
+        operationsClientApproved: false,
+      }));
+
+      alert("Rejected Successfully");
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const handleDeliverableAttachment = (index, e) => {
     const updated = [...contractDeliverables];
 
@@ -233,9 +277,19 @@ function OnBoardingSaves() {
       alert("Update Failed");
     }
   };
+  const Layout =
+    formData.status === "On Boarded" ? DashboardLayout : CncLeftLayout;
   return (
-    <CncLeftLayout>
-      <RegularForm title={pageTitle} onSave={handleSave} onCancel={() => {}}>
+    <Layout>
+      <RegularForm
+        title={pageTitle}
+        onSave={handleSave}
+        onCancel={() => {}}
+        attachmentName={formData.attachment}
+        attachmentPath={`https://your-backend-url/uploads/${formData.attachment}`}
+        onApprove={formData.status === "On Boarded" ? handleApprove : undefined}
+        onReject={formData.status === "On Boarded" ? handleReject : undefined}
+      >
         <div className="form-row">
           <label className="form-label">Client ID</label>
           <input
@@ -723,7 +777,7 @@ function OnBoardingSaves() {
           </>
         </div>
       </RegularForm>
-    </CncLeftLayout>
+    </Layout>
   );
 }
 

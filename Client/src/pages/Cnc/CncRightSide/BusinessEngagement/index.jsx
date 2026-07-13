@@ -23,7 +23,7 @@ function BusinessEngagement() {
     companyPhone: "",
     managingAgentName: "",
     managingAgentEmail: "",
-
+    attachment: "",
     shortDescription: "",
     description: "",
     CompanyAddress: "",
@@ -67,6 +67,16 @@ function BusinessEngagement() {
       [e.target.name]: e.target.value,
     });
   };
+  const handleAttachment = (e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    setFormData((prev) => ({
+      ...prev,
+      attachment: file.name,
+    }));
+  };
 
   const handleSave = async () => {
     console.log("FORM DATA BEFORE SAVE:", formData);
@@ -104,7 +114,13 @@ function BusinessEngagement() {
     <>
       <BusinessEngagementNavBar />
 
-      <TableLayout2 onSave={handleSave} onCancel={() => {}}>
+      <TableLayout2
+        title="Business Engagement"
+        onSave={handleSave}
+        onCancel={() => {}}
+        onAttachment={handleAttachment}
+        attachmentName={formData.attachment}
+      >
         <div className="table2-field">
           <label className="table2-label">Requester</label>
 
