@@ -97,7 +97,6 @@ function Employeesites() {
   // const generateRandomEmployees = () => {
   //   const newData = {};
 
-  //   const totalRows = employees.length;
   //   const totalCols = weekDates.length;
 
   //   const usedKeys = new Set();

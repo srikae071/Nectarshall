@@ -6,6 +6,7 @@ function RegularForm({
   onCancel,
   attachmentName,
   attachmentPath,
+  formData,
   onApprove,
   onReject,
 }) {
@@ -26,22 +27,32 @@ function RegularForm({
               </a>
             )}{" "}
             {onApprove && (
-              <button
-                type="button"
-                className="approve-button"
-                onClick={onApprove}
-              >
-                Approve
-              </button>
-            )}
-            {onReject && (
-              <button
-                type="button"
-                className="reject-button"
-                onClick={onReject}
-              >
-                Reject
-              </button>
+              <>
+                {formData?.operationsClientApproved === null ||
+                formData?.operationsClientApproved === undefined ? (
+                  <>
+                    <button
+                      type="button"
+                      className="approve-button"
+                      onClick={onApprove}
+                    >
+                      Approve
+                    </button>
+
+                    <button
+                      type="button"
+                      className="reject-button"
+                      onClick={onReject}
+                    >
+                      Reject
+                    </button>
+                  </>
+                ) : formData.operationsClientApproved ? (
+                  <span className="approvedText">Approved</span>
+                ) : (
+                  <span className="rejectedText">Rejected</span>
+                )}
+              </>
             )}
             <button type="button" className="primary-button" onClick={onSave}>
               Save

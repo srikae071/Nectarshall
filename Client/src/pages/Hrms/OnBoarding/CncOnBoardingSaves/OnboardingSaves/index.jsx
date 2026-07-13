@@ -4,14 +4,17 @@ import DashboardLayout from "../../../../Dashboard/DashboardLayout";
 import RegularForm from "../../../../../components/Layouts/FormLayouts/RegularForm";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import "./index.css";
 
 function OnBoardingSaves() {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [expanded, setExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState("Client Contract Deliverables");
   const [pageTitle, setPageTitle] = useState("");
+  const [backendStatus, setBackendStatus] = useState("");
   const [formData, setFormData] = useState({
     clientId: "",
     Type: "",
@@ -65,6 +68,7 @@ function OnBoardingSaves() {
       );
 
       const data = response.data;
+      setBackendStatus(data.status);
       const titleMap = {
         "Supplier Onboarding": "Onboarding Supplier",
         "Client Onboarding": "Onboarding Client",
@@ -93,13 +97,12 @@ function OnBoardingSaves() {
         status: data.status || "Open",
         attachment: data.attachment || "",
       });
-
-      setContractDeliverables(
+      const deliverables =
         data.contractDeliverables && data.contractDeliverables.length > 0
           ? data.contractDeliverables
           : [
               {
-                contractId: "",
+                contractId: "CNT-001",
                 siteName: "",
                 siteAddress: "",
                 siteManagerName: "",
@@ -109,8 +112,15 @@ function OnBoardingSaves() {
                 comments: "",
                 attachment: null,
               },
-            ],
-      );
+            ];
+
+      deliverables.forEach((item, index) => {
+        if (!item.contractId) {
+          item.contractId = `CNT-${String(index + 1).padStart(3, "0")}`;
+        }
+      });
+
+      setContractDeliverables(deliverables);
 
       setFinancialDetails(
         data.financialDetails && data.financialDetails.length > 0
@@ -218,7 +228,6 @@ function OnBoardingSaves() {
       console.log(error);
     }
   };
-
   const handleReject = async () => {
     try {
       await axios.put(
@@ -270,15 +279,17 @@ function OnBoardingSaves() {
           financialDetails,
         },
       );
+      setBackendStatus(formData.status);
 
       alert("Saved Successfully");
+      navigate("/");
     } catch (error) {
       console.log(error);
       alert("Update Failed");
     }
   };
   const Layout =
-    formData.status === "On Boarded" ? DashboardLayout : CncLeftLayout;
+    backendStatus === "On Boarded" ? DashboardLayout : CncLeftLayout;
   return (
     <Layout>
       <RegularForm
@@ -287,8 +298,9 @@ function OnBoardingSaves() {
         onCancel={() => {}}
         attachmentName={formData.attachment}
         attachmentPath={`https://your-backend-url/uploads/${formData.attachment}`}
-        onApprove={formData.status === "On Boarded" ? handleApprove : undefined}
-        onReject={formData.status === "On Boarded" ? handleReject : undefined}
+        formData={formData}
+        onApprove={backendStatus === "On Boarded" ? handleApprove : undefined}
+        onReject={backendStatus === "On Boarded" ? handleReject : undefined}
       >
         <div className="form-row">
           <label className="form-label">Client ID</label>
