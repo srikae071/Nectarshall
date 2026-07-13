@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 // import { useContext } from "react";
 import { EmployeeContext } from "../EmployeeContext.js";
 import "./index.css";
@@ -16,7 +17,7 @@ function Employeesites() {
   //   "Adeel Sultan",
   //   "Ajdin Sabonoski",
   // ];
-  const employees = ["ST petersburg", "Perth", "Canberra", "Noida", "Victoria"];
+  const [employees, setEmployees] = useState([]);
   const [formData, setFormData] = useState({
     start: "",
     end: "",
@@ -24,6 +25,49 @@ function Employeesites() {
     position: "",
     role: "",
   });
+  useEffect(() => {
+    fetchApprovedSites();
+  }, []);
+
+  const fetchApprovedSites = async () => {
+    try {
+      const response = await axios.get(
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding",
+      );
+
+      const approvedSites = [];
+
+      response.data
+        .filter((item) => item.operationsClientApproved === true)
+        .forEach((item) => {
+          if (item.contractDeliverables?.length > 0) {
+            item.contractDeliverables.forEach((site) => {
+              approvedSites.push({
+                siteName: site.siteName,
+                siteAddress: site.siteAddress,
+              });
+            });
+          }
+        });
+
+      const minimumRows = 5;
+
+      const rows =
+        approvedSites.length < minimumRows
+          ? [
+              ...approvedSites,
+              ...Array.from(
+                { length: minimumRows - approvedSites.length },
+                () => ({ siteAddress: "" }),
+              ),
+            ]
+          : approvedSites;
+
+      setEmployees(rows);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const [savedData, setSavedData] = useState({});
 
@@ -194,7 +238,7 @@ function Employeesites() {
             </div>
 
             {/* BODY */}
-            {employees.map((emp, i) => (
+            {employees.map((item, i) => (
               <div key={i} className="rowBlock">
                 <div className="grid">
                   {weekDates.map((d, j) => {
@@ -231,7 +275,7 @@ function Employeesites() {
                   })}
                 </div>
 
-                <div className="nameRow">{emp}</div>
+                <div className="nameRow">{item.siteAddress || ""}</div>
               </div>
             ))}
 
