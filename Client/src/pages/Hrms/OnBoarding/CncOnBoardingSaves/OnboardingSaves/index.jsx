@@ -37,7 +37,6 @@ function OnBoardingSaves() {
     status: "",
     attachment: "",
     operationsClientApproved: "",
-    numberOfServices: 1,
   });
   const [contractDeliverables, setContractDeliverables] = useState([
     {
@@ -119,22 +118,6 @@ function OnBoardingSaves() {
       deliverables.forEach((item, index) => {
         if (!item.contractId) {
           item.contractId = `CNT-${String(index + 1).padStart(3, "0")}`;
-        }
-
-        if (!item.numberOfServices) {
-          item.numberOfServices = 1;
-        }
-
-        if (!item.services) {
-          item.services = [
-            {
-              serviceType: "",
-              position: "",
-              quantity: "",
-              shiftStartTime: "",
-              shiftEndTime: "",
-            },
-          ];
         }
       });
 
