@@ -89,34 +89,23 @@ exports.getBoardingById = async (req, res) => {
 };
 exports.updateBoarding = async (req, res) => {
   try {
-    console.log("BODY RECEIVED:");
-    console.dir(req.body.contractDeliverables, { depth: null });
+    console.log(Boarding.schema.path("contractDeliverables").instance);
+    console.log(Boarding.schema.path("contractDeliverables").caster);
+    const boarding = await Boarding.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
 
-    // const boarding = await Boarding.findByIdAndUpdate(req.params.id, req.body, {
-    //   new: true,
-    //   runValidators: true,
-    // });
-    const boarding = await Boarding.findByIdAndUpdate(
-      req.params.id,
-      {
-        $set: req.body,
-      },
-      {
-        new: true,
-        runValidators: true,
-      },
-    );
     res.status(200).json({
       success: true,
+      message: "Boarding Updated Successfully",
       data: boarding,
     });
   } catch (err) {
-    console.error("UPDATE ERROR:");
     console.error(err);
 
     res.status(500).json({
+      success: false,
       message: err.message,
-      stack: err.stack,
     });
   }
 };
