@@ -129,7 +129,25 @@ function OnBoardingSaves() {
         if (!item.contractId) {
           item.contractId = `CNT-${String(index + 1).padStart(3, "0")}`;
         }
+
+        if (!item.numberOfServices) {
+          item.numberOfServices = 1;
+        }
+
+        if (!item.services) {
+          item.services = [
+            {
+              serviceType: "",
+              position: "",
+              quantity: "",
+              shiftStartTime: "",
+              shiftEndTime: "",
+            },
+          ];
+        }
       });
+
+      setContractDeliverables(deliverables);
 
       setContractDeliverables(deliverables);
 
@@ -301,6 +319,10 @@ function OnBoardingSaves() {
   };
   const handleServiceCountChange = (deliverableIndex, count) => {
     const updated = [...contractDeliverables];
+
+    if (!updated[deliverableIndex].services) {
+      updated[deliverableIndex].services = [];
+    }
 
     updated[deliverableIndex].numberOfServices = Number(count);
 
