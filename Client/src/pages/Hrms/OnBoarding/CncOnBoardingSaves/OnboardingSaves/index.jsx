@@ -17,7 +17,7 @@ function OnBoardingSaves() {
   const [backendStatus, setBackendStatus] = useState("");
   const [formData, setFormData] = useState({
     clientId: "",
-    Type: "",
+    SupplierType: "",
     companyName: "",
     abn: "",
     acn: "",
@@ -37,6 +37,17 @@ function OnBoardingSaves() {
     status: "",
     attachment: "",
     operationsClientApproved: "",
+    numberOfServices: 1,
+
+    services: [
+      {
+        serviceType: "",
+        position: "",
+        quantity: "",
+        shiftStartTime: "",
+        shiftEndTime: "",
+      },
+    ],
   });
   const [contractDeliverables, setContractDeliverables] = useState([
     {
@@ -288,6 +299,34 @@ function OnBoardingSaves() {
       alert("Update Failed");
     }
   };
+  const handleServiceCountChange = (deliverableIndex, count) => {
+    const updated = [...contractDeliverables];
+
+    updated[deliverableIndex].numberOfServices = Number(count);
+
+    updated[deliverableIndex].services = Array.from(
+      { length: Number(count) },
+      (_, index) =>
+        updated[deliverableIndex].services[index] || {
+          serviceType: "",
+          position: "",
+          quantity: "",
+          shiftStartTime: "",
+          shiftEndTime: "",
+        },
+    );
+
+    setContractDeliverables(updated);
+  };
+  const handleServiceChange = (deliverableIndex, serviceIndex, e) => {
+    const { name, value } = e.target;
+
+    const updated = [...contractDeliverables];
+
+    updated[deliverableIndex].services[serviceIndex][name] = value;
+
+    setContractDeliverables(updated);
+  };
   const Layout =
     backendStatus === "On Boarded" ? DashboardLayout : CncLeftLayout;
   return (
@@ -311,20 +350,22 @@ function OnBoardingSaves() {
             onChange={handleChange}
           />
         </div>
-        <div className="form-row">
-          <label className="form-label">Type</label>
+        {formData.category === "Supplier Onboarding" && (
+          <div className="form-row">
+            <label className="form-label">Type</label>
 
-          <select
-            className="form-input"
-            name="type"
-            value={formData.type}
-            onChange={handleChange}
-          >
-            <option value="">Select Type</option>
-            <option value="Vendor">Vendor</option>
-            <option value="Subcontractor">Sub-Contractor</option>
-          </select>
-        </div>
+            <select
+              className="form-input"
+              name="SupplierType"
+              value={formData.SupplierType}
+              onChange={handleChange}
+            >
+              <option value="">Select Type</option>
+              <option value="Vendor">Vendor</option>
+              <option value="Subcontractor">Sub-Contractor</option>
+            </select>
+          </div>
+        )}
 
         <div className="form-row">
           <label className="form-label">Company Name</label>
@@ -658,6 +699,120 @@ function OnBoardingSaves() {
                           </div>
                         </div>
                       </div>
+                      <div className="deliverable-row">
+                        <div className="deliverable-field">
+                          <label>Number of Services</label>
+
+                          <select
+                            value={item.numberOfServices}
+                            onChange={(e) =>
+                              handleServiceCountChange(index, e.target.value)
+                            }
+                          >
+                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                              <option key={num} value={num}>
+                                {num}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div className="deliverable-field"></div>
+                      </div>
+
+                      {/* ADD THIS HERE */}
+
+                      {item.services.map((service, serviceIndex) => (
+                        <div key={serviceIndex} className="serviceCard">
+                          <h4>Service {serviceIndex + 1}</h4>
+
+                          <div className="deliverable-row">
+                            <div className="deliverable-field">
+                              <label>Type of Services</label>
+
+                              <select
+                                name="serviceType"
+                                value={service.serviceType}
+                                onChange={(e) =>
+                                  handleServiceChange(index, serviceIndex, e)
+                                }
+                              >
+                                <option value="">Select Service</option>
+                                <option>Security</option>
+                                <option>Patrolling</option>
+                                <option>Electronics</option>
+                              </select>
+                            </div>
+
+                            <div className="deliverable-field">
+                              <label>Position</label>
+
+                              <select
+                                name="position"
+                                value={service.position}
+                                onChange={(e) =>
+                                  handleServiceChange(index, serviceIndex, e)
+                                }
+                              >
+                                <option value="">Select Position</option>
+                                <option>Site Manager</option>
+                                <option>Site In Charge</option>
+                                <option>GL1</option>
+                                <option>GL2</option>
+                                <option>GL3</option>
+                                <option>GL4</option>
+                              </select>
+                            </div>
+                          </div>
+
+                          <div className="deliverable-row">
+                            <div className="deliverable-field">
+                              <label>Quantity</label>
+
+                              <input
+                                type="number"
+                                name="quantity"
+                                value={service.quantity}
+                                onChange={(e) =>
+                                  handleServiceChange(index, serviceIndex, e)
+                                }
+                              />
+                            </div>
+
+                            <div className="deliverable-field"></div>
+                          </div>
+
+                          <div className="deliverable-row">
+                            <div className="deliverable-field">
+                              <label>Shift Start Time</label>
+
+                              <input
+                                type="time"
+                                name="shiftStartTime"
+                                value={service.shiftStartTime}
+                                onChange={(e) =>
+                                  handleServiceChange(index, serviceIndex, e)
+                                }
+                              />
+                            </div>
+
+                            <div className="deliverable-field">
+                              <label>Shift End Time</label>
+
+                              <input
+                                type="time"
+                                name="shiftEndTime"
+                                value={service.shiftEndTime}
+                                onChange={(e) =>
+                                  handleServiceChange(index, serviceIndex, e)
+                                }
+                              />
+                            </div>
+                          </div>
+
+                          <hr />
+                        </div>
+                      ))}
 
                       <div className="deliverable-comment">
                         <label>Comments</label>
