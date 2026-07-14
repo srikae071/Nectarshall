@@ -92,11 +92,20 @@ exports.updateBoarding = async (req, res) => {
     console.log("BODY RECEIVED:");
     console.dir(req.body.contractDeliverables, { depth: null });
 
-    const boarding = await Boarding.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-
+    // const boarding = await Boarding.findByIdAndUpdate(req.params.id, req.body, {
+    //   new: true,
+    //   runValidators: true,
+    // });
+    const boarding = await Boarding.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: req.body,
+      },
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
     res.status(200).json({
       success: true,
       data: boarding,
