@@ -69,7 +69,7 @@ function OnBoardingSaves() {
       billingCycle: "Monthly",
       comments: "",
 
-      attachment: null,
+      attachment: "",
     },
   ]);
   const fetchBoarding = async () => {
@@ -121,7 +121,7 @@ function OnBoardingSaves() {
                 siteMobile: "",
                 contractState: "Active",
                 comments: "",
-                attachment: null,
+                attachment: "",
               },
             ];
 
@@ -161,7 +161,7 @@ function OnBoardingSaves() {
                 invoiceNumber: "",
                 billingCycle: "Monthly",
                 comments: "",
-                attachment: null,
+                attachment: "",
               },
             ],
       );
