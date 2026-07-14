@@ -60,9 +60,23 @@ const BoardingSchema = new mongoose.Schema(
         contractState: String,
         comments: String,
         attachment: String,
+
+        numberOfServices: {
+          type: Number,
+          default: 1,
+        },
+
+        services: [
+          {
+            serviceType: String,
+            position: String,
+            quantity: Number,
+            shiftStartTime: String,
+            shiftEndTime: String,
+          },
+        ],
       },
     ],
-
     financialDetails: [
       {
         contractId: String,
@@ -71,15 +85,6 @@ const BoardingSchema = new mongoose.Schema(
         billingCycle: String,
         comments: String,
         attachment: String,
-      },
-    ],
-    services: [
-      {
-        serviceType: String,
-        position: String,
-        quantity: Number,
-        shiftStartTime: String,
-        shiftEndTime: String,
       },
     ],
   },

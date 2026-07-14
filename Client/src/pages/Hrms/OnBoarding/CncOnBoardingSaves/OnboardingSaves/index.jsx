@@ -38,16 +38,6 @@ function OnBoardingSaves() {
     attachment: "",
     operationsClientApproved: "",
     numberOfServices: 1,
-
-    services: [
-      {
-        serviceType: "",
-        position: "",
-        quantity: "",
-        shiftStartTime: "",
-        shiftEndTime: "",
-      },
-    ],
   });
   const [contractDeliverables, setContractDeliverables] = useState([
     {
@@ -60,6 +50,15 @@ function OnBoardingSaves() {
       contractState: "Active",
       comments: "",
       attachment: null,
+      services: [
+        {
+          serviceType: "",
+          position: "",
+          quantity: "",
+          shiftStartTime: "",
+          shiftEndTime: "",
+        },
+      ],
     },
   ]);
   const [financialDetails, setFinancialDetails] = useState([
@@ -722,7 +721,7 @@ function OnBoardingSaves() {
 
                       {/* ADD THIS HERE */}
 
-                      {item.services.map((service, serviceIndex) => (
+                      {item.services?.map((service, serviceIndex) => (
                         <div key={serviceIndex} className="serviceCard">
                           <h4>Service {serviceIndex + 1}</h4>
 
