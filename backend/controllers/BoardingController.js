@@ -90,7 +90,7 @@ exports.getBoardingById = async (req, res) => {
 exports.updateBoarding = async (req, res) => {
   try {
     console.log("BODY RECEIVED:");
-    console.log(JSON.stringify(req.body, null, 2));
+    console.dir(req.body.contractDeliverables, { depth: null });
 
     const boarding = await Boarding.findByIdAndUpdate(req.params.id, req.body, {
       new: true,

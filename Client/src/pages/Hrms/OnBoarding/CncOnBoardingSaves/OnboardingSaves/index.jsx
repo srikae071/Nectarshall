@@ -300,6 +300,15 @@ function OnBoardingSaves() {
 
   const handleSave = async () => {
     try {
+      console.log("FORM DATA:");
+      console.log(formData);
+
+      console.log("CONTRACT DELIVERABLES:");
+      console.log(contractDeliverables);
+
+      console.log("FINANCIAL DETAILS:");
+      console.log(financialDetails);
+
       await axios.put(
         `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding/${id}`,
         {
@@ -313,6 +322,14 @@ function OnBoardingSaves() {
       alert("Saved Successfully");
       navigate("/");
     } catch (error) {
+      console.log("FULL ERROR:", error);
+
+      console.log("RESPONSE:");
+      console.log(error.response);
+
+      console.log("DATA:");
+      console.log(error.response?.data);
+
       console.log(error);
       alert("Update Failed");
     }
