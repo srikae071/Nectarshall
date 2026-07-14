@@ -10,6 +10,7 @@ function DashboardLayout({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [employeeTrigger, setEmployeeTrigger] = useState(0);
+  const [openAdhoc, setOpenAdhoc] = useState(false);
 
   const generateEmployees = () => {
     setEmployeeTrigger((prev) => prev + 1);
@@ -210,6 +211,58 @@ function DashboardLayout({ children }) {
                   onClick={() => navigate("/onboarding-client-new")}
                 >
                   ➕ New Client
+                </div>
+              </div>
+            )}
+          </div>
+          {/* AD HOC SERVICES */}
+          <div className="menuBlock">
+            <div
+              className="submenuItem toggleHeader"
+              onClick={() => setOpenAdhoc(!openAdhoc)}
+            >
+              <span>🛠️ Ad Hoc Services</span>
+              <span>{openAdhoc ? "-" : "+"}</span>
+            </div>
+
+            {openAdhoc && (
+              <div className="submenuDropdown">
+                <div
+                  className={`submenuItem ${
+                    location.pathname === "/adhoc/all" ? "active" : ""
+                  }`}
+                  onClick={() => navigate("/adhoc/all")}
+                >
+                  📋 All
+                </div>
+
+                <div
+                  className={`submenuItem ${
+                    location.pathname === "" ? "active" : ""
+                  }`}
+                  onClick={() => navigate("")}
+                >
+                  🟢 Open
+                </div>
+
+                <div
+                  className={`submenuItem ${
+                    location.pathname === "/adhoc-services/pending"
+                      ? "active"
+                      : ""
+                  }`}
+                  onClick={() => navigate("/adhoc-services/pending")}
+                >
+                  🟡 Pending
+                </div>
+
+                <div
+                  className={`submenuItem ${
+                    location.pathname === "/adhoc-services/new" ? "active" : ""
+                  }`}
+                  onClick={() => navigate("/adhoc-services/new")}
+                >
+                  ➕ New Service
                 </div>
               </div>
             )}

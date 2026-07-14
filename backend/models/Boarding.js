@@ -60,7 +60,7 @@ const BoardingSchema = new mongoose.Schema(
         contractState: String,
         comments: String,
         attachment: String,
-
+        type: String,
         numberOfServices: {
           type: Number,
           default: 1,

@@ -30,7 +30,7 @@ function OnBoardingSaves() {
     contactNumber: "",
     onboardingDate: "",
     validTill: "",
-    type: "Adhoc",
+
     shortDescription: "",
     description: "",
     category: "",
@@ -49,6 +49,7 @@ function OnBoardingSaves() {
       siteMobile: "",
       contractState: "Active",
       comments: "",
+      type: "",
       attachment: null,
       services: [
         {
@@ -324,6 +325,11 @@ function OnBoardingSaves() {
 
     updated[deliverableIndex].services[serviceIndex][name] = value;
 
+    setContractDeliverables(updated);
+  };
+  const handleDeliverableTypeChange = (index, value) => {
+    const updated = [...contractDeliverables];
+    updated[index].type = value;
     setContractDeliverables(updated);
   };
   const Layout =
@@ -694,6 +700,34 @@ function OnBoardingSaves() {
                                 }
                               />
                               Inactive
+                            </label>
+                          </div>
+                        </div>
+
+                        <div className="deliverable-field">
+                          <label>ADHOC</label>
+
+                          <div className="deliverable-radio-group">
+                            <label>
+                              <input
+                                type="radio"
+                                checked={item.type === "Adhoc"}
+                                onChange={() =>
+                                  handleDeliverableTypeChange(index, "Adhoc")
+                                }
+                              />
+                              Yes
+                            </label>
+
+                            <label>
+                              <input
+                                type="radio"
+                                checked={item.type !== "Adhoc"}
+                                onChange={() =>
+                                  handleDeliverableTypeChange(index, "")
+                                }
+                              />
+                              No
                             </label>
                           </div>
                         </div>

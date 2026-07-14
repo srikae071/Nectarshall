@@ -98,6 +98,7 @@ import OnbCWorkInProgress from "./pages/Hrms/OnBoarding/OnBoardingClinet/OnBoard
 import OnbCOnBoarded from "./pages/Hrms/OnBoarding/OnBoardingClinet/OnBoardingCompliance/OnbCOnBoarded";
 import OnbCOpen from "./pages/Hrms/OnBoarding/OnBoardingClinet/OnBoardingCompliance/OnbCOpen";
 import OprationsClientOnbTab from "./pages/Dashboard/DashboardRightLayout/OprationsClientOnbTab";
+import AdhocAllTab from "./pages/Dashboard/DashboardRightLayout/AdhocServices/AdhocAllTab";
 // import BEWorkInProgress from "./pages/Cnc/CncRightSide/BEWorkInProgress";
 function App() {
   return (
@@ -267,6 +268,7 @@ function App() {
         path="/Operations-Complience/All"
         element={<OprationsClientOnbTab />}
       />
+      <Route path="/adhoc/all" element={<AdhocAllTab />} />
     </Routes>
   );
 }
