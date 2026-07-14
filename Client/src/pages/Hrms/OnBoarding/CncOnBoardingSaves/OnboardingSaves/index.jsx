@@ -51,15 +51,6 @@ function OnBoardingSaves() {
       comments: "",
       type: "",
       attachment: "",
-      services: [
-        {
-          serviceType: "",
-          position: "",
-          quantity: "",
-          shiftStartTime: "",
-          shiftEndTime: "",
-        },
-      ],
     },
   ]);
   const [financialDetails, setFinancialDetails] = useState([
@@ -334,38 +325,7 @@ function OnBoardingSaves() {
       alert("Update Failed");
     }
   };
-  const handleServiceCountChange = (deliverableIndex, count) => {
-    const updated = [...contractDeliverables];
 
-    if (!updated[deliverableIndex].services) {
-      updated[deliverableIndex].services = [];
-    }
-
-    updated[deliverableIndex].numberOfServices = Number(count);
-
-    updated[deliverableIndex].services = Array.from(
-      { length: Number(count) },
-      (_, index) =>
-        updated[deliverableIndex].services[index] || {
-          serviceType: "",
-          position: "",
-          quantity: "",
-          shiftStartTime: "",
-          shiftEndTime: "",
-        },
-    );
-
-    setContractDeliverables(updated);
-  };
-  const handleServiceChange = (deliverableIndex, serviceIndex, e) => {
-    const { name, value } = e.target;
-
-    const updated = [...contractDeliverables];
-
-    updated[deliverableIndex].services[serviceIndex][name] = value;
-
-    setContractDeliverables(updated);
-  };
   const handleDeliverableTypeChange = (index, value) => {
     const updated = [...contractDeliverables];
     updated[index].type = value;
@@ -771,120 +731,8 @@ function OnBoardingSaves() {
                           </div>
                         </div>
                       </div>
-                      <div className="deliverable-row">
-                        <div className="deliverable-field">
-                          <label>Number of Services</label>
-
-                          <select
-                            value={item.numberOfServices}
-                            onChange={(e) =>
-                              handleServiceCountChange(index, e.target.value)
-                            }
-                          >
-                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-                              <option key={num} value={num}>
-                                {num}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-
-                        <div className="deliverable-field"></div>
-                      </div>
 
                       {/* ADD THIS HERE */}
-
-                      {item.services?.map((service, serviceIndex) => (
-                        <div key={serviceIndex} className="serviceCard">
-                          <h4>Service {serviceIndex + 1}</h4>
-
-                          <div className="deliverable-row">
-                            <div className="deliverable-field">
-                              <label>Type of Services</label>
-
-                              <select
-                                name="serviceType"
-                                value={service.serviceType}
-                                onChange={(e) =>
-                                  handleServiceChange(index, serviceIndex, e)
-                                }
-                              >
-                                <option value="">Select Service</option>
-                                <option>Security</option>
-                                <option>Patrolling</option>
-                                <option>Electronics</option>
-                              </select>
-                            </div>
-
-                            <div className="deliverable-field">
-                              <label>Position</label>
-
-                              <select
-                                name="position"
-                                value={service.position}
-                                onChange={(e) =>
-                                  handleServiceChange(index, serviceIndex, e)
-                                }
-                              >
-                                <option value="">Select Position</option>
-                                <option>Site Manager</option>
-                                <option>Site In Charge</option>
-                                <option>GL1</option>
-                                <option>GL2</option>
-                                <option>GL3</option>
-                                <option>GL4</option>
-                              </select>
-                            </div>
-                          </div>
-
-                          <div className="deliverable-row">
-                            <div className="deliverable-field">
-                              <label>Quantity</label>
-
-                              <input
-                                type="number"
-                                name="quantity"
-                                value={service.quantity}
-                                onChange={(e) =>
-                                  handleServiceChange(index, serviceIndex, e)
-                                }
-                              />
-                            </div>
-
-                            <div className="deliverable-field"></div>
-                          </div>
-
-                          <div className="deliverable-row">
-                            <div className="deliverable-field">
-                              <label>Shift Start Time</label>
-
-                              <input
-                                type="time"
-                                name="shiftStartTime"
-                                value={service.shiftStartTime}
-                                onChange={(e) =>
-                                  handleServiceChange(index, serviceIndex, e)
-                                }
-                              />
-                            </div>
-
-                            <div className="deliverable-field">
-                              <label>Shift End Time</label>
-
-                              <input
-                                type="time"
-                                name="shiftEndTime"
-                                value={service.shiftEndTime}
-                                onChange={(e) =>
-                                  handleServiceChange(index, serviceIndex, e)
-                                }
-                              />
-                            </div>
-                          </div>
-
-                          <hr />
-                        </div>
-                      ))}
 
                       <div className="deliverable-comment">
                         <label>Comments</label>

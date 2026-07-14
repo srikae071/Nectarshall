@@ -61,20 +61,6 @@ const BoardingSchema = new mongoose.Schema(
         comments: String,
         attachment: String,
         type: String,
-        numberOfServices: {
-          type: Number,
-          default: 1,
-        },
-
-        services: [
-          {
-            serviceType: String,
-            position: String,
-            quantity: Number,
-            shiftStartTime: String,
-            shiftEndTime: String,
-          },
-        ],
       },
     ],
     financialDetails: [
