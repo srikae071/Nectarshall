@@ -46,8 +46,3 @@ app.get("/", (req, res) => {
 app.listen(process.env.PORT, () => {
   console.log(`Server Running on Port ${process.env.PORT}`);
 });
-const Boarding = require("./models/Boarding");
-
-console.log(Boarding.schema.path("contractDeliverables").instance);
-
-console.log(Boarding.schema.path("contractDeliverables").caster);

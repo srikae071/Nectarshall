@@ -1,8 +1,3 @@
-const Boarding = require("../models/Boarding");
-
-console.log("===== SCHEMA TYPE =====");
-
-console.log("=======================");
 exports.createBoarding = async (req, res) => {
   try {
     // Find the latest onboarding record
@@ -18,16 +13,16 @@ exports.createBoarding = async (req, res) => {
       }
     }
 
-    let clientId = "";
-    let businessId = "";
+    // let clientId = "";
+    // let businessId = "";
 
-    // Generate IDs based on category
-    if (req.body.category === "Home") {
-      clientId = `CUST-${String(nextNumber).padStart(3, "0")}`;
-      businessId = `BE-${String(nextNumber).padStart(3, "0")}`;
-    } else {
-      clientId = `OBD-${String(nextNumber).padStart(3, "0")}`;
-    }
+    // // Generate IDs based on category
+    // if (req.body.category === "Home") {
+    //   clientId = `CUST-${String(nextNumber).padStart(3, "0")}`;
+    //   businessId = `BE-${String(nextNumber).padStart(3, "0")}`;
+    // } else {
+    //   clientId = `OBD-${String(nextNumber).padStart(3, "0")}`;
+    // }
 
     const boarding = new Boarding({
       ...req.body,
@@ -90,141 +85,61 @@ exports.getBoardingById = async (req, res) => {
     });
   }
 };
-// exports.updateBoarding = async (req, res) => {
-//   try {
-//     const boarding = await Boarding.findByIdAndUpdate(req.params.id, req.body, {
-//       new: true,
-//     });
+const Boarding = require("../models/Boarding");
 
-//     res.status(200).json({
-//       success: true,
-//       message: "Boarding Updated Successfully",
-//       data: boarding,
-//     });
-//   } catch (err) {
-//     console.error(err);
-
-//     res.status(500).json({
-//       success: false,
-//       message: err.message,
-//     });
-//   }
-// };
-
-// exports.updateBoarding = async (req, res) => {
-//   try {
-//     console.log("BODY:");
-//     console.dir(req.body, { depth: null });
-
-//     return res.json(req.body);
-//   } catch (err) {
-//     console.log(err);
-//   }
-// };
-// exports.updateBoarding = async (req, res) => {
-//   try {
-//     console.log("BODY:");
-//     console.dir(req.body, { depth: null });
-
-//     const boarding = await Boarding.findByIdAndUpdate(req.params.id, req.body, {
-//       new: true,
-//       runValidators: true,
-//     });
-
-//     res.status(200).json({
-//       success: true,
-//       data: boarding,
-//     });
-//   } catch (err) {
-//     console.error(err);
-
-//     res.status(500).json({
-//       success: false,
-//       message: err.message,
-//     });
-//   }
-// };
-// exports.updateBoarding = async (req, res) => {
-//   try {
-//     const boarding = await Boarding.findById(req.params.id);
-
-//     boarding.category = req.body.category;
-//     boarding.clientId = req.body.clientId;
-//     boarding.SupplierId = req.body.SupplierId;
-//     boarding.BusinessId = req.body.BusinessId;
-//     boarding.SupplierType = req.body.SupplierType;
-//     boarding.companyName = req.body.companyName;
-//     boarding.requester = req.body.requester;
-//     boarding.requesterFor = req.body.requesterFor;
-//     boarding.abn = req.body.abn;
-//     boarding.acn = req.body.acn;
-//     boarding.emailAddress = req.body.emailAddress;
-//     boarding.companyAddress = req.body.companyAddress;
-//     boarding.SupplierAgentName = req.body.SupplierAgentName;
-//     boarding.SupplierAgentEmail = req.body.SupplierAgentEmail;
-//     boarding.companyPhone = req.body.companyPhone;
-//     boarding.managingAgentName = req.body.managingAgentName;
-//     boarding.managingAgentNumber = req.body.managingAgentNumber;
-//     boarding.managingAgentEmail = req.body.managingAgentEmail;
-//     boarding.onboardingDate = req.body.onboardingDate;
-//     boarding.validTill = req.body.validTill;
-//     boarding.type = req.body.type;
-//     boarding.shortDescription = req.body.shortDescription;
-//     boarding.description = req.body.description;
-//     boarding.supplierType = req.body.supplierType;
-//     boarding.attachment = req.body.attachment;
-//     boarding.operationsClientApproved = req.body.operationsClientApproved;
-//     boarding.status = req.body.status;
-
-//     // Don't update these yet
-//     // boarding.contractDeliverables = req.body.contractDeliverables;
-//     // boarding.financialDetails = req.body.financialDetails;
-
-//     await boarding.save();
-
-//     res.json(boarding);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({
-//       message: err.message,
-//       stack: err.stack,
-//     });
-//   }
-// };
 exports.updateBoarding = async (req, res) => {
   try {
     const boarding = await Boarding.findById(req.params.id);
 
-    console.log(JSON.stringify(boarding.contractDeliverables, null, 2));
-
-    return res.json(boarding.contractDeliverables);
-
-    if (boarding.contractDeliverables.length === 0) {
-      boarding.contractDeliverables.push({
-        contractId: "",
-        siteName: "",
-        siteAddress: "",
-        siteManagerName: "",
-        siteEmail: "",
-        siteMobile: "",
-        contractState: "Active",
-        comments: "",
-        attachment: "",
-        type: "",
+    if (!boarding) {
+      return res.status(404).json({
+        success: false,
+        message: "Boarding not found",
       });
     }
 
-    boarding.contractDeliverables[0].siteName =
-      req.body.contractDeliverables[0].siteName;
+    // Update all schema fields
+    boarding.category = req.body.category;
+    boarding.clientId = req.body.clientId;
+    boarding.SupplierId = req.body.SupplierId;
+    boarding.BusinessId = req.body.BusinessId;
+    boarding.SupplierType = req.body.SupplierType;
+    boarding.companyName = req.body.companyName;
+    boarding.requester = req.body.requester;
+    boarding.requesterFor = req.body.requesterFor;
+    boarding.abn = req.body.abn;
+    boarding.acn = req.body.acn;
+    boarding.emailAddress = req.body.emailAddress;
+    boarding.companyAddress = req.body.companyAddress;
+    boarding.SupplierAgentName = req.body.SupplierAgentName;
+    boarding.SupplierAgentEmail = req.body.SupplierAgentEmail;
+    boarding.companyPhone = req.body.companyPhone;
+    boarding.managingAgentName = req.body.managingAgentName;
+    boarding.managingAgentNumber = req.body.managingAgentNumber;
+    boarding.managingAgentEmail = req.body.managingAgentEmail;
+    boarding.onboardingDate = req.body.onboardingDate;
+    boarding.validTill = req.body.validTill;
+    boarding.type = req.body.type;
+    boarding.shortDescription = req.body.shortDescription;
+    boarding.description = req.body.description;
+    boarding.supplierType = req.body.supplierType;
+    boarding.attachment = req.body.attachment;
+    boarding.operationsClientApproved = req.body.operationsClientApproved;
+    boarding.status = req.body.status;
 
     await boarding.save();
 
-    res.json(boarding);
+    res.status(200).json({
+      success: true,
+      message: "Boarding Updated Successfully",
+      data: boarding,
+    });
   } catch (err) {
     console.error(err);
+
     res.status(500).json({
+      success: false,
       message: err.message,
-      stack: err.stack,
     });
   }
 };

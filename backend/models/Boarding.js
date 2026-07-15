@@ -49,30 +49,6 @@ const BoardingSchema = new mongoose.Schema(
       type: String,
       default: "Open",
     },
-    contractDeliverables: [
-      {
-        contractId: String,
-        siteName: String,
-        siteAddress: String,
-        siteManagerName: String,
-        siteEmail: String,
-        siteMobile: String,
-        contractState: String,
-        comments: String,
-        attachment: String,
-        type: String,
-      },
-    ],
-    financialDetails: [
-      {
-        contractId: String,
-        invoiceDate: Date,
-        invoiceNumber: String,
-        billingCycle: String,
-        comments: String,
-        attachment: String,
-      },
-    ],
   },
   {
     timestamps: true,
