@@ -9,11 +9,12 @@ const {
   updateBoarding,
 } = require("../controllers/BoardingController");
 
-router.post("/", upload.any(), boardingController.createBoarding);
+router.post("/", upload.any(), createBoarding);
 
 router.get("/", getAllBoardings);
 
 router.get("/:id", getBoardingById);
-router.put("/:id", upload.any(), boardingController.updateBoarding);
+
+router.put("/:id", upload.any(), updateBoarding);
 
 module.exports = router;
