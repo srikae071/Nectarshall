@@ -38,7 +38,20 @@ function OnBoardingSaves() {
     attachment: "",
     operationsClientApproved: "",
   });
-
+  const [contractDeliverables, setContractDeliverables] = useState([
+    {
+      clientId: "",
+      siteName: "",
+      siteAddress: "",
+      siteManagerName: "",
+      siteEmail: "",
+      siteMobile: "",
+      contractState: "Active",
+      adhoc: "No",
+      comments: "",
+      attachment: "",
+    },
+  ]);
   const fetchBoarding = async () => {
     try {
       const response = await axios.get(
@@ -75,29 +88,46 @@ function OnBoardingSaves() {
         status: data.status || "Open",
         attachment: data.attachment || "",
       });
+      setContractDeliverables(
+        data.contractDeliverables && data.contractDeliverables.length > 0
+          ? data.contractDeliverables
+          : [
+              {
+                clientId: "",
+                siteName: "",
+                siteAddress: "",
+                siteManagerName: "",
+                siteEmail: "",
+                siteMobile: "",
+                contractState: "Active",
+                adhoc: "No",
+                comments: "",
+                attachment: "",
+              },
+            ],
+      );
     } catch (err) {
       console.log(err);
     }
   };
 
-  const [contractDeliverables, setContractDeliverables] = useState([
-    {
-      clientId: "",
-      siteName: "",
-      siteAddress: "",
-      siteManagerName: "",
-      siteEmail: "",
-      siteMobile: "",
-      contractState: "Active",
-      adhoc: "No",
-    },
-  ]);
   const handleDeliverableChange = (index, e) => {
     const { name, value } = e.target;
 
     const updated = [...contractDeliverables];
 
     updated[index][name] = value;
+
+    setContractDeliverables(updated);
+  };
+  const handleDeliverableAttachment = (index, e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    const updated = [...contractDeliverables];
+
+    updated[index].attachment = file;
 
     setContractDeliverables(updated);
   };
@@ -598,6 +628,33 @@ function OnBoardingSaves() {
                             />
                             No
                           </label>
+                        </div>
+                      </div>
+                      <div className="deliverable-field deliverable-full">
+                        <label>Comments</label>
+                        <textarea
+                          className="deliverable-textarea"
+                          name="comments"
+                          value={item.comments || ""}
+                          onChange={(e) => handleDeliverableChange(index, e)}
+                        />
+                      </div>
+
+                      <div className="deliverable-field deliverable-full">
+                        <label>Attachment</label>
+                        <input
+                          type="file"
+                          onChange={(e) =>
+                            handleDeliverableAttachment(index, e)
+                          }
+                        />
+
+                        <div className="attachment-name">
+                          {item.attachment
+                            ? typeof item.attachment === "string"
+                              ? item.attachment
+                              : item.attachment.name
+                            : "No file selected"}
                         </div>
                       </div>
                     </div>

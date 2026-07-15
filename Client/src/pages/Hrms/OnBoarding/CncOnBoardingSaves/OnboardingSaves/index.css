@@ -49,3 +49,33 @@
   gap: 6px;
   font-weight: 500;
 }
+.deliverable-full {
+  grid-column: 1 / -1;
+}
+
+.deliverable-textarea {
+  width: 100%;
+  min-height: 120px;
+  resize: vertical;
+  padding: 10px;
+  border: 1px solid #d6d6d6;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+}
+
+.deliverable-textarea:focus {
+  border-color: #1976d2;
+}
+
+.deliverable-file {
+  padding: 8px 0;
+}
+
+.attachment-name {
+  margin-top: 8px;
+  display: block;
+  font-size: 13px;
+  color: #666;
+}

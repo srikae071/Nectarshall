@@ -90,7 +90,8 @@ const Boarding = require("../models/Boarding");
 exports.updateBoarding = async (req, res) => {
   try {
     const boarding = await Boarding.findById(req.params.id);
-
+    console.log("BODY:", req.body);
+    console.log("FILES:", req.files);
     if (!boarding) {
       return res.status(404).json({
         success: false,

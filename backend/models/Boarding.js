@@ -57,6 +57,8 @@ const BoardingSchema = new mongoose.Schema(
         siteManagerName: String,
         siteEmail: String,
         siteMobile: String,
+        comments: String,
+        attachment: String,
         contractState: {
           type: String,
           default: "Active",
