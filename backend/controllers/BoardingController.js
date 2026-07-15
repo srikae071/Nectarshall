@@ -143,17 +143,28 @@ exports.getBoardingById = async (req, res) => {
 // };
 exports.updateBoarding = async (req, res) => {
   try {
-    console.log(req.body);
-
     const boarding = await Boarding.findById(req.params.id);
 
-    Object.assign(boarding, req.body);
+    console.log("FOUND DOCUMENT:");
+    console.dir(boarding, { depth: null });
+
+    console.log("REQUEST BODY:");
+    console.dir(req.body, { depth: null });
+
+    Object.keys(req.body).forEach((key) => {
+      boarding[key] = req.body[key];
+    });
 
     await boarding.save();
 
     res.json(boarding);
   } catch (err) {
-    console.error(err);
+    console.error("ERROR NAME:", err.name);
+    console.error("ERROR MESSAGE:", err.message);
+
+    if (err.errors) {
+      console.dir(err.errors, { depth: null });
+    }
 
     res.status(500).json({
       message: err.message,
