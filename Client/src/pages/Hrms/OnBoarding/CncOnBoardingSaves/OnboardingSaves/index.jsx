@@ -282,6 +282,12 @@ function OnBoardingSaves() {
 
       // console.log("FINANCIAL DETAILS:");
       // console.log(financialDetails);
+      console.log("Sending:");
+      console.log({
+        ...formData,
+        contractDeliverables,
+        financialDetails,
+      });
       console.log(JSON.stringify(contractDeliverables, null, 2));
       await axios.put(
         `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding/${id}`,
