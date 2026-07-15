@@ -15,6 +15,7 @@ function OnBoardingSaves() {
   const [activeTab, setActiveTab] = useState("Client Contract Deliverables");
   const [pageTitle, setPageTitle] = useState("");
   const [backendStatus, setBackendStatus] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
   const [formData, setFormData] = useState({
     clientId: "",
     SupplierType: "",
@@ -204,46 +205,72 @@ function OnBoardingSaves() {
 
   //   setFinancialDetails(updated);
   // };
-
   const handleSave = async () => {
     try {
-      // console.log("FORM DATA:");
-      // console.log(formData);
+      const data = new FormData();
 
-      // console.log("CONTRACT DELIVERABLES:");
-      // console.log(contractDeliverables);
-
-      // console.log("FINANCIAL DETAILS:");
-      // console.log(financialDetails);
-      console.log("Sending:");
-      console.log({
-        ...formData,
+      Object.keys(formData).forEach((key) => {
+        data.append(key, formData[key]);
       });
+
+      if (selectedFile) {
+        data.append("attachment", selectedFile);
+      }
+
+      data.append("contractDeliverables", JSON.stringify(contractDeliverables));
 
       await axios.put(
         `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding/${id}`,
-        {
-          ...formData,
-          contractDeliverables,
-        },
+        data,
       );
-      setBackendStatus(formData.status);
 
+      setBackendStatus(formData.status);
       alert("Saved Successfully");
       navigate("/");
     } catch (error) {
-      // console.log("FULL ERROR:", error);
-
-      // console.log("RESPONSE:");
-      // console.log(error.response);
-
-      // console.log("DATA:");
-      // console.log(error.response?.data);
-
       console.log(error);
       alert("Update Failed");
     }
   };
+  // const handleSave = async () => {
+  //   try {
+  //     // console.log("FORM DATA:");
+  //     // console.log(formData);
+
+  //     // console.log("CONTRACT DELIVERABLES:");
+  //     // console.log(contractDeliverables);
+
+  //     // console.log("FINANCIAL DETAILS:");
+  //     // console.log(financialDetails);
+  //     console.log("Sending:");
+  //     console.log({
+  //       ...formData,
+  //     });
+
+  //     await axios.put(
+  //       `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding/${id}`,
+  //       {
+  //         ...formData,
+  //         contractDeliverables,
+  //       },
+  //     );
+  //     setBackendStatus(formData.status);
+
+  //     alert("Saved Successfully");
+  //     navigate("/");
+  //   } catch (error) {
+  //     // console.log("FULL ERROR:", error);
+
+  //     // console.log("RESPONSE:");
+  //     // console.log(error.response);
+
+  //     // console.log("DATA:");
+  //     // console.log(error.response?.data);
+
+  //     console.log(error);
+  //     alert("Update Failed");
+  //   }
+  // };
 
   const Layout =
     backendStatus === "On Boarded" ? DashboardLayout : CncLeftLayout;
@@ -650,11 +677,10 @@ function OnBoardingSaves() {
                         />
 
                         <div className="attachment-name">
-                          {item.attachment
-                            ? typeof item.attachment === "string"
-                              ? item.attachment
-                              : item.attachment.name
-                            : "No file selected"}
+                          <input
+                            type="file"
+                            onChange={(e) => setSelectedFile(e.target.files[0])}
+                          />
                         </div>
                       </div>
                     </div>
