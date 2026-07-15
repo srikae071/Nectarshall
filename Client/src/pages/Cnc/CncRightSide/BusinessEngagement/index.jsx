@@ -100,7 +100,7 @@ function BusinessEngagement() {
         },
       );
 
-      console.log(response.data);
+      // console.log(response.data);
       navigate("/"); // Home page route
       alert("Business Request Saved Successfully");
 
