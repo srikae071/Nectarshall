@@ -108,36 +108,36 @@ exports.getBoardingById = async (req, res) => {
 //   }
 // };
 
-// exports.updateBoarding = async (req, res) => {
-//   try {
-//     console.log("BODY:");
-//     console.dir(req.body, { depth: null });
-
-//     return res.json(req.body);
-//   } catch (err) {
-//     console.log(err);
-//   }
-// };
 exports.updateBoarding = async (req, res) => {
   try {
     console.log("BODY:");
     console.dir(req.body, { depth: null });
 
-    const boarding = await Boarding.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-
-    res.status(200).json({
-      success: true,
-      data: boarding,
-    });
+    return res.json(req.body);
   } catch (err) {
-    console.error(err);
-
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    console.log(err);
   }
 };
+// exports.updateBoarding = async (req, res) => {
+//   try {
+//     console.log("BODY:");
+//     console.dir(req.body, { depth: null });
+
+//     const boarding = await Boarding.findByIdAndUpdate(req.params.id, req.body, {
+//       new: true,
+//       runValidators: true,
+//     });
+
+//     res.status(200).json({
+//       success: true,
+//       data: boarding,
+//     });
+//   } catch (err) {
+//     console.error(err);
+
+//     res.status(500).json({
+//       success: false,
+//       message: err.message,
+//     });
+//   }
+// };
