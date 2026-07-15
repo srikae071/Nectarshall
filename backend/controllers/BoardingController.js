@@ -1,5 +1,8 @@
 const Boarding = require("../models/Boarding");
 
+console.log("========== SCHEMA ==========");
+console.log(Boarding.schema.path("contractDeliverables"));
+console.log("============================");
 exports.createBoarding = async (req, res) => {
   try {
     // Find the latest onboarding record
