@@ -108,16 +108,16 @@ exports.getBoardingById = async (req, res) => {
 //   }
 // };
 
-exports.updateBoarding = async (req, res) => {
-  try {
-    console.log("BODY:");
-    console.dir(req.body, { depth: null });
+// exports.updateBoarding = async (req, res) => {
+//   try {
+//     console.log("BODY:");
+//     console.dir(req.body, { depth: null });
 
-    return res.json(req.body);
-  } catch (err) {
-    console.log(err);
-  }
-};
+//     return res.json(req.body);
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
 // exports.updateBoarding = async (req, res) => {
 //   try {
 //     console.log("BODY:");
@@ -141,3 +141,23 @@ exports.updateBoarding = async (req, res) => {
 //     });
 //   }
 // };
+exports.updateBoarding = async (req, res) => {
+  try {
+    console.log(req.body);
+
+    const boarding = await Boarding.findById(req.params.id);
+
+    Object.assign(boarding, req.body);
+
+    await boarding.save();
+
+    res.json(boarding);
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      message: err.message,
+      stack: err.stack,
+    });
+  }
+};
