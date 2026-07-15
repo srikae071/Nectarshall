@@ -87,23 +87,34 @@ exports.getBoardingById = async (req, res) => {
     });
   }
 };
+// exports.updateBoarding = async (req, res) => {
+//   try {
+//     const boarding = await Boarding.findByIdAndUpdate(req.params.id, req.body, {
+//       new: true,
+//     });
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Boarding Updated Successfully",
+//       data: boarding,
+//     });
+//   } catch (err) {
+//     console.error(err);
+
+//     res.status(500).json({
+//       success: false,
+//       message: err.message,
+//     });
+//   }
+// };
+
 exports.updateBoarding = async (req, res) => {
   try {
-    const boarding = await Boarding.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+    console.log("BODY:");
+    console.dir(req.body, { depth: null });
 
-    res.status(200).json({
-      success: true,
-      message: "Boarding Updated Successfully",
-      data: boarding,
-    });
+    return res.json(req.body);
   } catch (err) {
-    console.error(err);
-
-    res.status(500).json({
-      success: false,
-      message: err.message,
-    });
+    console.log(err);
   }
 };
