@@ -1,7 +1,7 @@
 const Boarding = require("../models/Boarding");
 
 console.log("===== SCHEMA TYPE =====");
-console.dir(Boarding.schema.paths.contractDeliverables, { depth: null });
+
 console.log("=======================");
 exports.createBoarding = async (req, res) => {
   try {
@@ -194,6 +194,10 @@ exports.getBoardingById = async (req, res) => {
 exports.updateBoarding = async (req, res) => {
   try {
     const boarding = await Boarding.findById(req.params.id);
+
+    console.log(JSON.stringify(boarding.contractDeliverables, null, 2));
+
+    return res.json(boarding.contractDeliverables);
 
     if (boarding.contractDeliverables.length === 0) {
       boarding.contractDeliverables.push({
