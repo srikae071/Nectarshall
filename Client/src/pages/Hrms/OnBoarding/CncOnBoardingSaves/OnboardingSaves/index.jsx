@@ -123,8 +123,6 @@ function OnBoardingSaves() {
 
       setContractDeliverables(deliverables);
 
-      setContractDeliverables(deliverables);
-
       setFinancialDetails(
         data.financialDetails && data.financialDetails.length > 0
           ? data.financialDetails

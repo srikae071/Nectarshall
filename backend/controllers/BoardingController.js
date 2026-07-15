@@ -195,11 +195,20 @@ exports.updateBoarding = async (req, res) => {
   try {
     const boarding = await Boarding.findById(req.params.id);
 
-    console.log("DATABASE:");
-    console.dir(boarding.contractDeliverables, { depth: null });
-
-    console.log("REQUEST:");
-    console.dir(req.body.contractDeliverables, { depth: null });
+    if (boarding.contractDeliverables.length === 0) {
+      boarding.contractDeliverables.push({
+        contractId: "",
+        siteName: "",
+        siteAddress: "",
+        siteManagerName: "",
+        siteEmail: "",
+        siteMobile: "",
+        contractState: "Active",
+        comments: "",
+        attachment: "",
+        type: "",
+      });
+    }
 
     boarding.contractDeliverables[0].siteName =
       req.body.contractDeliverables[0].siteName;
@@ -209,7 +218,6 @@ exports.updateBoarding = async (req, res) => {
     res.json(boarding);
   } catch (err) {
     console.error(err);
-
     res.status(500).json({
       message: err.message,
       stack: err.stack,
