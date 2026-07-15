@@ -106,42 +106,60 @@ const getBoardingCandidateById = async (req, res) => {
   }
 };
 
-// Update Boarding Candidate
 // const updateBoardingCandidate = async (req, res) => {
 //   try {
-//     const candidate = await BoardingCandidates.findByIdAndUpdate(
+//     const updatedCandidate = await BoardingCandidates.findByIdAndUpdate(
 //       req.params.id,
-//       req.body,
+//       {
+//         ...req.body,
+//         contractDeliverables: req.body.contractDeliverables || [],
+//       },
 //       {
 //         new: true,
+//         runValidators: true,
 //       },
 //     );
 
-//     if (!candidate) {
+//     if (!updatedCandidate) {
 //       return res.status(404).json({
 //         message: "Boarding Candidate not found",
 //       });
 //     }
 
-//     res.status(200).json(candidate);
+//     res.status(200).json({
+//       message: "Boarding Candidate updated successfully",
+//       data: updatedCandidate,
+//     });
 //   } catch (error) {
 //     console.error(error);
 //     res.status(500).json({
-//       message: error.message,
+//       message: "Failed to update Boarding Candidate",
+//       error: error.message,
 //     });
 //   }
 // };
 
 //new code
-
 const updateBoardingCandidate = async (req, res) => {
   try {
+    const updateData = { ...req.body };
+
+    // Generate Contract IDs if missing
+    if (Array.isArray(updateData.contractDeliverables)) {
+      updateData.contractDeliverables = updateData.contractDeliverables.map(
+        (item, index) => ({
+          ...item,
+          clientId:
+            item.clientId && item.clientId.trim() !== ""
+              ? item.clientId
+              : `CNT-${String(index + 1).padStart(3, "0")}`,
+        }),
+      );
+    }
+
     const updatedCandidate = await BoardingCandidates.findByIdAndUpdate(
       req.params.id,
-      {
-        ...req.body,
-        contractDeliverables: req.body.contractDeliverables || [],
-      },
+      updateData,
       {
         new: true,
         runValidators: true,
@@ -154,15 +172,12 @@ const updateBoardingCandidate = async (req, res) => {
       });
     }
 
-    res.status(200).json({
-      message: "Boarding Candidate updated successfully",
-      data: updatedCandidate,
-    });
+    res.status(200).json(updatedCandidate);
   } catch (error) {
     console.error(error);
+
     res.status(500).json({
-      message: "Failed to update Boarding Candidate",
-      error: error.message,
+      message: error.message,
     });
   }
 };

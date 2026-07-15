@@ -110,7 +110,24 @@ function OnBoardingSaves() {
       console.log(err);
     }
   };
+  const addContractDeliverable = () => {
+    const nextNumber = contractDeliverables.length + 1;
 
+    setContractDeliverables([
+      ...contractDeliverables,
+      {
+        clientId: `CNT-${String(nextNumber).padStart(3, "0")}`,
+        siteName: "",
+        siteAddress: "",
+        siteManagerName: "",
+        siteEmail: "",
+        siteMobile: "",
+        contractState: "Active",
+        adhoc: "No",
+        comments: "",
+      },
+    ]);
+  };
   const handleDeliverableChange = (index, e) => {
     const { name, value } = e.target;
 
@@ -661,6 +678,15 @@ function OnBoardingSaves() {
                 ))}
               </>
             )}
+            <div className="deliverable-action">
+              <button
+                type="button"
+                className="add-contract-btn"
+                onClick={addContractDeliverable}
+              >
+                + Add Client Contract Deliverable
+              </button>
+            </div>
           </>
         </div>
       </RegularForm>
