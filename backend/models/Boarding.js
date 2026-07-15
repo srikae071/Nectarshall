@@ -39,7 +39,7 @@ const BoardingSchema = new mongoose.Schema(
 
     description: String,
     supplierType: String,
-    attachment: String,
+
     operationsClientApproved: {
       type: Boolean,
       default: null,

@@ -50,7 +50,7 @@ function OnBoardingSaves() {
       contractState: "Active",
       adhoc: "No",
       comments: "",
-      attachment: "",
+      // attachment: "",
     },
   ]);
   const fetchBoarding = async () => {
