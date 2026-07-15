@@ -49,6 +49,19 @@ const BoardingCandidatesSchema = new mongoose.Schema(
       type: String,
       default: "Open",
     },
+    contractDeliverables: [
+      {
+        clientId: String,
+        siteName: String,
+        siteAddress: String,
+        siteManagerName: String,
+        siteEmail: String,
+        siteMobile: String,
+        contractState: String,
+        adhoc: String,
+        comments: String,
+      },
+    ],
   },
   {
     timestamps: true,

@@ -107,27 +107,62 @@ const getBoardingCandidateById = async (req, res) => {
 };
 
 // Update Boarding Candidate
+// const updateBoardingCandidate = async (req, res) => {
+//   try {
+//     const candidate = await BoardingCandidates.findByIdAndUpdate(
+//       req.params.id,
+//       req.body,
+//       {
+//         new: true,
+//       },
+//     );
+
+//     if (!candidate) {
+//       return res.status(404).json({
+//         message: "Boarding Candidate not found",
+//       });
+//     }
+
+//     res.status(200).json(candidate);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({
+//       message: error.message,
+//     });
+//   }
+// };
+
+//new code
+
 const updateBoardingCandidate = async (req, res) => {
   try {
-    const candidate = await BoardingCandidates.findByIdAndUpdate(
+    const updatedCandidate = await BoardingCandidates.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      {
+        ...req.body,
+        contractDeliverables: req.body.contractDeliverables || [],
+      },
       {
         new: true,
+        runValidators: true,
       },
     );
 
-    if (!candidate) {
+    if (!updatedCandidate) {
       return res.status(404).json({
         message: "Boarding Candidate not found",
       });
     }
 
-    res.status(200).json(candidate);
+    res.status(200).json({
+      message: "Boarding Candidate updated successfully",
+      data: updatedCandidate,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      message: error.message,
+      message: "Failed to update Boarding Candidate",
+      error: error.message,
     });
   }
 };
