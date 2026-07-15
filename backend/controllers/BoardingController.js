@@ -148,16 +148,43 @@ exports.updateBoarding = async (req, res) => {
   try {
     const boarding = await Boarding.findById(req.params.id);
 
+    boarding.category = req.body.category;
+    boarding.clientId = req.body.clientId;
+    boarding.SupplierId = req.body.SupplierId;
+    boarding.BusinessId = req.body.BusinessId;
+    boarding.SupplierType = req.body.SupplierType;
     boarding.companyName = req.body.companyName;
-    boarding.status = req.body.status;
+    boarding.requester = req.body.requester;
+    boarding.requesterFor = req.body.requesterFor;
     boarding.abn = req.body.abn;
+    boarding.acn = req.body.acn;
+    boarding.emailAddress = req.body.emailAddress;
+    boarding.companyAddress = req.body.companyAddress;
+    boarding.SupplierAgentName = req.body.SupplierAgentName;
+    boarding.SupplierAgentEmail = req.body.SupplierAgentEmail;
+    boarding.companyPhone = req.body.companyPhone;
+    boarding.managingAgentName = req.body.managingAgentName;
+    boarding.managingAgentNumber = req.body.managingAgentNumber;
+    boarding.managingAgentEmail = req.body.managingAgentEmail;
+    boarding.onboardingDate = req.body.onboardingDate;
+    boarding.validTill = req.body.validTill;
+    boarding.type = req.body.type;
+    boarding.shortDescription = req.body.shortDescription;
+    boarding.description = req.body.description;
+    boarding.supplierType = req.body.supplierType;
+    boarding.attachment = req.body.attachment;
+    boarding.operationsClientApproved = req.body.operationsClientApproved;
+    boarding.status = req.body.status;
+
+    // Don't update these yet
+    // boarding.contractDeliverables = req.body.contractDeliverables;
+    // boarding.financialDetails = req.body.financialDetails;
 
     await boarding.save();
 
     res.json(boarding);
   } catch (err) {
     console.error(err);
-
     res.status(500).json({
       message: err.message,
       stack: err.stack,
