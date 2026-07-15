@@ -21,7 +21,7 @@ function OnBoardingSaves() {
     companyName: "",
     abn: "",
     acn: "",
-    address: "",
+    // address: "",
     companyAddress: "",
     companyPhone: "",
     managingAgentName: "",
@@ -60,7 +60,7 @@ function OnBoardingSaves() {
         companyName: data.companyName || "",
         abn: data.abn || "",
         acn: data.acn || "",
-        address: data.address || "",
+        // address: data.address || "",
         companyAddress: data.companyAddress || "",
         companyPhone: data.companyPhone || "",
         managingAgentName: data.managingAgentName || "",
@@ -75,31 +75,31 @@ function OnBoardingSaves() {
         status: data.status || "Open",
         attachment: data.attachment || "",
       });
-      const deliverables =
-        data.contractDeliverables && data.contractDeliverables.length > 0
-          ? data.contractDeliverables
-          : [
-              {
-                contractId: "CNT-001",
-                siteName: "",
-                siteAddress: "",
-                siteManagerName: "",
-                siteEmail: "",
-                siteMobile: "",
-                contractState: "Active",
-                comments: "",
-                attachment: "",
-              },
-            ];
-
-      deliverables.forEach((item, index) => {
-        if (!item.contractId) {
-          item.contractId = `CNT-${String(index + 1).padStart(3, "0")}`;
-        }
-      });
     } catch (err) {
       console.log(err);
     }
+  };
+
+  const [contractDeliverables, setContractDeliverables] = useState([
+    {
+      clientId: "",
+      siteName: "",
+      siteAddress: "",
+      siteManagerName: "",
+      siteEmail: "",
+      siteMobile: "",
+      contractState: "Active",
+      adhoc: "No",
+    },
+  ]);
+  const handleDeliverableChange = (index, e) => {
+    const { name, value } = e.target;
+
+    const updated = [...contractDeliverables];
+
+    updated[index][name] = value;
+
+    setContractDeliverables(updated);
   };
 
   useEffect(() => {
@@ -194,6 +194,7 @@ function OnBoardingSaves() {
         `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding/${id}`,
         {
           ...formData,
+          contractDeliverables,
         },
       );
       setBackendStatus(formData.status);
@@ -284,7 +285,7 @@ function OnBoardingSaves() {
           />
         </div>
 
-        <div className="form-row">
+        {/* <div className="form-row">
           <label className="form-label">Address</label>
           <input
             className="form-input"
@@ -292,7 +293,7 @@ function OnBoardingSaves() {
             value={formData.address}
             onChange={handleChange}
           />
-        </div>
+        </div> */}
 
         <div className="form-row">
           <label className="form-label">Company Address</label>
@@ -460,6 +461,150 @@ function OnBoardingSaves() {
                 Financial Details
               </button>
             </div>
+            {activeTab === "Client Contract Deliverables" && (
+              <>
+                {contractDeliverables.map((item, index) => (
+                  <div className="deliverable-form" key={index}>
+                    <div className="deliverable-grid">
+                      <div className="deliverable-field">
+                        <label>Client ID</label>
+                        <input
+                          name="clientId"
+                          value={item.clientId}
+                          onChange={(e) => handleDeliverableChange(index, e)}
+                        />
+                      </div>
+
+                      <div className="deliverable-field">
+                        <label>Site Name</label>
+                        <input
+                          name="siteName"
+                          value={item.siteName}
+                          onChange={(e) => handleDeliverableChange(index, e)}
+                        />
+                      </div>
+
+                      <div className="deliverable-field">
+                        <label>Site Address</label>
+                        <input
+                          name="siteAddress"
+                          value={item.siteAddress}
+                          onChange={(e) => handleDeliverableChange(index, e)}
+                        />
+                      </div>
+
+                      <div className="deliverable-field">
+                        <label>Site Manager Name</label>
+                        <input
+                          name="siteManagerName"
+                          value={item.siteManagerName}
+                          onChange={(e) => handleDeliverableChange(index, e)}
+                        />
+                      </div>
+
+                      <div className="deliverable-field">
+                        <label>Site Email</label>
+                        <input
+                          type="email"
+                          name="siteEmail"
+                          value={item.siteEmail}
+                          onChange={(e) => handleDeliverableChange(index, e)}
+                        />
+                      </div>
+
+                      <div className="deliverable-field">
+                        <label>Site Mobile Number</label>
+                        <input
+                          name="siteMobile"
+                          value={item.siteMobile}
+                          onChange={(e) => handleDeliverableChange(index, e)}
+                        />
+                      </div>
+
+                      <div className="deliverable-field">
+                        <label>Contract State</label>
+
+                        <div className="radio-group">
+                          <label>
+                            <input
+                              type="radio"
+                              name={`contractState-${index}`}
+                              checked={item.contractState === "Active"}
+                              onChange={() =>
+                                handleDeliverableChange(index, {
+                                  target: {
+                                    name: "contractState",
+                                    value: "Active",
+                                  },
+                                })
+                              }
+                            />
+                            Active
+                          </label>
+
+                          <label>
+                            <input
+                              type="radio"
+                              name={`contractState-${index}`}
+                              checked={item.contractState === "Inactive"}
+                              onChange={() =>
+                                handleDeliverableChange(index, {
+                                  target: {
+                                    name: "contractState",
+                                    value: "Inactive",
+                                  },
+                                })
+                              }
+                            />
+                            Inactive
+                          </label>
+                        </div>
+                      </div>
+
+                      <div className="deliverable-field">
+                        <label>Ad Hoc</label>
+
+                        <div className="radio-group">
+                          <label>
+                            <input
+                              type="radio"
+                              name={`adhoc-${index}`}
+                              checked={item.adhoc === "Yes"}
+                              onChange={() =>
+                                handleDeliverableChange(index, {
+                                  target: {
+                                    name: "adhoc",
+                                    value: "Yes",
+                                  },
+                                })
+                              }
+                            />
+                            Yes
+                          </label>
+
+                          <label>
+                            <input
+                              type="radio"
+                              name={`adhoc-${index}`}
+                              checked={item.adhoc === "No"}
+                              onChange={() =>
+                                handleDeliverableChange(index, {
+                                  target: {
+                                    name: "adhoc",
+                                    value: "No",
+                                  },
+                                })
+                              }
+                            />
+                            No
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
           </>
         </div>
       </RegularForm>

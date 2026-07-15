@@ -126,7 +126,7 @@ exports.updateBoarding = async (req, res) => {
     boarding.attachment = req.body.attachment;
     boarding.operationsClientApproved = req.body.operationsClientApproved;
     boarding.status = req.body.status;
-
+    boarding.contractDeliverables = req.body.contractDeliverables;
     await boarding.save();
 
     res.status(200).json({
