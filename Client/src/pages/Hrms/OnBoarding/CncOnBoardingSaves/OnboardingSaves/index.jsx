@@ -39,9 +39,25 @@ function OnBoardingSaves() {
     attachment: "",
     operationsClientApproved: "",
   });
+  // const [contractDeliverables, setContractDeliverables] = useState([
+  //   {
+  //     clientId: "",
+  //     siteName: "",
+  //     siteAddress: "",
+  //     siteManagerName: "",
+  //     siteEmail: "",
+  //     siteMobile: "",
+  //     contractState: "Active",
+  //     adhoc: "No",
+  //     comments: "",
+  //     // attachment: "",
+  //   },
+  // ]);
+
+  // new code
   const [contractDeliverables, setContractDeliverables] = useState([
     {
-      clientId: "",
+      clientId: "CNT-001",
       siteName: "",
       siteAddress: "",
       siteManagerName: "",
@@ -50,7 +66,18 @@ function OnBoardingSaves() {
       contractState: "Active",
       adhoc: "No",
       comments: "",
-      // attachment: "",
+
+      numberOfServices: 1,
+
+      services: [
+        {
+          serviceType: "",
+          position: "",
+          quantity: "",
+          shiftStartTime: "",
+          shiftEndTime: "",
+        },
+      ],
     },
   ]);
   const fetchBoarding = async () => {
@@ -92,8 +119,22 @@ function OnBoardingSaves() {
         data.contractDeliverables && data.contractDeliverables.length > 0
           ? data.contractDeliverables
           : [
+              // {
+              //   clientId: "",
+              //   siteName: "",
+              //   siteAddress: "",
+              //   siteManagerName: "",
+              //   siteEmail: "",
+              //   siteMobile: "",
+              //   contractState: "Active",
+              //   adhoc: "No",
+              //   comments: "",
+              //   attachment: "",
+              // },
+
+              // new code
               {
-                clientId: "",
+                clientId: "CNT-001",
                 siteName: "",
                 siteAddress: "",
                 siteManagerName: "",
@@ -102,7 +143,18 @@ function OnBoardingSaves() {
                 contractState: "Active",
                 adhoc: "No",
                 comments: "",
-                attachment: "",
+
+                numberOfServices: 1,
+
+                services: [
+                  {
+                    serviceType: "",
+                    position: "",
+                    quantity: "",
+                    shiftStartTime: "",
+                    shiftEndTime: "",
+                  },
+                ],
               },
             ],
       );
@@ -111,7 +163,11 @@ function OnBoardingSaves() {
     }
   };
   const addContractDeliverable = () => {
-    const nextNumber = contractDeliverables.length + 1;
+    const lastId =
+      contractDeliverables[contractDeliverables.length - 1]?.clientId ||
+      "CNT-000";
+
+    const nextNumber = parseInt(lastId.replace("CNT-", ""), 10) + 1;
 
     setContractDeliverables([
       ...contractDeliverables,
@@ -127,6 +183,17 @@ function OnBoardingSaves() {
         comments: "",
       },
     ]);
+  };
+
+  const deleteContractDeliverable = (index) => {
+    if (contractDeliverables.length === 1) {
+      alert("At least one Client Contract Deliverable is required.");
+      return;
+    }
+
+    const updated = contractDeliverables.filter((_, i) => i !== index);
+
+    setContractDeliverables(updated);
   };
   const handleDeliverableChange = (index, e) => {
     const { name, value } = e.target;
@@ -148,6 +215,37 @@ function OnBoardingSaves() {
 
   //   setContractDeliverables(updated);
   // };
+
+  // new code
+  const handleNumberOfServices = (index, value) => {
+    const updated = [...contractDeliverables];
+
+    updated[index].numberOfServices = Number(value);
+
+    updated[index].services = Array.from(
+      { length: Number(value) },
+      (_, i) =>
+        updated[index].services[i] || {
+          serviceType: "",
+          position: "",
+          quantity: "",
+          shiftStartTime: "",
+          shiftEndTime: "",
+        },
+    );
+
+    setContractDeliverables(updated);
+  };
+
+  const handleServiceChange = (contractIndex, serviceIndex, e) => {
+    const { name, value } = e.target;
+
+    const updated = [...contractDeliverables];
+
+    updated[contractIndex].services[serviceIndex][name] = value;
+
+    setContractDeliverables(updated);
+  };
 
   useEffect(() => {
     if (id) {
@@ -656,6 +754,113 @@ function OnBoardingSaves() {
                           onChange={(e) => handleDeliverableChange(index, e)}
                         />
                       </div>
+                      <div className="deliverable-field deliverable-full">
+                        <label>Number Of Services</label>
+
+                        <select
+                          className="deliverable-input"
+                          value={item.numberOfServices}
+                          onChange={(e) =>
+                            handleNumberOfServices(index, e.target.value)
+                          }
+                        >
+                          {Array.from({ length: 10 }, (_, i) => (
+                            <option key={i + 1} value={i + 1}>
+                              {i + 1}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      {item.services.map((service, serviceIndex) => (
+                        <div key={serviceIndex} className="service-container">
+                          <h4 className="service-title">
+                            Service {serviceIndex + 1}
+                          </h4>
+
+                          <div className="deliverable-grid">
+                            <div className="deliverable-field">
+                              <label>Type Of Service</label>
+
+                              <select
+                                name="serviceType"
+                                value={service.serviceType}
+                                onChange={(e) =>
+                                  handleServiceChange(index, serviceIndex, e)
+                                }
+                              >
+                                <option value="">Select</option>
+                                <option value="Security">Security</option>
+                                <option value="Patrolling">Patrolling</option>
+                                <option value="Electronics">Electronics</option>
+                              </select>
+                            </div>
+
+                            <div className="deliverable-field">
+                              <label>Position</label>
+
+                              <select
+                                name="position"
+                                value={service.position}
+                                onChange={(e) =>
+                                  handleServiceChange(index, serviceIndex, e)
+                                }
+                              >
+                                <option value="">Select</option>
+                                <option value="Sales Manager">
+                                  Sales Manager
+                                </option>
+                                <option value="Site Manager">
+                                  Site Manager
+                                </option>
+                                <option value="In Charge">In Charge</option>
+                                <option value="GL1">GL1</option>
+                                <option value="GL2">GL2</option>
+                                <option value="GL3">GL3</option>
+                                <option value="GL4">GL4</option>
+                              </select>
+                            </div>
+
+                            <div className="deliverable-field">
+                              <label>Quantity</label>
+
+                              <input
+                                type="number"
+                                name="quantity"
+                                value={service.quantity}
+                                onChange={(e) =>
+                                  handleServiceChange(index, serviceIndex, e)
+                                }
+                              />
+                            </div>
+
+                            <div className="deliverable-field">
+                              <label>Shift Start Time</label>
+
+                              <input
+                                type="time"
+                                name="shiftStartTime"
+                                value={service.shiftStartTime}
+                                onChange={(e) =>
+                                  handleServiceChange(index, serviceIndex, e)
+                                }
+                              />
+                            </div>
+
+                            <div className="deliverable-field">
+                              <label>Shift End Time</label>
+
+                              <input
+                                type="time"
+                                name="shiftEndTime"
+                                value={service.shiftEndTime}
+                                onChange={(e) =>
+                                  handleServiceChange(index, serviceIndex, e)
+                                }
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ))}
 
                       {/* <div className="deliverable-field deliverable-full">
                         <label>Attachment</label>
@@ -674,19 +879,29 @@ function OnBoardingSaves() {
                         </div>
                       </div> */}
                     </div>
+                    <div className="deliverable-action">
+                      <button
+                        type="button"
+                        className="add-contract-btn"
+                        onClick={addContractDeliverable}
+                      >
+                        + Add Client Contract Deliverable
+                      </button>
+
+                      {contractDeliverables.length > 1 && (
+                        <button
+                          type="button"
+                          className="delete-contract-btn"
+                          onClick={() => deleteContractDeliverable(index)}
+                        >
+                          Delete Client Contract Deliverable
+                        </button>
+                      )}
+                    </div>
                   </div>
                 ))}
               </>
             )}
-            <div className="deliverable-action">
-              <button
-                type="button"
-                className="add-contract-btn"
-                onClick={addContractDeliverable}
-              >
-                + Add Client Contract Deliverable
-              </button>
-            </div>
           </>
         </div>
       </RegularForm>

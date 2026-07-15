@@ -49,17 +49,101 @@ const BoardingCandidatesSchema = new mongoose.Schema(
       type: String,
       default: "Open",
     },
+    // contractDeliverables: [
+    //   {
+    //     clientId: String,
+    //     siteName: String,
+    //     siteAddress: String,
+    //     siteManagerName: String,
+    //     siteEmail: String,
+    //     siteMobile: String,
+    //     contractState: String,
+    //     adhoc: String,
+    //     comments: String,
+    //   },
+    // ],
+
+    // new code
     contractDeliverables: [
       {
-        clientId: String,
-        siteName: String,
-        siteAddress: String,
-        siteManagerName: String,
-        siteEmail: String,
-        siteMobile: String,
-        contractState: String,
-        adhoc: String,
-        comments: String,
+        clientId: {
+          type: String,
+          default: "",
+        },
+
+        siteName: {
+          type: String,
+          default: "",
+        },
+
+        siteAddress: {
+          type: String,
+          default: "",
+        },
+
+        siteManagerName: {
+          type: String,
+          default: "",
+        },
+
+        siteEmail: {
+          type: String,
+          default: "",
+        },
+
+        siteMobile: {
+          type: String,
+          default: "",
+        },
+
+        contractState: {
+          type: String,
+          default: "Active",
+        },
+
+        adhoc: {
+          type: String,
+          default: "No",
+        },
+
+        comments: {
+          type: String,
+          default: "",
+        },
+
+        numberOfServices: {
+          type: Number,
+          default: 1,
+        },
+
+        services: [
+          {
+            serviceType: {
+              type: String,
+              default: "",
+            },
+
+            position: {
+              type: String,
+              default: "",
+            },
+
+            quantity: {
+              type: Number,
+              default: 0,
+            },
+
+            shiftStartTime: {
+              type: String,
+              default: "",
+            },
+
+            shiftEndTime: {
+              type: String,
+              default: "",
+            },
+          },
+        ],
       },
     ],
   },
