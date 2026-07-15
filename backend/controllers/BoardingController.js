@@ -130,12 +130,8 @@ exports.updateBoarding = async (req, res) => {
     boarding.supplierType = req.body.supplierType;
     boarding.attachment = req.body.attachment;
     boarding.operationsClientApproved = req.body.operationsClientApproved;
-    if (req.file) {
-      boarding.attachment = req.file.filename;
-    }
     boarding.status = req.body.status;
     boarding.contractDeliverables = req.body.contractDeliverables;
-    // boarding.contractDeliverables = JSON.parse(req.body.contractDeliverables);
     await boarding.save();
 
     res.status(200).json({
