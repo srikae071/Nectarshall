@@ -149,6 +149,8 @@ exports.updateBoarding = async (req, res) => {
     const boarding = await Boarding.findById(req.params.id);
 
     boarding.companyName = req.body.companyName;
+    boarding.status = req.body.status;
+    boarding.abn = req.body.abn;
 
     await boarding.save();
 
