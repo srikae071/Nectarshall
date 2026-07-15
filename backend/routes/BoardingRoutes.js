@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const upload = require("../middleware/multer");
 
 const {
   createBoarding,
@@ -9,12 +8,12 @@ const {
   updateBoarding,
 } = require("../controllers/BoardingController");
 
-router.post("/create", upload.single("attachment"), createBoarding);
+router.post("/create", createBoarding);
 
 router.get("/", getAllBoardings);
 
 router.get("/:id", getBoardingById);
 
-router.put("/:id", upload.single("attachment"), updateBoarding);
+router.put("/:id", updateBoarding);
 
 module.exports = router;
