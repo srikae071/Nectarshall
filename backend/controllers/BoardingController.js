@@ -2,10 +2,7 @@ exports.createBoarding = async (req, res) => {
   try {
     // Find the latest onboarding record
     const lastBoarding = await Boarding.findOne().sort({ createdAt: -1 });
-    console.log("===== CREATE BOARDING =====");
-    console.log("Content-Type:", req.headers["content-type"]);
-    console.log("Files:", req.files);
-    console.log("Body:", req.body);
+
     let nextNumber = 1;
 
     if (lastBoarding && lastBoarding.clientId) {
@@ -29,6 +26,9 @@ exports.createBoarding = async (req, res) => {
 
     const boarding = new Boarding({
       ...req.body,
+
+      clientId,
+      businessId,
 
       category: req.body.category,
     });
