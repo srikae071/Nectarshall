@@ -162,6 +162,31 @@ function OnBoardingSaves() {
       console.log(err);
     }
   };
+  // const addContractDeliverable = () => {
+  //   const lastId =
+  //     contractDeliverables[contractDeliverables.length - 1]?.clientId ||
+  //     "CNT-000";
+
+  //   const nextNumber = parseInt(lastId.replace("CNT-", ""), 10) + 1;
+
+  //   setContractDeliverables([
+  //     ...contractDeliverables,
+  //     {
+  //       clientId: `CNT-${String(nextNumber).padStart(3, "0")}`,
+  //       siteName: "",
+  //       siteAddress: "",
+  //       siteManagerName: "",
+  //       siteEmail: "",
+  //       siteMobile: "",
+  //       contractState: "Active",
+  //       adhoc: "No",
+  //       comments: "",
+  //     },
+  //   ]);
+  // };
+
+  //new code
+
   const addContractDeliverable = () => {
     const lastId =
       contractDeliverables[contractDeliverables.length - 1]?.clientId ||
@@ -181,6 +206,18 @@ function OnBoardingSaves() {
         contractState: "Active",
         adhoc: "No",
         comments: "",
+
+        numberOfServices: 1,
+
+        services: [
+          {
+            serviceType: "",
+            position: "",
+            quantity: "",
+            shiftStartTime: "",
+            shiftEndTime: "",
+          },
+        ],
       },
     ]);
   };
@@ -771,7 +808,8 @@ function OnBoardingSaves() {
                           ))}
                         </select>
                       </div>
-                      {item.services.map((service, serviceIndex) => (
+
+                      {(item.services || []).map((service, serviceIndex) => (
                         <div key={serviceIndex} className="service-container">
                           <h4 className="service-title">
                             Service {serviceIndex + 1}
@@ -898,6 +936,10 @@ function OnBoardingSaves() {
                         </button>
                       )}
                     </div>
+
+                    {index !== contractDeliverables.length - 1 && (
+                      <div className="contract-divider"></div>
+                    )}
                   </div>
                 ))}
               </>
