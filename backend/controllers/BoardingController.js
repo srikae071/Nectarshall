@@ -1,7 +1,7 @@
 const Boarding = require("../models/Boarding");
 
 console.log("===== SCHEMA TYPE =====");
-console.log(Boarding.schema.obj.contractDeliverables);
+console.log(require("util").inspect(Boarding.schema.obj, { depth: null }));
 console.log("=======================");
 exports.createBoarding = async (req, res) => {
   try {
