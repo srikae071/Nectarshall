@@ -56,7 +56,7 @@ function OnBoardingSaves() {
   const fetchBoarding = async () => {
     try {
       const response = await axios.get(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding/${id}`,
+        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/${id}`,
       );
 
       const data = response.data;
@@ -148,7 +148,7 @@ function OnBoardingSaves() {
   const handleApprove = async () => {
     try {
       await axios.put(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding/${id}`,
+        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/${id}`,
         {
           operationsClientApproved: true,
         },
@@ -167,7 +167,7 @@ function OnBoardingSaves() {
   const handleReject = async () => {
     try {
       await axios.put(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding/${id}`,
+        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/${id}`,
         {
           operationsClientApproved: false,
         },

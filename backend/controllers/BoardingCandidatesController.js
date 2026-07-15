@@ -18,18 +18,53 @@
 const BoardingCandidates = require("../models/BoardingCandidates");
 
 // Create Boarding Candidate
+// const createBoardingCandidate = async (req, res) => {
+//   try {
+//     const candidate = new BoardingCandidates(req.body);
+
+//     const savedCandidate = await candidate.save();
+
+//     res.status(201).json(savedCandidate);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({
+//       message: "Failed to create Boarding Candidate",
+//       error: error.message,
+//     });
+//   }
+// };
+
 const createBoardingCandidate = async (req, res) => {
   try {
-    const candidate = new BoardingCandidates(req.body);
+    // Get the latest created record
+    const lastCandidate = await BoardingCandidates.findOne().sort({
+      createdAt: -1,
+    });
+
+    let clientId = "ONBD-001";
+
+    if (lastCandidate && lastCandidate.clientId) {
+      const lastNumber = parseInt(
+        lastCandidate.clientId.replace("ONBD-", ""),
+        10,
+      );
+
+      clientId = `ONBD-${String(lastNumber + 1).padStart(3, "0")}`;
+    }
+
+    const candidate = new BoardingCandidates({
+      ...req.body,
+      clientId,
+    });
 
     const savedCandidate = await candidate.save();
 
     res.status(201).json(savedCandidate);
   } catch (error) {
     console.error(error);
+
     res.status(500).json({
-      message: "Failed to create Boarding Candidate",
-      error: error.message,
+      message: error.message,
     });
   }
 };
