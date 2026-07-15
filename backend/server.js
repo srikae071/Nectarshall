@@ -10,6 +10,8 @@ const leaveRoutes = require("./routes/leaveRoutes");
 const jobRequestRoutes = require("./routes/jobRequestRoutes");
 const complianceRoutes = require("./routes/complianceRoutes");
 const boardingRoutes = require("./routes/BoardingRoutes");
+const boardingCandidatesRoutes = require("./routes/BoardingCandidatesRoutes");
+
 const app = express();
 
 app.use(cors());
@@ -22,6 +24,7 @@ app.use("/api/leaves", leaveRoutes);
 app.use("/api/hrrequests", hrRequestRoutes);
 app.use("/api/jobrequests", jobRequestRoutes);
 app.use("/api/compliance", complianceRoutes);
+app.use("/api/BoardingCandidates", boardingCandidatesRoutes);
 // Middleware
 
 // MongoDB Connection

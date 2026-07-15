@@ -87,7 +87,6 @@ function OnBoardingSaves() {
         description: data.description || "",
         category: data.category || "",
         status: data.status || "Open",
-        attachment: data.attachment || "",
       });
       setContractDeliverables(
         data.contractDeliverables && data.contractDeliverables.length > 0
@@ -121,17 +120,17 @@ function OnBoardingSaves() {
 
     setContractDeliverables(updated);
   };
-  const handleDeliverableAttachment = (index, e) => {
-    const file = e.target.files[0];
+  // const handleDeliverableAttachment = (index, e) => {
+  //   const file = e.target.files[0];
 
-    if (!file) return;
+  //   if (!file) return;
 
-    const updated = [...contractDeliverables];
+  //   const updated = [...contractDeliverables];
 
-    updated[index].attachment = file;
+  //   updated[index].attachment = file;
 
-    setContractDeliverables(updated);
-  };
+  //   setContractDeliverables(updated);
+  // };
 
   useEffect(() => {
     if (id) {
@@ -254,8 +253,8 @@ function OnBoardingSaves() {
         title={pageTitle}
         onSave={handleSave}
         onCancel={() => {}}
-        attachmentName={formData.attachment}
-        attachmentPath={`https://your-backend-url/uploads/${formData.attachment}`}
+        // attachmentName={formData.attachment}
+        // attachmentPath={`https://your-backend-url/uploads/${formData.attachment}`}
         formData={formData}
         onApprove={backendStatus === "On Boarded" ? handleApprove : undefined}
         onReject={backendStatus === "On Boarded" ? handleReject : undefined}

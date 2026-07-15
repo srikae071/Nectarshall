@@ -31,34 +31,34 @@ function BusinessEngagement() {
     category: "Home",
   });
 
-  const { id } = useParams();
+  // const { id } = useParams();
   const navigate = useNavigate();
-  useEffect(() => {
-    const fetchRequest = async () => {
-      try {
-        const response = await axios.get(
-          `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests/${id}`,
-        );
+  // useEffect(() => {
+  //   const fetchRequest = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests/${id}`,
+  //       );
 
-        setFormData({
-          requester: response.data.requester || "",
-          requesterFor: response.data.requesterFor || "",
-          category: response.data.category || "",
-          subCategory: response.data.subCategory || "",
-          urgency: response.data.urgency || "",
-          shortDescription: response.data.shortDescription || "",
-          description: response.data.description || "",
-          workNotes: response.data.workNotes || "",
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  //       setFormData({
+  //         requester: response.data.requester || "",
+  //         requesterFor: response.data.requesterFor || "",
+  //         category: response.data.category || "",
+  //         subCategory: response.data.subCategory || "",
+  //         urgency: response.data.urgency || "",
+  //         shortDescription: response.data.shortDescription || "",
+  //         description: response.data.description || "",
+  //         workNotes: response.data.workNotes || "",
+  //       });
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
 
-    if (id) {
-      fetchRequest();
-    }
-  }, [id]);
+  //   if (id) {
+  //     fetchRequest();
+  //   }
+  // }, [id]);
 
   const handleChange = (e) => {
     console.log("name:", e.target.name, "value:", e.target.value);
@@ -83,8 +83,16 @@ function BusinessEngagement() {
     try {
       console.log("Sending:", formData);
 
-      const response = await axios.post(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/Boarding/create",
+      // const response = await axios.post(
+      //   "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/Boarding/create",
+      //   {
+      //     ...formData,
+      //     category: "Client Onboarding",
+      //     status: "Open",
+      //   },
+      // );
+      await axios.post(
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/create",
         {
           ...formData,
           category: "Client Onboarding",

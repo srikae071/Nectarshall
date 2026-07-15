@@ -13,22 +13,8 @@ exports.createBoarding = async (req, res) => {
       }
     }
 
-    // let clientId = "";
-    // let businessId = "";
-
-    // // Generate IDs based on category
-    // if (req.body.category === "Home") {
-    //   clientId = `CUST-${String(nextNumber).padStart(3, "0")}`;
-    //   businessId = `BE-${String(nextNumber).padStart(3, "0")}`;
-    // } else {
-    //   clientId = `OBD-${String(nextNumber).padStart(3, "0")}`;
-    // }
-
     const boarding = new Boarding({
       ...req.body,
-
-      clientId,
-      businessId,
 
       category: req.body.category,
     });
@@ -41,7 +27,7 @@ exports.createBoarding = async (req, res) => {
       data: boarding,
     });
   } catch (err) {
-    console.error(err);
+    console.error("CREATE ERROR:", err);
 
     res.status(500).json({
       success: false,
