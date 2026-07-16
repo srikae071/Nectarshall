@@ -1,31 +1,41 @@
+import { useRef } from "react";
 import "./index.css";
 function RegularForm({
   title,
   children,
   onSave,
   onCancel,
+  onAttachment,
   attachmentName,
-  attachmentPath,
+
   formData,
   onApprove,
   onReject,
 }) {
+  const fileInputRef = useRef(null);
   return (
     <div className="form-layout-page">
       {title && (
         <div className="form-layout-header">
           <h2>{title}</h2>
           <div className="form-layout-header-actions">
-            {attachmentName && (
-              <a
-                href={attachmentPath}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="attachment-link"
-              >
-                📎 {attachmentName}
-              </a>
-            )}{" "}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf,.doc,.docx,.xls,.xlsx"
+              style={{ display: "none" }}
+              onChange={onAttachment}
+            />
+
+            <button
+              type="button"
+              className="attachment-btn"
+              onClick={() => fileInputRef.current.click()}
+            >
+              📎 Attachment
+            </button>
+
+            {attachmentName && <span>{attachmentName}</span>}
             {onApprove && (
               <>
                 {formData?.operationsClientApproved === null ||

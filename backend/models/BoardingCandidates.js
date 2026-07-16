@@ -49,21 +49,17 @@ const BoardingCandidatesSchema = new mongoose.Schema(
       type: String,
       default: "Open",
     },
-    // contractDeliverables: [
-    //   {
-    //     clientId: String,
-    //     siteName: String,
-    //     siteAddress: String,
-    //     siteManagerName: String,
-    //     siteEmail: String,
-    //     siteMobile: String,
-    //     contractState: String,
-    //     adhoc: String,
-    //     comments: String,
-    //   },
-    // ],
 
-    // new code
+    attachment: {
+      fileName: {
+        type: String,
+        default: "",
+      },
+      filePath: {
+        type: String,
+        default: "",
+      },
+    },
     contractDeliverables: [
       {
         clientId: {
@@ -144,6 +140,34 @@ const BoardingCandidatesSchema = new mongoose.Schema(
             },
           },
         ],
+      },
+    ],
+    financialDetails: [
+      {
+        contractId: {
+          type: String,
+          default: "",
+        },
+
+        invoiceDate: {
+          type: Date,
+          default: null,
+        },
+
+        invoiceNumber: {
+          type: String,
+          default: "",
+        },
+
+        billingCycle: {
+          type: String,
+          default: "Monthly",
+        },
+
+        comments: {
+          type: String,
+          default: "",
+        },
       },
     ],
   },

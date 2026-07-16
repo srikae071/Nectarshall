@@ -37,11 +37,18 @@ function AdhocAllTab() {
   const fetchBoarding = async () => {
     try {
       const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding",
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates",
       );
-
       setData(
-        response.data.filter((item) => item.category === "Client Onboarding"),
+        response.data.filter((item) => {
+          const firstContract = item.contractDeliverables?.[0];
+
+          return (
+            item.category === "Client Onboarding" &&
+            item.status === "On Boarded" &&
+            firstContract?.adhoc === "Yes"
+          );
+        }),
       );
     } catch (error) {
       console.log(error);

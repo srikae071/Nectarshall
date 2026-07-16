@@ -1,38 +1,4 @@
-// const BoardingCandidates = require("../models/BoardingCandidates");
-
-// const createBoardingCandidate = async (req, res) => {
-//   try {
-//     const candidate = new BoardingCandidates(req.body);
-
-//     const savedCandidate = await candidate.save();
-
-//     res.status(201).json(savedCandidate);
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-
-// module.exports = {
-//   createBoardingCandidate,
-// };
 const BoardingCandidates = require("../models/BoardingCandidates");
-
-// Create Boarding Candidate
-// const createBoardingCandidate = async (req, res) => {
-//   try {
-//     const candidate = new BoardingCandidates(req.body);
-
-//     const savedCandidate = await candidate.save();
-
-//     res.status(201).json(savedCandidate);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({
-//       message: "Failed to create Boarding Candidate",
-//       error: error.message,
-//     });
-//   }
-// };
 
 const createBoardingCandidate = async (req, res) => {
   try {
@@ -106,40 +72,6 @@ const getBoardingCandidateById = async (req, res) => {
   }
 };
 
-// const updateBoardingCandidate = async (req, res) => {
-//   try {
-//     const updatedCandidate = await BoardingCandidates.findByIdAndUpdate(
-//       req.params.id,
-//       {
-//         ...req.body,
-//         contractDeliverables: req.body.contractDeliverables || [],
-//       },
-//       {
-//         new: true,
-//         runValidators: true,
-//       },
-//     );
-
-//     if (!updatedCandidate) {
-//       return res.status(404).json({
-//         message: "Boarding Candidate not found",
-//       });
-//     }
-
-//     res.status(200).json({
-//       message: "Boarding Candidate updated successfully",
-//       data: updatedCandidate,
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({
-//       message: "Failed to update Boarding Candidate",
-//       error: error.message,
-//     });
-//   }
-// };
-
-//new code
 const updateBoardingCandidate = async (req, res) => {
   try {
     const updateData = { ...req.body };

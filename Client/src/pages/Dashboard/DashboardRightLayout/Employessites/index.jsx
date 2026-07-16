@@ -32,7 +32,7 @@ function Employeesites() {
   const fetchApprovedSites = async () => {
     try {
       const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding",
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates",
       );
 
       const approvedSites = [];

@@ -15,6 +15,7 @@ function OnBoardingSaves() {
   const [activeTab, setActiveTab] = useState("Client Contract Deliverables");
   const [pageTitle, setPageTitle] = useState("");
   const [backendStatus, setBackendStatus] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
   // const [selectedFile, setSelectedFile] = useState(null);
   const [formData, setFormData] = useState({
     clientId: "",
@@ -78,6 +79,16 @@ function OnBoardingSaves() {
           shiftEndTime: "",
         },
       ],
+    },
+  ]);
+
+  const [financialDetails, setFinancialDetails] = useState([
+    {
+      contractId: "FIN-001",
+      invoiceDate: "",
+      invoiceNumber: "",
+      billingCycle: "Monthly",
+      comments: "",
     },
   ]);
   const fetchBoarding = async () => {
@@ -158,6 +169,19 @@ function OnBoardingSaves() {
               },
             ],
       );
+      setFinancialDetails(
+        data.financialDetails?.length
+          ? data.financialDetails
+          : [
+              {
+                contractId: "FIN-001",
+                invoiceDate: "",
+                invoiceNumber: "",
+                billingCycle: "Monthly",
+                comments: "",
+              },
+            ],
+      );
     } catch (err) {
       console.log(err);
     }
@@ -221,6 +245,23 @@ function OnBoardingSaves() {
       },
     ]);
   };
+  const addFinancialDetail = () => {
+    const lastId =
+      financialDetails[financialDetails.length - 1]?.contractId || "FIN-000";
+
+    const nextNumber = parseInt(lastId.replace("FIN-", ""), 10) + 1;
+
+    setFinancialDetails([
+      ...financialDetails,
+      {
+        contractId: `FIN-${String(nextNumber).padStart(3, "0")}`,
+        invoiceDate: "",
+        invoiceNumber: "",
+        billingCycle: "Monthly",
+        comments: "",
+      },
+    ]);
+  };
 
   const deleteContractDeliverable = (index) => {
     if (contractDeliverables.length === 1) {
@@ -240,6 +281,24 @@ function OnBoardingSaves() {
     updated[index][name] = value;
 
     setContractDeliverables(updated);
+  };
+
+  const deleteFinancialDetail = (index) => {
+    if (financialDetails.length === 1) {
+      alert("At least one Financial Detail is required.");
+      return;
+    }
+
+    setFinancialDetails(financialDetails.filter((_, i) => i !== index));
+  };
+  const handleFinancialChange = (index, e) => {
+    const { name, value } = e.target;
+
+    const updated = [...financialDetails];
+
+    updated[index][name] = value;
+
+    setFinancialDetails(updated);
   };
   // const handleDeliverableAttachment = (index, e) => {
   //   const file = e.target.files[0];
@@ -335,38 +394,24 @@ function OnBoardingSaves() {
       console.log(error);
     }
   };
-  // const handleDeliverableAttachment = (index, e) => {
-  //   const updated = [...contractDeliverables];
+  const handleAttachment = (e) => {
+    const file = e.target.files[0];
 
-  //   updated[index].attachment = e.target.files[0];
+    if (!file) return;
 
-  //   setContractDeliverables(updated);
-  // };
-  // const handleFinancialAttachment = (index, e) => {
-  //   const updated = [...financialDetails];
+    setSelectedFile(file);
 
-  //   updated[index].attachment = e.target.files[0];
-
-  //   setFinancialDetails(updated);
-  // };
-  // const removeFinancial = (index) => {
-  //   if (index === 0) return;
-
-  //   const updated = financialDetails.filter((_, i) => i !== index);
-
-  //   setFinancialDetails(updated);
-  // };
+    setFormData((prev) => ({
+      ...prev,
+      attachment: {
+        fileName: file.name,
+        filePath: "",
+      },
+    }));
+  };
 
   const handleSave = async () => {
     try {
-      // console.log("FORM DATA:");
-      // console.log(formData);
-
-      // console.log("CONTRACT DELIVERABLES:");
-      // console.log(contractDeliverables);
-
-      // console.log("FINANCIAL DETAILS:");
-      // console.log(financialDetails);
       console.log("Sending:");
       console.log({
         ...formData,
@@ -377,6 +422,7 @@ function OnBoardingSaves() {
         {
           ...formData,
           contractDeliverables,
+          financialDetails,
         },
       );
       setBackendStatus(formData.status);
@@ -384,14 +430,6 @@ function OnBoardingSaves() {
       alert("Saved Successfully");
       navigate("/");
     } catch (error) {
-      // console.log("FULL ERROR:", error);
-
-      // console.log("RESPONSE:");
-      // console.log(error.response);
-
-      // console.log("DATA:");
-      // console.log(error.response?.data);
-
       console.log(error);
       alert("Update Failed");
     }
@@ -405,8 +443,8 @@ function OnBoardingSaves() {
         title={pageTitle}
         onSave={handleSave}
         onCancel={() => {}}
-        // attachmentName={formData.attachment}
-        // attachmentPath={`https://your-backend-url/uploads/${formData.attachment}`}
+        onAttachment={handleAttachment}
+        attachmentName={formData.attachment?.fileName}
         formData={formData}
         onApprove={backendStatus === "On Boarded" ? handleApprove : undefined}
         onReject={backendStatus === "On Boarded" ? handleReject : undefined}
@@ -575,19 +613,6 @@ function OnBoardingSaves() {
           </select>
         </div>
 
-        <div className="form-row">
-          <label className="form-label">Type</label>
-          <select
-            className="form-select"
-            name="type"
-            value={formData.type}
-            onChange={handleChange}
-          >
-            <option>Adhoc</option>
-            <option>Contractual</option>
-          </select>
-        </div>
-
         <div className="form-row form-full">
           <label className="form-label">Short Description</label>
           <textarea
@@ -643,6 +668,92 @@ function OnBoardingSaves() {
                 Financial Details
               </button>
             </div>
+            {activeTab === "Financial Details" && (
+              <>
+                {financialDetails.map((item, index) => (
+                  <div className="deliverable-form" key={index}>
+                    <div className="deliverable-grid">
+                      <div className="deliverable-field">
+                        <label>Contract ID</label>
+                        <input
+                          name="contractId"
+                          value={item.contractId}
+                          onChange={(e) => handleFinancialChange(index, e)}
+                        />
+                      </div>
+
+                      <div className="deliverable-field">
+                        <label>Invoice Date</label>
+                        <input
+                          type="date"
+                          name="invoiceDate"
+                          value={item.invoiceDate}
+                          onChange={(e) => handleFinancialChange(index, e)}
+                        />
+                      </div>
+
+                      <div className="deliverable-field">
+                        <label>Invoice Number</label>
+                        <input
+                          name="invoiceNumber"
+                          value={item.invoiceNumber}
+                          onChange={(e) => handleFinancialChange(index, e)}
+                        />
+                      </div>
+
+                      <div className="deliverable-field">
+                        <label>Billing Cycle</label>
+
+                        <select
+                          name="billingCycle"
+                          value={item.billingCycle}
+                          onChange={(e) => handleFinancialChange(index, e)}
+                        >
+                          <option value="Monthly">Monthly</option>
+                          <option value="Weekly">Weekly</option>
+                          <option value="Adaptive">Adaptive</option>
+                        </select>
+                      </div>
+
+                      <div className="deliverable-field deliverable-full">
+                        <label>Comments</label>
+
+                        <textarea
+                          className="deliverable-textarea"
+                          name="comments"
+                          value={item.comments}
+                          onChange={(e) => handleFinancialChange(index, e)}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="deliverable-action">
+                      <button
+                        type="button"
+                        className="add-contract-btn"
+                        onClick={addFinancialDetail}
+                      >
+                        + Add Financial Detail
+                      </button>
+
+                      {financialDetails.length > 1 && (
+                        <button
+                          type="button"
+                          className="delete-contract-btn"
+                          onClick={() => deleteFinancialDetail(index)}
+                        >
+                          Delete Financial Detail
+                        </button>
+                      )}
+                    </div>
+
+                    {index !== financialDetails.length - 1 && (
+                      <div className="contract-divider"></div>
+                    )}
+                  </div>
+                ))}
+              </>
+            )}
             {activeTab === "Client Contract Deliverables" && (
               <>
                 {contractDeliverables.map((item, index) => (
