@@ -187,3 +187,38 @@
   margin-top: 5px;
   border-radius: 8px;
 }
+.clickableSite {
+  cursor: pointer;
+  color: #1976d2;
+  font-weight: 600;
+}
+
+.clickableSite:hover {
+  text-decoration: underline;
+}
+
+.sitePopupOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.sitePopup {
+  width: 420px;
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+.serviceDetails {
+  margin-top: 15px;
+}
+
+.serviceDetails p {
+  margin: 8px 0;
+}

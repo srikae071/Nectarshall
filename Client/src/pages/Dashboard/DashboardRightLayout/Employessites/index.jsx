@@ -10,6 +10,10 @@ function Employeesites() {
 
   const [currentDate, setCurrentDate] = useState(new Date());
   const [popup, setPopup] = useState(null);
+  const [sitePopup, setSitePopup] = useState(null);
+  const openSitePopup = (site) => {
+    setSitePopup(site);
+  };
   // const employeeNames = [
   //   "Abdul Haseeb Ansar",
   //   "Abdul Rahman Najjarine",
@@ -45,6 +49,7 @@ function Employeesites() {
               approvedSites.push({
                 siteName: site.siteName,
                 siteAddress: site.siteAddress,
+                services: site.services || [],
               });
             });
           }
@@ -274,7 +279,12 @@ function Employeesites() {
                   })}
                 </div>
 
-                <div className="nameRow">{item.siteAddress || ""}</div>
+                <div
+                  className="nameRow clickableSite"
+                  onClick={() => openSitePopup(item)}
+                >
+                  {item.siteAddress || ""}
+                </div>
               </div>
             ))}
 
@@ -352,6 +362,48 @@ function Employeesites() {
                   <button className="saveBtn" onClick={handleSave}>
                     Save Template
                   </button>
+                </div>
+              </div>
+            )}
+            {sitePopup && (
+              <div className="sitePopupOverlay">
+                <div className="sitePopup">
+                  <div className="popupHeader">
+                    <span>{sitePopup.siteName}</span>
+
+                    <button
+                      className="closeBtn"
+                      onClick={() => setSitePopup(null)}
+                    >
+                      ×
+                    </button>
+                  </div>
+
+                  {sitePopup.services.map((service, index) => (
+                    <div key={index} className="serviceDetails">
+                      <p>
+                        <strong>Service Type:</strong> {service.serviceType}
+                      </p>
+
+                      <p>
+                        <strong>Position:</strong> {service.position}
+                      </p>
+
+                      <p>
+                        <strong>Quantity:</strong> {service.quantity}
+                      </p>
+
+                      <p>
+                        <strong>Shift Start:</strong> {service.shiftStartTime}
+                      </p>
+
+                      <p>
+                        <strong>Shift End:</strong> {service.shiftEndTime}
+                      </p>
+
+                      {index !== sitePopup.services.length - 1 && <hr />}
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
