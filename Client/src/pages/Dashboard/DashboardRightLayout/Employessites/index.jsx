@@ -35,7 +35,7 @@ function Employeesites() {
   const handleSitePopupSave = async () => {
     try {
       await axios.put(
-        `/api/BoardingCandidates/${sitePopup.boardingId}/contracts/${sitePopup.contractId}/services`,
+        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/${sitePopup.boardingId}/contracts/${sitePopup.contractId}/services`,
         {
           services: sitePopup.services,
         },

@@ -114,6 +114,11 @@ const BoardingCandidatesSchema = new mongoose.Schema(
 
         services: [
           {
+            employee: {
+              type: String,
+              default: "",
+            },
+
             serviceType: {
               type: String,
               default: "",
