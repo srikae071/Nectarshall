@@ -130,10 +130,46 @@ const deleteBoardingCandidate = async (req, res) => {
   }
 };
 
+// newly added
+const updateContractService = async (req, res) => {
+  try {
+    const { id, contractId } = req.params;
+    const { services } = req.body;
+
+    const boarding = await BoardingCandidates.findById(id);
+
+    if (!boarding) {
+      return res.status(404).json({ message: "Boarding Candidate not found" });
+    }
+
+    const contract = boarding.contractDeliverables.id(contractId);
+
+    if (!contract) {
+      return res
+        .status(404)
+        .json({ message: "Contract Deliverable not found" });
+    }
+
+    contract.services = services;
+
+    await boarding.save();
+
+    res.status(200).json({
+      message: "Service updated successfully",
+      data: boarding,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.message,
+    });
+  }
+};
 module.exports = {
   createBoardingCandidate,
   getBoardingCandidates,
   getBoardingCandidateById,
   updateBoardingCandidate,
   deleteBoardingCandidate,
+  //newly added
+  updateContractService,
 };

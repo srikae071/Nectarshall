@@ -18,6 +18,7 @@ const {
   getBoardingCandidateById,
   updateBoardingCandidate,
   deleteBoardingCandidate,
+  updateContractService,
 } = require("../controllers/BoardingCandidatesController");
 
 router.post("/create", createBoardingCandidate);
@@ -29,5 +30,6 @@ router.get("/:id", getBoardingCandidateById);
 router.put("/:id", updateBoardingCandidate);
 
 router.delete("/:id", deleteBoardingCandidate);
+router.put("/:id/contracts/:contractId/services", updateContractService);
 
 module.exports = router;

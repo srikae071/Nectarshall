@@ -32,7 +32,24 @@ function Employeesites() {
   useEffect(() => {
     fetchApprovedSites();
   }, []);
+  const handleSitePopupSave = async () => {
+    try {
+      await axios.put(
+        `/api/BoardingCandidates/${sitePopup.boardingId}/contracts/${sitePopup.contractId}/services`,
+        {
+          services: sitePopup.services,
+        },
+      );
 
+      alert("Updated Successfully");
+
+      setSitePopup(null);
+
+      fetchApprovedSites();
+    } catch (err) {
+      console.log(err);
+    }
+  };
   const fetchApprovedSites = async () => {
     try {
       const response = await axios.get(
@@ -47,9 +64,12 @@ function Employeesites() {
           if (item.contractDeliverables?.length > 0) {
             item.contractDeliverables.forEach((site) => {
               approvedSites.push({
+                boardingId: item._id,
+                contractId: site._id,
+                clientId: site.clientId,
                 siteName: site.siteName,
                 siteAddress: site.siteAddress,
-                services: site.services || [],
+                services: JSON.parse(JSON.stringify(site.services || [])),
               });
             });
           }
@@ -96,6 +116,13 @@ function Employeesites() {
     }
 
     return week;
+  };
+  const handleServicePopupChange = (serviceIndex, field, value) => {
+    const updated = { ...sitePopup };
+
+    updated.services[serviceIndex][field] = value;
+
+    setSitePopup(updated);
   };
 
   const weekDates = getWeekDates(currentDate);
@@ -381,25 +408,97 @@ function Employeesites() {
 
                   {sitePopup.services.map((service, index) => (
                     <div key={index} className="serviceDetails">
-                      <p>
-                        <strong>Service Type:</strong> {service.serviceType}
-                      </p>
+                      <div className="form-group">
+                        <label>Service Type</label>
+                        <input
+                          type="text"
+                          value={service.serviceType}
+                          onChange={(e) =>
+                            handleServicePopupChange(
+                              index,
+                              "serviceType",
+                              e.target.value,
+                            )
+                          }
+                        />
+                      </div>
 
-                      <p>
-                        <strong>Position:</strong> {service.position}
-                      </p>
+                      <div className="form-group">
+                        <label>Position</label>
+                        <input
+                          type="text"
+                          value={service.position}
+                          onChange={(e) =>
+                            handleServicePopupChange(
+                              index,
+                              "position",
+                              e.target.value,
+                            )
+                          }
+                        />
+                      </div>
 
-                      <p>
-                        <strong>Quantity:</strong> {service.quantity}
-                      </p>
+                      <div className="form-group">
+                        <label>Quantity</label>
+                        <input
+                          type="number"
+                          value={service.quantity}
+                          onChange={(e) =>
+                            handleServicePopupChange(
+                              index,
+                              "quantity",
+                              e.target.value,
+                            )
+                          }
+                        />
+                      </div>
 
-                      <p>
-                        <strong>Shift Start:</strong> {service.shiftStartTime}
-                      </p>
+                      <div className="form-group">
+                        <label>Shift Start</label>
+                        <input
+                          type="time"
+                          value={service.shiftStartTime}
+                          onChange={(e) =>
+                            handleServicePopupChange(
+                              index,
+                              "shiftStartTime",
+                              e.target.value,
+                            )
+                          }
+                        />
+                      </div>
 
-                      <p>
-                        <strong>Shift End:</strong> {service.shiftEndTime}
-                      </p>
+                      <div className="form-group">
+                        <label>Shift End</label>
+                        <input
+                          type="time"
+                          value={service.shiftEndTime}
+                          onChange={(e) =>
+                            handleServicePopupChange(
+                              index,
+                              "shiftEndTime",
+                              e.target.value,
+                            )
+                          }
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Employee</label>
+                        <input
+                          type="text"
+                          value={service.employee || ""}
+                          onChange={(e) =>
+                            handleServicePopupChange(
+                              index,
+                              "employee",
+                              e.target.value,
+                            )
+                          }
+                        />
+                      </div>
+                      <button className="saveBtn" onClick={handleSitePopupSave}>
+                        Save
+                      </button>
 
                       {index !== sitePopup.services.length - 1 && <hr />}
                     </div>
