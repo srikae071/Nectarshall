@@ -61,11 +61,20 @@ function BusinessEngagement() {
   // }, [id]);
 
   const handleChange = (e) => {
-    console.log("name:", e.target.name, "value:", e.target.value);
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    let { name, value } = e.target;
+
+    if (name === "abn") {
+      value = value.replace(/\D/g, "").slice(0, 11);
+    }
+
+    if (name === "acn") {
+      value = value.replace(/\D/g, "").slice(0, 9);
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
   const handleAttachment = (e) => {
     const file = e.target.files[0];
@@ -80,17 +89,30 @@ function BusinessEngagement() {
 
   const handleSave = async () => {
     console.log("FORM DATA BEFORE SAVE:", formData);
-    try {
-      console.log("Sending:", formData);
 
-      // const response = await axios.post(
-      //   "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/Boarding/create",
-      //   {
-      //     ...formData,
-      //     category: "Client Onboarding",
-      //     status: "Open",
-      //   },
-      // );
+    // Remove spaces before checking
+    const abn = formData.abn.trim();
+    const acn = formData.acn.trim();
+
+    let hasError = false;
+
+    // ABN validation (must be exactly 11 digits)
+    if (!/^\d{11}$/.test(abn)) {
+      alert("Invalid ABN Number. ABN must contain exactly 11 digits.");
+      hasError = true;
+    }
+
+    // ACN validation (must be exactly 9 digits)
+    if (!/^\d{9}$/.test(acn)) {
+      alert("Invalid ACN Number. ACN must contain exactly 9 digits.");
+      hasError = true;
+    }
+
+    if (hasError) {
+      return;
+    }
+
+    try {
       await axios.post(
         "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/create",
         {
@@ -100,24 +122,13 @@ function BusinessEngagement() {
         },
       );
 
-      // console.log(response.data);
-      navigate("/"); // Home page route
+      navigate("/");
       alert("Business Request Saved Successfully");
-
-      setFormData({
-        requester: "",
-        requesterFor: "",
-
-        shortDescription: "",
-        description: "",
-        workNotes: "",
-      });
     } catch (error) {
       console.error(error);
       alert("Error Saving Request");
     }
   };
-
   return (
     <>
       <BusinessEngagementNavBar />
@@ -168,6 +179,7 @@ function BusinessEngagement() {
           <input
             className="table2-input"
             name="abn"
+            maxLength={11}
             value={formData.abn}
             onChange={handleChange}
           />
@@ -180,6 +192,7 @@ function BusinessEngagement() {
             className="table2-input"
             name="acn"
             value={formData.acn}
+            maxLength={9}
             onChange={handleChange}
           />
         </div>

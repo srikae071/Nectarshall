@@ -106,7 +106,7 @@ function OprationsClientOnbTab() {
       item.requesterFor?.toLowerCase().includes(search.toLowerCase()) ||
       item.abn?.toLowerCase().includes(search.toLowerCase()),
   );
-  console.log(filteredData);
+
   return (
     <DashboardLayout>
       <TableLayout1
@@ -122,7 +122,11 @@ function OprationsClientOnbTab() {
             <React.Fragment key={item._id}>
               <tr
                 style={{ cursor: "pointer" }}
-                onClick={() => navigate(`/onboarding-saves/${item._id}`)}
+                onClick={() =>
+                  navigate(`/onboarding-saves/${item._id}`, {
+                    state: { source: "operations" },
+                  })
+                }
               >
                 {visibleColumns.includes("clientId") && (
                   <td>{item.clientId}</td>

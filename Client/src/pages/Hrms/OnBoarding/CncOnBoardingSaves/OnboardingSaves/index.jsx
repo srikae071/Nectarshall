@@ -3,13 +3,15 @@ import CncLeftLayout from "../../../../Cnc/CncLeftLayout";
 import DashboardLayout from "../../../../Dashboard/DashboardLayout";
 import RegularForm from "../../../../../components/Layouts/FormLayouts/RegularForm";
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 
 import "./index.css";
 
 function OnBoardingSaves() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const source = location.state?.source;
   const { id } = useParams();
   const [expanded, setExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState("Client Contract Deliverables");
@@ -40,22 +42,7 @@ function OnBoardingSaves() {
     attachment: "",
     operationsClientApproved: "",
   });
-  // const [contractDeliverables, setContractDeliverables] = useState([
-  //   {
-  //     clientId: "",
-  //     siteName: "",
-  //     siteAddress: "",
-  //     siteManagerName: "",
-  //     siteEmail: "",
-  //     siteMobile: "",
-  //     contractState: "Active",
-  //     adhoc: "No",
-  //     comments: "",
-  //     // attachment: "",
-  //   },
-  // ]);
 
-  // new code
   const [contractDeliverables, setContractDeliverables] = useState([
     {
       clientId: "CNT-001",
@@ -77,6 +64,8 @@ function OnBoardingSaves() {
           quantity: "",
           shiftStartTime: "",
           shiftEndTime: "",
+          contractStartDate: "",
+          contractEndDate: "",
           workingDays: [],
         },
       ],
@@ -99,6 +88,7 @@ function OnBoardingSaves() {
       );
 
       const data = response.data;
+      console.log(data.contractDeliverables);
       setBackendStatus(data.status);
       const titleMap = {
         "Supplier Onboarding": "Onboarding Supplier",
@@ -165,6 +155,8 @@ function OnBoardingSaves() {
                     quantity: "",
                     shiftStartTime: "",
                     shiftEndTime: "",
+                    contractStartDate: "",
+                    contractEndDate: "",
                     workingDays: [],
                   },
                 ],
@@ -220,6 +212,8 @@ function OnBoardingSaves() {
             quantity: "",
             shiftStartTime: "",
             shiftEndTime: "",
+            contractStartDate: "",
+            contractEndDate: "",
             workingDays: [],
           },
         ],
@@ -432,8 +426,9 @@ function OnBoardingSaves() {
     }
   };
 
-  const Layout =
-    backendStatus === "On Boarded" ? DashboardLayout : CncLeftLayout;
+  // const Layout =
+  //   backendStatus === "On Boarded" ? DashboardLayout : CncLeftLayout;
+  const Layout = source === "operations" ? DashboardLayout : CncLeftLayout;
   return (
     <Layout>
       <RegularForm
@@ -443,8 +438,16 @@ function OnBoardingSaves() {
         onAttachment={handleAttachment}
         attachmentName={formData.attachment?.fileName}
         formData={formData}
-        onApprove={backendStatus === "On Boarded" ? handleApprove : undefined}
-        onReject={backendStatus === "On Boarded" ? handleReject : undefined}
+        onApprove={
+          backendStatus === "On Boarded" && source === "operations"
+            ? handleApprove
+            : undefined
+        }
+        onReject={
+          backendStatus === "On Boarded" && source === "operations"
+            ? handleReject
+            : undefined
+        }
       >
         <div className="form-row">
           <label className="form-label">Client ID</label>
@@ -993,6 +996,8 @@ function OnBoardingSaves() {
                           <input
                             type="number"
                             name="quantity"
+                            min="0"
+                            step="1"
                             value={service.quantity}
                             onChange={(e) =>
                               handleServiceChange(index, serviceIndex, e)
@@ -1031,7 +1036,14 @@ function OnBoardingSaves() {
                             <input
                               type="date"
                               name="contractStartDate"
-                              value={service.contractStartDate || ""}
+                              value={
+                                service.contractStartDate
+                                  ? String(service.contractStartDate).slice(
+                                      0,
+                                      10,
+                                    )
+                                  : ""
+                              }
                               onChange={(e) =>
                                 handleServiceChange(index, serviceIndex, e)
                               }
@@ -1043,7 +1055,11 @@ function OnBoardingSaves() {
                             <input
                               type="date"
                               name="contractEndDate"
-                              value={service.contractEndDate || ""}
+                              value={
+                                service.contractEndDate
+                                  ? String(service.contractEndDate).slice(0, 10)
+                                  : ""
+                              }
                               onChange={(e) =>
                                 handleServiceChange(index, serviceIndex, e)
                               }

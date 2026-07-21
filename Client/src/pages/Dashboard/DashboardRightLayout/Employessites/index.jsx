@@ -1,27 +1,24 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext, useMemo } from "react";
 import axios from "axios";
-// import { useContext } from "react";
-import { EmployeeContext } from "../EmployeeContext.js";
+import { EmployeeContext } from "../EmployeeContext";
 import "./index.css";
-import DashboardLayout from "../../DashboardLayout/index";
+import DashboardLayout from "../../DashboardLayout";
 
 function Employeesites() {
-  // const { trigger } = useContext(EmployeeContext);
+  const { selectedCustomer } = useContext(EmployeeContext);
 
   const [currentDate, setCurrentDate] = useState(new Date());
+
   const [popup, setPopup] = useState(null);
   const [sitePopup, setSitePopup] = useState(null);
-  const openSitePopup = (site) => {
-    setSitePopup(site);
-  };
-  // const employeeNames = [
-  //   "Abdul Haseeb Ansar",
-  //   "Abdul Rahman Najjarine",
-  //   "Abu Talha",
-  //   "Adeel Sultan",
-  //   "Ajdin Sabonoski",
-  // ];
+
   const [employees, setEmployees] = useState([]);
+  const [serviceRows, setServiceRows] = useState([]);
+  const [selectedSite, setSelectedSite] = useState(null);
+
+  const [savedData, setSavedData] = useState({});
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     start: "",
     end: "",
@@ -29,15 +26,231 @@ function Employeesites() {
     position: "",
     role: "",
   });
+
+  const weekDays = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+
+  const getWeekDates = (date) => {
+    const start = new Date(date);
+
+    const day = start.getDay();
+
+    const diff = start.getDate() - day + (day === 0 ? -6 : 1);
+
+    start.setDate(diff);
+
+    const week = [];
+
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(start);
+
+      d.setDate(start.getDate() + i);
+
+      week.push({
+        label: d.toLocaleDateString("en-GB", {
+          weekday: "short",
+          day: "2-digit",
+          month: "short",
+        }),
+        full: new Date(d),
+      });
+    }
+
+    return week;
+  };
+
+  const weekDates = useMemo(() => getWeekDates(currentDate), [currentDate]);
+
+  const isDateBetween = (date, start, end) => {
+    if (!start || !end) return false;
+
+    const current = new Date(date);
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+
+    current.setHours(0, 0, 0, 0);
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(0, 0, 0, 0);
+
+    return current >= startDate && current <= endDate;
+  };
+
+  const isWorkingDay = (date, workingDays = []) => {
+    const dayName = weekDays[new Date(date).getDay()];
+
+    return workingDays.includes(dayName);
+  };
+
+  const fetchApprovedSites = async () => {
+    try {
+      const response = await axios.get(
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates",
+      );
+
+      const approvedSites = [];
+
+      response.data
+        .filter(
+          (item) =>
+            item.operationsClientApproved === true &&
+            item.status === "On Boarded" &&
+            (!selectedCustomer || item.requester === selectedCustomer),
+        )
+        .forEach((boarding) => {
+          (boarding.contractDeliverables || []).forEach((contract) => {
+            (contract.services || []).forEach((service, serviceIndex) => {
+              approvedSites.push({
+                boardingId: boarding._id,
+                contractId: contract._id,
+
+                requester: boarding.requester,
+                clientId: contract.clientId,
+
+                siteName: contract.siteName,
+                siteAddress: contract.siteAddress,
+
+                serviceIndex,
+
+                services: JSON.parse(JSON.stringify(contract.services || [])),
+
+                serviceType: service.serviceType || "",
+                employee: service.employee || "",
+                position: service.position || "",
+                quantity: service.quantity || 0,
+
+                shiftStartTime: service.shiftStartTime || "",
+
+                shiftEndTime: service.shiftEndTime || "",
+
+                workingDays: service.workingDays || [],
+
+                contractStartDate: service.contractStartDate,
+
+                contractEndDate: service.contractEndDate,
+              });
+            });
+          });
+        });
+
+      const minimumRows = 10;
+
+      const rows =
+        approvedSites.length < minimumRows
+          ? [
+              ...approvedSites,
+              ...Array.from(
+                {
+                  length: minimumRows - approvedSites.length,
+                },
+                () => ({
+                  siteName: "",
+                  siteAddress: "",
+                  serviceType: "",
+                }),
+              ),
+            ]
+          : approvedSites;
+
+      setEmployees(rows);
+
+      if (rows.length > 0 && rows[0].boardingId) {
+        setSelectedSite(rows[0]);
+        setServiceRows(rows);
+      } else {
+        setSelectedSite(null);
+        setServiceRows([]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     fetchApprovedSites();
-  }, []);
+  }, [selectedCustomer]);
+  const openServicePopup = (row, date) => {
+    if (!row) return;
+
+    const selectedService = row.services?.[row.serviceIndex] || {
+      serviceType: row.serviceType,
+      position: row.position,
+      quantity: row.quantity,
+      shiftStartTime: row.shiftStartTime,
+      shiftEndTime: row.shiftEndTime,
+      employee: row.employee,
+      workingDays: row.workingDays,
+      contractStartDate: row.contractStartDate,
+      contractEndDate: row.contractEndDate,
+    };
+
+    setSitePopup({
+      boardingId: row.boardingId,
+      contractId: row.contractId,
+      serviceIndex: row.serviceIndex,
+      selectedDate: date,
+      services: [JSON.parse(JSON.stringify(selectedService))],
+    });
+  };
+
+  const shouldRenderService = (service, date) => {
+    if (!service) return false;
+
+    if (
+      !isDateBetween(date, service.contractStartDate, service.contractEndDate)
+    ) {
+      return false;
+    }
+
+    return isWorkingDay(date, service.workingDays || []);
+  };
+
+  const getServiceCard = (service, date) => {
+    if (!shouldRenderService(service, date)) {
+      return null;
+    }
+
+    return {
+      serviceType: service.serviceType,
+      position: service.position,
+      quantity: service.quantity,
+      shiftStartTime: service.shiftStartTime,
+      shiftEndTime: service.shiftEndTime,
+      employee: service.employee,
+    };
+  };
+
+  const handleServicePopupChange = (index, field, value) => {
+    setSitePopup((prev) => {
+      const updated = { ...prev };
+
+      updated.services = [...updated.services];
+
+      updated.services[index] = {
+        ...updated.services[index],
+        [field]: value,
+      };
+
+      return updated;
+    });
+  };
+
   const handleSitePopupSave = async () => {
     try {
+      const updatedServices = [...(selectedSite.services || [])];
+
+      updatedServices[sitePopup.serviceIndex] = sitePopup.services[0];
+
       await axios.put(
         `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/${sitePopup.boardingId}/contracts/${sitePopup.contractId}/services`,
         {
-          services: sitePopup.services,
+          services: updatedServices,
         },
       );
 
@@ -50,463 +263,296 @@ function Employeesites() {
       console.log(err);
     }
   };
-  const fetchApprovedSites = async () => {
-    try {
-      const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates",
-      );
-
-      const approvedSites = [];
-
-      response.data
-        .filter((item) => item.operationsClientApproved === true)
-        .forEach((item) => {
-          if (item.contractDeliverables?.length > 0) {
-            item.contractDeliverables.forEach((site) => {
-              approvedSites.push({
-                boardingId: item._id,
-                contractId: site._id,
-                clientId: site.clientId,
-                siteName: site.siteName,
-                siteAddress: site.siteAddress,
-                services: JSON.parse(JSON.stringify(site.services || [])),
-              });
-            });
-          }
-        });
-
-      const minimumRows = 5;
-
-      const rows =
-        approvedSites.length < minimumRows
-          ? [
-              ...approvedSites,
-              ...Array.from(
-                { length: minimumRows - approvedSites.length },
-                () => ({ siteAddress: "" }),
-              ),
-            ]
-          : approvedSites;
-
-      setEmployees(rows);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const [savedData, setSavedData] = useState({});
-
-  // ✅ GENERATE WEEK
-  const getWeekDates = (date) => {
-    const start = new Date(date);
-    const day = start.getDay();
-    const diff = start.getDate() - day + (day === 0 ? -6 : 1);
-    start.setDate(diff);
-
-    const week = [];
-
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(start);
-      d.setDate(start.getDate() + i);
-
-      week.push({
-        label: d.toDateString().slice(0, 10),
-        full: new Date(d),
-      });
-    }
-
-    return week;
-  };
-  const handleServicePopupChange = (serviceIndex, field, value) => {
-    const updated = { ...sitePopup };
-
-    updated.services[serviceIndex][field] = value;
-
-    setSitePopup(updated);
-  };
-
-  const weekDates = getWeekDates(currentDate);
-  // const generateRandomEmployees = () => {
-  //   const newData = {};
-
-  //   const totalCols = weekDates.length;
-
-  //   const usedKeys = new Set();
-
-  //   while (usedKeys.size < 5) {
-  //     const i = Math.floor(Math.random() * totalRows);
-  //     const j = Math.floor(Math.random() * totalCols);
-
-  //     const key = `${i}-${weekDates[j].full.toDateString()}`;
-
-  //     if (usedKeys.has(key)) continue;
-
-  //     usedKeys.add(key);
-
-  //     const randomEmployee =
-  //       employeeNames[Math.floor(Math.random() * employeeNames.length)];
-
-  //     newData[key] = {
-  //       start: "09:00",
-  //       end: "18:00",
-  //       position: randomEmployee,
-  //     };
-  //   }
-
-  //   setSavedData((prev) => ({
-  //     ...prev,
-  //     ...newData,
-  //   }));
-  // };
-
-  // useEffect(() => {
-  //   if (trigger === 0) return;
-  //   generateRandomEmployees();
-  // }, [trigger]);
-
-  // ✅ CLICK CELL
-  const handleClick = (e, dateObj, empIndex) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-
-    const key = `${empIndex}-${dateObj.toDateString()}`;
-    const existing = savedData[key];
-
-    setPopup({
-      date: dateObj,
-      empIndex,
-      x: rect.left + rect.width / 2,
-      y: rect.bottom + 5,
-    });
-
-    setFormData(
-      existing || {
-        start: "",
-        end: "",
-        break: "",
-        position: "",
-        role: "",
-      },
-    );
-  };
-
-  // ✅ SAVE DATA
-  const handleSave = () => {
-    if (!formData.start || !formData.end) {
-      alert("Start and End time required");
-      return;
-    }
-
-    const key = `${popup.empIndex}-${popup.date.toDateString()}`;
-
-    setSavedData((prev) => ({
-      ...prev,
-      [key]: formData,
-    }));
-
-    setPopup(null);
-  };
 
   return (
     <DashboardLayout>
-      <div className="mainLayout">
-        <div className="rightPanel">
-          <div className="container">
-            {/* TOP BAR */}
-            <div className="topBar">
-              <div className="Datebuttons">
-                {/* PREVIOUS WEEK */}
-                <button
-                  onClick={() =>
-                    setCurrentDate((prev) => {
-                      const d = new Date(prev);
-                      d.setDate(prev.getDate() - 7);
-                      return d;
-                    })
-                  }
-                >
-                  {"<"}
-                </button>
+      <div className="schedulePage">
+        <div className="scheduleContainer">
+          {/* ================= TOP BAR ================= */}
 
-                {/* DATE RANGE */}
-                <span>
-                  {weekDates[0].label} - {weekDates[6].label}
-                </span>
+          <div className="scheduleTopBar">
+            <div className="weekNavigation">
+              <button
+                className="weekButton"
+                onClick={() =>
+                  setCurrentDate((prev) => {
+                    const d = new Date(prev);
 
-                {/* NEXT WEEK */}
-                <button
-                  onClick={() =>
-                    setCurrentDate((prev) => {
-                      const d = new Date(prev);
-                      d.setDate(prev.getDate() + 7);
-                      return d;
-                    })
-                  }
-                >
-                  {">"}
-                </button>
+                    d.setDate(prev.getDate() - 7);
 
-                <div className="right">
-                  <select className="actionbuttons">
-                    <option>Actions</option>
-                  </select>
-                  <button className="actionbuttons">Collapse</button>
-                </div>
+                    return d;
+                  })
+                }
+              >
+                &#10094;
+              </button>
+
+              <div className="weekTitle">
+                {weekDates[0].label} - {weekDates[6].label}
               </div>
 
-              <div className="savebuttons">
-                <button className="savechangesbtn">Save Changes</button>
-                <button className="btn">Cancel</button>
-              </div>
+              <button
+                className="weekButton"
+                onClick={() =>
+                  setCurrentDate((prev) => {
+                    const d = new Date(prev);
+
+                    d.setDate(prev.getDate() + 7);
+
+                    return d;
+                  })
+                }
+              >
+                &#10095;
+              </button>
             </div>
 
-            {/* HEADER */}
-            <div className="grid header">
-              {weekDates.map((d, i) => (
-                <div key={i} className="headerCell">
-                  {d.label}
+            <div className="topRightButtons">
+              <select className="actionSelect">
+                <option>Actions</option>
+              </select>
+
+              <button className="collapseButton">Collapse</button>
+
+              <button className="saveChangesButton">Save Changes</button>
+
+              <button className="cancelButton">Cancel</button>
+            </div>
+          </div>
+
+          {/* ================= CALENDAR ================= */}
+
+          <div className="calendarWrapper">
+            <div className="calendarHeader">
+              {weekDates.map((day, index) => (
+                <div key={index} className="calendarHeaderCell">
+                  <div className="dayName">
+                    {day.full.toLocaleDateString("en-US", {
+                      weekday: "short",
+                    })}
+                  </div>
+
+                  <div className="dayDate">
+                    {day.full.toLocaleDateString("en-US", {
+                      day: "2-digit",
+                      month: "short",
+                    })}
+                  </div>
                 </div>
               ))}
             </div>
+            <div className="calendarBody">
+              {serviceRows.map((service, rowIndex) => {
+                const showSiteName =
+                  rowIndex === 0 &&
+                  selectedSite &&
+                  selectedSite.siteName === service.siteName;
 
-            {/* BODY */}
-            {employees.map((item, i) => (
-              <div key={i} className="rowBlock">
-                <div className="grid">
-                  {weekDates.map((d, j) => {
-                    const key = `${i}-${d.full.toDateString()}`;
-                    const data = savedData[key];
-                    const isBlocked = i % 2 === 0;
+                return (
+                  <div
+                    key={`${service.boardingId}-${service.contractId}-${service.serviceIndex}-${rowIndex}`}
+                    className="serviceRowWrapper"
+                  >
+                    {showSiteName && (
+                      <div className="siteNameRow">
+                        <div className="siteTitle">{selectedSite.siteName}</div>
 
-                    return (
-                      <div key={j} className="cell">
-                        <div
-                          onClick={(e) => handleClick(e, d.full, i)}
-                          className="cellInner"
-                        >
-                          {!data ? (
-                            <div className="plus">+</div>
-                          ) : data ? (
-                            <div className="savedBox">
-                              <div>
-                                {data.start} - {data.end}
-                              </div>
-                              <div className="small">{data.position}</div>
-                            </div>
-                          ) : null}
-                          <div></div>
+                        <div className="siteAddress">
+                          {selectedSite.siteAddress}
                         </div>
-
-                        {isBlocked && (
-                          <div className="blocked">
-                            Full Day <br /> Not Available
-                          </div>
-                        )}
                       </div>
-                    );
-                  })}
-                </div>
+                    )}
 
-                <div
-                  className="nameRow clickableSite"
-                  onClick={() => openSitePopup(item)}
-                >
-                  {item.siteAddress || ""}
-                </div>
-              </div>
-            ))}
+                    <div className="calendarRow">
+                      {weekDates.map((day, colIndex) => {
+                        const card = getServiceCard(service, day.full);
 
-            {/* POPUP */}
-            {popup && (
-              <div
-                className="popupForm"
-                style={{ top: popup.y, left: popup.x }}
-              >
+                        return (
+                          <div key={colIndex} className="calendarCell">
+                            {!card ? (
+                              <div
+                                className="emptyCell"
+                                onClick={() =>
+                                  openServicePopup(service, day.full)
+                                }
+                              >
+                                +
+                              </div>
+                            ) : (
+                              <div
+                                className="serviceCard"
+                                onClick={() =>
+                                  openServicePopup(service, day.full)
+                                }
+                              >
+                                <div className="serviceType">
+                                  {card.serviceType}
+                                </div>
+
+                                <div className="servicePosition">
+                                  {card.position}
+                                </div>
+
+                                <div className="serviceQty">
+                                  Qty : {card.quantity}
+                                </div>
+
+                                <div className="serviceShift">
+                                  {card.shiftStartTime}
+                                  {" - "}
+                                  {card.shiftEndTime}
+                                </div>
+
+                                <div className="serviceEmployee">
+                                  {card.employee
+                                    ? card.employee
+                                    : "Assign Employee"}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {sitePopup && (
+            <div className="sitePopupOverlay">
+              <div className="sitePopup">
                 <div className="popupHeader">
-                  <span>Selected Shift</span>
-                  <span className="closeBtn" onClick={() => setPopup(null)}>
+                  <span>Edit Service</span>
+
+                  <button
+                    className="closeBtn"
+                    onClick={() => setSitePopup(null)}
+                  >
                     ×
-                  </span>
-                </div>
-
-                <div className="form">
-                  <label>Start</label>
-                  <input
-                    type="time"
-                    value={formData.start}
-                    onChange={(e) =>
-                      setFormData({ ...formData, start: e.target.value })
-                    }
-                  />
-
-                  <label>End</label>
-                  <input
-                    type="time"
-                    value={formData.end}
-                    onChange={(e) =>
-                      setFormData({ ...formData, end: e.target.value })
-                    }
-                  />
-
-                  <label>Meal Break</label>
-                  <input
-                    type="number"
-                    value={formData.break}
-                    onChange={(e) =>
-                      setFormData({ ...formData, break: e.target.value })
-                    }
-                  />
-
-                  <label>Position</label>
-                  <select
-                    value={formData.position}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        position: e.target.value,
-                      })
-                    }
-                  >
-                    <option>Select</option>
-                    <option>Security</option>
-                    <option>Manager</option>
-                  </select>
-
-                  <label>Role</label>
-                  <select
-                    value={formData.role}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        role: e.target.value,
-                      })
-                    }
-                  >
-                    <option>Select</option>
-                    <option>Guard</option>
-                    <option>Supervisor</option>
-                  </select>
-
-                  <button className="saveBtn" onClick={handleSave}>
-                    Save Template
                   </button>
                 </div>
-              </div>
-            )}
-            {sitePopup && (
-              <div className="sitePopupOverlay">
-                <div className="sitePopup">
-                  <div className="popupHeader">
-                    <span>{sitePopup.siteAddress}</span>
 
-                    <button
-                      className="closeBtn"
-                      onClick={() => setSitePopup(null)}
-                    >
-                      ×
-                    </button>
-                  </div>
+                {sitePopup.services.map((service, index) => (
+                  <div key={index} className="serviceDetails">
+                    <div className="form-group">
+                      <label>Service Type</label>
 
-                  {sitePopup.services.map((service, index) => (
-                    <div key={index} className="serviceDetails">
-                      <div className="form-group">
-                        <label>Service Type</label>
-                        <input
-                          type="text"
-                          value={service.serviceType}
-                          onChange={(e) =>
-                            handleServicePopupChange(
-                              index,
-                              "serviceType",
-                              e.target.value,
-                            )
-                          }
-                        />
-                      </div>
+                      <input
+                        type="text"
+                        value={service.serviceType}
+                        onChange={(e) =>
+                          handleServicePopupChange(
+                            index,
+                            "serviceType",
+                            e.target.value,
+                          )
+                        }
+                      />
+                    </div>
 
-                      <div className="form-group">
-                        <label>Position</label>
-                        <input
-                          type="text"
-                          value={service.position}
-                          onChange={(e) =>
-                            handleServicePopupChange(
-                              index,
-                              "position",
-                              e.target.value,
-                            )
-                          }
-                        />
-                      </div>
+                    <div className="form-group">
+                      <label>Position</label>
 
-                      <div className="form-group">
-                        <label>Quantity</label>
-                        <input
-                          type="number"
-                          value={service.quantity}
-                          onChange={(e) =>
-                            handleServicePopupChange(
-                              index,
-                              "quantity",
-                              e.target.value,
-                            )
-                          }
-                        />
-                      </div>
+                      <input
+                        type="text"
+                        value={service.position}
+                        onChange={(e) =>
+                          handleServicePopupChange(
+                            index,
+                            "position",
+                            e.target.value,
+                          )
+                        }
+                      />
+                    </div>
 
-                      <div className="form-group">
-                        <label>Shift Start</label>
-                        <input
-                          type="time"
-                          value={service.shiftStartTime}
-                          onChange={(e) =>
-                            handleServicePopupChange(
-                              index,
-                              "shiftStartTime",
-                              e.target.value,
-                            )
-                          }
-                        />
-                      </div>
+                    <div className="form-group">
+                      <label>Quantity</label>
 
-                      <div className="form-group">
-                        <label>Shift End</label>
-                        <input
-                          type="time"
-                          value={service.shiftEndTime}
-                          onChange={(e) =>
-                            handleServicePopupChange(
-                              index,
-                              "shiftEndTime",
-                              e.target.value,
-                            )
-                          }
-                        />
-                      </div>
-                      <div className="form-group">
-                        <label>Employee</label>
-                        <input
-                          type="text"
-                          value={service.employee || ""}
-                          onChange={(e) =>
-                            handleServicePopupChange(
-                              index,
-                              "employee",
-                              e.target.value,
-                            )
-                          }
-                        />
-                      </div>
-                      <button className="saveBtn" onClick={handleSitePopupSave}>
+                      <input
+                        type="number"
+                        value={service.quantity}
+                        onChange={(e) =>
+                          handleServicePopupChange(
+                            index,
+                            "quantity",
+                            Number(e.target.value),
+                          )
+                        }
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Shift Start</label>
+
+                      <input
+                        type="time"
+                        value={service.shiftStartTime || ""}
+                        onChange={(e) =>
+                          handleServicePopupChange(
+                            index,
+                            "shiftStartTime",
+                            e.target.value,
+                          )
+                        }
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Shift End</label>
+
+                      <input
+                        type="time"
+                        value={service.shiftEndTime || ""}
+                        onChange={(e) =>
+                          handleServicePopupChange(
+                            index,
+                            "shiftEndTime",
+                            e.target.value,
+                          )
+                        }
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Employee</label>
+
+                      <input
+                        type="text"
+                        value={service.employee || ""}
+                        onChange={(e) =>
+                          handleServicePopupChange(
+                            index,
+                            "employee",
+                            e.target.value,
+                          )
+                        }
+                      />
+                    </div>
+                    <div className="popupButtons">
+                      <button
+                        className="savePopupButton"
+                        onClick={handleSitePopupSave}
+                      >
                         Save
                       </button>
 
-                      {index !== sitePopup.services.length - 1 && <hr />}
+                      <button
+                        className="cancelPopupButton"
+                        onClick={() => setSitePopup(null)}
+                      >
+                        Cancel
+                      </button>
                     </div>
-                  ))}
-                </div>
+
+                    {index !== sitePopup.services.length - 1 && <hr />}
+                  </div>
+                ))}
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </DashboardLayout>

@@ -67,7 +67,11 @@ function OnBoardingSupplierTab() {
             <tr
               key={item._id}
               style={{ cursor: "pointer" }}
-              onClick={() => navigate(`/onboarding-saves/${item._id}`)}
+              onClick={() =>
+                navigate(`/onboarding-saves/${item._id}`, {
+                  state: { source: "cnc" },
+                })
+              }
             >
               {visibleColumns.includes("clientId") && <td>{item.clientId}</td>}
 

@@ -1,37 +1,107 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 import "./index.css";
 import DashbordNavbar from "../DashbordNavbar/index.jsx";
 import { EmployeeContext } from "../DashboardRightLayout/EmployeeContext.js";
-// const [openOnboarding, setOpenOnboarding] = useState(false);
+
 function DashboardLayout({ children }) {
-  const [openOnboarding, setOpenOnboarding] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const [employeeTrigger, setEmployeeTrigger] = useState(0);
+
+  const [openOnboarding, setOpenOnboarding] = useState(false);
   const [openAdhoc, setOpenAdhoc] = useState(false);
+
+  const [employeeTrigger, setEmployeeTrigger] = useState(0);
+
+  const [manualToggle, setManualToggle] = useState(true);
+
+  const isScheduleRoute = location.pathname.startsWith("/schedule");
+
+  const openSchedule = isScheduleRoute || manualToggle;
+
+  // ==========================
+  // Dynamic Customer States
+  // ==========================
+
+  const [customers, setCustomers] = useState([]);
+
+  const [selectedCustomer, setSelectedCustomer] = useState("");
+
+  const [loadingCustomers, setLoadingCustomers] = useState(false);
+
+  const [customerError, setCustomerError] = useState("");
 
   const generateEmployees = () => {
     setEmployeeTrigger((prev) => prev + 1);
   };
-  const isScheduleRoute = location.pathname.startsWith("/schedule");
-  const [manualToggle, setManualToggle] = useState(true);
 
-  const openSchedule = isScheduleRoute || manualToggle;
-  const [selectedCustomer, setSelectedCustomer] = useState("CBRE");
-  // useEffect(() => {
-  //   if (location.pathname === "/schedule") {
-  //     setOpenSchedule(true);
-  //   }
-  // }, [location.pathname]);
-  const customerData = {
-    CBRE: { shifts: 27, unfilled: 0, hours: 230, cost: 7643.84 },
-    Srikar: { shifts: 18, unfilled: 2, hours: 150, cost: 5200.5 },
-    Teja: { shifts: 22, unfilled: 1, hours: 180, cost: 6100.2 },
-    Kanth: { shifts: 30, unfilled: 3, hours: 250, cost: 8000.75 },
-    Rohith: { shifts: 15, unfilled: 0, hours: 120, cost: 4200.0 },
-    Pavan: { shifts: 20, unfilled: 4, hours: 170, cost: 5900.9 },
+  // ==========================
+  // Fetch Approved Customers
+  // ==========================
+
+  useEffect(() => {
+    fetchCustomers();
+  }, []);
+
+  const fetchCustomers = async () => {
+    try {
+      setLoadingCustomers(true);
+      setCustomerError("");
+
+      const response = await axios.get(
+        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates",
+      );
+
+      const data = Array.isArray(response.data) ? response.data : [];
+
+      const approvedCustomers = data.filter(
+        (item) =>
+          item.operationsClientApproved === true &&
+          item.status === "On Boarded",
+      );
+
+      const uniqueCustomers = [
+        ...new Set(
+          approvedCustomers
+            .map((item) => item.requester)
+            .filter((item) => item && item.trim() !== ""),
+        ),
+      ];
+
+      setCustomers(uniqueCustomers);
+
+      if (uniqueCustomers.length > 0) {
+        setSelectedCustomer(uniqueCustomers[0]);
+      }
+    } catch (error) {
+      console.error("Failed to load customers", error);
+
+      setCustomerError("Unable to load customers.");
+    } finally {
+      setLoadingCustomers(false);
+    }
+  };
+
+  // ====================================
+  // Navigation Helpers
+  // ====================================
+
+  const openEmployeeSchedule = () => {
+    navigate("/schedule", {
+      state: {
+        requester: selectedCustomer,
+      },
+    });
+  };
+
+  const openSiteSchedule = () => {
+    navigate("/employe-sites", {
+      state: {
+        requester: selectedCustomer,
+      },
+    });
   };
 
   return (
@@ -39,9 +109,11 @@ function DashboardLayout({ children }) {
       <DashbordNavbar />
 
       <div className="mainLayout">
-        {/* SIDEBAR */}
+        {/* LEFT SIDEBAR */}
+
         <div className="operationssidebar">
           {/* DASHBOARD */}
+
           <div
             className={`submenuItem ${
               location.pathname === "/dashboard" ? "active" : ""
@@ -51,7 +123,8 @@ function DashboardLayout({ children }) {
             📊 Dashboard
           </div>
 
-          {/* SCHEDULE (TOGGLE) */}
+          {/* SCHEDULE */}
+
           <div className="menuBlock">
             <div
               className="submenuItem toggleHeader"
@@ -61,78 +134,113 @@ function DashboardLayout({ children }) {
               }}
             >
               <span>📅 Schedule</span>
+
               <span>{openSchedule ? "-" : "+"}</span>
             </div>
 
-            {/* DROPDOWN PANEL */}
             {openSchedule && (
               <div className="schedulePanel">
-                {/* HEADER */}
                 <div className="publishBox">
                   <div>Publish & Notify</div>
+
                   <small>0 Shifts Unpublished</small>
                 </div>
 
                 {/* CUSTOMER */}
+                {/* CUSTOMER */}
+
                 <div className="section">
                   <label>SELECT CUSTOMER:</label>
-                  <select
-                    value={selectedCustomer}
-                    onChange={(e) => setSelectedCustomer(e.target.value)}
-                  >
-                    {Object.keys(customerData).map((name) => (
-                      <option key={name} value={name}>
-                        {name}
-                      </option>
-                    ))}
-                  </select>
+
+                  {loadingCustomers ? (
+                    <div className="customerLoading">Loading customers...</div>
+                  ) : customerError ? (
+                    <div className="customerError">{customerError}</div>
+                  ) : (
+                    <select
+                      value={selectedCustomer}
+                      onChange={(e) => setSelectedCustomer(e.target.value)}
+                    >
+                      {customers.length === 0 ? (
+                        <option value="">No Approved Customers</option>
+                      ) : (
+                        customers.map((customer) => (
+                          <option key={customer} value={customer}>
+                            {customer}
+                          </option>
+                        ))
+                      )}
+                    </select>
+                  )}
                 </div>
 
                 {/* SCHEDULE BY */}
+
                 <div className="section">
                   <label>SCHEDULE BY:</label>
+
                   <div className="btnGroup">
                     <button
-                      className="activeBtn"
-                      onClick={() => navigate("/schedule")}
+                      className={
+                        location.pathname.startsWith("/schedule")
+                          ? "activeBtn"
+                          : ""
+                      }
+                      onClick={openEmployeeSchedule}
                     >
                       Employees
                     </button>
-                    <button onClick={() => navigate("/employe-sites")}>
+
+                    <button
+                      className={
+                        location.pathname.startsWith("/employe-sites")
+                          ? "activeBtn"
+                          : ""
+                      }
+                      onClick={openSiteSchedule}
+                    >
                       Sites
                     </button>
                   </div>
                 </div>
 
-                {/* REPORT */}
-                {/* <div className="reportBox">
+                {/* REPORT SECTION
+                    (Keeping commented exactly like existing code)
+                */}
+
+                {/*
+                <div className="reportBox">
+
                   <h4>WEEKLY REPORT</h4>
 
                   <div className="reportRow">
                     <span>Total Shifts</span>
-                    <b>{customerData[selectedCustomer].shifts}</b>
+                    <b>0</b>
                   </div>
 
                   <div className="reportRow">
                     <span>Unfilled Shifts</span>
-                    <b>{customerData[selectedCustomer].unfilled}</b>
+                    <b>0</b>
                   </div>
 
                   <div className="reportRow">
                     <span>Filled Hours</span>
-                    <b>{customerData[selectedCustomer].hours}</b>
+                    <b>0</b>
                   </div>
 
                   <div className="reportRow">
                     <span>Filled Cost</span>
-                    <b>$ {customerData[selectedCustomer].cost}</b>
+                    <b>$0</b>
                   </div>
-                </div> */}
+
+                </div>
+                */}
               </div>
             )}
           </div>
 
           {/* TIMESHEETS */}
+
           <div
             className={`submenuItem ${
               location.pathname === "/timesheets" ? "active" : ""
@@ -141,6 +249,9 @@ function DashboardLayout({ children }) {
           >
             ⏱️ Timesheets
           </div>
+
+          {/* REPORTS */}
+
           <div
             className={`submenuItem ${
               location.pathname === "/reports" ? "active" : ""
@@ -149,6 +260,9 @@ function DashboardLayout({ children }) {
           >
             📊 Reports
           </div>
+
+          {/* INCIDENTS */}
+
           <div
             className={`submenuItem ${
               location.pathname === "/incidents" ? "active" : ""
@@ -157,13 +271,16 @@ function DashboardLayout({ children }) {
           >
             📌 Incidents
           </div>
+
           {/* ONBOARDING CLIENT */}
+
           <div className="menuBlock">
             <div
               className="submenuItem toggleHeader"
               onClick={() => setOpenOnboarding(!openOnboarding)}
             >
               <span>👤 On Boarding Client</span>
+
               <span>{openOnboarding ? "-" : "+"}</span>
             </div>
 
@@ -215,13 +332,16 @@ function DashboardLayout({ children }) {
               </div>
             )}
           </div>
+
           {/* AD HOC SERVICES */}
+
           <div className="menuBlock">
             <div
               className="submenuItem toggleHeader"
               onClick={() => setOpenAdhoc(!openAdhoc)}
             >
               <span>🛠️ Ad Hoc Services</span>
+
               <span>{openAdhoc ? "-" : "+"}</span>
             </div>
 
@@ -270,8 +390,14 @@ function DashboardLayout({ children }) {
         </div>
 
         {/* RIGHT CONTENT */}
+
         <EmployeeContext.Provider
-          value={{ trigger: employeeTrigger, generateEmployees }}
+          value={{
+            trigger: employeeTrigger,
+            generateEmployees,
+            selectedCustomer,
+            customers,
+          }}
         >
           <div className="rightContent">{children}</div>
         </EmployeeContext.Provider>

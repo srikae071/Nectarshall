@@ -12,11 +12,12 @@ body {
 }
 
 .operationssidebar {
-  font-size: 14px;
-  letter-spacing: 0.2px;
-  background-color: #2e2e2e;
+  width: 290px;
+  min-width: 290px;
+  max-width: 290px;
+  background: #2e2e2e;
+  overflow-y: auto;
 }
-
 .menuHeader {
   font-size: 14px;
   color: #333;
@@ -75,9 +76,9 @@ body {
 
 .rightContent {
   flex: 1;
+  overflow: auto;
   display: flex;
   flex-direction: column;
-  /* min-height: 100vh; */
 }
 .submenuItem.active {
   background: #e81010;
@@ -95,10 +96,9 @@ body {
 /* PANEL */
 
 .schedulePanel {
-  font-size: 13.5px;
-  color: #eae3e3;
   background: #120f0c;
-  padding: 10px;
+  padding: 14px;
+  border-top: 1px solid #444;
 }
 
 /* PUBLISH BOX */
@@ -154,6 +154,20 @@ body {
   border-radius: 3px;
   transition: background 0.2s ease;
 }
+.customerLoading {
+  padding: 8px;
+  color: #fff;
+  font-size: 13px;
+}
+.customerError {
+  padding: 8px;
+  color: #ff6b6b;
+  font-size: 13px;
+}
+.btnGroup button {
+  height: 38px;
+  font-weight: 600;
+}
 
 .btnGroup button:hover {
   background: #5482de;
@@ -161,11 +175,11 @@ body {
 }
 
 .btnGroup button:hover {
-  background: #5482de;
+  background: #e15125;
 }
 
 .activeBtn {
-  background: #5482de;
+  background: #e81010 !important;
   color: white;
 }
 
