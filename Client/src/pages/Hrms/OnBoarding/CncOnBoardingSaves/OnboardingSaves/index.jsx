@@ -69,7 +69,7 @@ function OnBoardingSaves() {
       comments: "",
 
       numberOfServices: 1,
-
+      scopeOfWork: "",
       services: [
         {
           serviceType: "",
@@ -77,6 +77,7 @@ function OnBoardingSaves() {
           quantity: "",
           shiftStartTime: "",
           shiftEndTime: "",
+          workingDays: [],
         },
       ],
     },
@@ -164,6 +165,7 @@ function OnBoardingSaves() {
                     quantity: "",
                     shiftStartTime: "",
                     shiftEndTime: "",
+                    workingDays: [],
                   },
                 ],
               },
@@ -186,28 +188,6 @@ function OnBoardingSaves() {
       console.log(err);
     }
   };
-  // const addContractDeliverable = () => {
-  //   const lastId =
-  //     contractDeliverables[contractDeliverables.length - 1]?.clientId ||
-  //     "CNT-000";
-
-  //   const nextNumber = parseInt(lastId.replace("CNT-", ""), 10) + 1;
-
-  //   setContractDeliverables([
-  //     ...contractDeliverables,
-  //     {
-  //       clientId: `CNT-${String(nextNumber).padStart(3, "0")}`,
-  //       siteName: "",
-  //       siteAddress: "",
-  //       siteManagerName: "",
-  //       siteEmail: "",
-  //       siteMobile: "",
-  //       contractState: "Active",
-  //       adhoc: "No",
-  //       comments: "",
-  //     },
-  //   ]);
-  // };
 
   //new code
 
@@ -240,6 +220,7 @@ function OnBoardingSaves() {
             quantity: "",
             shiftStartTime: "",
             shiftEndTime: "",
+            workingDays: [],
           },
         ],
       },
@@ -409,7 +390,23 @@ function OnBoardingSaves() {
       },
     }));
   };
+  const handleWorkingDayChange = (index, serviceIndex, day, checked) => {
+    const updated = [...contractDeliverables];
 
+    let days = updated[index].services[serviceIndex].workingDays || [];
+
+    if (checked) {
+      if (!days.includes(day)) {
+        days = [...days, day];
+      }
+    } else {
+      days = days.filter((d) => d !== day);
+    }
+
+    updated[index].services[serviceIndex].workingDays = days;
+
+    setContractDeliverables(updated);
+  };
   const handleSave = async () => {
     try {
       console.log("Sending:");
@@ -893,6 +890,14 @@ function OnBoardingSaves() {
                           </label>
                         </div>
                       </div>
+                      <div className="deliverable-field">
+                        <label>Scope Of Work</label>
+                        <input
+                          name="scopeOfWork"
+                          value={item.scopeOfWork}
+                          onChange={(e) => handleDeliverableChange(index, e)}
+                        />
+                      </div>
                       <div className="deliverable-field deliverable-full">
                         <label>Comments</label>
                         <textarea
@@ -920,97 +925,6 @@ function OnBoardingSaves() {
                         </select>
                       </div>
 
-                      {(item.services || []).map((service, serviceIndex) => (
-                        <div key={serviceIndex} className="service-container">
-                          <h4 className="service-title">
-                            Service {serviceIndex + 1}
-                          </h4>
-
-                          <div className="deliverable-grid">
-                            <div className="deliverable-field">
-                              <label>Type Of Service</label>
-
-                              <select
-                                name="serviceType"
-                                value={service.serviceType}
-                                onChange={(e) =>
-                                  handleServiceChange(index, serviceIndex, e)
-                                }
-                              >
-                                <option value="">Select</option>
-                                <option value="Security">Security</option>
-                                <option value="Patrolling">Patrolling</option>
-                                <option value="Electronics">Electronics</option>
-                              </select>
-                            </div>
-
-                            <div className="deliverable-field">
-                              <label>Position</label>
-
-                              <select
-                                name="position"
-                                value={service.position}
-                                onChange={(e) =>
-                                  handleServiceChange(index, serviceIndex, e)
-                                }
-                              >
-                                <option value="">Select</option>
-                                <option value="Sales Manager">
-                                  Sales Manager
-                                </option>
-                                <option value="Site Manager">
-                                  Site Manager
-                                </option>
-                                <option value="In Charge">In Charge</option>
-                                <option value="GL1">GL1</option>
-                                <option value="GL2">GL2</option>
-                                <option value="GL3">GL3</option>
-                                <option value="GL4">GL4</option>
-                              </select>
-                            </div>
-
-                            <div className="deliverable-field">
-                              <label>Quantity</label>
-
-                              <input
-                                type="number"
-                                name="quantity"
-                                value={service.quantity}
-                                onChange={(e) =>
-                                  handleServiceChange(index, serviceIndex, e)
-                                }
-                              />
-                            </div>
-
-                            <div className="deliverable-field">
-                              <label>Shift Start Time</label>
-
-                              <input
-                                type="time"
-                                name="shiftStartTime"
-                                value={service.shiftStartTime}
-                                onChange={(e) =>
-                                  handleServiceChange(index, serviceIndex, e)
-                                }
-                              />
-                            </div>
-
-                            <div className="deliverable-field">
-                              <label>Shift End Time</label>
-
-                              <input
-                                type="time"
-                                name="shiftEndTime"
-                                value={service.shiftEndTime}
-                                onChange={(e) =>
-                                  handleServiceChange(index, serviceIndex, e)
-                                }
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-
                       {/* <div className="deliverable-field deliverable-full">
                         <label>Attachment</label>
                         <input
@@ -1028,6 +942,150 @@ function OnBoardingSaves() {
                         </div>
                       </div> */}
                     </div>
+                    {(item.services || []).map((service, serviceIndex) => (
+                      <div key={serviceIndex} className="service-container">
+                        <h4 className="service-title">
+                          Service {serviceIndex + 1}
+                        </h4>
+
+                        <div className="deliverable-grid">
+                          <div className="deliverable-field">
+                            <label>Type Of Service</label>
+
+                            <select
+                              name="serviceType"
+                              value={service.serviceType}
+                              onChange={(e) =>
+                                handleServiceChange(index, serviceIndex, e)
+                              }
+                            >
+                              <option value="">Select</option>
+                              <option value="Security">Security</option>
+                              <option value="Patrolling">Patrolling</option>
+                              <option value="Electronics">Electronics</option>
+                            </select>
+                          </div>
+
+                          <div className="deliverable-field">
+                            <label>Position</label>
+
+                            <select
+                              name="position"
+                              value={service.position}
+                              onChange={(e) =>
+                                handleServiceChange(index, serviceIndex, e)
+                              }
+                            >
+                              <option value="">Select</option>
+
+                              <option value="Site Manager">Site Manager</option>
+                              <option value="In Charge">Site In Charge</option>
+                              <option value="GL1">GL1</option>
+                              <option value="GL2">GL2</option>
+                              <option value="GL3">GL3</option>
+                              <option value="GL4">GL4</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div className="deliverable-field">
+                          <label>Quantity</label>
+
+                          <input
+                            type="number"
+                            name="quantity"
+                            value={service.quantity}
+                            onChange={(e) =>
+                              handleServiceChange(index, serviceIndex, e)
+                            }
+                          />
+                        </div>
+                        <div className="deliverable-grid">
+                          <div className="deliverable-field">
+                            <label>Shift Start Time</label>
+
+                            <input
+                              type="time"
+                              name="shiftStartTime"
+                              value={service.shiftStartTime}
+                              onChange={(e) =>
+                                handleServiceChange(index, serviceIndex, e)
+                              }
+                            />
+                          </div>
+
+                          <div className="deliverable-field">
+                            <label>Shift End Time</label>
+
+                            <input
+                              type="time"
+                              name="shiftEndTime"
+                              value={service.shiftEndTime}
+                              onChange={(e) =>
+                                handleServiceChange(index, serviceIndex, e)
+                              }
+                            />
+                          </div>
+                          <div className="deliverable-field">
+                            <label>Contract Start Date</label>
+
+                            <input
+                              type="date"
+                              name="contractStartDate"
+                              value={service.contractStartDate || ""}
+                              onChange={(e) =>
+                                handleServiceChange(index, serviceIndex, e)
+                              }
+                            />
+                          </div>
+                          <div className="deliverable-field">
+                            <label>Contract End Date</label>
+
+                            <input
+                              type="date"
+                              name="contractEndDate"
+                              value={service.contractEndDate || ""}
+                              onChange={(e) =>
+                                handleServiceChange(index, serviceIndex, e)
+                              }
+                            />
+                          </div>
+                        </div>
+                        {/* </div> */}
+                        <div className="deliverable-field deliverable-full">
+                          <label className="onbdsaveslabel">Working Days</label>
+
+                          <div className="working-days">
+                            {[
+                              { label: "MO", value: "Monday" },
+                              { label: "TU", value: "Tuesday" },
+                              { label: "WE", value: "Wednesday" },
+                              { label: "TH", value: "Thursday" },
+                              { label: "FR", value: "Friday" },
+                              { label: "SA", value: "Saturday" },
+                              { label: "SU", value: "Sunday" },
+                            ].map((day) => (
+                              <label key={day.value}>
+                                <input
+                                  type="checkbox"
+                                  checked={(service.workingDays || []).includes(
+                                    day.value,
+                                  )}
+                                  onChange={(e) =>
+                                    handleWorkingDayChange(
+                                      index,
+                                      serviceIndex,
+                                      day.value,
+                                      e.target.checked,
+                                    )
+                                  }
+                                />
+                                {day.label}
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                     <div className="deliverable-action">
                       <button
                         type="button"

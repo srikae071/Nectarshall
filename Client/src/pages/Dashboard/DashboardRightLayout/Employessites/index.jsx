@@ -396,7 +396,7 @@ function Employeesites() {
               <div className="sitePopupOverlay">
                 <div className="sitePopup">
                   <div className="popupHeader">
-                    <span>{sitePopup.siteName}</span>
+                    <span>{sitePopup.siteAddress}</span>
 
                     <button
                       className="closeBtn"

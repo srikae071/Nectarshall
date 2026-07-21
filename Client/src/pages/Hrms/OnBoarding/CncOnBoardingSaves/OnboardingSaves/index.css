@@ -22,7 +22,9 @@
   color: #444;
   font-size: 14px;
 }
-
+.onbdsaveslabel {
+  margin-top: 10px;
+}
 .deliverable-field input {
   height: 38px;
   padding: 8px 10px;
@@ -55,7 +57,7 @@
 
 .deliverable-textarea {
   width: 100%;
-  min-height: 120px;
+  min-height: 60px;
   resize: vertical;
   padding: 10px;
   border: 1px solid #d6d6d6;
@@ -72,7 +74,15 @@
 .deliverable-file {
   padding: 8px 0;
 }
+.serviceGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
 
+.full-width {
+  grid-column: 1/-1;
+}
 .attachment-name {
   margin-top: 8px;
   display: block;
@@ -137,12 +147,7 @@
 .service-container .deliverable-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-}
-
-.service-container .deliverable-field {
-  display: flex;
-  flex-direction: column;
+  gap: 18px;
 }
 
 .service-container .deliverable-field label {
@@ -175,4 +180,23 @@
   background: #fafafa;
   padding: 18px;
   margin-bottom: 25px;
+}
+.working-days {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.working-days label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.working-days input {
+  width: 16px;
+  height: 16px;
 }

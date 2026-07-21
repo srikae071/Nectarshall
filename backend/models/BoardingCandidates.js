@@ -106,6 +106,10 @@ const BoardingCandidatesSchema = new mongoose.Schema(
           type: String,
           default: "",
         },
+        scopeOfWork: {
+          type: String,
+          default: "",
+        },
 
         numberOfServices: {
           type: Number,
@@ -142,6 +146,19 @@ const BoardingCandidatesSchema = new mongoose.Schema(
             shiftEndTime: {
               type: String,
               default: "",
+            },
+            contractStartDate: {
+              type: Date,
+              default: null,
+            },
+
+            contractEndDate: {
+              type: Date,
+              default: null,
+            },
+            workingDays: {
+              type: [String],
+              default: [],
             },
           },
         ],

@@ -77,21 +77,21 @@ const menuData = [
       },
     ],
   },
-  {
-    title: "Business Engagement",
-    items: [
-      // { label: "All", path: "/hrms" },
-      { label: "All", path: "/Business-EngagementTab" },
-      { label: "Create New", path: "" },
-      { label: "Open", path: "/Business-Engagement-open" },
-      {
-        label: "Work In Progress",
-        path: "/Business-Engagement-work-in-progress",
-      },
-      { label: "Resolved", path: "/Business-Engagement-resolved" },
-      { label: "Closed", path: "/Business-Engagement-closed" },
-    ],
-  },
+  // {
+  //   title: "Business Engagement",
+  //   items: [
+  //     // { label: "All", path: "/hrms" },
+  //     { label: "All", path: "/Business-EngagementTab" },
+  //     { label: "Create New", path: "" },
+  //     { label: "Open", path: "/Business-Engagement-open" },
+  //     {
+  //       label: "Work In Progress",
+  //       path: "/Business-Engagement-work-in-progress",
+  //     },
+  //     { label: "Resolved", path: "/Business-Engagement-resolved" },
+  //     { label: "Closed", path: "/Business-Engagement-closed" },
+  //   ],
+  // },
 ];
 
 const MenuItem = ({ item, level = 0, expandedMenus, setExpandedMenus }) => {

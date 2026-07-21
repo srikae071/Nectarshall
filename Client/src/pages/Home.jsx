@@ -139,10 +139,9 @@ function Home() {
           <a
             role="button"
             tabIndex={0}
-            onClick={() => navigate("/Client/onboarding-compliance")}
+            onClick={() => navigate("/it/open")}
             onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ")
-                navigate("/Client/onboarding-compliance");
+              if (e.key === "Enter" || e.key === " ") navigate("/it/open");
             }}
           >
             IT
