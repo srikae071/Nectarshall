@@ -170,6 +170,39 @@ const BoardingCandidatesSchema = new mongoose.Schema(
             },
           },
         ],
+        adhocServices: [
+          {
+            adhocId: {
+              type: String,
+              default: "",
+            },
+
+            serviceType: {
+              type: String,
+              default: "",
+            },
+
+            position: {
+              type: String,
+              default: "",
+            },
+
+            shiftStartTime: {
+              type: String,
+              default: "",
+            },
+
+            shiftEndTime: {
+              type: String,
+              default: "",
+            },
+
+            serviceDate: {
+              type: Date,
+              default: null,
+            },
+          },
+        ],
       },
     ],
     financialDetails: [

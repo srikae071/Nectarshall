@@ -858,45 +858,6 @@ function OnBoardingSaves() {
                         </div>
                       </div>
 
-                      <div className="deliverable-field">
-                        <label>Ad Hoc</label>
-
-                        <div className="radio-group">
-                          <label>
-                            <input
-                              type="radio"
-                              name={`adhoc-${index}`}
-                              checked={item.adhoc === "Yes"}
-                              onChange={() =>
-                                handleDeliverableChange(index, {
-                                  target: {
-                                    name: "adhoc",
-                                    value: "Yes",
-                                  },
-                                })
-                              }
-                            />
-                            Yes
-                          </label>
-
-                          <label>
-                            <input
-                              type="radio"
-                              name={`adhoc-${index}`}
-                              checked={item.adhoc === "No"}
-                              onChange={() =>
-                                handleDeliverableChange(index, {
-                                  target: {
-                                    name: "adhoc",
-                                    value: "No",
-                                  },
-                                })
-                              }
-                            />
-                            No
-                          </label>
-                        </div>
-                      </div>
                       <div className="deliverable-field deliverable-full">
                         <label>Scope Of Work</label>
                         <textarea

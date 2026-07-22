@@ -134,7 +134,7 @@ const deleteBoardingCandidate = async (req, res) => {
 const updateContractService = async (req, res) => {
   try {
     const { id, contractId } = req.params;
-    const { services } = req.body;
+    const { services, adhocServices = [] } = req.body;
 
     const boarding = await BoardingCandidates.findById(id);
 
@@ -151,6 +151,28 @@ const updateContractService = async (req, res) => {
     }
 
     contract.services = services;
+    const existingAdhocServices = contract.adhocServices || [];
+
+    let lastNumber = existingAdhocServices.reduce((max, item) => {
+      if (!item.adhocId) return max;
+
+      const num = parseInt(item.adhocId.replace("AD", ""), 10);
+
+      return isNaN(num) ? max : Math.max(max, num);
+    }, 0);
+
+    contract.adhocServices = adhocServices.map((item) => {
+      if (item.adhocId && item.adhocId.trim() !== "") {
+        return item;
+      }
+
+      lastNumber++;
+
+      return {
+        ...item,
+        adhocId: `AD${String(lastNumber).padStart(3, "0")}`,
+      };
+    });
 
     await boarding.save();
 

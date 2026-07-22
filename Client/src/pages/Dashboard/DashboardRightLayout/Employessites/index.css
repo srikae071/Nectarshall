@@ -180,8 +180,14 @@
   padding: 8px;
   background: #2f2f2f;
   transition: background 0.2s ease;
+  position: relative;
 }
-
+.adhocButtonContainer {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 20;
+}
 .calendarCell:hover {
   background: #3a3a3a;
 }
@@ -213,21 +219,25 @@
 /* ================= SERVICE CARD ================= */
 
 .serviceCard {
+  background: #fff7cc;
+  border: 1px solid #d9c65a;
+  border-radius: 4px;
+
+  padding: 4px 6px;
+  margin: 2px 0;
+
+  min-height: 58px;
   width: 100%;
-  min-height: 130px;
-  background: #b4ab62;
-  border-left: 5px solid #f4b400;
-  border-radius: 10px;
-  padding: 10px;
-  cursor: pointer;
+
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  gap: 5px;
-  transition: all 0.25s ease;
-  overflow: hidden;
-}
+  justify-content: center;
 
+  cursor: pointer;
+  font-size: 11px;
+  line-height: 1.15;
+  box-sizing: border-box;
+}
 .serviceCard:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
