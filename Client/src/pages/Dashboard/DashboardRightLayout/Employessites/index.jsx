@@ -165,7 +165,7 @@ function Employeesites() {
   useEffect(() => {
     fetchApprovedSites();
   }, [activeRequester]);
-  const openServicePopup = (row, date) => {
+  const openServicePopup = (row, date, employeeIndex = 0) => {
     if (!row) return;
 
     // const selectedService = row.services?.[row.serviceIndex] || {
@@ -213,6 +213,9 @@ function Employeesites() {
       contractId: row.contractId,
       serviceIndex: row.serviceIndex,
       selectedDate: date,
+
+      employeeIndex,
+
       services: [JSON.parse(JSON.stringify(selectedService))],
     });
   };
@@ -320,10 +323,21 @@ function Employeesites() {
           serviceDate: adhocPopup.serviceDate,
         },
       ];
+      const updatedServices = [...(selectedSite.services || [])];
 
-      console.log(updatedAdhocServices);
+      await axios.put(
+        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/${adhocPopup.boardingId}/contracts/${adhocPopup.contractId}/services`,
+        {
+          services: updatedServices,
+          adhocServices: updatedAdhocServices,
+        },
+      );
+
+      alert("Adhoc Service Added Successfully");
 
       setAdhocPopup(null);
+
+      fetchApprovedSites();
     } catch (err) {
       console.error(err);
     }
@@ -466,7 +480,11 @@ function Employeesites() {
                                     key={qtyIndex}
                                     className="serviceCard"
                                     onClick={() =>
-                                      openServicePopup(service, day.full)
+                                      openServicePopup(
+                                        service,
+                                        day.full,
+                                        qtyIndex,
+                                      )
                                     }
                                   >
                                     <div className="serviceType">
@@ -509,7 +527,7 @@ function Employeesites() {
             <div className="sitePopupOverlay">
               <div className="sitePopup">
                 <div className="popupHeader">
-                  <span>Edit Service</span>
+                  <span>Regular Services</span>
 
                   <button
                     className="closeBtn"
@@ -604,50 +622,49 @@ function Employeesites() {
                     <div className="form-group">
                       <label>Assigned Employees</label>
 
-                      {(service.assignedEmployees || []).map(
-                        (emp, empIndex) => (
-                          <div
-                            key={empIndex}
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "15px",
-                              marginBottom: "15px",
-                            }}
-                          >
-                            <span
-                              style={{
-                                width: "90px",
-                                fontWeight: "600",
-                                marginRight: "10px",
-                              }}
-                            >
-                              Employee {empIndex + 1}
-                            </span>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "15px",
+                          marginBottom: "15px",
+                        }}
+                      >
+                        <span
+                          style={{
+                            width: "90px",
+                            fontWeight: "600",
+                            marginRight: "10px",
+                          }}
+                        >
+                          Employee {(sitePopup.employeeIndex || 0) + 1}
+                        </span>
 
-                            <input
-                              type="text"
-                              style={{
-                                flex: 1,
-                                padding: "8px 10px",
-                              }}
-                              value={emp.employee || ""}
-                              onChange={(e) => {
-                                const updatedServices = [...sitePopup.services];
+                        <input
+                          type="text"
+                          style={{
+                            flex: 1,
+                            padding: "8px 10px",
+                          }}
+                          value={
+                            service.assignedEmployees?.[
+                              sitePopup.employeeIndex || 0
+                            ]?.employee || ""
+                          }
+                          onChange={(e) => {
+                            const updatedServices = [...sitePopup.services];
 
-                                updatedServices[index].assignedEmployees[
-                                  empIndex
-                                ].employee = e.target.value;
+                            updatedServices[index].assignedEmployees[
+                              sitePopup.employeeIndex || 0
+                            ].employee = e.target.value;
 
-                                setSitePopup({
-                                  ...sitePopup,
-                                  services: updatedServices,
-                                });
-                              }}
-                            />
-                          </div>
-                        ),
-                      )}
+                            setSitePopup({
+                              ...sitePopup,
+                              services: updatedServices,
+                            });
+                          }}
+                        />
+                      </div>
                     </div>
                     <div className="popupButtons">
                       <button

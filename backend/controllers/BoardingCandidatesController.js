@@ -133,6 +133,8 @@ const deleteBoardingCandidate = async (req, res) => {
 // newly added
 const updateContractService = async (req, res) => {
   try {
+    console.log("===== updateContractService HIT =====");
+    console.log(req.body);
     const { id, contractId } = req.params;
     const { services, adhocServices = [] } = req.body;
 

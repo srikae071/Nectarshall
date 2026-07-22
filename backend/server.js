@@ -9,14 +9,13 @@ const caseRoutes = require("./routes/caseRoutes");
 const leaveRoutes = require("./routes/leaveRoutes");
 const jobRequestRoutes = require("./routes/jobRequestRoutes");
 const complianceRoutes = require("./routes/complianceRoutes");
-const boardingRoutes = require("./routes/BoardingRoutes");
+
 const boardingCandidatesRoutes = require("./routes/BoardingCandidatesRoutes");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use("/api/boarding", boardingRoutes);
 
 app.use("/api/cases", caseRoutes);
 app.use("/api/itrequests", itRequestRoutes);
