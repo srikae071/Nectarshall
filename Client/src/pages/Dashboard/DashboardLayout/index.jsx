@@ -72,7 +72,12 @@ function DashboardLayout({ children }) {
 
       setCustomers(uniqueCustomers);
 
-      if (uniqueCustomers.length > 0) {
+      // if (uniqueCustomers.length > 0) {
+      //   setSelectedCustomer(uniqueCustomers[0]);
+      // }
+      if (location.state?.requester) {
+        setSelectedCustomer(location.state.requester);
+      } else if (uniqueCustomers.length > 0) {
         setSelectedCustomer(uniqueCustomers[0]);
       }
     } catch (error) {
@@ -159,7 +164,26 @@ function DashboardLayout({ children }) {
                   ) : (
                     <select
                       value={selectedCustomer}
-                      onChange={(e) => setSelectedCustomer(e.target.value)}
+                      // onChange={(e) => setSelectedCustomer(e.target.value)}
+                      onChange={(e) => {
+                        const customer = e.target.value;
+
+                        setSelectedCustomer(customer);
+
+                        if (location.pathname === "/employe-sites") {
+                          navigate("/employe-sites", {
+                            replace: true,
+                            state: { requester: customer },
+                          });
+                        }
+
+                        if (location.pathname.startsWith("/schedule")) {
+                          navigate("/schedule", {
+                            replace: true,
+                            state: { requester: customer },
+                          });
+                        }
+                      }}
                     >
                       {customers.length === 0 ? (
                         <option value="">No Approved Customers</option>
@@ -205,36 +229,36 @@ function DashboardLayout({ children }) {
                 </div>
 
                 {/* REPORT SECTION
-                    (Keeping commented exactly like existing code)
-                */}
+                        (Keeping commented exactly like existing code)
+                    */}
 
                 {/*
-                <div className="reportBox">
+                    <div className="reportBox">
 
-                  <h4>WEEKLY REPORT</h4>
+                      <h4>WEEKLY REPORT</h4>
 
-                  <div className="reportRow">
-                    <span>Total Shifts</span>
-                    <b>0</b>
-                  </div>
+                      <div className="reportRow">
+                        <span>Total Shifts</span>
+                        <b>0</b>
+                      </div>
 
-                  <div className="reportRow">
-                    <span>Unfilled Shifts</span>
-                    <b>0</b>
-                  </div>
+                      <div className="reportRow">
+                        <span>Unfilled Shifts</span>
+                        <b>0</b>
+                      </div>
 
-                  <div className="reportRow">
-                    <span>Filled Hours</span>
-                    <b>0</b>
-                  </div>
+                      <div className="reportRow">
+                        <span>Filled Hours</span>
+                        <b>0</b>
+                      </div>
 
-                  <div className="reportRow">
-                    <span>Filled Cost</span>
-                    <b>$0</b>
-                  </div>
+                      <div className="reportRow">
+                        <span>Filled Cost</span>
+                        <b>$0</b>
+                      </div>
 
-                </div>
-                */}
+                    </div>
+                    */}
               </div>
             )}
           </div>
@@ -335,7 +359,7 @@ function DashboardLayout({ children }) {
 
           {/* AD HOC SERVICES */}
 
-          <div className="menuBlock">
+          {/* <div className="menuBlock">
             <div
               className="submenuItem toggleHeader"
               onClick={() => setOpenAdhoc(!openAdhoc)}
@@ -386,7 +410,7 @@ function DashboardLayout({ children }) {
                 </div>
               </div>
             )}
-          </div>
+          </div> */}
         </div>
 
         {/* RIGHT CONTENT */}

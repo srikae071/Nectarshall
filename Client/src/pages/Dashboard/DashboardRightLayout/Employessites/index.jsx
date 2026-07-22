@@ -1,12 +1,15 @@
 import { useState, useEffect, useContext, useMemo } from "react";
 import axios from "axios";
 import { EmployeeContext } from "../EmployeeContext";
+import { useLocation } from "react-router-dom";
 import "./index.css";
 import DashboardLayout from "../../DashboardLayout";
 
 function Employeesites() {
   const { selectedCustomer } = useContext(EmployeeContext);
+  const location = useLocation();
 
+  const activeRequester = location.state?.requester || selectedCustomer;
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const [popup, setPopup] = useState(null);
@@ -99,9 +102,12 @@ function Employeesites() {
       response.data
         .filter(
           (item) =>
+            // item.operationsClientApproved === true &&
+            // item.status === "On Boarded" &&
+            // (!selectedCustomer || item.requester === selectedCustomer),
             item.operationsClientApproved === true &&
             item.status === "On Boarded" &&
-            (!selectedCustomer || item.requester === selectedCustomer),
+            item.requester === activeRequester,
         )
         .forEach((boarding) => {
           (boarding.contractDeliverables || []).forEach((contract) => {
@@ -139,24 +145,7 @@ function Employeesites() {
           });
         });
 
-      const minimumRows = 10;
-
-      const rows =
-        approvedSites.length < minimumRows
-          ? [
-              ...approvedSites,
-              ...Array.from(
-                {
-                  length: minimumRows - approvedSites.length,
-                },
-                () => ({
-                  siteName: "",
-                  siteAddress: "",
-                  serviceType: "",
-                }),
-              ),
-            ]
-          : approvedSites;
+      const rows = approvedSites;
 
       setEmployees(rows);
 
@@ -174,21 +163,49 @@ function Employeesites() {
 
   useEffect(() => {
     fetchApprovedSites();
-  }, [selectedCustomer]);
+  }, [activeRequester]);
   const openServicePopup = (row, date) => {
     if (!row) return;
 
-    const selectedService = row.services?.[row.serviceIndex] || {
-      serviceType: row.serviceType,
-      position: row.position,
-      quantity: row.quantity,
-      shiftStartTime: row.shiftStartTime,
-      shiftEndTime: row.shiftEndTime,
-      employee: row.employee,
-      workingDays: row.workingDays,
-      contractStartDate: row.contractStartDate,
-      contractEndDate: row.contractEndDate,
-    };
+    // const selectedService = row.services?.[row.serviceIndex] || {
+    //   serviceType: row.serviceType,
+    //   position: row.position,
+    //   quantity: row.quantity,
+    //   shiftStartTime: row.shiftStartTime,
+    //   shiftEndTime: row.shiftEndTime,
+    //   employee: row.employee,
+    //   workingDays: row.workingDays,
+    //   contractStartDate: row.contractStartDate,
+    //   contractEndDate: row.contractEndDate,
+    // };
+    const selectedService = JSON.parse(
+      JSON.stringify(
+        row.services?.[row.serviceIndex] || {
+          serviceType: row.serviceType,
+          position: row.position,
+          quantity: row.quantity,
+          shiftStartTime: row.shiftStartTime,
+          shiftEndTime: row.shiftEndTime,
+          employee: row.employee,
+          assignedEmployees: [],
+          workingDays: row.workingDays,
+          contractStartDate: row.contractStartDate,
+          contractEndDate: row.contractEndDate,
+        },
+      ),
+    );
+
+    if (!selectedService.assignedEmployees) {
+      selectedService.assignedEmployees = [];
+    }
+
+    while (
+      selectedService.assignedEmployees.length < selectedService.quantity
+    ) {
+      selectedService.assignedEmployees.push({
+        employee: "",
+      });
+    }
 
     setSitePopup({
       boardingId: row.boardingId,
@@ -343,11 +360,16 @@ function Employeesites() {
             </div>
             <div className="calendarBody">
               {serviceRows.map((service, rowIndex) => {
-                const showSiteName =
-                  rowIndex === 0 &&
-                  selectedSite &&
-                  selectedSite.siteName === service.siteName;
+                // const showSiteName =
+                //   rowIndex === 0 &&
+                //   selectedSite &&
+                //   selectedSite.siteName === service.siteName;
+                const previousRow = serviceRows[rowIndex - 1];
 
+                const showSiteName =
+                  rowIndex === 0 ||
+                  !previousRow ||
+                  previousRow.contractId !== service.contractId;
                 return (
                   <div
                     key={`${service.boardingId}-${service.contractId}-${service.serviceIndex}-${rowIndex}`}
@@ -355,11 +377,12 @@ function Employeesites() {
                   >
                     {showSiteName && (
                       <div className="siteNameRow">
-                        <div className="siteTitle">{selectedSite.siteName}</div>
-
-                        <div className="siteAddress">
-                          {selectedSite.siteAddress}
+                        <div className="requesterName">
+                          Requester : {service.requester}
                         </div>
+                        {/* <div className="siteTitle">{selectedSite.siteName}</div> */}
+
+                        <div className="siteAddress">{service.siteAddress}</div>
                       </div>
                     )}
 

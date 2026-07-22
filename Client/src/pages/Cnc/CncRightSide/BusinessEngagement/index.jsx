@@ -23,7 +23,11 @@ function BusinessEngagement() {
     companyPhone: "",
     managingAgentName: "",
     managingAgentEmail: "",
-    attachment: "",
+    // attachment: "",
+    attachment: {
+      fileName: "",
+      filePath: "",
+    },
     shortDescription: "",
     description: "",
     CompanyAddress: "",
@@ -83,14 +87,19 @@ function BusinessEngagement() {
 
     setFormData((prev) => ({
       ...prev,
-      attachment: file.name,
+      // attachment: file.name,
+      attachment: {
+        fileName: file.name,
+        filePath: "",
+      },
     }));
   };
 
   const handleSave = async () => {
-    console.log("FORM DATA BEFORE SAVE:", formData);
+    // console.log("FORM DATA BEFORE SAVE:", formData);
 
     // Remove spaces before checking
+    console.log("Business Engagement Attachment:", formData.attachment);
     const abn = formData.abn.trim();
     const acn = formData.acn.trim();
 
@@ -138,7 +147,8 @@ function BusinessEngagement() {
         onSave={handleSave}
         onCancel={() => {}}
         onAttachment={handleAttachment}
-        attachmentName={formData.attachment}
+        // attachmentName={formData.attachment}
+        attachmentName={formData.attachment?.fileName}
       >
         <div className="table2-field">
           <label className="table2-label">Requester</label>

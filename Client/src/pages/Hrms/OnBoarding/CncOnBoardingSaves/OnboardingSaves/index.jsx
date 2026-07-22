@@ -116,6 +116,10 @@ function OnBoardingSaves() {
         description: data.description || "",
         category: data.category || "",
         status: data.status || "Open",
+        attachment: data.attachment || {
+          fileName: "",
+          filePath: "",
+        },
       });
       setContractDeliverables(
         data.contractDeliverables && data.contractDeliverables.length > 0
@@ -893,9 +897,10 @@ function OnBoardingSaves() {
                           </label>
                         </div>
                       </div>
-                      <div className="deliverable-field">
+                      <div className="deliverable-field deliverable-full">
                         <label>Scope Of Work</label>
-                        <input
+                        <textarea
+                          className="deliverable-textarea"
                           name="scopeOfWork"
                           value={item.scopeOfWork}
                           onChange={(e) => handleDeliverableChange(index, e)}
