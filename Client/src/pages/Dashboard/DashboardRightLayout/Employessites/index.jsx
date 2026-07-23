@@ -3,7 +3,6 @@ import axios from "axios";
 import { EmployeeContext } from "../EmployeeContext";
 import { useLocation } from "react-router-dom";
 import "./index.css";
-import DashboardLayout from "../../DashboardLayout";
 
 function Employeesites() {
   const { selectedCustomer } = useContext(EmployeeContext);
@@ -344,385 +343,209 @@ function Employeesites() {
   };
 
   return (
-    <DashboardLayout>
-      <div className="schedulePage">
-        <div className="scheduleContainer">
-          {/* ================= TOP BAR ================= */}
+    <div className="schedulePage">
+      <div className="scheduleContainer">
+        {/* ================= TOP BAR ================= */}
 
-          <div className="scheduleTopBar">
-            <div className="weekNavigation">
-              <button
-                className="weekButton"
-                onClick={() =>
-                  setCurrentDate((prev) => {
-                    const d = new Date(prev);
+        <div className="scheduleTopBar">
+          <div className="weekNavigation">
+            <button
+              className="weekButton"
+              onClick={() =>
+                setCurrentDate((prev) => {
+                  const d = new Date(prev);
 
-                    d.setDate(prev.getDate() - 7);
+                  d.setDate(prev.getDate() - 7);
 
-                    return d;
-                  })
-                }
-              >
-                &#10094;
-              </button>
+                  return d;
+                })
+              }
+            >
+              &#10094;
+            </button>
 
-              <div className="weekTitle">
-                {weekDates[0].label} - {weekDates[6].label}
-              </div>
-
-              <button
-                className="weekButton"
-                onClick={() =>
-                  setCurrentDate((prev) => {
-                    const d = new Date(prev);
-
-                    d.setDate(prev.getDate() + 7);
-
-                    return d;
-                  })
-                }
-              >
-                &#10095;
-              </button>
+            <div className="weekTitle">
+              {weekDates[0].label} - {weekDates[6].label}
             </div>
 
-            <div className="topRightButtons">
-              <select className="actionSelect">
-                <option>Actions</option>
-              </select>
+            <button
+              className="weekButton"
+              onClick={() =>
+                setCurrentDate((prev) => {
+                  const d = new Date(prev);
 
-              <button className="collapseButton">Collapse</button>
+                  d.setDate(prev.getDate() + 7);
 
-              <button className="saveChangesButton">Save Changes</button>
-
-              <button className="cancelButton">Cancel</button>
-            </div>
+                  return d;
+                })
+              }
+            >
+              &#10095;
+            </button>
           </div>
 
-          {/* ================= CALENDAR ================= */}
+          <div className="topRightButtons">
+            <select className="actionSelect">
+              <option>Actions</option>
+            </select>
 
-          <div className="calendarWrapper">
-            <div className="calendarHeader">
-              {weekDates.map((day, index) => (
-                <div key={index} className="calendarHeaderCell">
-                  <div className="dayName">
-                    {day.full.toLocaleDateString("en-US", {
-                      weekday: "short",
-                    })}
-                  </div>
+            <button className="collapseButton">Collapse</button>
 
-                  <div className="dayDate">
-                    {day.full.toLocaleDateString("en-US", {
-                      day: "2-digit",
-                      month: "short",
-                    })}
-                  </div>
+            <button className="saveChangesButton">Save Changes</button>
+
+            <button className="cancelButton">Cancel</button>
+          </div>
+        </div>
+
+        {/* ================= CALENDAR ================= */}
+
+        <div className="calendarWrapper">
+          <div className="calendarHeader">
+            {weekDates.map((day, index) => (
+              <div key={index} className="calendarHeaderCell">
+                <div className="dayName">
+                  {day.full.toLocaleDateString("en-US", {
+                    weekday: "short",
+                  })}
                 </div>
-              ))}
-            </div>
-            <div className="calendarBody">
-              {serviceRows.map((service, rowIndex) => {
-                // const showSiteName =
-                //   rowIndex === 0 &&
-                //   selectedSite &&
-                //   selectedSite.siteName === service.siteName;
-                const previousRow = serviceRows[rowIndex - 1];
 
-                const showSiteName =
-                  rowIndex === 0 ||
-                  !previousRow ||
-                  previousRow.contractId !== service.contractId;
-                return (
-                  <div
-                    key={`${service.boardingId}-${service.contractId}-${service.serviceIndex}-${rowIndex}`}
-                    className="serviceRowWrapper"
-                  >
-                    {showSiteName && (
-                      <div className="siteNameRow">
-                        <div className="siteAddress">{service.siteAddress}</div>
-                      </div>
-                    )}
+                <div className="dayDate">
+                  {day.full.toLocaleDateString("en-US", {
+                    day: "2-digit",
+                    month: "short",
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="calendarBody">
+            {serviceRows.map((service, rowIndex) => {
+              // const showSiteName =
+              //   rowIndex === 0 &&
+              //   selectedSite &&
+              //   selectedSite.siteName === service.siteName;
+              const previousRow = serviceRows[rowIndex - 1];
 
-                    <div className="calendarRow">
-                      {weekDates.map((day, colIndex) => {
-                        const card = getServiceCard(service, day.full);
+              const showSiteName =
+                rowIndex === 0 ||
+                !previousRow ||
+                previousRow.contractId !== service.contractId;
+              return (
+                <div
+                  key={`${service.boardingId}-${service.contractId}-${service.serviceIndex}-${rowIndex}`}
+                  className="serviceRowWrapper"
+                >
+                  {showSiteName && (
+                    <div className="siteNameRow">
+                      <div className="siteAddress">{service.siteAddress}</div>
+                    </div>
+                  )}
 
-                        return (
-                          <div key={colIndex} className="calendarCell">
-                            {card && (
-                              <div className="adhocButtonContainer">
-                                <button
-                                  className="adhocButton"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    openAdhocPopup(service, day.full);
-                                  }}
-                                >
-                                  ➕
-                                </button>
-                              </div>
-                            )}
-                            {!card ? (
-                              <div
-                                className="emptyCell"
-                                onClick={() =>
-                                  openServicePopup(service, day.full)
-                                }
+                  <div className="calendarRow">
+                    {weekDates.map((day, colIndex) => {
+                      const card = getServiceCard(service, day.full);
+
+                      return (
+                        <div key={colIndex} className="calendarCell">
+                          {card && (
+                            <div className="adhocButtonContainer">
+                              <button
+                                className="adhocButton"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  openAdhocPopup(service, day.full);
+                                }}
                               >
-                                +
-                              </div>
-                            ) : (
-                              <>
-                                {Array.from({
-                                  length: card.quantity || 1,
-                                }).map((_, qtyIndex) => (
-                                  <div
-                                    key={qtyIndex}
-                                    className="serviceCard"
-                                    onClick={() =>
-                                      openServicePopup(
-                                        service,
-                                        day.full,
-                                        qtyIndex,
-                                      )
-                                    }
-                                  >
-                                    <div className="serviceType">
-                                      {card.serviceType}
-                                    </div>
-
-                                    <div className="servicePosition">
-                                      {card.position}
-                                    </div>
-
-                                    <div className="serviceQty">
-                                      Qty : {qtyIndex + 1} / {card.quantity}
-                                    </div>
-
-                                    <div className="serviceShift">
-                                      {card.shiftStartTime}
-                                      {" - "}
-                                      {card.shiftEndTime}
-                                    </div>
-
-                                    <div className="serviceEmployee">
-                                      {service.assignedEmployees?.[qtyIndex]
-                                        ?.employee || "Assign Employee"}
-                                    </div>
+                                ➕
+                              </button>
+                            </div>
+                          )}
+                          {!card ? (
+                            <div
+                              className="emptyCell"
+                              onClick={() =>
+                                openServicePopup(service, day.full)
+                              }
+                            >
+                              +
+                            </div>
+                          ) : (
+                            <>
+                              {Array.from({
+                                length: card.quantity || 1,
+                              }).map((_, qtyIndex) => (
+                                <div
+                                  key={qtyIndex}
+                                  className="serviceCard"
+                                  onClick={() =>
+                                    openServicePopup(
+                                      service,
+                                      day.full,
+                                      qtyIndex,
+                                    )
+                                  }
+                                >
+                                  <div className="serviceType">
+                                    {card.serviceType}
                                   </div>
-                                ))}
-                              </>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
+
+                                  <div className="servicePosition">
+                                    {card.position}
+                                  </div>
+
+                                  <div className="serviceQty">
+                                    Qty : {qtyIndex + 1} / {card.quantity}
+                                  </div>
+
+                                  <div className="serviceShift">
+                                    {card.shiftStartTime}
+                                    {" - "}
+                                    {card.shiftEndTime}
+                                  </div>
+
+                                  <div className="serviceEmployee">
+                                    {service.assignedEmployees?.[qtyIndex]
+                                      ?.employee || "Assign Employee"}
+                                  </div>
+                                </div>
+                              ))}
+                            </>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              );
+            })}
           </div>
+        </div>
 
-          {sitePopup && (
-            <div className="sitePopupOverlay">
-              <div className="sitePopup">
-                <div className="popupHeader">
-                  <span>Regular Services</span>
+        {sitePopup && (
+          <div className="sitePopupOverlay">
+            <div className="sitePopup">
+              <div className="popupHeader">
+                <span>Regular Services</span>
 
-                  <button
-                    className="closeBtn"
-                    onClick={() => setSitePopup(null)}
-                  >
-                    ×
-                  </button>
-                </div>
-
-                {sitePopup.services.map((service, index) => (
-                  <div key={index} className="serviceDetails">
-                    <div className="form-group">
-                      <label>Service Type</label>
-
-                      <input
-                        type="text"
-                        value={service.serviceType}
-                        onChange={(e) =>
-                          handleServicePopupChange(
-                            index,
-                            "serviceType",
-                            e.target.value,
-                          )
-                        }
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>Position</label>
-
-                      <input
-                        type="text"
-                        value={service.position}
-                        onChange={(e) =>
-                          handleServicePopupChange(
-                            index,
-                            "position",
-                            e.target.value,
-                          )
-                        }
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>Quantity</label>
-
-                      <input
-                        type="number"
-                        value={service.quantity}
-                        onChange={(e) =>
-                          handleServicePopupChange(
-                            index,
-                            "quantity",
-                            Number(e.target.value),
-                          )
-                        }
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>Shift Start</label>
-
-                      <input
-                        type="time"
-                        value={service.shiftStartTime || ""}
-                        onChange={(e) =>
-                          handleServicePopupChange(
-                            index,
-                            "shiftStartTime",
-                            e.target.value,
-                          )
-                        }
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>Shift End</label>
-
-                      <input
-                        type="time"
-                        value={service.shiftEndTime || ""}
-                        onChange={(e) =>
-                          handleServicePopupChange(
-                            index,
-                            "shiftEndTime",
-                            e.target.value,
-                          )
-                        }
-                      />
-                    </div>
-
-                    <div className="form-group">
-                      <label>Assigned Employees</label>
-
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "15px",
-                          marginBottom: "15px",
-                        }}
-                      >
-                        <span
-                          style={{
-                            width: "90px",
-                            fontWeight: "600",
-                            marginRight: "10px",
-                          }}
-                        >
-                          Employee {(sitePopup.employeeIndex || 0) + 1}
-                        </span>
-
-                        <input
-                          type="text"
-                          style={{
-                            flex: 1,
-                            padding: "8px 10px",
-                          }}
-                          value={
-                            service.assignedEmployees?.[
-                              sitePopup.employeeIndex || 0
-                            ]?.employee || ""
-                          }
-                          onChange={(e) => {
-                            const updatedServices = [...sitePopup.services];
-
-                            updatedServices[index].assignedEmployees[
-                              sitePopup.employeeIndex || 0
-                            ].employee = e.target.value;
-
-                            setSitePopup({
-                              ...sitePopup,
-                              services: updatedServices,
-                            });
-                          }}
-                        />
-                      </div>
-                    </div>
-                    <div className="popupButtons">
-                      <button
-                        className="savePopupButton"
-                        onClick={handleSitePopupSave}
-                      >
-                        Save
-                      </button>
-
-                      <button
-                        className="cancelPopupButton"
-                        onClick={() => setSitePopup(null)}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-
-                    {index !== sitePopup.services.length - 1 && <hr />}
-                  </div>
-                ))}
+                <button className="closeBtn" onClick={() => setSitePopup(null)}>
+                  ×
+                </button>
               </div>
-            </div>
-          )}
-          {adhocPopup && (
-            <div className="sitePopupOverlay">
-              <div className="sitePopup">
-                <div className="popupHeader">
-                  <span>Add Adhoc Service</span>
 
-                  <button
-                    className="closeBtn"
-                    onClick={() => setAdhocPopup(null)}
-                  >
-                    ×
-                  </button>
-                </div>
-
-                <div className="serviceDetails">
-                  <div className="form-group">
-                    <label>Adhoc ID</label>
-
-                    <input
-                      type="text"
-                      value={adhocPopup.adhocId || "Auto Generate"}
-                      readOnly
-                    />
-                  </div>
+              {sitePopup.services.map((service, index) => (
+                <div key={index} className="serviceDetails">
                   <div className="form-group">
                     <label>Service Type</label>
 
                     <input
                       type="text"
-                      value={adhocPopup.serviceType}
+                      value={service.serviceType}
                       onChange={(e) =>
-                        setAdhocPopup({
-                          ...adhocPopup,
-                          serviceType: e.target.value,
-                        })
+                        handleServicePopupChange(
+                          index,
+                          "serviceType",
+                          e.target.value,
+                        )
                       }
                     />
                   </div>
@@ -732,12 +555,29 @@ function Employeesites() {
 
                     <input
                       type="text"
-                      value={adhocPopup.position}
+                      value={service.position}
                       onChange={(e) =>
-                        setAdhocPopup({
-                          ...adhocPopup,
-                          position: e.target.value,
-                        })
+                        handleServicePopupChange(
+                          index,
+                          "position",
+                          e.target.value,
+                        )
+                      }
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Quantity</label>
+
+                    <input
+                      type="number"
+                      value={service.quantity}
+                      onChange={(e) =>
+                        handleServicePopupChange(
+                          index,
+                          "quantity",
+                          Number(e.target.value),
+                        )
                       }
                     />
                   </div>
@@ -747,12 +587,13 @@ function Employeesites() {
 
                     <input
                       type="time"
-                      value={adhocPopup.shiftStartTime}
+                      value={service.shiftStartTime || ""}
                       onChange={(e) =>
-                        setAdhocPopup({
-                          ...adhocPopup,
-                          shiftStartTime: e.target.value,
-                        })
+                        handleServicePopupChange(
+                          index,
+                          "shiftStartTime",
+                          e.target.value,
+                        )
                       }
                     />
                   </div>
@@ -762,38 +603,188 @@ function Employeesites() {
 
                     <input
                       type="time"
-                      value={adhocPopup.shiftEndTime}
+                      value={service.shiftEndTime || ""}
                       onChange={(e) =>
-                        setAdhocPopup({
-                          ...adhocPopup,
-                          shiftEndTime: e.target.value,
-                        })
+                        handleServicePopupChange(
+                          index,
+                          "shiftEndTime",
+                          e.target.value,
+                        )
                       }
                     />
                   </div>
 
+                  <div className="form-group">
+                    <label>Assigned Employees</label>
+
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "15px",
+                        marginBottom: "15px",
+                      }}
+                    >
+                      <span
+                        style={{
+                          width: "90px",
+                          fontWeight: "600",
+                          marginRight: "10px",
+                        }}
+                      >
+                        Employee {(sitePopup.employeeIndex || 0) + 1}
+                      </span>
+
+                      <input
+                        type="text"
+                        style={{
+                          flex: 1,
+                          padding: "8px 10px",
+                        }}
+                        value={
+                          service.assignedEmployees?.[
+                            sitePopup.employeeIndex || 0
+                          ]?.employee || ""
+                        }
+                        onChange={(e) => {
+                          const updatedServices = [...sitePopup.services];
+
+                          updatedServices[index].assignedEmployees[
+                            sitePopup.employeeIndex || 0
+                          ].employee = e.target.value;
+
+                          setSitePopup({
+                            ...sitePopup,
+                            services: updatedServices,
+                          });
+                        }}
+                      />
+                    </div>
+                  </div>
                   <div className="popupButtons">
                     <button
                       className="savePopupButton"
-                      onClick={handleAdhocSave}
+                      onClick={handleSitePopupSave}
                     >
                       Save
                     </button>
 
                     <button
                       className="cancelPopupButton"
-                      onClick={() => setAdhocPopup(null)}
+                      onClick={() => setSitePopup(null)}
                     >
                       Cancel
                     </button>
                   </div>
+
+                  {index !== sitePopup.services.length - 1 && <hr />}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {adhocPopup && (
+          <div className="sitePopupOverlay">
+            <div className="sitePopup">
+              <div className="popupHeader">
+                <span>Add Adhoc Service</span>
+
+                <button
+                  className="closeBtn"
+                  onClick={() => setAdhocPopup(null)}
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="serviceDetails">
+                <div className="form-group">
+                  <label>Adhoc ID</label>
+
+                  <input
+                    type="text"
+                    value={adhocPopup.adhocId || "Auto Generate"}
+                    readOnly
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Service Type</label>
+
+                  <input
+                    type="text"
+                    value={adhocPopup.serviceType}
+                    onChange={(e) =>
+                      setAdhocPopup({
+                        ...adhocPopup,
+                        serviceType: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Position</label>
+
+                  <input
+                    type="text"
+                    value={adhocPopup.position}
+                    onChange={(e) =>
+                      setAdhocPopup({
+                        ...adhocPopup,
+                        position: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Shift Start</label>
+
+                  <input
+                    type="time"
+                    value={adhocPopup.shiftStartTime}
+                    onChange={(e) =>
+                      setAdhocPopup({
+                        ...adhocPopup,
+                        shiftStartTime: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Shift End</label>
+
+                  <input
+                    type="time"
+                    value={adhocPopup.shiftEndTime}
+                    onChange={(e) =>
+                      setAdhocPopup({
+                        ...adhocPopup,
+                        shiftEndTime: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="popupButtons">
+                  <button className="savePopupButton" onClick={handleAdhocSave}>
+                    Save
+                  </button>
+
+                  <button
+                    className="cancelPopupButton"
+                    onClick={() => setAdhocPopup(null)}
+                  >
+                    Cancel
+                  </button>
                 </div>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
-    </DashboardLayout>
+    </div>
   );
 }
 

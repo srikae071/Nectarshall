@@ -304,14 +304,14 @@ function OnBoardingCompliance() {
           />
         </div>
         <div className="deliverable-container">
-          <div
+          {/* <div
             className="deliverable-header"
             onClick={() => setExpanded(!expanded)}
           >
             <button type="button" className="deliverable-toggle">
               {expanded ? "-" : "+"}
             </button>
-          </div>
+          </div> */}
 
           <>
             <div className="deliverable-tabs">

@@ -4,7 +4,6 @@ import axios from "axios";
 import { EmployeeContext } from "../EmployeeContext.js";
 
 import "./index.css";
-import DashboardLayout from "../../DashboardLayout/index.jsx";
 
 function Schedule() {
   // const { trigger } = useContext(EmployeeContext);
@@ -226,265 +225,259 @@ function Schedule() {
     setPopup(null);
   };
   return (
-    <DashboardLayout>
-      <div className="mainLayout">
-        <div className="rightPanel">
-          <div className="Shedulecontainer">
-            {/* TOP BAR */}
-            <div className="topBar">
-              <div className="Datebuttons">
-                {/* PREVIOUS WEEK */}
-                <button
-                  onClick={() =>
-                    setCurrentDate((prev) => {
-                      const d = new Date(prev);
-                      d.setDate(prev.getDate() - 7);
-                      return d;
-                    })
-                  }
-                >
-                  {"<"}
-                </button>
+    <div className="mainLayout">
+      <div className="rightPanel">
+        <div className="Shedulecontainer">
+          {/* TOP BAR */}
+          <div className="topBar">
+            <div className="Datebuttons">
+              {/* PREVIOUS WEEK */}
+              <button
+                onClick={() =>
+                  setCurrentDate((prev) => {
+                    const d = new Date(prev);
+                    d.setDate(prev.getDate() - 7);
+                    return d;
+                  })
+                }
+              >
+                {"<"}
+              </button>
 
-                {/* DATE RANGE */}
-                <span style={{ color: "#e5e7eb" }}>
-                  {weekDates[0].label} - {weekDates[6].label}
-                </span>
+              {/* DATE RANGE */}
+              <span style={{ color: "#e5e7eb" }}>
+                {weekDates[0].label} - {weekDates[6].label}
+              </span>
 
-                {/* NEXT WEEK */}
-                <button
-                  onClick={() =>
-                    setCurrentDate((prev) => {
-                      const d = new Date(prev);
-                      d.setDate(prev.getDate() + 7);
-                      return d;
-                    })
-                  }
-                >
-                  {">"}
-                </button>
+              {/* NEXT WEEK */}
+              <button
+                onClick={() =>
+                  setCurrentDate((prev) => {
+                    const d = new Date(prev);
+                    d.setDate(prev.getDate() + 7);
+                    return d;
+                  })
+                }
+              >
+                {">"}
+              </button>
 
-                <div className="right">
-                  <select className="actionbuttons">
-                    <option>Actions</option>
-                  </select>
-                  <button className="actionbuttons">Collapse</button>
-                </div>
-              </div>
-
-              <div className="savebuttons">
-                <button className="shedulesavechangesbtn">Save Changes</button>
-                <button className="btn">Cancel</button>
+              <div className="right">
+                <select className="actionbuttons">
+                  <option>Actions</option>
+                </select>
+                <button className="actionbuttons">Collapse</button>
               </div>
             </div>
 
-            {/* HEADER */}
-            <div className="grid header">
-              {weekDates.map((d, i) => (
-                <div key={i} className="headerCell">
-                  {d.label}
-                </div>
-              ))}
+            <div className="savebuttons">
+              <button className="shedulesavechangesbtn">Save Changes</button>
+              <button className="btn">Cancel</button>
             </div>
+          </div>
 
-            {/* BODY */}
-            {employees.map((emp, i) => (
-              <div key={i} className="rowBlock">
-                <div className="grid">
-                  {weekDates.map((d, j) => {
-                    const dateKey = d.full.toISOString().split("T")[0];
-                    const data = savedData[i]?.[dateKey];
-                    const isBlocked = i % 2 === 0;
-
-                    return (
-                      <div key={j} className="cell">
-                        <div
-                          onClick={(e) => handleClick(e, d.full, i)}
-                          className="cellInner"
-                        >
-                          {isBlocked && (
-                            <div className="blocked">
-                              Full Day Not Available
-                            </div>
-                          )}
-
-                          <div className="cellContent">
-                            {!data ? (
-                              <div className="plus">+</div>
-                            ) : (
-                              <div className="savedBox">
-                                <div className="timeRow">
-                                  {data.start} - {data.end}
-                                </div>
-
-                                <div className="positionRow">
-                                  {data.position}
-                                </div>
-
-                                {data.role && (
-                                  <div className="roleRow">{data.role}</div>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <div className="nameRow">{emp}</div>
+          {/* HEADER */}
+          <div className="grid header">
+            {weekDates.map((d, i) => (
+              <div key={i} className="headerCell">
+                {d.label}
               </div>
             ))}
+          </div>
 
-            {/* POPUP */}
-            {popup && (
-              <div className="popupForm">
-                <div className="popupHeader">
-                  <span>Shift Details</span>
-                  <span className="closeBtn" onClick={() => setPopup(null)}>
-                    ×
-                  </span>
-                </div>
+          {/* BODY */}
+          {employees.map((emp, i) => (
+            <div key={i} className="rowBlock">
+              <div className="grid">
+                {weekDates.map((d, j) => {
+                  const dateKey = d.full.toISOString().split("T")[0];
+                  const data = savedData[i]?.[dateKey];
+                  const isBlocked = i % 2 === 0;
 
-                <div className="popupGrid">
-                  {/* LEFT SIDE */}
-                  <div className="leftCol">
-                    <label>Start Date</label>
-                    <input
-                      type="date"
-                      value={formData.startDate || ""}
-                      onChange={(e) =>
-                        setFormData({ ...formData, startDate: e.target.value })
-                      }
-                    />
-
-                    <label>Start Time</label>
-                    <input
-                      type="time"
-                      value={formData.start}
-                      onChange={(e) =>
-                        setFormData({ ...formData, start: e.target.value })
-                      }
-                    />
-
-                    <label>Meal Break (mins)</label>
-                    <input
-                      type="number"
-                      value={formData.break}
-                      onChange={(e) =>
-                        setFormData({ ...formData, break: e.target.value })
-                      }
-                    />
-
-                    <label>Position</label>
-                    <select
-                      value={formData.position}
-                      onChange={(e) =>
-                        setFormData({ ...formData, position: e.target.value })
-                      }
-                    >
-                      <option>Select</option>
-                      <option>Security</option>
-                      <option>Manager</option>
-                    </select>
-
-                    <label>Role</label>
-                    <select
-                      value={formData.role}
-                      onChange={(e) =>
-                        setFormData({ ...formData, role: e.target.value })
-                      }
-                    >
-                      <option>Select</option>
-                      <option>Guard</option>
-                      <option>Supervisor</option>
-                    </select>
-                  </div>
-
-                  {/* RIGHT SIDE */}
-                  <div className="rightCol">
-                    <label>End Date</label>
-                    <input
-                      type="date"
-                      value={formData.endDate || ""}
-                      onChange={(e) =>
-                        setFormData({ ...formData, endDate: e.target.value })
-                      }
-                    />
-
-                    <label>End Time</label>
-                    <input
-                      type="time"
-                      value={formData.end}
-                      onChange={(e) =>
-                        setFormData({ ...formData, end: e.target.value })
-                      }
-                    />
-
-                    <label>Description</label>
-                    <textarea
-                      className="descriptionBox"
-                      placeholder="Enter shift details, notes, or instructions..."
-                      maxLength={1000}
-                      value={formData.note || ""}
-                      onChange={(e) =>
-                        setFormData({ ...formData, note: e.target.value })
-                      }
-                    />
-
-                    <div className="charCount">
-                      {(formData.note || "").length}/1000
-                    </div>
-                    <label>Site Name</label>
-
-                    <select
-                      value={formData.siteName}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          siteName: e.target.value,
-                        })
-                      }
-                    >
-                      <option value="">Select Site</option>
-
-                      {siteNames.map((site, index) => (
-                        <option key={index} value={site}>
-                          {site}
-                        </option>
-                      ))}
-                    </select>
-                    <div className="mapSection">
-                      <a
-                        href="https://www.google.com/maps?q=17.3850,78.4867"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="mapLink"
+                  return (
+                    <div key={j} className="cell">
+                      <div
+                        onClick={(e) => handleClick(e, d.full, i)}
+                        className="cellInner"
                       >
-                        📍 View Site Map
-                      </a>
+                        {isBlocked && (
+                          <div className="blocked">Full Day Not Available</div>
+                        )}
 
-                      <div className="mapPoints">
-                        <span>• Site A</span>
-                        <span>• Site B</span>
-                        <span>• Site C</span>
+                        <div className="cellContent">
+                          {!data ? (
+                            <div className="plus">+</div>
+                          ) : (
+                            <div className="savedBox">
+                              <div className="timeRow">
+                                {data.start} - {data.end}
+                              </div>
+
+                              <div className="positionRow">{data.position}</div>
+
+                              {data.role && (
+                                <div className="roleRow">{data.role}</div>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  );
+                })}
+              </div>
+
+              <div className="nameRow">{emp}</div>
+            </div>
+          ))}
+
+          {/* POPUP */}
+          {popup && (
+            <div className="popupForm">
+              <div className="popupHeader">
+                <span>Shift Details</span>
+                <span className="closeBtn" onClick={() => setPopup(null)}>
+                  ×
+                </span>
+              </div>
+
+              <div className="popupGrid">
+                {/* LEFT SIDE */}
+                <div className="leftCol">
+                  <label>Start Date</label>
+                  <input
+                    type="date"
+                    value={formData.startDate || ""}
+                    onChange={(e) =>
+                      setFormData({ ...formData, startDate: e.target.value })
+                    }
+                  />
+
+                  <label>Start Time</label>
+                  <input
+                    type="time"
+                    value={formData.start}
+                    onChange={(e) =>
+                      setFormData({ ...formData, start: e.target.value })
+                    }
+                  />
+
+                  <label>Meal Break (mins)</label>
+                  <input
+                    type="number"
+                    value={formData.break}
+                    onChange={(e) =>
+                      setFormData({ ...formData, break: e.target.value })
+                    }
+                  />
+
+                  <label>Position</label>
+                  <select
+                    value={formData.position}
+                    onChange={(e) =>
+                      setFormData({ ...formData, position: e.target.value })
+                    }
+                  >
+                    <option>Select</option>
+                    <option>Security</option>
+                    <option>Manager</option>
+                  </select>
+
+                  <label>Role</label>
+                  <select
+                    value={formData.role}
+                    onChange={(e) =>
+                      setFormData({ ...formData, role: e.target.value })
+                    }
+                  >
+                    <option>Select</option>
+                    <option>Guard</option>
+                    <option>Supervisor</option>
+                  </select>
                 </div>
 
-                <div className="popupFooter">
-                  <button className="saveBtn" onClick={handleSave}>
-                    Save
-                  </button>
+                {/* RIGHT SIDE */}
+                <div className="rightCol">
+                  <label>End Date</label>
+                  <input
+                    type="date"
+                    value={formData.endDate || ""}
+                    onChange={(e) =>
+                      setFormData({ ...formData, endDate: e.target.value })
+                    }
+                  />
+
+                  <label>End Time</label>
+                  <input
+                    type="time"
+                    value={formData.end}
+                    onChange={(e) =>
+                      setFormData({ ...formData, end: e.target.value })
+                    }
+                  />
+
+                  <label>Description</label>
+                  <textarea
+                    className="descriptionBox"
+                    placeholder="Enter shift details, notes, or instructions..."
+                    maxLength={1000}
+                    value={formData.note || ""}
+                    onChange={(e) =>
+                      setFormData({ ...formData, note: e.target.value })
+                    }
+                  />
+
+                  <div className="charCount">
+                    {(formData.note || "").length}/1000
+                  </div>
+                  <label>Site Name</label>
+
+                  <select
+                    value={formData.siteName}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        siteName: e.target.value,
+                      })
+                    }
+                  >
+                    <option value="">Select Site</option>
+
+                    {siteNames.map((site, index) => (
+                      <option key={index} value={site}>
+                        {site}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="mapSection">
+                    <a
+                      href="https://www.google.com/maps?q=17.3850,78.4867"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mapLink"
+                    >
+                      📍 View Site Map
+                    </a>
+
+                    <div className="mapPoints">
+                      <span>• Site A</span>
+                      <span>• Site B</span>
+                      <span>• Site C</span>
+                    </div>
+                  </div>
                 </div>
               </div>
-            )}
-          </div>
+
+              <div className="popupFooter">
+                <button className="saveBtn" onClick={handleSave}>
+                  Save
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
-    </DashboardLayout>
+    </div>
   );
 }
 

@@ -1,22 +1,22 @@
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 import "./index.css";
 import DashbordNavbar from "../DashbordNavbar/index.jsx";
 import { EmployeeContext } from "../DashboardRightLayout/EmployeeContext.js";
-
-function DashboardLayout({ children }) {
+// import { SidebarProvider } from "../SidebarContext";
+function DashboardLayout() {
   const navigate = useNavigate();
   const location = useLocation();
 
   const [openOnboarding, setOpenOnboarding] = useState(false);
-  const [openAdhoc, setOpenAdhoc] = useState(false);
+  // const [openAdhoc, setOpenAdhoc] = useState(false);
 
   const [employeeTrigger, setEmployeeTrigger] = useState(0);
 
   const [manualToggle, setManualToggle] = useState(true);
-
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const isScheduleRoute = location.pathname.startsWith("/schedule");
 
   const openSchedule = isScheduleRoute || manualToggle;
@@ -116,16 +116,29 @@ function DashboardLayout({ children }) {
       <div className="mainLayout">
         {/* LEFT SIDEBAR */}
 
-        <div className="operationssidebar">
+        <div
+          className={`operationssidebar ${sidebarCollapsed ? "collapsed" : ""}`}
+        >
           {/* DASHBOARD */}
-
+          <div className="sidebarTop">
+            <button
+              className="hamburgerBtn"
+              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            >
+              ☰
+            </button>
+          </div>
           <div
             className={`submenuItem ${
               location.pathname === "/dashboard" ? "active" : ""
             }`}
-            onClick={() => navigate("/main-dashboard")}
+            onClick={() => {
+              navigate("/main-dashboard");
+            }}
           >
-            📊 Dashboard
+            <span className="menuIcon">📊</span>
+
+            {!sidebarCollapsed && <span className="menuText">Dashboard</span>}
           </div>
 
           {/* SCHEDULE */}
@@ -138,12 +151,18 @@ function DashboardLayout({ children }) {
                 setManualToggle(false);
               }}
             >
-              <span>📅 Schedule</span>
+              <div className="menuLeft">
+                <span className="menuIcon">📅</span>
 
-              <span>{openSchedule ? "-" : "+"}</span>
+                {!sidebarCollapsed && (
+                  <span className="menuText">Schedule</span>
+                )}
+              </div>
+
+              {!sidebarCollapsed && <span>{openSchedule ? "-" : "+"}</span>}
             </div>
 
-            {openSchedule && (
+            {openSchedule && !sidebarCollapsed && (
               <div className="schedulePanel">
                 <div className="publishBox">
                   <div>Publish & Notify</div>
@@ -227,38 +246,6 @@ function DashboardLayout({ children }) {
                     </button>
                   </div>
                 </div>
-
-                {/* REPORT SECTION
-                        (Keeping commented exactly like existing code)
-                    */}
-
-                {/*
-                    <div className="reportBox">
-
-                      <h4>WEEKLY REPORT</h4>
-
-                      <div className="reportRow">
-                        <span>Total Shifts</span>
-                        <b>0</b>
-                      </div>
-
-                      <div className="reportRow">
-                        <span>Unfilled Shifts</span>
-                        <b>0</b>
-                      </div>
-
-                      <div className="reportRow">
-                        <span>Filled Hours</span>
-                        <b>0</b>
-                      </div>
-
-                      <div className="reportRow">
-                        <span>Filled Cost</span>
-                        <b>$0</b>
-                      </div>
-
-                    </div>
-                    */}
               </div>
             )}
           </div>
@@ -271,7 +258,9 @@ function DashboardLayout({ children }) {
             }`}
             onClick={() => navigate("/timesheets")}
           >
-            ⏱️ Timesheets
+            <span className="menuIcon">⏱️</span>
+
+            {!sidebarCollapsed && <span className="menuText">Timesheets</span>}
           </div>
 
           {/* REPORTS */}
@@ -282,7 +271,9 @@ function DashboardLayout({ children }) {
             }`}
             onClick={() => navigate("/reports")}
           >
-            📊 Reports
+            <span className="menuIcon">📊</span>
+
+            {!sidebarCollapsed && <span className="menuText">Reports</span>}
           </div>
 
           {/* INCIDENTS */}
@@ -293,19 +284,34 @@ function DashboardLayout({ children }) {
             }`}
             onClick={() => navigate("/incidents")}
           >
-            📌 Incidents
+            <span className="menuIcon">📌</span>
+
+            {!sidebarCollapsed && <span className="menuText">Incidents</span>}
           </div>
 
           {/* ONBOARDING CLIENT */}
 
           <div className="menuBlock">
             <div
-              className="submenuItem toggleHeader"
-              onClick={() => setOpenOnboarding(!openOnboarding)}
-            >
-              <span>👤 On Boarding Client</span>
+              onClick={() => {
+                if (sidebarCollapsed) {
+                  setSidebarCollapsed(false);
+                  setOpenOnboarding(true);
+                  return;
+                }
 
-              <span>{openOnboarding ? "-" : "+"}</span>
+                setOpenOnboarding(!openOnboarding);
+              }}
+            >
+              <div className="menuLeft">
+                <span className="menuIcon">👤</span>
+
+                {!sidebarCollapsed && (
+                  <span className="menuText">On Boarding Client</span>
+                )}
+              </div>
+
+              {!sidebarCollapsed && <span>{openOnboarding ? "-" : "+"}</span>}
             </div>
 
             {openOnboarding && (
@@ -356,61 +362,16 @@ function DashboardLayout({ children }) {
               </div>
             )}
           </div>
+          <div
+            className={`submenuItem ${
+              location.pathname === "/roster" ? "active" : ""
+            }`}
+            onClick={() => navigate("/roster")}
+          >
+            <span className="menuIcon">⏱️</span>
 
-          {/* AD HOC SERVICES */}
-
-          {/* <div className="menuBlock">
-            <div
-              className="submenuItem toggleHeader"
-              onClick={() => setOpenAdhoc(!openAdhoc)}
-            >
-              <span>🛠️ Ad Hoc Services</span>
-
-              <span>{openAdhoc ? "-" : "+"}</span>
-            </div>
-
-            {openAdhoc && (
-              <div className="submenuDropdown">
-                <div
-                  className={`submenuItem ${
-                    location.pathname === "/adhoc/all" ? "active" : ""
-                  }`}
-                  onClick={() => navigate("/adhoc/all")}
-                >
-                  📋 All
-                </div>
-
-                <div
-                  className={`submenuItem ${
-                    location.pathname === "" ? "active" : ""
-                  }`}
-                  onClick={() => navigate("")}
-                >
-                  🟢 Open
-                </div>
-
-                <div
-                  className={`submenuItem ${
-                    location.pathname === "/adhoc-services/pending"
-                      ? "active"
-                      : ""
-                  }`}
-                  onClick={() => navigate("/adhoc-services/pending")}
-                >
-                  🟡 Pending
-                </div>
-
-                <div
-                  className={`submenuItem ${
-                    location.pathname === "/adhoc-services/new" ? "active" : ""
-                  }`}
-                  onClick={() => navigate("/adhoc-services/new")}
-                >
-                  ➕ New Service
-                </div>
-              </div>
-            )}
-          </div> */}
+            {!sidebarCollapsed && <span className="menuText">Roster</span>}
+          </div>
         </div>
 
         {/* RIGHT CONTENT */}
@@ -423,7 +384,9 @@ function DashboardLayout({ children }) {
             customers,
           }}
         >
-          <div className="rightContent">{children}</div>
+          <div className="rightContent">
+            <Outlet />
+          </div>
         </EmployeeContext.Provider>
       </div>
     </div>

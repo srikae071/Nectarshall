@@ -200,3 +200,92 @@ body {
   justify-content: space-between;
   margin-bottom: 5px;
 }
+.operationssidebar {
+  width: 270px;
+  min-width: 270px;
+  max-width: 270px;
+
+  background: #202124;
+
+  transition: 0.3s;
+}
+
+.operationssidebar.collapsed {
+  width: 70px;
+
+  min-width: 70px;
+
+  max-width: 70px;
+}
+.sidebarTop {
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  height: 58px;
+
+  border-bottom: 1px solid #383838;
+}
+.hamburgerBtn {
+  width: 42px;
+
+  height: 42px;
+
+  border: none;
+
+  background: transparent;
+
+  color: white;
+
+  font-size: 23px;
+
+  cursor: pointer;
+
+  border-radius: 8px;
+
+  transition: 0.2s;
+}
+
+.hamburgerBtn:hover {
+  background: #d71920;
+}
+.submenuItem {
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+
+  padding: 14px;
+
+  white-space: nowrap;
+}
+.menuIcon {
+  width: 24px;
+
+  text-align: center;
+
+  font-size: 22px;
+
+  flex-shrink: 0;
+}
+.menuText {
+  flex: 1;
+}
+.menuLeft {
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+}
+.operationssidebar.collapsed .submenuItem {
+  justify-content: center;
+
+  padding: 16px 0;
+}
+.operationssidebar.collapsed .menuText {
+  display: none;
+}

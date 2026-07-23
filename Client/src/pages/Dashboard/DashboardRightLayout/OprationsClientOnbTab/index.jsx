@@ -108,111 +108,107 @@ function OprationsClientOnbTab() {
   );
 
   return (
-    <DashboardLayout>
-      <TableLayout1
-        title="Business Engagement"
-        storageKey="businessEngagementColumns"
-        search={search}
-        setSearch={setSearch}
-        defaultColumns={defaultColumns}
-        allColumns={allColumns}
-      >
-        {(visibleColumns) =>
-          filteredData.map((item) => (
-            <React.Fragment key={item._id}>
-              <tr
-                style={{ cursor: "pointer" }}
-                onClick={() =>
-                  navigate(`/onboarding-saves/${item._id}`, {
-                    state: { source: "operations" },
-                  })
-                }
-              >
-                {visibleColumns.includes("clientId") && (
-                  <td>{item.clientId}</td>
-                )}
+    <TableLayout1
+      title="Business Engagement"
+      storageKey="businessEngagementColumns"
+      search={search}
+      setSearch={setSearch}
+      defaultColumns={defaultColumns}
+      allColumns={allColumns}
+    >
+      {(visibleColumns) =>
+        filteredData.map((item) => (
+          <React.Fragment key={item._id}>
+            <tr
+              style={{ cursor: "pointer" }}
+              onClick={() =>
+                navigate(`/onboarding-saves/${item._id}`, {
+                  state: { source: "operations" },
+                })
+              }
+            >
+              {visibleColumns.includes("clientId") && <td>{item.clientId}</td>}
 
-                {visibleColumns.includes("requester") && (
-                  <td>{item.requester}</td>
-                )}
+              {visibleColumns.includes("requester") && (
+                <td>{item.requester}</td>
+              )}
 
-                {visibleColumns.includes("requesterFor") && (
-                  <td>{item.requesterFor}</td>
-                )}
+              {visibleColumns.includes("requesterFor") && (
+                <td>{item.requesterFor}</td>
+              )}
 
-                {visibleColumns.includes("status") && <td>{item.status}</td>}
+              {visibleColumns.includes("status") && <td>{item.status}</td>}
 
-                {visibleColumns.includes("companyName") && (
-                  <td>{item.companyName}</td>
-                )}
+              {visibleColumns.includes("companyName") && (
+                <td>{item.companyName}</td>
+              )}
 
-                {visibleColumns.includes("acn") && <td>{item.acn}</td>}
+              {visibleColumns.includes("acn") && <td>{item.acn}</td>}
 
-                {visibleColumns.includes("abn") && <td>{item.abn}</td>}
+              {visibleColumns.includes("abn") && <td>{item.abn}</td>}
 
-                {visibleColumns.includes("companyAddress") && (
-                  <td>{item.companyAddress}</td>
-                )}
+              {visibleColumns.includes("companyAddress") && (
+                <td>{item.companyAddress}</td>
+              )}
 
-                {visibleColumns.includes("companyPhone") && (
-                  <td>{item.companyPhone}</td>
-                )}
+              {visibleColumns.includes("companyPhone") && (
+                <td>{item.companyPhone}</td>
+              )}
 
-                {visibleColumns.includes("managingAgentName") && (
-                  <td>{item.managingAgentName}</td>
-                )}
+              {visibleColumns.includes("managingAgentName") && (
+                <td>{item.managingAgentName}</td>
+              )}
 
-                {visibleColumns.includes("managingAgentEmail") && (
-                  <td>{item.managingAgentEmail}</td>
-                )}
+              {visibleColumns.includes("managingAgentEmail") && (
+                <td>{item.managingAgentEmail}</td>
+              )}
 
-                {visibleColumns.includes("shortDescription") && (
-                  <td>{item.shortDescription}</td>
-                )}
+              {visibleColumns.includes("shortDescription") && (
+                <td>{item.shortDescription}</td>
+              )}
 
-                {visibleColumns.includes("description") && (
-                  <td>{item.description}</td>
-                )}
-              </tr>
+              {visibleColumns.includes("description") && (
+                <td>{item.description}</td>
+              )}
+            </tr>
 
-              <tr className="operationsApprovalRow">
-                <td colSpan={visibleColumns.length}>
-                  <div className="operationsApprovalBox">
-                    {item.operationsClientApproved === true ? (
-                      <span className="approvedText">Approved</span>
-                    ) : item.operationsClientApproved === false ? (
-                      <span className="rejectedText">Rejected</span>
-                    ) : (
-                      <>
-                        <button
-                          className="approveBtn"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleApprove(item._id);
-                          }}
-                        >
-                          Approve
-                        </button>
+            <tr className="operationsApprovalRow">
+              <td colSpan={visibleColumns.length}>
+                <div className="operationsApprovalBox">
+                  {item.operationsClientApproved === true ? (
+                    <span className="approvedText">Approved</span>
+                  ) : item.operationsClientApproved === false ? (
+                    <span className="rejectedText">Rejected</span>
+                  ) : (
+                    <>
+                      <button
+                        className="approveBtn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleApprove(item._id);
+                        }}
+                      >
+                        Approve
+                      </button>
 
-                        <button
-                          className="rejectBtn"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleReject(item._id);
-                          }}
-                        >
-                          Reject
-                        </button>
-                      </>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            </React.Fragment>
-          ))
-        }
-      </TableLayout1>
-    </DashboardLayout>
+                      <button
+                        className="rejectBtn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleReject(item._id);
+                        }}
+                      >
+                        Reject
+                      </button>
+                    </>
+                  )}
+                </div>
+              </td>
+            </tr>
+          </React.Fragment>
+        ))
+      }
+    </TableLayout1>
   );
 }
 

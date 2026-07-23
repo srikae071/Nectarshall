@@ -21,12 +21,14 @@ import PreAll from "../src/pages/Hrms/Employee/PreJoiningCompliance/PreAll/index
 import PreEmployeeCreateNew from "../src/pages/Hrms/Employee/PreJoiningCompliance/PreEmployeeCreateNew/index.jsx";
 import PreEmployeeResolved from "../src/pages/Hrms/Employee/PreJoiningCompliance/PreEmployeeResolved/index.jsx";
 import OfferLetter from "../src/pages/Hrms/Employee/OfferLetter/index.jsx";
+import DashboardLayout from "./pages/Dashboard/DashboardLayout";
 import Schedule from "./pages/Dashboard/DashboardRightLayout/Schedule/index.jsx";
 import TimeSheat from "./pages/Dashboard/DashboardRightLayout/TimeSheat";
 import Employeesites from "./pages/Dashboard/DashboardRightLayout/Employessites/index.jsx";
 import Reportss from "./pages/Dashboard/DashboardRightLayout/Reportss/index.jsx";
 import Incidents from "./pages/Dashboard/DashboardRightLayout/Incidents/index.jsx";
 import MainDashboard from "./pages/Dashboard/DashboardRightLayout/MainDashboard/index.jsx";
+import RosterMain from "./pages/Dashboard/DashboardRightLayout/Roster/RosterMain";
 import PatrollingSchedule from "./pages/Patrolling/PatrollingRightContent/PatrollingSchedule/index.jsx";
 import PatrollingMainDashboard from "./pages/Patrolling/PatrollingRightContent/PatrollingMainDashboard/index.jsx";
 import PatrollingTimesheets from "./pages/Patrolling/PatrollingRightContent/PatrollingTimeSheat/index.jsx";
@@ -116,12 +118,21 @@ function App() {
       <Route path="/hrms/assigned-cases" element={<Assingtome />} />
       {/* <Route path="/onboarding/clint" element={<OnboardingCompliance />} /> */}
       <Route path="/organisation-policies" element={<OpMainPage />} />
-      <Route path="/schedule" element={<Schedule />} />
-      <Route path="/timesheets" element={<TimeSheat />} />
-      <Route path="/employe-sites" element={<Employeesites />} />
-      <Route path="/reports" element={<Reportss />} />
-      <Route path="/incidents" element={<Incidents />} />
-      <Route path="/main-dashboard" element={<MainDashboard />} />
+
+      <Route element={<DashboardLayout />}>
+        <Route path="/main-dashboard" element={<MainDashboard />} />
+        <Route path="/schedule" element={<Schedule />} />
+        <Route path="/timesheets" element={<TimeSheat />} />
+        <Route path="/employe-sites" element={<Employeesites />} />
+        <Route path="/reports" element={<Reportss />} />
+        <Route path="/incidents" element={<Incidents />} />
+        <Route
+          path="/Operations-Complience/All"
+          element={<OprationsClientOnbTab />}
+        />
+        <Route path="/roster" element={<RosterMain />} />
+      </Route>
+
       <Route path="/ask-for-it" element={<MainAFI />} />
       <Route path="/ask-for-hr" element={<AskForHrMainPage />} />
       <Route path="/PatrolingSchedule" element={<PatrollingSchedule />} />
@@ -264,10 +275,7 @@ function App() {
         element={<OnbCOnBoarded />}
       />
       <Route path="/onboaeding-complience/Open" element={<OnbCOpen />} />
-      <Route
-        path="/Operations-Complience/All"
-        element={<OprationsClientOnbTab />}
-      />
+
       <Route path="/adhoc/all" element={<AdhocAllTab />} />
     </Routes>
   );
