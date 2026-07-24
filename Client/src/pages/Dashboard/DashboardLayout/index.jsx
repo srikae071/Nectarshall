@@ -6,7 +6,7 @@ import "./index.css";
 import DashbordNavbar from "../DashbordNavbar/index.jsx";
 import { EmployeeContext } from "../DashboardRightLayout/EmployeeContext.js";
 // import { SidebarProvider } from "../SidebarContext";
-function DashboardLayout() {
+function DashboardLayout({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -372,6 +372,16 @@ function DashboardLayout() {
 
             {!sidebarCollapsed && <span className="menuText">Roster</span>}
           </div>
+          <div
+            className={`submenuItem ${
+              location.pathname === "/dashboard/employee" ? "active" : ""
+            }`}
+            onClick={() => navigate("/dashboard/employee")}
+          >
+            <span className="menuIcon">👥</span>
+
+            {!sidebarCollapsed && <span className="menuText">Employee</span>}
+          </div>
         </div>
 
         {/* RIGHT CONTENT */}
@@ -384,9 +394,7 @@ function DashboardLayout() {
             customers,
           }}
         >
-          <div className="rightContent">
-            <Outlet />
-          </div>
+          <div className="rightContent">{children ? children : <Outlet />}</div>
         </EmployeeContext.Provider>
       </div>
     </div>

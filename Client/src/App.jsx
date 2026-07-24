@@ -29,6 +29,7 @@ import Reportss from "./pages/Dashboard/DashboardRightLayout/Reportss/index.jsx"
 import Incidents from "./pages/Dashboard/DashboardRightLayout/Incidents/index.jsx";
 import MainDashboard from "./pages/Dashboard/DashboardRightLayout/MainDashboard/index.jsx";
 import RosterMain from "./pages/Dashboard/DashboardRightLayout/Roster/RosterMain";
+import Employees from "./pages/Dashboard/DashboardRightLayout/Employee/index.jsx";
 import PatrollingSchedule from "./pages/Patrolling/PatrollingRightContent/PatrollingSchedule/index.jsx";
 import PatrollingMainDashboard from "./pages/Patrolling/PatrollingRightContent/PatrollingMainDashboard/index.jsx";
 import PatrollingTimesheets from "./pages/Patrolling/PatrollingRightContent/PatrollingTimeSheat/index.jsx";
@@ -131,8 +132,9 @@ function App() {
           element={<OprationsClientOnbTab />}
         />
         <Route path="/roster" element={<RosterMain />} />
+        <Route path="/dashboard/employee" element={<Employees />} />
       </Route>
-
+      <Route path="/onboarding-saves/:id" element={<OnBoardingSaves />} />
       <Route path="/ask-for-it" element={<MainAFI />} />
       <Route path="/ask-for-hr" element={<AskForHrMainPage />} />
       <Route path="/PatrolingSchedule" element={<PatrollingSchedule />} />
@@ -180,9 +182,9 @@ function App() {
         element={<OnBoardingResonanceRequirementsCreateNew />}
       />
       {/* <Route
-        path="/onboarding/resonancerequirement/resolved"
-        element={<OnBoardingResonanceRequirementsResolve />}
-      /> */}
+          path="/onboarding/resonancerequirement/resolved"
+          element={<OnBoardingResonanceRequirementsResolve />}
+        /> */}
       <Route path="/onboarding-saves/:id" element={<OnBoardingSaves />} />
       <Route path="/Resonancereq" element={<ResonanceMain />} />
       <Route path="/onboarding/prejoining" element={<OnBoardingPreJoining />} />
@@ -191,9 +193,9 @@ function App() {
         element={<OnBoardingOfferLetter />}
       />
       {/* <Route
-        path="/onboarding/resonancerequirement/resolved"
-        element={<OnBoardingResolve />}
-      /> */}
+          path="/onboarding/resonancerequirement/resolved"
+          element={<OnBoardingResolve />}
+        /> */}
       <Route
         path="/onboarding/employerequest"
         element={<OnBoardingEmReqAll />}
@@ -240,10 +242,7 @@ function App() {
         path="/requests-onboarding-all"
         element={<ReqOnboardingAllTab />}
       />
-      <Route
-        path="requests-onboarding-saves/:id"
-        element={<RequestOnboardingSaves />}
-      />
+
       <Route
         path="/requests-onboarding-resolved"
         element={<ReqOnboardingResolvedTab />}
