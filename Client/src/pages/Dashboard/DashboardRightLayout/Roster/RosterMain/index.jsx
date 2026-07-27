@@ -4,8 +4,8 @@ import "./index.css";
 
 function RosterMain() {
   const [candidates, setCandidates] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [dbEmployees, setDbEmployees] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   // Current calendar date anchor
@@ -43,6 +43,7 @@ function RosterMain() {
   const [newEmployeeName, setNewEmployeeName] = useState("");
   const [savingAssign, setSavingAssign] = useState(false);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState("");
+
   // 24 Hours for Employee Timeline View
   const hours = useMemo(() => {
     const arr = [];
@@ -51,6 +52,7 @@ function RosterMain() {
     }
     return arr;
   }, []);
+
   // Weekdays Sunday to Saturday
   const weekDays = useMemo(
     () => [
@@ -67,14 +69,14 @@ function RosterMain() {
 
   useEffect(() => {
     fetchAllData();
-    // line to check
-    // fetchBoardingCandidates();
   }, []);
 
   const fetchAllData = async () => {
     try {
       setLoading(true);
       setError("");
+
+      // Fetch Boarding Candidates
       let candRes;
       try {
         candRes = await axios.get(
@@ -84,6 +86,7 @@ function RosterMain() {
         candRes = await axios.get("/api/BoardingCandidates");
       }
       setCandidates(Array.isArray(candRes.data) ? candRes.data : []);
+
       // Fetch Employees from DB
       let empRes;
       try {
@@ -96,30 +99,6 @@ function RosterMain() {
       setDbEmployees(Array.isArray(empRes.data) ? empRes.data : []);
     } catch (err) {
       console.error("Error loading roster data:", err);
-      setError("Failed to load customer and employee data.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchBoardingCandidates = async () => {
-    try {
-      setLoading(true);
-      setError("");
-
-      let response;
-      try {
-        response = await axios.get(
-          "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates",
-        );
-      } catch (err) {
-        response = await axios.get("/api/BoardingCandidates");
-      }
-
-      const data = Array.isArray(response.data) ? response.data : [];
-      setCandidates(data);
-    } catch (err) {
-      console.error("Error loading boarding candidates for roster:", err);
       setError("Failed to load customer and employee data.");
     } finally {
       setLoading(false);
@@ -180,7 +159,7 @@ function RosterMain() {
     setCurrentDate(new Date());
   };
 
-  // 1. Customer Options
+  // 1. Customer Options (sourced from BoardingCandidates)
   const rawCustomerOptions = useMemo(() => {
     const names = candidates
       .map((item) => (item.companyName || item.clientId || "").trim())
@@ -191,115 +170,87 @@ function RosterMain() {
   const customerOptions = useMemo(() => {
     if (!customerSearchQuery.trim()) return rawCustomerOptions;
     const q = customerSearchQuery.trim().toLowerCase();
-    return rawCustomerOptions.filter((item) => item.toLowerCase().includes(q));
+    return rawCustomerOptions.filter((item) =>
+      item.toLowerCase().startsWith(q),
+    );
   }, [rawCustomerOptions, customerSearchQuery]);
 
-  // 2. Employee Options
+  // 2. Employee Options (sourced ONLY from /api/employees table as requested)
   const rawEmployeeOptions = useMemo(() => {
-    // let filtered = candidates;
     const employees = new Set();
-    // From /api/employees DB model
     dbEmployees.forEach((emp) => {
       if (emp.employeeName && emp.employeeName.trim()) {
         employees.add(emp.employeeName.trim());
       }
     });
-    // From Boarding Candidates
-    let filtered = candidates;
-    if (selectedCustomer) {
-      filtered = filtered.filter(
-        (item) =>
-          (item.companyName || "").trim().toLowerCase() ===
-            selectedCustomer.trim().toLowerCase() ||
-          (item.clientId || "").trim().toLowerCase() ===
-            selectedCustomer.trim().toLowerCase(),
-      );
-    }
-
-    // const employees = new Set();
-
-    filtered.forEach((item) => {
-      if (item.requester && item.requester.trim()) {
-        employees.add(item.requester.trim());
-      }
-      (item.contractDeliverables || []).forEach((contract) => {
-        (contract.services || []).forEach((service) => {
-          if (service.employee && service.employee.trim()) {
-            employees.add(service.employee.trim());
-          }
-          (service.assignedEmployees || []).forEach((empObj) => {
-            if (empObj?.employee && empObj.employee.trim()) {
-              employees.add(empObj.employee.trim());
-            }
-          });
-        });
-      });
-    });
-
     return [...employees].sort();
-    // }, [candidates, selectedCustomer]);
-  }, [candidates, dbEmployees, selectedCustomer]);
+  }, [dbEmployees]);
+
   const employeeOptions = useMemo(() => {
     if (!employeeSearchQuery.trim()) return rawEmployeeOptions;
     const q = employeeSearchQuery.trim().toLowerCase();
-    return rawEmployeeOptions.filter((item) => item.toLowerCase().includes(q));
+    return rawEmployeeOptions.filter((item) =>
+      item.toLowerCase().startsWith(q),
+    );
   }, [rawEmployeeOptions, employeeSearchQuery]);
 
-  // 3. Site Options
+  // 3. Selected Employee object (if exists in dbEmployees)
+  const activeEmployeeObj = useMemo(() => {
+    if (!selectedEmployee) return null;
+    return (
+      dbEmployees.find(
+        (emp) =>
+          (emp.employeeName || "").trim().toLowerCase() ===
+          selectedEmployee.trim().toLowerCase(),
+      ) || null
+    );
+  }, [dbEmployees, selectedEmployee]);
+
+  // 4. Site Options (sourced from selected employee locations OR selected customer deliverable sites)
   const rawSiteOptions = useMemo(() => {
-    let filtered = candidates;
-
-    if (selectedCustomer) {
-      filtered = filtered.filter(
-        (item) =>
-          (item.companyName || "").trim().toLowerCase() ===
-            selectedCustomer.trim().toLowerCase() ||
-          (item.clientId || "").trim().toLowerCase() ===
-            selectedCustomer.trim().toLowerCase(),
-      );
-    }
-
-    if (selectedEmployee) {
-      filtered = filtered.filter((item) => {
-        const matchesRequester =
-          (item.requester || "").trim().toLowerCase() ===
-          selectedEmployee.trim().toLowerCase();
-
-        const matchesServiceEmp = (item.contractDeliverables || []).some(
-          (contract) =>
-            (contract.services || []).some(
-              (service) =>
-                (service.employee || "").trim().toLowerCase() ===
-                  selectedEmployee.trim().toLowerCase() ||
-                (service.assignedEmployees || []).some(
-                  (e) =>
-                    (e?.employee || "").trim().toLowerCase() ===
-                    selectedEmployee.trim().toLowerCase(),
-                ),
-            ),
-        );
-
-        return matchesRequester || matchesServiceEmp;
-      });
-    }
-
     const sites = new Set();
 
-    filtered.forEach((item) => {
-      (item.contractDeliverables || []).forEach((contract) => {
-        if (contract.siteName && contract.siteName.trim()) {
-          sites.add(contract.siteName.trim());
+    if (selectedEmployee && activeEmployeeObj) {
+      // Sites come from employee's locations table
+      const locs =
+        activeEmployeeObj.locations && activeEmployeeObj.locations.length > 0
+          ? activeEmployeeObj.locations
+          : [{ place: activeEmployeeObj.place }];
+
+      locs.forEach((loc) => {
+        if (loc.place && loc.place.trim()) {
+          sites.add(loc.place.trim());
         }
       });
-    });
+    } else {
+      // Sites come from BoardingCandidates contractDeliverables
+      let filtered = candidates;
+      if (selectedCustomer) {
+        filtered = filtered.filter(
+          (item) =>
+            (item.companyName || "").trim().toLowerCase() ===
+              selectedCustomer.trim().toLowerCase() ||
+            (item.clientId || "").trim().toLowerCase() ===
+              selectedCustomer.trim().toLowerCase(),
+        );
+      }
+
+      filtered.forEach((item) => {
+        (item.contractDeliverables || []).forEach((contract) => {
+          if (contract.siteName && contract.siteName.trim()) {
+            sites.add(contract.siteName.trim());
+          }
+        });
+      });
+    }
 
     return [...sites].sort();
-  }, [candidates, selectedCustomer, selectedEmployee]);
+  }, [candidates, selectedCustomer, selectedEmployee, activeEmployeeObj]);
 
   const siteOptions = useMemo(() => {
     if (!siteSearchQuery.trim()) return rawSiteOptions;
     const q = siteSearchQuery.trim().toLowerCase();
-    return rawSiteOptions.filter((item) => item.toLowerCase().includes(q));
+    return rawSiteOptions.filter((item) => item.toLowerCase().startsWith(q));
   }, [rawSiteOptions, siteSearchQuery]);
 
   // Reset Filters
@@ -316,21 +267,6 @@ function RosterMain() {
     setShowSiteSearch(false);
   };
 
-  const activeEmployeeObj = useMemo(() => {
-    if (!selectedEmployee) return null;
-    return (
-      dbEmployees.find(
-        (emp) =>
-          (emp.employeeName || "").trim().toLowerCase() ===
-          selectedEmployee.trim().toLowerCase(),
-      ) || {
-        employeeName: selectedEmployee,
-        place: "Default Location",
-        shiftStartTime: "08:00",
-        shiftEndTime: "20:00",
-      }
-    );
-  }, [dbEmployees, selectedEmployee]);
   // Helper for timeline bar style
   const getShiftBarStyle = (startTimeStr, endTimeStr) => {
     const parseHour = (str) => {
@@ -340,11 +276,14 @@ function RosterMain() {
       const m = parseInt(parts[1], 10) || 0;
       return h + m / 60;
     };
+
     const startH = parseHour(startTimeStr);
     let endH = parseHour(endTimeStr);
     if (endH <= startH) endH = 24;
+
     const leftPercent = (startH / 24) * 100;
     const widthPercent = ((endH - startH) / 24) * 100;
+
     return {
       left: `${leftPercent}%`,
       width: `${widthPercent}%`,
@@ -353,6 +292,11 @@ function RosterMain() {
 
   // Filtered Candidate Records
   const displayRecords = useMemo(() => {
+    // If no customer and no site and no employee, return empty array
+    if (!selectedCustomer && !selectedSite && !selectedEmployee) {
+      return [];
+    }
+
     return candidates.filter((item) => {
       const custName = (item.companyName || item.clientId || "").trim();
       if (
@@ -365,23 +309,7 @@ function RosterMain() {
         customerSearchQuery.trim() &&
         !custName
           .toLowerCase()
-          .includes(customerSearchQuery.trim().toLowerCase())
-      ) {
-        return false;
-      }
-
-      const empName = (item.requester || "").trim();
-      if (
-        selectedEmployee &&
-        empName.toLowerCase() !== selectedEmployee.trim().toLowerCase()
-      ) {
-        return false;
-      }
-      if (
-        employeeSearchQuery.trim() &&
-        !empName
-          .toLowerCase()
-          .includes(employeeSearchQuery.trim().toLowerCase())
+          .startsWith(customerSearchQuery.trim().toLowerCase())
       ) {
         return false;
       }
@@ -394,15 +322,6 @@ function RosterMain() {
         );
         if (!hasSite) return false;
       }
-      if (siteSearchQuery.trim()) {
-        const hasSiteQuery = (item.contractDeliverables || []).some((c) =>
-          (c.siteName || "")
-            .trim()
-            .toLowerCase()
-            .includes(siteSearchQuery.trim().toLowerCase()),
-        );
-        if (!hasSiteQuery) return false;
-      }
 
       return true;
     });
@@ -412,8 +331,6 @@ function RosterMain() {
     selectedEmployee,
     selectedSite,
     customerSearchQuery,
-    employeeSearchQuery,
-    siteSearchQuery,
   ]);
 
   // Deliverable Site Rows
@@ -425,15 +342,6 @@ function RosterMain() {
           selectedSite &&
           (contract.siteName || "").trim().toLowerCase() !==
             selectedSite.trim().toLowerCase()
-        ) {
-          return;
-        }
-        if (
-          siteSearchQuery.trim() &&
-          !(contract.siteName || "")
-            .trim()
-            .toLowerCase()
-            .includes(siteSearchQuery.trim().toLowerCase())
         ) {
           return;
         }
@@ -451,7 +359,7 @@ function RosterMain() {
       });
     });
     return rows;
-  }, [displayRecords, selectedSite, siteSearchQuery]);
+  }, [displayRecords, selectedSite]);
 
   const isToday = (d) => {
     const now = new Date();
@@ -462,7 +370,6 @@ function RosterMain() {
     );
   };
 
-  // Color themes for ServiceNow shift badges
   const colorThemes = [
     "theme-green",
     "theme-blue",
@@ -471,7 +378,6 @@ function RosterMain() {
     "theme-purple",
   ];
 
-  // Open Assign Employee Modal Popup
   const handleOpenAssignModal = (row, card, sIdx) => {
     setAssignModal({
       isOpen: true,
@@ -479,25 +385,21 @@ function RosterMain() {
       contractId: row.contractId,
       serviceIndex: sIdx,
       cardIndex: card.cardIndex,
-      quantity: card.totalQty,
       siteName: row.siteName,
       serviceType: card.serviceType || card.position || "Shift",
       position: card.position || "",
       shiftTime: `${card.shiftStartTime || "08:00"} - ${card.shiftEndTime || "16:00"}`,
-      currentEmployee:
-        card.assignedEmployees?.[card.cardIndex - 1]?.employee || "",
+      currentEmployee: card.employee || row.requester || "",
     });
     setNewEmployeeName(card.employee || row.requester || "");
     setSaveSuccessMsg("");
   };
 
-  // Close Assign Modal
   const handleCloseModal = () => {
     setAssignModal((prev) => ({ ...prev, isOpen: false }));
     setSaveSuccessMsg("");
   };
 
-  // Save Assigned Employee to Backend API
   const handleSaveAssignEmployee = async () => {
     if (!newEmployeeName.trim()) return;
 
@@ -515,46 +417,27 @@ function RosterMain() {
       );
       if (!contract) throw new Error("Contract Deliverable not found");
 
-      // Clone existing services array
       const updatedServices = JSON.parse(
         JSON.stringify(contract.services || []),
       );
       if (updatedServices[assignModal.serviceIndex]) {
         updatedServices[assignModal.serviceIndex].employee =
           newEmployeeName.trim();
-
-        // Also update assignedEmployees array for consistency
-        const qty = updatedServices[assignModal.serviceIndex].quantity || 1;
-
-        let assigned =
+        const existingAssigned =
           updatedServices[assignModal.serviceIndex].assignedEmployees || [];
-
-        // Create empty rows until quantity
-        while (assigned.length < qty) {
-          assigned.push({
-            employee: "",
-          });
-        }
-
-        // Update only the clicked card
-        assigned[assignModal.cardIndex - 1].employee = newEmployeeName.trim();
-
-        updatedServices[assignModal.serviceIndex].assignedEmployees = assigned;
+        existingAssigned.push({ employee: newEmployeeName.trim() });
+        updatedServices[assignModal.serviceIndex].assignedEmployees =
+          existingAssigned;
       }
 
-      // API Endpoint URL
       const apiUrl = `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/${assignModal.candidateId}/contracts/${assignModal.contractId}/services`;
-      console.log(
-        "Saving assignedEmployees:",
-        updatedServices[assignModal.serviceIndex].assignedEmployees,
-      );
+
       try {
         await axios.put(apiUrl, {
           services: updatedServices,
           adhocServices: contract.adhocServices || [],
         });
       } catch (err) {
-        // Fallback to relative local API endpoint
         await axios.put(
           `/api/BoardingCandidates/${assignModal.candidateId}/contracts/${assignModal.contractId}/services`,
           {
@@ -564,10 +447,7 @@ function RosterMain() {
         );
       }
 
-      setSaveSuccessMsg("Employee assigned and saved successfully!");
-
-      // Refresh backend candidates data
-      // await fetchBoardingCandidates();
+      setSaveSuccessMsg("Employee assigned successfully!");
       await fetchAllData();
 
       setTimeout(() => {
@@ -580,6 +460,27 @@ function RosterMain() {
       setSavingAssign(false);
     }
   };
+
+  // Locations array for selected employee (up to 3 locations)
+  const selectedEmployeeLocations = useMemo(() => {
+    if (!activeEmployeeObj) return [];
+    if (activeEmployeeObj.locations && activeEmployeeObj.locations.length > 0) {
+      return activeEmployeeObj.locations.filter((l) => {
+        if (!selectedSite) return true;
+        return (
+          (l.place || "").trim().toLowerCase() ===
+          selectedSite.trim().toLowerCase()
+        );
+      });
+    }
+    return [
+      {
+        place: activeEmployeeObj.place || "Default Location",
+        shiftStartTime: activeEmployeeObj.shiftStartTime || "08:00",
+        shiftEndTime: activeEmployeeObj.shiftEndTime || "20:00",
+      },
+    ];
+  }, [activeEmployeeObj, selectedSite]);
 
   return (
     <div className="rosterMainWrapper">
@@ -621,22 +522,50 @@ function RosterMain() {
             </div>
 
             {showCustomerSearch && (
-              <div className="tabSearchBox">
-                <input
-                  type="text"
-                  placeholder="Search customer (e.g. NO)..."
-                  value={customerSearchQuery}
-                  onChange={(e) => setCustomerSearchQuery(e.target.value)}
-                  className="tabSearchInput"
-                  autoFocus
-                />
-                {customerSearchQuery && (
-                  <button
-                    className="clearSearchBtn"
-                    onClick={() => setCustomerSearchQuery("")}
-                  >
-                    ✕
-                  </button>
+              <div className="tabSearchContainer">
+                <div className="tabSearchBox">
+                  <input
+                    type="text"
+                    placeholder="Type starting letter (e.g. N)..."
+                    value={customerSearchQuery}
+                    onChange={(e) => setCustomerSearchQuery(e.target.value)}
+                    className="tabSearchInput"
+                    autoFocus
+                  />
+                  {customerSearchQuery && (
+                    <button
+                      className="clearSearchBtn"
+                      onClick={() => setCustomerSearchQuery("")}
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+
+                {customerSearchQuery.trim() && (
+                  <div className="searchResultsDropdown">
+                    {customerOptions.length === 0 ? (
+                      <div className="noResultItem">
+                        No customers starting with "{customerSearchQuery}"
+                      </div>
+                    ) : (
+                      customerOptions.map((customer, idx) => (
+                        <div
+                          key={idx}
+                          className="searchResultItem"
+                          onClick={() => {
+                            setSelectedCustomer(customer);
+                            setSelectedEmployee("");
+                            setSelectedSite("");
+                            setCustomerSearchQuery("");
+                            setShowCustomerSearch(false);
+                          }}
+                        >
+                          {customer}
+                        </div>
+                      ))
+                    )}
+                  </div>
                 )}
               </div>
             )}
@@ -652,11 +581,7 @@ function RosterMain() {
               }}
               disabled={loading}
             >
-              <option value="">
-                {customerSearchQuery
-                  ? `-- Matching "${customerSearchQuery}" (${customerOptions.length}) --`
-                  : "All Customers"}
-              </option>
+              <option value="">Select Customer</option>
               {customerOptions.map((customer, index) => (
                 <option key={index} value={customer}>
                   {customer}
@@ -700,22 +625,49 @@ function RosterMain() {
             </div>
 
             {showEmployeeSearch && (
-              <div className="tabSearchBox">
-                <input
-                  type="text"
-                  placeholder="Search employee..."
-                  value={employeeSearchQuery}
-                  onChange={(e) => setEmployeeSearchQuery(e.target.value)}
-                  className="tabSearchInput"
-                  autoFocus
-                />
-                {employeeSearchQuery && (
-                  <button
-                    className="clearSearchBtn"
-                    onClick={() => setEmployeeSearchQuery("")}
-                  >
-                    ✕
-                  </button>
+              <div className="tabSearchContainer">
+                <div className="tabSearchBox">
+                  <input
+                    type="text"
+                    placeholder="Type starting letter..."
+                    value={employeeSearchQuery}
+                    onChange={(e) => setEmployeeSearchQuery(e.target.value)}
+                    className="tabSearchInput"
+                    autoFocus
+                  />
+                  {employeeSearchQuery && (
+                    <button
+                      className="clearSearchBtn"
+                      onClick={() => setEmployeeSearchQuery("")}
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+
+                {employeeSearchQuery.trim() && (
+                  <div className="searchResultsDropdown">
+                    {employeeOptions.length === 0 ? (
+                      <div className="noResultItem">
+                        No employees starting with "{employeeSearchQuery}"
+                      </div>
+                    ) : (
+                      employeeOptions.map((employee, idx) => (
+                        <div
+                          key={idx}
+                          className="searchResultItem"
+                          onClick={() => {
+                            setSelectedEmployee(employee);
+                            setSelectedSite("");
+                            setEmployeeSearchQuery("");
+                            setShowEmployeeSearch(false);
+                          }}
+                        >
+                          {employee}
+                        </div>
+                      ))
+                    )}
+                  </div>
                 )}
               </div>
             )}
@@ -730,11 +682,7 @@ function RosterMain() {
               }}
               disabled={loading}
             >
-              <option value="">
-                {employeeSearchQuery
-                  ? `-- Matching "${employeeSearchQuery}" (${employeeOptions.length}) --`
-                  : "All Employees"}
-              </option>
+              <option value="">Select Employee</option>
               {employeeOptions.map((employee, index) => (
                 <option key={index} value={employee}>
                   {employee}
@@ -759,22 +707,48 @@ function RosterMain() {
             </div>
 
             {showSiteSearch && (
-              <div className="tabSearchBox">
-                <input
-                  type="text"
-                  placeholder="Search site..."
-                  value={siteSearchQuery}
-                  onChange={(e) => setSiteSearchQuery(e.target.value)}
-                  className="tabSearchInput"
-                  autoFocus
-                />
-                {siteSearchQuery && (
-                  <button
-                    className="clearSearchBtn"
-                    onClick={() => setSiteSearchQuery("")}
-                  >
-                    ✕
-                  </button>
+              <div className="tabSearchContainer">
+                <div className="tabSearchBox">
+                  <input
+                    type="text"
+                    placeholder="Type starting letter..."
+                    value={siteSearchQuery}
+                    onChange={(e) => setSiteSearchQuery(e.target.value)}
+                    className="tabSearchInput"
+                    autoFocus
+                  />
+                  {siteSearchQuery && (
+                    <button
+                      className="clearSearchBtn"
+                      onClick={() => setSiteSearchQuery("")}
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+
+                {siteSearchQuery.trim() && (
+                  <div className="searchResultsDropdown">
+                    {siteOptions.length === 0 ? (
+                      <div className="noResultItem">
+                        No sites starting with "{siteSearchQuery}"
+                      </div>
+                    ) : (
+                      siteOptions.map((site, idx) => (
+                        <div
+                          key={idx}
+                          className="searchResultItem"
+                          onClick={() => {
+                            setSelectedSite(site);
+                            setSiteSearchQuery("");
+                            setShowSiteSearch(false);
+                          }}
+                        >
+                          {site}
+                        </div>
+                      ))
+                    )}
+                  </div>
                 )}
               </div>
             )}
@@ -786,11 +760,7 @@ function RosterMain() {
               onChange={(e) => setSelectedSite(e.target.value)}
               disabled={loading}
             >
-              <option value="">
-                {siteSearchQuery
-                  ? `-- Matching "${siteSearchQuery}" (${siteOptions.length}) --`
-                  : "All Sites"}
-              </option>
+              <option value="">Select Site</option>
               {siteOptions.map((site, index) => (
                 <option key={index} value={site}>
                   {site}
@@ -801,7 +771,7 @@ function RosterMain() {
         </div>
       </div>
 
-      {/* 70% HEIGHT: SERVICENOW STYLE LIGHT THEME CALENDAR VIEW */}
+      {/* 70% HEIGHT: CALENDAR VIEW / SELECTED EMPLOYEE TIMELINE VIEW */}
       <div className="rosterBottomSection">
         {loading ? (
           <div className="rosterLoadingState">
@@ -837,187 +807,202 @@ function RosterMain() {
                 <span className="calendarTitleText">{calendarHeaderTitle}</span>
               </div>
             </div>
-            {/* IF AN EMPLOYEE IS SELECTED: DISPLAY EMPLOYEE SHIFT TIMELINE MATCHING IMAGE */}
-            {selectedEmployee && activeEmployeeObj ? (
+
+            {/* CASE 1: IF AN EMPLOYEE IS SELECTED: DISPLAY ONLY EMPLOYEE SHIFT TIMELINE SCHEDULE (LOCATIONS 1, 2, 3) */}
+            {selectedEmployee ? (
               <div className="selectedEmployeeTimelineBox">
                 <div className="empTimelineHeader">
-                  <h3>
-                    Employee Shift Timeline Schedule:{" "}
-                    {activeEmployeeObj.employeeName}
-                  </h3>
+                  <h3>Employee Shift Timeline Schedule: {selectedEmployee}</h3>
                 </div>
-                <div className="employeeTimelineRow">
-                  <div className="agentInfoCol">
-                    <div className="agentName">
-                      {activeEmployeeObj.employeeName}
-                    </div>
-                    <div className="agentLocation">
-                      📍 {activeEmployeeObj.place || "Default Location"}
-                    </div>
+
+                {selectedEmployeeLocations.length === 0 ? (
+                  <div className="emptyStateCalendar">
+                    No location records for {selectedEmployee}.
                   </div>
-                  <div className="timelineBarCol">
-                    <div className="hoursBackgroundGrid">
-                      {hours.map((hStr, hIdx) => (
-                        <div key={hIdx} className="gridHourCell">
-                          <span className="hourLabel">{hStr}</span>
+                ) : (
+                  selectedEmployeeLocations.map((loc, lIdx) => (
+                    <div key={lIdx} className="employeeTimelineRow">
+                      <div className="agentInfoCol">
+                        <div className="agentName">{selectedEmployee}</div>
+                        <div className="agentLocation">
+                          📍 {loc.place || `Location ${lIdx + 1}`}
                         </div>
-                      ))}
-                    </div>
-                    <div
-                      className="shiftBlockBar"
-                      style={getShiftBarStyle(
-                        activeEmployeeObj.shiftStartTime,
-                        activeEmployeeObj.shiftEndTime,
-                      )}
-                    >
-                      <div className="shiftBlockTitle">
-                        Shift: {activeEmployeeObj.shiftStartTime || "08:00"} -{" "}
-                        {activeEmployeeObj.shiftEndTime || "20:00"}
+                      </div>
+
+                      <div className="timelineBarCol">
+                        <div className="hoursBackgroundGrid">
+                          {hours.map((hStr, hIdx) => (
+                            <div key={hIdx} className="gridHourCell">
+                              <span className="hourLabel">{hStr}</span>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div
+                          className="shiftBlockBar"
+                          style={getShiftBarStyle(
+                            loc.shiftStartTime,
+                            loc.shiftEndTime,
+                          )}
+                        >
+                          <div className="shiftBlockTitle">
+                            Shift: {loc.shiftStartTime || "08:00"} -{" "}
+                            {loc.shiftEndTime || "20:00"}
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
+                  ))
+                )}
               </div>
-            ) : null}
-
-            {/* CALENDAR WEEK HEADER */}
-            <div className="calendarWeekHeader">
-              {weekDates.map((date, idx) => {
-                const dayName = weekDays[idx];
-                const dayNum = date.getDate();
-                const monthShort = date.toLocaleDateString("en-US", {
-                  month: "short",
-                });
-
-                return (
-                  <div
-                    key={idx}
-                    className={`weekHeaderCell ${isToday(date) ? "isToday" : ""}`}
-                  >
-                    <div className="dayNameTxt">{dayName}</div>
-                    <div
-                      className={`dayNumBadge ${isToday(date) ? "todayCircle" : ""}`}
-                    >
-                      {monthShort} {dayNum}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* DELIVERABLE SITE ROWS */}
-            {deliverableRows.length === 0 ? (
+            ) : !selectedCustomer && !selectedSite ? (
+              /* CASE 2: EMPTY STATE WHEN NOTHING SELECTED */
               <div className="emptyStateCalendar">
-                No contract deliverables or sites match the selected filters.
+                Please select a Customer, Employee, or Site from the filters
+                above to view schedule details.
               </div>
             ) : (
-              deliverableRows.map((row) => (
-                <div className="siteCalendarRow" key={row.rowId}>
-                  {/* SITE BANNER */}
-                  <div className="siteBannerHeader">
-                    <span className="siteBannerTitle">
-                      📍 {row.siteName}{" "}
-                      {row.siteAddress ? `(${row.siteAddress})` : ""}
-                    </span>
-                    <span className="siteBannerMeta">
-                      Customer: <strong>{row.companyName}</strong> | Requester:{" "}
-                      <strong>{row.requester}</strong>
-                    </span>
-                  </div>
+              /* CASE 3: DELIVERABLE SITE ROWS WHEN CUSTOMER OR SITE SELECTED */
+              <>
+                <div className="calendarWeekHeader">
+                  {weekDates.map((date, idx) => {
+                    const dayName = weekDays[idx];
+                    const dayNum = date.getDate();
+                    const monthShort = date.toLocaleDateString("en-US", {
+                      month: "short",
+                    });
 
-                  {/* 7 DAYS CALENDAR GRID FOR THIS SITE */}
-                  <div className="siteDaysGrid">
-                    {weekDates.map((date, dayIdx) => {
-                      const currentDayName = weekDays[dayIdx];
-
-                      const matchingServices = row.services.filter((svc) => {
-                        const workingDays = svc.workingDays || [];
-                        if (workingDays.length > 0) {
-                          if (!workingDays.includes(currentDayName))
-                            return false;
-                        }
-                        if (svc.contractStartDate) {
-                          const start = new Date(svc.contractStartDate);
-                          start.setHours(0, 0, 0, 0);
-                          if (date < start) return false;
-                        }
-                        if (svc.contractEndDate) {
-                          const end = new Date(svc.contractEndDate);
-                          end.setHours(23, 59, 59, 999);
-                          if (date > end) return false;
-                        }
-                        return true;
-                      });
-
-                      // Expand services by quantity
-                      const expandedCards = [];
-                      matchingServices.forEach((svc, sIdx) => {
-                        const qty = Math.max(1, Number(svc.quantity) || 1);
-                        for (let q = 0; q < qty; q++) {
-                          expandedCards.push({
-                            ...svc,
-                            serviceIndex: sIdx,
-                            cardIndex: q + 1,
-                            totalQty: qty,
-                            themeClass:
-                              colorThemes[(sIdx + q) % colorThemes.length],
-                          });
-                        }
-                      });
-
-                      return (
+                    return (
+                      <div
+                        key={idx}
+                        className={`weekHeaderCell ${isToday(date) ? "isToday" : ""}`}
+                      >
+                        <div className="dayNameTxt">{dayName}</div>
                         <div
-                          key={dayIdx}
-                          className={`calendarDayCell ${isToday(date) ? "todayCell" : ""}`}
+                          className={`dayNumBadge ${isToday(date) ? "todayCircle" : ""}`}
                         >
-                          {expandedCards.length === 0 ? (
-                            <div className="emptyDayCell">-</div>
-                          ) : (
-                            expandedCards.map((card, cIdx) => (
-                              <div
-                                key={cIdx}
-                                className={`shiftCard ${card.themeClass}`}
-                                title="Click to assign employee"
-                                onClick={() =>
-                                  handleOpenAssignModal(
-                                    row,
-                                    card,
-                                    card.serviceIndex,
-                                  )
-                                }
-                              >
-                                <div className="shiftHeader">
-                                  <span className="shiftType">
-                                    {card.serviceType ||
-                                      card.position ||
-                                      "Shift"}
-                                  </span>
-                                  {card.totalQty > 1 && (
-                                    <span className="qtyBadge">
-                                      #{card.cardIndex}
-                                    </span>
-                                  )}
-                                </div>
-
-                                <div className="shiftTime">
-                                  🕒 {card.shiftStartTime || "08:00"} -{" "}
-                                  {card.shiftEndTime || "16:00"}
-                                </div>
-
-                                <div className="shiftEmployee">
-                                  👤{" "}
-                                  {card.assignedEmployees?.[card.cardIndex - 1]
-                                    ?.employee || "Click to Assign"}
-                                </div>
-                              </div>
-                            ))
-                          )}
+                          {monthShort} {dayNum}
                         </div>
-                      );
-                    })}
-                  </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              ))
+
+                {deliverableRows.length === 0 ? (
+                  <div className="emptyStateCalendar">
+                    No contract deliverables or sites match the selected
+                    filters.
+                  </div>
+                ) : (
+                  deliverableRows.map((row) => (
+                    <div className="siteCalendarRow" key={row.rowId}>
+                      <div className="siteBannerHeader">
+                        <span className="siteBannerTitle">
+                          📍 {row.siteName}{" "}
+                          {row.siteAddress ? `(${row.siteAddress})` : ""}
+                        </span>
+                        <span className="siteBannerMeta">
+                          Customer: <strong>{row.companyName}</strong> |
+                          Requester: <strong>{row.requester}</strong>
+                        </span>
+                      </div>
+
+                      <div className="siteDaysGrid">
+                        {weekDates.map((date, dayIdx) => {
+                          const currentDayName = weekDays[dayIdx];
+
+                          const matchingServices = row.services.filter(
+                            (svc) => {
+                              const workingDays = svc.workingDays || [];
+                              if (workingDays.length > 0) {
+                                if (!workingDays.includes(currentDayName))
+                                  return false;
+                              }
+                              if (svc.contractStartDate) {
+                                const start = new Date(svc.contractStartDate);
+                                start.setHours(0, 0, 0, 0);
+                                if (date < start) return false;
+                              }
+                              if (svc.contractEndDate) {
+                                const end = new Date(svc.contractEndDate);
+                                end.setHours(23, 59, 59, 999);
+                                if (date > end) return false;
+                              }
+                              return true;
+                            },
+                          );
+
+                          const expandedCards = [];
+                          matchingServices.forEach((svc, sIdx) => {
+                            const qty = Math.max(1, Number(svc.quantity) || 1);
+                            for (let q = 0; q < qty; q++) {
+                              expandedCards.push({
+                                ...svc,
+                                serviceIndex: sIdx,
+                                cardIndex: q + 1,
+                                totalQty: qty,
+                                themeClass:
+                                  colorThemes[(sIdx + q) % colorThemes.length],
+                              });
+                            }
+                          });
+
+                          return (
+                            <div
+                              key={dayIdx}
+                              className={`calendarDayCell ${isToday(date) ? "todayCell" : ""}`}
+                            >
+                              {expandedCards.length === 0 ? (
+                                <div className="emptyDayCell">-</div>
+                              ) : (
+                                expandedCards.map((card, cIdx) => (
+                                  <div
+                                    key={cIdx}
+                                    className={`shiftCard ${card.themeClass}`}
+                                    title="Click to assign employee"
+                                    onClick={() =>
+                                      handleOpenAssignModal(
+                                        row,
+                                        card,
+                                        card.serviceIndex,
+                                      )
+                                    }
+                                  >
+                                    <div className="shiftHeader">
+                                      <span className="shiftType">
+                                        {card.serviceType ||
+                                          card.position ||
+                                          "Shift"}
+                                      </span>
+                                      {card.totalQty > 1 && (
+                                        <span className="qtyBadge">
+                                          #{card.cardIndex}
+                                        </span>
+                                      )}
+                                    </div>
+
+                                    <div className="shiftTime">
+                                      🕒 {card.shiftStartTime || "08:00"} -{" "}
+                                      {card.shiftEndTime || "16:00"}
+                                    </div>
+
+                                    <div className="shiftEmployee">
+                                      👤{" "}
+                                      {card.employee ||
+                                        row.requester ||
+                                        "Click to Assign"}
+                                    </div>
+                                  </div>
+                                ))
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </>
             )}
           </div>
         )}
@@ -1044,10 +1029,7 @@ function RosterMain() {
                   {assignModal.shiftTime})
                 </p>
                 <p>
-                  <p>
-                    <strong>Slot:</strong> {assignModal.cardIndex} /{" "}
-                    {assignModal.quantity}
-                  </p>
+                  <strong>Slot:</strong> Card #{assignModal.cardIndex}
                 </p>
               </div>
 
