@@ -56,6 +56,7 @@ function OpMainPage() {
                 slotLabel: `Slot ${q + 1}`,
                 isAdhoc: false,
                 employeeName: empName.trim(),
+                hasEmployee: true,
                 companyName: cand.companyName || cand.requester || "Unnamed Company",
                 siteName: contract.siteName || "N/A",
                 siteAddress: contract.siteAddress || contract.siteName || "N/A",
@@ -71,30 +72,32 @@ function OpMainPage() {
           }
         });
 
-        // Adhoc Services
+        // Adhoc Services (Included always if adhoc service exists)
         (contract.adhocServices || []).forEach((adhoc, aIdx) => {
           const empName = adhoc.employee || "";
-          if (empName && empName.trim() !== "") {
-            rows.push({
-              rowId: `${cand._id}_${contract._id}_adhoc_${aIdx}`,
-              candidateId: cand._id,
-              contractId: contract._id,
-              adhocIndex: aIdx,
-              isAdhoc: true,
-              slotLabel: "ADHOC",
-              employeeName: empName.trim(),
-              companyName: cand.companyName || cand.requester || "Unnamed Company",
-              siteName: contract.siteName || "N/A",
-              siteAddress: contract.siteAddress || contract.siteName || "N/A",
-              typeOfService: adhoc.serviceType || "Adhoc Service",
-              position: adhoc.position || (contract.services?.[0]?.position) || "Adhoc",
-              shiftStartTime: adhoc.shiftStartTime || "08:00",
-              shiftEndTime: adhoc.shiftEndTime || "16:00",
-              approvalState: adhoc.approvalState || "Pending",
-              contractObj: contract,
-              candObj: cand,
-            });
-          }
+          rows.push({
+            rowId: `${cand._id}_${contract._id}_adhoc_${aIdx}`,
+            candidateId: cand._id,
+            contractId: contract._id,
+            adhocIndex: aIdx,
+            isAdhoc: true,
+            slotLabel: "ADHOC",
+            employeeName:
+              empName && empName.trim() !== ""
+                ? empName.trim()
+                : "Unassigned (Assign in Roster)",
+            hasEmployee: Boolean(empName && empName.trim() !== ""),
+            companyName: cand.companyName || cand.requester || "Unnamed Company",
+            siteName: contract.siteName || "N/A",
+            siteAddress: contract.siteAddress || contract.siteName || "N/A",
+            typeOfService: adhoc.serviceType || "Adhoc Service",
+            position: adhoc.position || (contract.services?.[0]?.position) || "Adhoc",
+            shiftStartTime: adhoc.shiftStartTime || "08:00",
+            shiftEndTime: adhoc.shiftEndTime || "16:00",
+            approvalState: adhoc.approvalState || "Pending",
+            contractObj: contract,
+            candObj: cand,
+          });
         });
       });
     });
@@ -115,6 +118,11 @@ function OpMainPage() {
   }, [assignedSlotRows]);
 
   const handleUpdateApproval = async (rowItem, newStatus) => {
+    if (!rowItem.hasEmployee) {
+      alert("Please assign an employee to this Adhoc shift in the Roster first before approving/rejecting.");
+      return;
+    }
+
     const actionKey = `${rowItem.rowId}_${newStatus}`;
     try {
       setActionLoadingId(actionKey);
@@ -229,7 +237,11 @@ function OpMainPage() {
         </td>
 
         <td className="actionCol">
-          {isAccepted ? (
+          {!row.hasEmployee ? (
+            <span style={{ fontSize: "11.5px", color: "#64748b", fontStyle: "italic" }}>
+              Pending Assignment in Roster
+            </span>
+          ) : isAccepted ? (
             <div className="statusBadge flexBadge acceptedBadge">
               <span>✓ Accepted</span>
               <button
@@ -289,14 +301,14 @@ function OpMainPage() {
             onClick={() => navigate("/")}
           />
         </div>
-        <div className="navTitle">Organisation Policies & Approvals</div>
+        <div className="navTitle">Organisation Policies Approvals and Adhoc Approvals</div>
       </div>
 
       <div className="opContentContainer">
         <div className="opHeaderBlock">
           <h2>Employee Shift Assignment Approval List</h2>
           <p>
-            Review assigned shift employees from the Roster, grouped by company name.
+            Review assigned shift employees & adhoc requests from the Roster, grouped by company name.
           </p>
         </div>
 
@@ -346,7 +358,7 @@ function OpMainPage() {
                 {adhocRows.length > 0 && (
                   <div className="opAdhocSection">
                     <div className="opAdhocSubheader">
-                      ⚡ Adhoc Requests ({adhocRows.length})
+                      ⚡ Adhoc Approvals ({adhocRows.length})
                     </div>
                     <div className="opTableCard">
                       <table className="opApprovalTable">

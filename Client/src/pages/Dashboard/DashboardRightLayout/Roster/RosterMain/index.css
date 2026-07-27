@@ -698,8 +698,33 @@
 
 .theme-adhoc {
   background: #1e293b !important;
-  border-left: 4px solid #4ade80 !important;
+  border-left: 4px solid #cbd5e1 !important;
   color: #ffffff !important;
+}
+
+/* Blackish Adhoc Card Themes */
+.theme-adhoc-silver {
+  background: #1e293b !important;
+  border-left: 4px solid #cbd5e1 !important;
+  color: #f1f5f9 !important;
+}
+
+.theme-adhoc-yellow {
+  background: #26230f !important;
+  border-left: 4px solid #facc15 !important;
+  color: #fef08a !important;
+}
+
+.theme-adhoc-green {
+  background: #0f291e !important;
+  border-left: 4px solid #4ade80 !important;
+  color: #bbf7d0 !important;
+}
+
+.theme-adhoc-red {
+  background: #2d1517 !important;
+  border-left: 4px solid #f87171 !important;
+  color: #fecaca !important;
 }
 
 /* ASSIGN MODAL */

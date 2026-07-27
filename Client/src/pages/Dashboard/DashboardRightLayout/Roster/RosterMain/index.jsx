@@ -1176,19 +1176,19 @@ function RosterMain() {
                                   ))}
 
                                   {matchingAdhoc.map((adhoc, aIdx) => {
-                                    let adhocThemeClass = "theme-adhoc";
+                                    let adhocThemeClass = "theme-adhoc-silver";
                                     const hasEmp =
                                       adhoc.employee &&
                                       adhoc.employee.trim() !== "";
                                     if (hasEmp) {
                                       if (adhoc.approvalState === "Accepted") {
-                                        adhocThemeClass = "theme-green";
+                                        adhocThemeClass = "theme-adhoc-green";
                                       } else if (
                                         adhoc.approvalState === "Rejected"
                                       ) {
-                                        adhocThemeClass = "theme-red";
+                                        adhocThemeClass = "theme-adhoc-red";
                                       } else {
-                                        adhocThemeClass = "theme-yellow";
+                                        adhocThemeClass = "theme-adhoc-yellow";
                                       }
                                     }
 
@@ -1214,10 +1214,8 @@ function RosterMain() {
                                           <span
                                             className="qtyBadge"
                                             style={{
-                                              color:
-                                                adhocThemeClass === "theme-adhoc"
-                                                  ? "#cbd5e1"
-                                                  : "inherit",
+                                              color: "inherit",
+                                              opacity: 0.9,
                                             }}
                                           >
                                             ADHOC
