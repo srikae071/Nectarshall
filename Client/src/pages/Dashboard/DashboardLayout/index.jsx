@@ -374,6 +374,16 @@ function DashboardLayout({ children }) {
           </div>
           <div
             className={`submenuItem ${
+              location.pathname === "/add-adhoc" ? "active" : ""
+            }`}
+            onClick={() => navigate("/add-adhoc")}
+          >
+            <span className="menuIcon">➕</span>
+
+            {!sidebarCollapsed && <span className="menuText">Add Adhoc</span>}
+          </div>
+          <div
+            className={`submenuItem ${
               location.pathname === "/dashboard/employee" ? "active" : ""
             }`}
             onClick={() => navigate("/dashboard/employee")}

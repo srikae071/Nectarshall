@@ -356,6 +356,7 @@ function RosterMain() {
           siteName: contract.siteName || `Site ${cIdx + 1}`,
           siteAddress: contract.siteAddress || "",
           services: contract.services || [],
+          adhocServices: contract.adhocServices || [],
         });
       });
     });
@@ -986,53 +987,90 @@ function RosterMain() {
                             }
                           });
 
+                          const matchingAdhoc = (row.adhocServices || []).filter(
+                            (adhoc) => {
+                              if (!adhoc.serviceDate) return true;
+                              const adhocD = new Date(adhoc.serviceDate);
+                              return (
+                                adhocD.getDate() === date.getDate() &&
+                                adhocD.getMonth() === date.getMonth() &&
+                                adhocD.getFullYear() === date.getFullYear()
+                              );
+                            },
+                          );
+
                           return (
                             <div
                               key={dayIdx}
                               className={`calendarDayCell ${isToday(date) ? "todayCell" : ""}`}
                             >
-                              {expandedCards.length === 0 ? (
+                              {expandedCards.length === 0 &&
+                              matchingAdhoc.length === 0 ? (
                                 <div className="emptyDayCell">-</div>
                               ) : (
-                                expandedCards.map((card, cIdx) => (
-                                  <div
-                                    key={cIdx}
-                                    className={`shiftCard ${card.themeClass}`}
-                                    title="Click to assign employee"
-                                    onClick={() =>
-                                      handleOpenAssignModal(
-                                        row,
-                                        card,
-                                        card.serviceIndex,
-                                      )
-                                    }
-                                  >
-                                    <div className="shiftHeader">
-                                      <span className="shiftType">
-                                        {card.serviceType ||
-                                          card.position ||
-                                          "Shift"}
-                                      </span>
-                                      {card.totalQty > 1 && (
-                                        <span className="qtyBadge">
-                                          #{card.cardIndex}
+                                <>
+                                  {expandedCards.map((card, cIdx) => (
+                                    <div
+                                      key={cIdx}
+                                      className={`shiftCard ${card.themeClass}`}
+                                      title="Click to assign employee"
+                                      onClick={() =>
+                                        handleOpenAssignModal(
+                                          row,
+                                          card,
+                                          card.serviceIndex,
+                                        )
+                                      }
+                                    >
+                                      <div className="shiftHeader">
+                                        <span className="shiftType">
+                                          {card.serviceType ||
+                                            card.position ||
+                                            "Shift"}
                                         </span>
-                                      )}
-                                    </div>
+                                        {card.totalQty > 1 && (
+                                          <span className="qtyBadge">
+                                            #{card.cardIndex}
+                                          </span>
+                                        )}
+                                      </div>
 
-                                    <div className="shiftTime">
-                                      🕒 {card.shiftStartTime || "08:00"} -{" "}
-                                      {card.shiftEndTime || "16:00"}
-                                    </div>
+                                      <div className="shiftTime">
+                                        🕒 {card.shiftStartTime || "08:00"} -{" "}
+                                        {card.shiftEndTime || "16:00"}
+                                      </div>
 
-                                    <div className="shiftEmployee">
-                                      👤{" "}
-                                      {card.slotEmployee ||
-                                        row.requester ||
-                                        "Click to Assign"}
+                                      <div className="shiftEmployee">
+                                        👤{" "}
+                                        {card.slotEmployee ||
+                                          row.requester ||
+                                          "Click to Assign"}
+                                      </div>
                                     </div>
-                                  </div>
-                                ))
+                                  ))}
+
+                                  {matchingAdhoc.map((adhoc, aIdx) => (
+                                    <div
+                                      key={`adhoc_${aIdx}`}
+                                      className="shiftCard theme-adhoc"
+                                      title={`Adhoc: ${adhoc.serviceType || adhoc.adhocName || "Adhoc"}`}
+                                    >
+                                      <div className="shiftHeader">
+                                        <span className="shiftType">
+                                          {adhoc.serviceType ||
+                                            adhoc.adhocName ||
+                                            "Adhoc"}
+                                        </span>
+                                        <span
+                                          className="qtyBadge"
+                                          style={{ color: "#4ade80" }}
+                                        >
+                                          ADHOC
+                                        </span>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </>
                               )}
                             </div>
                           );

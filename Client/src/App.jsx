@@ -102,6 +102,7 @@ import OnbCOnBoarded from "./pages/Hrms/OnBoarding/OnBoardingClinet/OnBoardingCo
 import OnbCOpen from "./pages/Hrms/OnBoarding/OnBoardingClinet/OnBoardingCompliance/OnbCOpen";
 import OprationsClientOnbTab from "./pages/Dashboard/DashboardRightLayout/OprationsClientOnbTab";
 import AdhocAllTab from "./pages/Dashboard/DashboardRightLayout/AdhocServices/AdhocAllTab";
+import AddAdhoc from "./pages/Dashboard/DashboardRightLayout/AddAdhoc";
 // import BEWorkInProgress from "./pages/Cnc/CncRightSide/BEWorkInProgress";
 function App() {
   return (
@@ -132,6 +133,7 @@ function App() {
           element={<OprationsClientOnbTab />}
         />
         <Route path="/roster" element={<RosterMain />} />
+        <Route path="/add-adhoc" element={<AddAdhoc />} />
         <Route path="/dashboard/employee" element={<Employees />} />
       </Route>
       <Route path="/onboarding-saves/:id" element={<OnBoardingSaves />} />
