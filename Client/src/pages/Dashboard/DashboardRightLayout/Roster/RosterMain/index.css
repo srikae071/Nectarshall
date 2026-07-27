@@ -678,6 +678,12 @@
   color: #581c87;
 }
 
+.theme-yellow {
+  background: #fef08a !important;
+  border-left: 4px solid #eab308 !important;
+  color: #713f12 !important;
+}
+
 /* ASSIGN MODAL */
 
 .assignModalOverlay {

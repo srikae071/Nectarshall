@@ -34,6 +34,7 @@ function RosterMain() {
     contractId: "",
     serviceIndex: null,
     cardIndex: 1,
+    slotIndex: 0,
     siteName: "",
     serviceType: "",
     position: "",
@@ -379,19 +380,22 @@ function RosterMain() {
   ];
 
   const handleOpenAssignModal = (row, card, sIdx) => {
+    const slotIdx = card.slotIndex ?? (card.cardIndex - 1);
+    const slotEmp = card.slotEmployee || (card.assignedEmployees?.[slotIdx]?.employee) || (slotIdx === 0 ? card.employee : "") || "";
     setAssignModal({
       isOpen: true,
       candidateId: row.candidateId,
       contractId: row.contractId,
       serviceIndex: sIdx,
       cardIndex: card.cardIndex,
+      slotIndex: slotIdx,
       siteName: row.siteName,
       serviceType: card.serviceType || card.position || "Shift",
       position: card.position || "",
       shiftTime: `${card.shiftStartTime || "08:00"} - ${card.shiftEndTime || "16:00"}`,
-      currentEmployee: card.employee || row.requester || "",
+      currentEmployee: slotEmp || row.requester || "",
     });
-    setNewEmployeeName(card.employee || row.requester || "");
+    setNewEmployeeName(slotEmp || row.requester || "");
     setSaveSuccessMsg("");
   };
 
@@ -421,13 +425,27 @@ function RosterMain() {
         JSON.stringify(contract.services || []),
       );
       if (updatedServices[assignModal.serviceIndex]) {
-        updatedServices[assignModal.serviceIndex].employee =
-          newEmployeeName.trim();
-        const existingAssigned =
-          updatedServices[assignModal.serviceIndex].assignedEmployees || [];
-        existingAssigned.push({ employee: newEmployeeName.trim() });
-        updatedServices[assignModal.serviceIndex].assignedEmployees =
-          existingAssigned;
+        const targetService = updatedServices[assignModal.serviceIndex];
+        const slotIdx = assignModal.slotIndex ?? (assignModal.cardIndex - 1);
+        const qty = Math.max(1, Number(targetService.quantity) || 1);
+
+        let existingAssigned = targetService.assignedEmployees || [];
+        while (existingAssigned.length < qty) {
+          existingAssigned.push({ employee: "", isYellow: false, isUpdated: false });
+        }
+
+        existingAssigned[slotIdx] = {
+          ...existingAssigned[slotIdx],
+          employee: newEmployeeName.trim(),
+          isYellow: true,
+          isUpdated: true,
+        };
+
+        targetService.assignedEmployees = existingAssigned;
+
+        if (slotIdx === 0) {
+          targetService.employee = newEmployeeName.trim();
+        }
       }
 
       const apiUrl = `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/${assignModal.candidateId}/contracts/${assignModal.contractId}/services`;
@@ -936,13 +954,25 @@ function RosterMain() {
                           matchingServices.forEach((svc, sIdx) => {
                             const qty = Math.max(1, Number(svc.quantity) || 1);
                             for (let q = 0; q < qty; q++) {
+                              const slotEmpObj = svc.assignedEmployees?.[q];
+                              const slotEmployee =
+                                slotEmpObj?.employee ||
+                                (q === 0 ? svc.employee || "" : "");
+                              const isYellow = Boolean(
+                                slotEmpObj?.isYellow || slotEmpObj?.isUpdated,
+                              );
+
                               expandedCards.push({
                                 ...svc,
                                 serviceIndex: sIdx,
                                 cardIndex: q + 1,
+                                slotIndex: q,
                                 totalQty: qty,
-                                themeClass:
-                                  colorThemes[(sIdx + q) % colorThemes.length],
+                                slotEmployee: slotEmployee,
+                                isYellow: isYellow,
+                                themeClass: isYellow
+                                  ? "theme-yellow"
+                                  : colorThemes[(sIdx + q) % colorThemes.length],
                               });
                             }
                           });
@@ -988,7 +1018,7 @@ function RosterMain() {
 
                                     <div className="shiftEmployee">
                                       👤{" "}
-                                      {card.employee ||
+                                      {card.slotEmployee ||
                                         row.requester ||
                                         "Click to Assign"}
                                     </div>

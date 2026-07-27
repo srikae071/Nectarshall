@@ -128,6 +128,14 @@ const BoardingCandidatesSchema = new mongoose.Schema(
                   type: String,
                   default: "",
                 },
+                isYellow: {
+                  type: Boolean,
+                  default: false,
+                },
+                isUpdated: {
+                  type: Boolean,
+                  default: false,
+                },
               },
             ],
 
