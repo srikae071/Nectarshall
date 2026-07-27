@@ -38,6 +38,7 @@ function OpMainPage() {
     const rows = [];
     (candidates || []).forEach((cand) => {
       (cand.contractDeliverables || []).forEach((contract) => {
+        // Standard Services
         (contract.services || []).forEach((svc, sIdx) => {
           const qty = Math.max(1, Number(svc.quantity) || 1);
           for (let q = 0; q < qty; q++) {
@@ -53,6 +54,7 @@ function OpMainPage() {
                 serviceIndex: sIdx,
                 slotIndex: q,
                 slotLabel: `Slot ${q + 1}`,
+                isAdhoc: false,
                 employeeName: empName.trim(),
                 companyName: cand.companyName || cand.requester || "Unnamed Company",
                 siteName: contract.siteName || "N/A",
@@ -66,6 +68,32 @@ function OpMainPage() {
                 candObj: cand,
               });
             }
+          }
+        });
+
+        // Adhoc Services
+        (contract.adhocServices || []).forEach((adhoc, aIdx) => {
+          const empName = adhoc.employee || "";
+          if (empName && empName.trim() !== "") {
+            rows.push({
+              rowId: `${cand._id}_${contract._id}_adhoc_${aIdx}`,
+              candidateId: cand._id,
+              contractId: contract._id,
+              adhocIndex: aIdx,
+              isAdhoc: true,
+              slotLabel: "ADHOC",
+              employeeName: empName.trim(),
+              companyName: cand.companyName || cand.requester || "Unnamed Company",
+              siteName: contract.siteName || "N/A",
+              siteAddress: contract.siteAddress || contract.siteName || "N/A",
+              typeOfService: adhoc.serviceType || "Adhoc Service",
+              position: adhoc.position || (contract.services?.[0]?.position) || "Adhoc",
+              shiftStartTime: adhoc.shiftStartTime || "08:00",
+              shiftEndTime: adhoc.shiftEndTime || "16:00",
+              approvalState: adhoc.approvalState || "Pending",
+              contractObj: contract,
+              candObj: cand,
+            });
           }
         });
       });
@@ -99,26 +127,37 @@ function OpMainPage() {
       );
       if (!contract) return;
 
-      const updatedServices = JSON.parse(
+      let updatedServices = JSON.parse(
         JSON.stringify(contract.services || [])
       );
+      let updatedAdhocServices = JSON.parse(
+        JSON.stringify(contract.adhocServices || [])
+      );
 
-      if (updatedServices[rowItem.serviceIndex]) {
-        const targetSvc = updatedServices[rowItem.serviceIndex];
-        const qty = Math.max(1, Number(targetSvc.quantity) || 1);
-        let assigned = targetSvc.assignedEmployees || [];
-        while (assigned.length < qty) {
-          assigned.push({ employee: "", isYellow: false, approvalState: "Pending" });
+      if (rowItem.isAdhoc) {
+        if (updatedAdhocServices[rowItem.adhocIndex]) {
+          updatedAdhocServices[rowItem.adhocIndex].approvalState = newStatus;
+          updatedAdhocServices[rowItem.adhocIndex].isYellow =
+            newStatus !== "Accepted" && newStatus !== "Rejected";
         }
+      } else {
+        if (updatedServices[rowItem.serviceIndex]) {
+          const targetSvc = updatedServices[rowItem.serviceIndex];
+          const qty = Math.max(1, Number(targetSvc.quantity) || 1);
+          let assigned = targetSvc.assignedEmployees || [];
+          while (assigned.length < qty) {
+            assigned.push({ employee: "", isYellow: false, approvalState: "Pending" });
+          }
 
-        assigned[rowItem.slotIndex] = {
-          ...assigned[rowItem.slotIndex],
-          employee: rowItem.employeeName,
-          approvalState: newStatus,
-          isYellow: newStatus !== "Accepted" && newStatus !== "Rejected",
-        };
+          assigned[rowItem.slotIndex] = {
+            ...assigned[rowItem.slotIndex],
+            employee: rowItem.employeeName,
+            approvalState: newStatus,
+            isYellow: newStatus !== "Accepted" && newStatus !== "Rejected",
+          };
 
-        targetSvc.assignedEmployees = assigned;
+          targetSvc.assignedEmployees = assigned;
+        }
       }
 
       const apiUrl = `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/${rowItem.candidateId}/contracts/${rowItem.contractId}/services`;
@@ -126,14 +165,14 @@ function OpMainPage() {
       try {
         await axios.put(apiUrl, {
           services: updatedServices,
-          adhocServices: contract.adhocServices || [],
+          adhocServices: updatedAdhocServices,
         });
       } catch (err) {
         await axios.put(
           `/api/BoardingCandidates/${rowItem.candidateId}/contracts/${rowItem.contractId}/services`,
           {
             services: updatedServices,
-            adhocServices: contract.adhocServices || [],
+            adhocServices: updatedAdhocServices,
           }
         );
       }
@@ -145,6 +184,98 @@ function OpMainPage() {
     } finally {
       setActionLoadingId(null);
     }
+  };
+
+  const renderApprovalRow = (row) => {
+    const isAccepted = row.approvalState === "Accepted";
+    const isRejected = row.approvalState === "Rejected";
+
+    return (
+      <tr
+        key={row.rowId}
+        className={
+          isAccepted
+            ? "rowAccepted"
+            : isRejected
+            ? "rowRejected"
+            : "rowPending"
+        }
+      >
+        <td className="empNameCol">
+          <span className="empNameTxt">
+            👤 {row.employeeName}{" "}
+            <strong className="slotBadge">({row.slotLabel})</strong>
+          </span>
+        </td>
+
+        <td className="siteAddressCol">
+          <span className="siteAddressTxt">📍 {row.siteAddress}</span>
+        </td>
+
+        <td className="serviceCol">
+          <span className="serviceTag">{row.typeOfService}</span>
+        </td>
+
+        <td className="positionCol">
+          <span className="positionTxt">{row.position}</span>
+        </td>
+
+        <td className="shiftTimeCol">
+          <span className="shiftTimeTxt">🕒 {row.shiftStartTime}</span>
+        </td>
+
+        <td className="shiftTimeCol">
+          <span className="shiftTimeTxt">🕒 {row.shiftEndTime}</span>
+        </td>
+
+        <td className="actionCol">
+          {isAccepted ? (
+            <div className="statusBadge flexBadge acceptedBadge">
+              <span>✓ Accepted</span>
+              <button
+                className="changeStatusBtn"
+                onClick={() => handleUpdateApproval(row, "Pending")}
+                title="Re-evaluate"
+              >
+                Reset
+              </button>
+            </div>
+          ) : isRejected ? (
+            <div className="statusBadge flexBadge rejectedBadge">
+              <span>✕ Rejected</span>
+              <button
+                className="changeStatusBtn"
+                onClick={() => handleUpdateApproval(row, "Pending")}
+                title="Re-evaluate"
+              >
+                Reset
+              </button>
+            </div>
+          ) : (
+            <div className="btnGroup">
+              <button
+                className="acceptBtn"
+                disabled={actionLoadingId !== null}
+                onClick={() => handleUpdateApproval(row, "Accepted")}
+              >
+                {actionLoadingId === `${row.rowId}_Accepted`
+                  ? "Saving..."
+                  : "Accept"}
+              </button>
+              <button
+                className="rejectBtn"
+                disabled={actionLoadingId !== null}
+                onClick={() => handleUpdateApproval(row, "Rejected")}
+              >
+                {actionLoadingId === `${row.rowId}_Rejected`
+                  ? "Saving..."
+                  : "Reject"}
+              </button>
+            </div>
+          )}
+        </td>
+      </tr>
+    );
   };
 
   return (
@@ -176,125 +307,70 @@ function OpMainPage() {
             No employee slot assignments found requiring approval.
           </div>
         ) : (
-          Object.entries(groupedByCompany).map(([companyName, rows]) => (
-            <div className="opCompanyCard" key={companyName}>
-              <div className="opCompanyCardHeader">
-                <span className="opCompanyTitle">🏢 {companyName}</span>
-                <span className="opCompanyBadge">
-                  {rows.length} Assignment{rows.length > 1 ? "s" : ""}
-                </span>
-              </div>
+          Object.entries(groupedByCompany).map(([companyName, rows]) => {
+            const standardRows = rows.filter((r) => !r.isAdhoc);
+            const adhocRows = rows.filter((r) => r.isAdhoc);
 
-              <div className="opTableCard">
-                <table className="opApprovalTable">
-                  <thead>
-                    <tr>
-                      <th>Employee Name</th>
-                      <th>Site Address</th>
-                      <th>Type of Service</th>
-                      <th>Position</th>
-                      <th>Shift Start Time</th>
-                      <th>Shift End Time</th>
-                      <th>Accept / Reject</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {rows.map((row) => {
-                      const isAccepted = row.approvalState === "Accepted";
-                      const isRejected = row.approvalState === "Rejected";
+            return (
+              <div className="opCompanyCard" key={companyName}>
+                <div className="opCompanyCardHeader">
+                  <span className="opCompanyTitle">🏢 {companyName}</span>
+                  <span className="opCompanyBadge">
+                    {rows.length} Total Request{rows.length > 1 ? "s" : ""}
+                  </span>
+                </div>
 
-                      return (
-                        <tr
-                          key={row.rowId}
-                          className={
-                            isAccepted
-                              ? "rowAccepted"
-                              : isRejected
-                              ? "rowRejected"
-                              : "rowPending"
-                          }
-                        >
-                          <td className="empNameCol">
-                            <span className="empNameTxt">
-                              👤 {row.employeeName}{" "}
-                              <strong className="slotBadge">({row.slotLabel})</strong>
-                            </span>
-                          </td>
-
-                          <td className="siteAddressCol">
-                            <span className="siteAddressTxt">📍 {row.siteAddress}</span>
-                          </td>
-
-                          <td className="serviceCol">
-                            <span className="serviceTag">{row.typeOfService}</span>
-                          </td>
-
-                          <td className="positionCol">
-                            <span className="positionTxt">{row.position}</span>
-                          </td>
-
-                          <td className="shiftTimeCol">
-                            <span className="shiftTimeTxt">🕒 {row.shiftStartTime}</span>
-                          </td>
-
-                          <td className="shiftTimeCol">
-                            <span className="shiftTimeTxt">🕒 {row.shiftEndTime}</span>
-                          </td>
-
-                          <td className="actionCol">
-                            {isAccepted ? (
-                              <div className="statusBadge flexBadge acceptedBadge">
-                                <span>✓ Accepted</span>
-                                <button
-                                  className="changeStatusBtn"
-                                  onClick={() => handleUpdateApproval(row, "Pending")}
-                                  title="Re-evaluate"
-                                >
-                                  Reset
-                                </button>
-                              </div>
-                            ) : isRejected ? (
-                              <div className="statusBadge flexBadge rejectedBadge">
-                                <span>✕ Rejected</span>
-                                <button
-                                  className="changeStatusBtn"
-                                  onClick={() => handleUpdateApproval(row, "Pending")}
-                                  title="Re-evaluate"
-                                >
-                                  Reset
-                                </button>
-                              </div>
-                            ) : (
-                              <div className="btnGroup">
-                                <button
-                                  className="acceptBtn"
-                                  disabled={actionLoadingId !== null}
-                                  onClick={() => handleUpdateApproval(row, "Accepted")}
-                                >
-                                  {actionLoadingId === `${row.rowId}_Accepted`
-                                    ? "Saving..."
-                                    : "Accept"}
-                                </button>
-                                <button
-                                  className="rejectBtn"
-                                  disabled={actionLoadingId !== null}
-                                  onClick={() => handleUpdateApproval(row, "Rejected")}
-                                >
-                                  {actionLoadingId === `${row.rowId}_Rejected`
-                                    ? "Saving..."
-                                    : "Reject"}
-                                </button>
-                              </div>
-                            )}
-                          </td>
+                {/* Standard Shift Requests Table */}
+                {standardRows.length > 0 && (
+                  <div className="opTableCard">
+                    <table className="opApprovalTable">
+                      <thead>
+                        <tr>
+                          <th>Employee Name</th>
+                          <th>Site Address</th>
+                          <th>Type of Service</th>
+                          <th>Position</th>
+                          <th>Shift Start Time</th>
+                          <th>Shift End Time</th>
+                          <th>Accept / Reject</th>
                         </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+                      </thead>
+                      <tbody>
+                        {standardRows.map((row) => renderApprovalRow(row))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {/* Adhoc Shift Requests Section */}
+                {adhocRows.length > 0 && (
+                  <div className="opAdhocSection">
+                    <div className="opAdhocSubheader">
+                      ⚡ Adhoc Requests ({adhocRows.length})
+                    </div>
+                    <div className="opTableCard">
+                      <table className="opApprovalTable">
+                        <thead>
+                          <tr>
+                            <th>Employee Name</th>
+                            <th>Site Address</th>
+                            <th>Type of Service</th>
+                            <th>Position</th>
+                            <th>Shift Start Time</th>
+                            <th>Shift End Time</th>
+                            <th>Accept / Reject</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {adhocRows.map((row) => renderApprovalRow(row))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>

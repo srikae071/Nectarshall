@@ -213,6 +213,21 @@ const BoardingCandidatesSchema = new mongoose.Schema(
               type: Date,
               default: null,
             },
+
+            employee: {
+              type: String,
+              default: "",
+            },
+
+            approvalState: {
+              type: String,
+              default: "Pending",
+            },
+
+            isYellow: {
+              type: Boolean,
+              default: false,
+            },
           },
         ],
       },

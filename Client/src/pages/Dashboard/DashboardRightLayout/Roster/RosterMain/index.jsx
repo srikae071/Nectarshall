@@ -571,6 +571,9 @@ function RosterMain() {
       if (updatedAdhocServices[adhocAssignModal.adhocIndex]) {
         updatedAdhocServices[adhocAssignModal.adhocIndex].employee =
           newAdhocEmployeeName.trim();
+        updatedAdhocServices[adhocAssignModal.adhocIndex].approvalState =
+          "Pending";
+        updatedAdhocServices[adhocAssignModal.adhocIndex].isYellow = true;
       }
 
       const apiUrl = `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/${adhocAssignModal.candidateId}/contracts/${adhocAssignModal.contractId}/services`;
@@ -1172,43 +1175,69 @@ function RosterMain() {
                                     </div>
                                   ))}
 
-                                  {matchingAdhoc.map((adhoc, aIdx) => (
-                                    <div
-                                      key={`adhoc_${aIdx}`}
-                                      className="shiftCard theme-adhoc"
-                                      title="Click to assign employee to adhoc"
-                                      onClick={() =>
-                                        handleOpenAdhocAssignModal(
-                                          row,
-                                          adhoc,
-                                          aIdx,
-                                        )
+                                  {matchingAdhoc.map((adhoc, aIdx) => {
+                                    let adhocThemeClass = "theme-adhoc";
+                                    const hasEmp =
+                                      adhoc.employee &&
+                                      adhoc.employee.trim() !== "";
+                                    if (hasEmp) {
+                                      if (adhoc.approvalState === "Accepted") {
+                                        adhocThemeClass = "theme-green";
+                                      } else if (
+                                        adhoc.approvalState === "Rejected"
+                                      ) {
+                                        adhocThemeClass = "theme-red";
+                                      } else {
+                                        adhocThemeClass = "theme-yellow";
                                       }
-                                    >
-                                      <div className="shiftHeader">
-                                        <span className="shiftType">
-                                          {adhoc.serviceType ||
-                                            adhoc.adhocName ||
-                                            "Adhoc"}
-                                        </span>
-                                        <span
-                                          className="qtyBadge"
-                                          style={{ color: "#4ade80" }}
-                                        >
-                                          ADHOC
-                                        </span>
-                                      </div>
+                                    }
 
-                                      <div className="shiftTime">
-                                        🕒 {adhoc.shiftStartTime || "08:00"} -{" "}
-                                        {adhoc.shiftEndTime || "16:00"}
-                                      </div>
+                                    return (
+                                      <div
+                                        key={`adhoc_${aIdx}`}
+                                        className={`shiftCard ${adhocThemeClass}`}
+                                        title="Click to assign employee to adhoc"
+                                        onClick={() =>
+                                          handleOpenAdhocAssignModal(
+                                            row,
+                                            adhoc,
+                                            aIdx,
+                                          )
+                                        }
+                                      >
+                                        <div className="shiftHeader">
+                                          <span className="shiftType">
+                                            {hasEmp
+                                              ? adhoc.employee
+                                              : adhoc.serviceType || "Adhoc"}
+                                          </span>
+                                          <span
+                                            className="qtyBadge"
+                                            style={{
+                                              color:
+                                                adhocThemeClass === "theme-adhoc"
+                                                  ? "#cbd5e1"
+                                                  : "inherit",
+                                            }}
+                                          >
+                                            ADHOC
+                                          </span>
+                                        </div>
 
-                                      <div className="shiftEmployee">
-                                        👤 {adhoc.employee || "Click to Assign"}
+                                        <div className="shiftTime">
+                                          🕒 {adhoc.shiftStartTime || "08:00"} -{" "}
+                                          {adhoc.shiftEndTime || "16:00"}
+                                        </div>
+
+                                        <div className="shiftEmployee">
+                                          👤{" "}
+                                          {hasEmp
+                                            ? adhoc.employee
+                                            : "Click to Assign"}
+                                        </div>
                                       </div>
-                                    </div>
-                                  ))}
+                                    );
+                                  })}
                                 </>
                               )}
                             </div>
