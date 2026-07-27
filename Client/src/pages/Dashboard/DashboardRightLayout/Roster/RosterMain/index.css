@@ -690,6 +690,12 @@
   color: #991b1b !important;
 }
 
+.theme-gray {
+  background: #e2e8f0 !important;
+  border-left: 4px solid #94a3b8 !important;
+  color: #334155 !important;
+}
+
 .theme-adhoc {
   background: #1e293b !important;
   border-left: 4px solid #4ade80 !important;

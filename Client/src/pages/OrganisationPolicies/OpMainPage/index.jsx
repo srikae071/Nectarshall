@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import logo from "../../../images/logo.png";
@@ -34,39 +34,57 @@ function OpMainPage() {
   };
 
   // Collect all assigned employee slot cards across candidates & contracts
-  const assignedSlotRows = [];
-  (candidates || []).forEach((cand) => {
-    (cand.contractDeliverables || []).forEach((contract) => {
-      (contract.services || []).forEach((svc, sIdx) => {
-        const qty = Math.max(1, Number(svc.quantity) || 1);
-        for (let q = 0; q < qty; q++) {
-          const slotEmpObj = svc.assignedEmployees?.[q];
-          const empName =
-            slotEmpObj?.employee || (q === 0 ? svc.employee || "" : "");
-          
-          if (empName && empName.trim() !== "") {
-            assignedSlotRows.push({
-              rowId: `${cand._id}_${contract._id}_${sIdx}_${q}`,
-              candidateId: cand._id,
-              contractId: contract._id,
-              serviceIndex: sIdx,
-              slotIndex: q,
-              slotLabel: `Slot ${q + 1}`,
-              employeeName: empName.trim(),
-              companyName: cand.companyName || cand.requester || "N/A",
-              siteName: contract.siteName || "N/A",
-              siteAddress: contract.siteAddress || contract.siteName || "N/A",
-              typeOfService: svc.serviceType || svc.position || "Shift",
-              position: svc.position || "N/A",
-              approvalState: slotEmpObj?.approvalState || "Pending",
-              contractObj: contract,
-              candObj: cand,
-            });
+  const assignedSlotRows = useMemo(() => {
+    const rows = [];
+    (candidates || []).forEach((cand) => {
+      (cand.contractDeliverables || []).forEach((contract) => {
+        (contract.services || []).forEach((svc, sIdx) => {
+          const qty = Math.max(1, Number(svc.quantity) || 1);
+          for (let q = 0; q < qty; q++) {
+            const slotEmpObj = svc.assignedEmployees?.[q];
+            const empName =
+              slotEmpObj?.employee || (q === 0 ? svc.employee || "" : "");
+
+            if (empName && empName.trim() !== "") {
+              rows.push({
+                rowId: `${cand._id}_${contract._id}_${sIdx}_${q}`,
+                candidateId: cand._id,
+                contractId: contract._id,
+                serviceIndex: sIdx,
+                slotIndex: q,
+                slotLabel: `Slot ${q + 1}`,
+                employeeName: empName.trim(),
+                companyName: cand.companyName || cand.requester || "Unnamed Company",
+                siteName: contract.siteName || "N/A",
+                siteAddress: contract.siteAddress || contract.siteName || "N/A",
+                typeOfService: svc.serviceType || svc.position || "Shift",
+                position: svc.position || "N/A",
+                shiftStartTime: svc.shiftStartTime || "08:00",
+                shiftEndTime: svc.shiftEndTime || "16:00",
+                approvalState: slotEmpObj?.approvalState || "Pending",
+                contractObj: contract,
+                candObj: cand,
+              });
+            }
           }
-        }
+        });
       });
     });
-  });
+    return rows;
+  }, [candidates]);
+
+  // Group assigned rows by Company Name
+  const groupedByCompany = useMemo(() => {
+    const groups = {};
+    assignedSlotRows.forEach((row) => {
+      const comp = row.companyName || "Other Companies";
+      if (!groups[comp]) {
+        groups[comp] = [];
+      }
+      groups[comp].push(row);
+    });
+    return groups;
+  }, [assignedSlotRows]);
 
   const handleUpdateApproval = async (rowItem, newStatus) => {
     const actionKey = `${rowItem.rowId}_${newStatus}`;
@@ -147,120 +165,136 @@ function OpMainPage() {
         <div className="opHeaderBlock">
           <h2>Employee Shift Assignment Approval List</h2>
           <p>
-            Review assigned shift employees from the Roster, and approve or reject shift allocations.
+            Review assigned shift employees from the Roster, grouped by company name.
           </p>
         </div>
 
         {loading ? (
           <div className="opLoading">Loading employee shift assignments...</div>
-        ) : assignedSlotRows.length === 0 ? (
+        ) : Object.keys(groupedByCompany).length === 0 ? (
           <div className="opEmptyState">
             No employee slot assignments found requiring approval.
           </div>
         ) : (
-          <div className="opTableCard">
-            <table className="opApprovalTable">
-              <thead>
-                <tr>
-                  <th>Employee Name</th>
-                  <th>Company Name</th>
-                  <th>Site Address</th>
-                  <th>Type of Service</th>
-                  <th>Position</th>
-                  <th>Accept / Reject</th>
-                </tr>
-              </thead>
-              <tbody>
-                {assignedSlotRows.map((row) => {
-                  const isAccepted = row.approvalState === "Accepted";
-                  const isRejected = row.approvalState === "Rejected";
+          Object.entries(groupedByCompany).map(([companyName, rows]) => (
+            <div className="opCompanyCard" key={companyName}>
+              <div className="opCompanyCardHeader">
+                <span className="opCompanyTitle">🏢 {companyName}</span>
+                <span className="opCompanyBadge">
+                  {rows.length} Assignment{rows.length > 1 ? "s" : ""}
+                </span>
+              </div>
 
-                  return (
-                    <tr
-                      key={row.rowId}
-                      className={
-                        isAccepted
-                          ? "rowAccepted"
-                          : isRejected
-                          ? "rowRejected"
-                          : "rowPending"
-                      }
-                    >
-                      <td className="empNameCol">
-                        <span className="empNameTxt">
-                          👤 {row.employeeName}{" "}
-                          <strong className="slotBadge">({row.slotLabel})</strong>
-                        </span>
-                      </td>
-
-                      <td className="companyNameCol">
-                        <span className="companyNameTxt">🏢 {row.companyName}</span>
-                      </td>
-
-                      <td className="siteAddressCol">
-                        <span className="siteAddressTxt">📍 {row.siteAddress}</span>
-                      </td>
-
-                      <td className="serviceCol">
-                        <span className="serviceTag">{row.typeOfService}</span>
-                      </td>
-
-                      <td className="positionCol">
-                        <span className="positionTxt">{row.position}</span>
-                      </td>
-
-                      <td className="actionCol">
-                        {isAccepted ? (
-                          <div className="statusBadge flexBadge acceptedBadge">
-                            <span>✓ Accepted</span>
-                            <button
-                              className="changeStatusBtn"
-                              onClick={() => handleUpdateApproval(row, "Pending")}
-                              title="Re-evaluate"
-                            >
-                              Reset
-                            </button>
-                          </div>
-                        ) : isRejected ? (
-                          <div className="statusBadge flexBadge rejectedBadge">
-                            <span>✕ Rejected</span>
-                            <button
-                              className="changeStatusBtn"
-                              onClick={() => handleUpdateApproval(row, "Pending")}
-                              title="Re-evaluate"
-                            >
-                              Reset
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="btnGroup">
-                            <button
-                              className="acceptBtn"
-                              disabled={actionLoadingId !== null}
-                              onClick={() => handleUpdateApproval(row, "Accepted")}
-                            >
-                              {actionLoadingId === `${row.rowId}_Accepted`
-                                ? "Saving..."
-                                : "Accept"}
-                            </button>
-                            <button
-                              className="rejectBtn"
-                              disabled={actionLoadingId !== null}
-                              onClick={() => handleUpdateApproval(row, "Rejected")}
-                            >
-                              {actionLoadingId === `${row.rowId}_Rejected`
-                                ? "Saving..."
-                                : "Reject"}
-                            </button>
-                          </div>
-                        )}
-                      </td>
+              <div className="opTableCard">
+                <table className="opApprovalTable">
+                  <thead>
+                    <tr>
+                      <th>Employee Name</th>
+                      <th>Site Address</th>
+                      <th>Type of Service</th>
+                      <th>Position</th>
+                      <th>Shift Start Time</th>
+                      <th>Shift End Time</th>
+                      <th>Accept / Reject</th>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                  </thead>
+                  <tbody>
+                    {rows.map((row) => {
+                      const isAccepted = row.approvalState === "Accepted";
+                      const isRejected = row.approvalState === "Rejected";
+
+                      return (
+                        <tr
+                          key={row.rowId}
+                          className={
+                            isAccepted
+                              ? "rowAccepted"
+                              : isRejected
+                              ? "rowRejected"
+                              : "rowPending"
+                          }
+                        >
+                          <td className="empNameCol">
+                            <span className="empNameTxt">
+                              👤 {row.employeeName}{" "}
+                              <strong className="slotBadge">({row.slotLabel})</strong>
+                            </span>
+                          </td>
+
+                          <td className="siteAddressCol">
+                            <span className="siteAddressTxt">📍 {row.siteAddress}</span>
+                          </td>
+
+                          <td className="serviceCol">
+                            <span className="serviceTag">{row.typeOfService}</span>
+                          </td>
+
+                          <td className="positionCol">
+                            <span className="positionTxt">{row.position}</span>
+                          </td>
+
+                          <td className="shiftTimeCol">
+                            <span className="shiftTimeTxt">🕒 {row.shiftStartTime}</span>
+                          </td>
+
+                          <td className="shiftTimeCol">
+                            <span className="shiftTimeTxt">🕒 {row.shiftEndTime}</span>
+                          </td>
+
+                          <td className="actionCol">
+                            {isAccepted ? (
+                              <div className="statusBadge flexBadge acceptedBadge">
+                                <span>✓ Accepted</span>
+                                <button
+                                  className="changeStatusBtn"
+                                  onClick={() => handleUpdateApproval(row, "Pending")}
+                                  title="Re-evaluate"
+                                >
+                                  Reset
+                                </button>
+                              </div>
+                            ) : isRejected ? (
+                              <div className="statusBadge flexBadge rejectedBadge">
+                                <span>✕ Rejected</span>
+                                <button
+                                  className="changeStatusBtn"
+                                  onClick={() => handleUpdateApproval(row, "Pending")}
+                                  title="Re-evaluate"
+                                >
+                                  Reset
+                                </button>
+                              </div>
+                            ) : (
+                              <div className="btnGroup">
+                                <button
+                                  className="acceptBtn"
+                                  disabled={actionLoadingId !== null}
+                                  onClick={() => handleUpdateApproval(row, "Accepted")}
+                                >
+                                  {actionLoadingId === `${row.rowId}_Accepted`
+                                    ? "Saving..."
+                                    : "Accept"}
+                                </button>
+                                <button
+                                  className="rejectBtn"
+                                  disabled={actionLoadingId !== null}
+                                  onClick={() => handleUpdateApproval(row, "Rejected")}
+                                >
+                                  {actionLoadingId === `${row.rowId}_Rejected`
+                                    ? "Saving..."
+                                    : "Reject"}
+                                </button>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ))
         )}
       </div>
     </div>

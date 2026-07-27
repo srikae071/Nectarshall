@@ -45,6 +45,23 @@ function RosterMain() {
   const [savingAssign, setSavingAssign] = useState(false);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState("");
 
+  // Assign Employee to Adhoc Modal State
+  const [adhocAssignModal, setAdhocAssignModal] = useState({
+    isOpen: false,
+    candidateId: "",
+    contractId: "",
+    adhocIndex: null,
+    siteName: "",
+    serviceType: "",
+    shiftStartTime: "08:00",
+    shiftEndTime: "16:00",
+    shiftTime: "",
+    currentEmployee: "",
+  });
+  const [newAdhocEmployeeName, setNewAdhocEmployeeName] = useState("");
+  const [savingAdhocAssign, setSavingAdhocAssign] = useState(false);
+  const [saveAdhocSuccessMsg, setSaveAdhocSuccessMsg] = useState("");
+
   // 24 Hours for Employee Timeline View
   const hours = useMemo(() => {
     const arr = [];
@@ -160,13 +177,24 @@ function RosterMain() {
     setCurrentDate(new Date());
   };
 
-  // 1. Customer Options (sourced from BoardingCandidates)
+  // Filter approved & on-boarded candidates only
+  const approvedCandidates = useMemo(() => {
+    return (candidates || []).filter((item) => {
+      const isApproved = item.operationsClientApproved === true;
+      const statusStr = (item.status || "").trim().toLowerCase();
+      const isOnBoarded =
+        statusStr === "on boarded" || statusStr === "onboarded";
+      return isApproved && isOnBoarded;
+    });
+  }, [candidates]);
+
+  // 1. Customer Options (sourced from approved BoardingCandidates)
   const rawCustomerOptions = useMemo(() => {
-    const names = candidates
+    const names = approvedCandidates
       .map((item) => (item.companyName || item.clientId || "").trim())
       .filter((name) => name !== "");
     return [...new Set(names)].sort();
-  }, [candidates]);
+  }, [approvedCandidates]);
 
   const customerOptions = useMemo(() => {
     if (!customerSearchQuery.trim()) return rawCustomerOptions;
@@ -224,8 +252,8 @@ function RosterMain() {
         }
       });
     } else {
-      // Sites come from BoardingCandidates contractDeliverables
-      let filtered = candidates;
+      // Sites come from approved BoardingCandidates contractDeliverables
+      let filtered = approvedCandidates;
       if (selectedCustomer) {
         filtered = filtered.filter(
           (item) =>
@@ -246,7 +274,12 @@ function RosterMain() {
     }
 
     return [...sites].sort();
-  }, [candidates, selectedCustomer, selectedEmployee, activeEmployeeObj]);
+  }, [
+    selectedEmployee,
+    activeEmployeeObj,
+    approvedCandidates,
+    selectedCustomer,
+  ]);
 
   const siteOptions = useMemo(() => {
     if (!siteSearchQuery.trim()) return rawSiteOptions;
@@ -270,20 +303,14 @@ function RosterMain() {
 
   // Helper for timeline bar style
   const getShiftBarStyle = (startTimeStr, endTimeStr) => {
-    const parseHour = (str) => {
-      if (!str) return 8;
-      const parts = str.split(":");
-      const h = parseInt(parts[0], 10) || 0;
-      const m = parseInt(parts[1], 10) || 0;
-      return h + m / 60;
-    };
+    const startMins = parseTimeToMinutes(startTimeStr || "08:00");
+    const endMins = parseTimeToMinutes(endTimeStr || "20:00");
 
-    const startH = parseHour(startTimeStr);
-    let endH = parseHour(endTimeStr);
-    if (endH <= startH) endH = 24;
+    let durationMins = endMins - startMins;
+    if (durationMins <= 0) durationMins += 24 * 60;
 
-    const leftPercent = (startH / 24) * 100;
-    const widthPercent = ((endH - startH) / 24) * 100;
+    const leftPercent = (startMins / (24 * 60)) * 100;
+    const widthPercent = (durationMins / (24 * 60)) * 100;
 
     return {
       left: `${leftPercent}%`,
@@ -298,7 +325,7 @@ function RosterMain() {
       return [];
     }
 
-    return candidates.filter((item) => {
+    return approvedCandidates.filter((item) => {
       const custName = (item.companyName || item.clientId || "").trim();
       if (
         selectedCustomer &&
@@ -327,7 +354,7 @@ function RosterMain() {
       return true;
     });
   }, [
-    candidates,
+    approvedCandidates,
     selectedCustomer,
     selectedEmployee,
     selectedSite,
@@ -381,8 +408,12 @@ function RosterMain() {
   ];
 
   const handleOpenAssignModal = (row, card, sIdx) => {
-    const slotIdx = card.slotIndex ?? (card.cardIndex - 1);
-    const slotEmp = card.slotEmployee || (card.assignedEmployees?.[slotIdx]?.employee) || (slotIdx === 0 ? card.employee : "") || "";
+    const slotIdx = card.slotIndex ?? card.cardIndex - 1;
+    const slotEmp =
+      card.slotEmployee ||
+      card.assignedEmployees?.[slotIdx]?.employee ||
+      (slotIdx === 0 ? card.employee : "") ||
+      "";
     setAssignModal({
       isOpen: true,
       candidateId: row.candidateId,
@@ -392,8 +423,17 @@ function RosterMain() {
       slotIndex: slotIdx,
       siteName: row.siteName,
       serviceType: card.serviceType || card.position || "Shift",
-      position: card.position || "",
+      position: card.position || "N/A",
+      shiftStartTime: card.shiftStartTime || "08:00",
+      shiftEndTime: card.shiftEndTime || "16:00",
       shiftTime: `${card.shiftStartTime || "08:00"} - ${card.shiftEndTime || "16:00"}`,
+      contractStartDate: card.contractStartDate
+        ? String(card.contractStartDate).slice(0, 10)
+        : "N/A",
+      contractEndDate: card.contractEndDate
+        ? String(card.contractEndDate).slice(0, 10)
+        : "N/A",
+      workingDays: card.workingDays ? card.workingDays.join(", ") : "All Days",
       currentEmployee: slotEmp || row.requester || "",
     });
     setNewEmployeeName(slotEmp || row.requester || "");
@@ -427,12 +467,16 @@ function RosterMain() {
       );
       if (updatedServices[assignModal.serviceIndex]) {
         const targetService = updatedServices[assignModal.serviceIndex];
-        const slotIdx = assignModal.slotIndex ?? (assignModal.cardIndex - 1);
+        const slotIdx = assignModal.slotIndex ?? assignModal.cardIndex - 1;
         const qty = Math.max(1, Number(targetService.quantity) || 1);
 
         let existingAssigned = targetService.assignedEmployees || [];
         while (existingAssigned.length < qty) {
-          existingAssigned.push({ employee: "", isYellow: false, isUpdated: false });
+          existingAssigned.push({
+            employee: "",
+            isYellow: false,
+            isUpdated: false,
+          });
         }
 
         existingAssigned[slotIdx] = {
@@ -478,6 +522,85 @@ function RosterMain() {
       alert(`Failed to save employee assignment: ${err.message}`);
     } finally {
       setSavingAssign(false);
+    }
+  };
+
+  const handleOpenAdhocAssignModal = (row, adhoc, aIdx) => {
+    setAdhocAssignModal({
+      isOpen: true,
+      candidateId: row.candidateId,
+      contractId: row.contractId,
+      adhocIndex: aIdx,
+      siteName: row.siteName,
+      serviceType: adhoc.serviceType || adhoc.adhocName || "Adhoc",
+      shiftStartTime: adhoc.shiftStartTime || "08:00",
+      shiftEndTime: adhoc.shiftEndTime || "16:00",
+      shiftTime: `${adhoc.shiftStartTime || "08:00"} - ${adhoc.shiftEndTime || "16:00"}`,
+      currentEmployee: adhoc.employee || "",
+    });
+    setNewAdhocEmployeeName(adhoc.employee || "");
+    setSaveAdhocSuccessMsg("");
+  };
+
+  const handleCloseAdhocModal = () => {
+    setAdhocAssignModal((prev) => ({ ...prev, isOpen: false }));
+    setSaveAdhocSuccessMsg("");
+  };
+
+  const handleSaveAssignAdhoc = async () => {
+    if (!newAdhocEmployeeName.trim()) return;
+
+    try {
+      setSavingAdhocAssign(true);
+      setSaveAdhocSuccessMsg("");
+
+      const candidate = candidates.find(
+        (c) => c._id === adhocAssignModal.candidateId,
+      );
+      if (!candidate) throw new Error("Boarding Candidate record not found");
+
+      const contract = (candidate.contractDeliverables || []).find(
+        (c) => c._id === adhocAssignModal.contractId,
+      );
+      if (!contract) throw new Error("Contract Deliverable not found");
+
+      const updatedAdhocServices = JSON.parse(
+        JSON.stringify(contract.adhocServices || []),
+      );
+
+      if (updatedAdhocServices[adhocAssignModal.adhocIndex]) {
+        updatedAdhocServices[adhocAssignModal.adhocIndex].employee =
+          newAdhocEmployeeName.trim();
+      }
+
+      const apiUrl = `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/${adhocAssignModal.candidateId}/contracts/${adhocAssignModal.contractId}/services`;
+
+      try {
+        await axios.put(apiUrl, {
+          services: contract.services || [],
+          adhocServices: updatedAdhocServices,
+        });
+      } catch (err) {
+        await axios.put(
+          `/api/BoardingCandidates/${adhocAssignModal.candidateId}/contracts/${adhocAssignModal.contractId}/services`,
+          {
+            services: contract.services || [],
+            adhocServices: updatedAdhocServices,
+          },
+        );
+      }
+
+      setSaveAdhocSuccessMsg("Adhoc Employee assigned successfully!");
+      await fetchAllData();
+
+      setTimeout(() => {
+        handleCloseAdhocModal();
+      }, 1000);
+    } catch (err) {
+      console.error("Error saving assigned adhoc employee:", err);
+      alert(`Failed to save adhoc employee assignment: ${err.message}`);
+    } finally {
+      setSavingAdhocAssign(false);
     }
   };
 
@@ -960,11 +1083,11 @@ function RosterMain() {
                               const slotEmployee =
                                 slotEmpObj?.employee ||
                                 (q === 0 ? svc.employee || "" : "");
-                              const approvalState = slotEmpObj?.approvalState || "";
+                              const approvalState =
+                                slotEmpObj?.approvalState || "";
 
-                              let themeClass =
-                                colorThemes[(sIdx + q) % colorThemes.length];
-                              if (slotEmployee) {
+                              let themeClass = "theme-gray";
+                              if (slotEmployee && slotEmployee.trim()) {
                                 if (approvalState === "Accepted") {
                                   themeClass = "theme-green";
                                 } else if (approvalState === "Rejected") {
@@ -987,17 +1110,17 @@ function RosterMain() {
                             }
                           });
 
-                          const matchingAdhoc = (row.adhocServices || []).filter(
-                            (adhoc) => {
-                              if (!adhoc.serviceDate) return true;
-                              const adhocD = new Date(adhoc.serviceDate);
-                              return (
-                                adhocD.getDate() === date.getDate() &&
-                                adhocD.getMonth() === date.getMonth() &&
-                                adhocD.getFullYear() === date.getFullYear()
-                              );
-                            },
-                          );
+                          const matchingAdhoc = (
+                            row.adhocServices || []
+                          ).filter((adhoc) => {
+                            if (!adhoc.serviceDate) return true;
+                            const adhocD = new Date(adhoc.serviceDate);
+                            return (
+                              adhocD.getDate() === date.getDate() &&
+                              adhocD.getMonth() === date.getMonth() &&
+                              adhocD.getFullYear() === date.getFullYear()
+                            );
+                          });
 
                           return (
                             <div
@@ -1053,7 +1176,14 @@ function RosterMain() {
                                     <div
                                       key={`adhoc_${aIdx}`}
                                       className="shiftCard theme-adhoc"
-                                      title={`Adhoc: ${adhoc.serviceType || adhoc.adhocName || "Adhoc"}`}
+                                      title="Click to assign employee to adhoc"
+                                      onClick={() =>
+                                        handleOpenAdhocAssignModal(
+                                          row,
+                                          adhoc,
+                                          aIdx,
+                                        )
+                                      }
                                     >
                                       <div className="shiftHeader">
                                         <span className="shiftType">
@@ -1067,6 +1197,15 @@ function RosterMain() {
                                         >
                                           ADHOC
                                         </span>
+                                      </div>
+
+                                      <div className="shiftTime">
+                                        🕒 {adhoc.shiftStartTime || "08:00"} -{" "}
+                                        {adhoc.shiftEndTime || "16:00"}
+                                      </div>
+
+                                      <div className="shiftEmployee">
+                                        👤 {adhoc.employee || "Click to Assign"}
                                       </div>
                                     </div>
                                   ))}
@@ -1099,11 +1238,28 @@ function RosterMain() {
             <div className="assignModalBody">
               <div className="shiftInfoBox">
                 <p>
-                  <strong>Site:</strong> {assignModal.siteName}
+                  <strong>Site Name:</strong> {assignModal.siteName}
                 </p>
                 <p>
-                  <strong>Service / Shift:</strong> {assignModal.serviceType} (
-                  {assignModal.shiftTime})
+                  <strong>Type of Service:</strong> {assignModal.serviceType}
+                </p>
+                <p>
+                  <strong>Position:</strong> {assignModal.position}
+                </p>
+                <p>
+                  <strong>Shift Start Time:</strong>{" "}
+                  {assignModal.shiftStartTime}
+                </p>
+                <p>
+                  <strong>Shift End Time:</strong> {assignModal.shiftEndTime}
+                </p>
+                <p>
+                  <strong>Contract Start Date:</strong>{" "}
+                  {assignModal.contractStartDate}
+                </p>
+                <p>
+                  <strong>Contract End Date:</strong>{" "}
+                  {assignModal.contractEndDate}
                 </p>
                 <p>
                   <strong>Slot:</strong> Card #{assignModal.cardIndex}
@@ -1115,9 +1271,7 @@ function RosterMain() {
               )}
 
               <div className="formGroup">
-                <label htmlFor="assignEmployeeInput">
-                  Select or Enter Employee Name:
-                </label>
+                <label htmlFor="assignEmployeeInput">Asign To</label>
                 <input
                   id="assignEmployeeInput"
                   type="text"
@@ -1151,7 +1305,78 @@ function RosterMain() {
                 onClick={handleSaveAssignEmployee}
                 disabled={savingAssign || !newEmployeeName.trim()}
               >
-                {savingAssign ? "Saving..." : "Save Assignment"}
+                {savingAssign ? "Saving..." : "Save"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ADHOC ASSIGN EMPLOYEE MODAL POPUP */}
+      {adhocAssignModal.isOpen && (
+        <div className="assignModalOverlay">
+          <div className="assignModalContainer">
+            <div className="assignModalHeader">
+              <h3>Assign Employee to Adhoc Shift</h3>
+              <button className="closeModalBtn" onClick={handleCloseAdhocModal}>
+                ✕
+              </button>
+            </div>
+
+            <div className="assignModalBody">
+              <div className="shiftInfoBox">
+                <p>
+                  <strong>Site Name:</strong> {adhocAssignModal.siteName}
+                </p>
+                <p>
+                  <strong>Type of Service:</strong>{" "}
+                  {adhocAssignModal.serviceType}
+                </p>
+                <p>
+                  <strong>Shift Start Time:</strong>{" "}
+                  {adhocAssignModal.shiftStartTime}
+                </p>
+                <p>
+                  <strong>Shift End Time:</strong>{" "}
+                  {adhocAssignModal.shiftEndTime}
+                </p>
+              </div>
+
+              {saveAdhocSuccessMsg && (
+                <div className="saveSuccessAlert">{saveAdhocSuccessMsg}</div>
+              )}
+
+              <div className="formGroup">
+                <label htmlFor="assignAdhocEmployeeInput">Assign To:</label>
+                <input
+                  id="assignAdhocEmployeeInput"
+                  type="text"
+                  list="employeeSuggestions"
+                  value={newAdhocEmployeeName}
+                  onChange={(e) => setNewAdhocEmployeeName(e.target.value)}
+                  placeholder="Type or select employee..."
+                  className="assignInput"
+                  autoFocus
+                />
+              </div>
+            </div>
+
+            <div className="assignModalFooter">
+              <button
+                type="button"
+                className="cancelBtn"
+                onClick={handleCloseAdhocModal}
+                disabled={savingAdhocAssign}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="saveAssignBtn"
+                onClick={handleSaveAssignAdhoc}
+                disabled={savingAdhocAssign || !newAdhocEmployeeName.trim()}
+              >
+                {savingAdhocAssign ? "Saving..." : "Save"}
               </button>
             </div>
           </div>

@@ -9,11 +9,13 @@ function AddAdhoc() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  const [adhocName, setAdhocName] = useState("");
+  const todayStr = new Date().toISOString().slice(0, 10);
   const [selectedCandidateId, setSelectedCandidateId] = useState("");
   const [selectedContractId, setSelectedContractId] = useState("");
   const [shiftStartTime, setShiftStartTime] = useState("08:00");
   const [shiftEndTime, setShiftEndTime] = useState("16:00");
+  const [shiftStartDate, setShiftStartDate] = useState(todayStr);
+  const [shiftEndDate, setShiftEndDate] = useState(todayStr);
 
   useEffect(() => {
     fetchCandidates();
@@ -54,10 +56,6 @@ function AddAdhoc() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!adhocName.trim()) {
-      alert("Please enter an Adhoc name.");
-      return;
-    }
     if (!selectedCandidateId) {
       alert("Please select a company.");
       return;
@@ -80,15 +78,18 @@ function AddAdhoc() {
       const existingAdhocServices = contract.adhocServices || [];
       const newAdhoc = {
         adhocId: `AD${Date.now().toString().slice(-4)}`,
-        serviceType: adhocName.trim(),
-        adhocName: adhocName.trim(),
+        serviceType: "Adhoc Service",
+        adhocName: "Adhoc",
         position: "Adhoc",
         shiftStartTime: shiftStartTime || "08:00",
         shiftEndTime: shiftEndTime || "16:00",
-        serviceDate: new Date().toISOString(),
+        shiftStartDate: shiftStartDate || todayStr,
+        shiftEndDate: shiftEndDate || todayStr,
+        serviceDate: shiftStartDate || new Date().toISOString(),
         companyName: selectedCandidate.companyName,
         siteName: contract.siteName,
         siteAddress: contract.siteAddress,
+        employee: "",
       };
 
       const updatedAdhocServices = [...existingAdhocServices, newAdhoc];
@@ -133,18 +134,6 @@ function AddAdhoc() {
           <div className="addAdhocLoading">Loading companies and sites...</div>
         ) : (
           <form className="addAdhocForm" onSubmit={handleSubmit}>
-            <div className="formField">
-              <label htmlFor="adhocNameInput">Adhoc Name</label>
-              <input
-                id="adhocNameInput"
-                type="text"
-                value={adhocName}
-                onChange={(e) => setAdhocName(e.target.value)}
-                placeholder="Enter Adhoc Name (e.g., Event Guard, Patrol...)"
-                required
-              />
-            </div>
-
             <div className="formField">
               <label htmlFor="companySelect">Select Company</label>
               <select
@@ -209,6 +198,30 @@ function AddAdhoc() {
               </div>
             </div>
 
+            <div className="formRow">
+              <div className="formField">
+                <label htmlFor="shiftStartDateInput">Shift Start Date</label>
+                <input
+                  id="shiftStartDateInput"
+                  type="date"
+                  value={shiftStartDate}
+                  onChange={(e) => setShiftStartDate(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="formField">
+                <label htmlFor="shiftEndDateInput">Shift End Date</label>
+                <input
+                  id="shiftEndDateInput"
+                  type="date"
+                  value={shiftEndDate}
+                  onChange={(e) => setShiftEndDate(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
             <div className="formActions">
               <button
                 type="button"
@@ -222,7 +235,7 @@ function AddAdhoc() {
               <button
                 type="submit"
                 className="submitAdhocBtn"
-                disabled={saving || !adhocName.trim() || !selectedContractId}
+                disabled={saving || !selectedContractId}
               >
                 {saving ? "Adding..." : "Add Adhoc"}
               </button>
