@@ -136,6 +136,10 @@ const BoardingCandidatesSchema = new mongoose.Schema(
                   type: Boolean,
                   default: false,
                 },
+                approvalState: {
+                  type: String,
+                  default: "Pending",
+                },
               },
             ],
 

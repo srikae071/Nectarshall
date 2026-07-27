@@ -439,6 +439,7 @@ function RosterMain() {
           employee: newEmployeeName.trim(),
           isYellow: true,
           isUpdated: true,
+          approvalState: "Pending",
         };
 
         targetService.assignedEmployees = existingAssigned;
@@ -958,9 +959,19 @@ function RosterMain() {
                               const slotEmployee =
                                 slotEmpObj?.employee ||
                                 (q === 0 ? svc.employee || "" : "");
-                              const isYellow = Boolean(
-                                slotEmpObj?.isYellow || slotEmpObj?.isUpdated,
-                              );
+                              const approvalState = slotEmpObj?.approvalState || "";
+
+                              let themeClass =
+                                colorThemes[(sIdx + q) % colorThemes.length];
+                              if (slotEmployee) {
+                                if (approvalState === "Accepted") {
+                                  themeClass = "theme-green";
+                                } else if (approvalState === "Rejected") {
+                                  themeClass = "theme-red";
+                                } else {
+                                  themeClass = "theme-yellow";
+                                }
+                              }
 
                               expandedCards.push({
                                 ...svc,
@@ -969,10 +980,8 @@ function RosterMain() {
                                 slotIndex: q,
                                 totalQty: qty,
                                 slotEmployee: slotEmployee,
-                                isYellow: isYellow,
-                                themeClass: isYellow
-                                  ? "theme-yellow"
-                                  : colorThemes[(sIdx + q) % colorThemes.length],
+                                approvalState: approvalState,
+                                themeClass: themeClass,
                               });
                             }
                           });
