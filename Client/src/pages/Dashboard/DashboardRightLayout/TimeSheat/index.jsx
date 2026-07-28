@@ -8,6 +8,15 @@ function TimesheetPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCustomer, setSelectedCustomer] = useState("All");
 
+  const [hiddenRowIds, setHiddenRowIds] = useState(() => {
+    try {
+      const saved = localStorage.getItem("timesheet_hidden_rows");
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
   useEffect(() => {
     fetchCandidates();
   }, []);
@@ -23,12 +32,28 @@ function TimesheetPage() {
       } catch (err) {
         res = await axios.get("/api/BoardingCandidates");
       }
-      setCandidates(res.data || []);
+      const dataArr = Array.isArray(res.data)
+        ? res.data
+        : Array.isArray(res.data?.data)
+        ? res.data.data
+        : [];
+      setCandidates(dataArr);
     } catch (err) {
       console.error("Error fetching candidates in TimesheetPage:", err);
+      setCandidates([]);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDeleteRow = (rowId) => {
+    setHiddenRowIds((prev) => {
+      const next = [...prev, rowId];
+      try {
+        localStorage.setItem("timesheet_hidden_rows", JSON.stringify(next));
+      } catch (e) {}
+      return next;
+    });
   };
 
   const calculateSummary = (startTimeStr, endTimeStr) => {
@@ -47,10 +72,13 @@ function TimesheetPage() {
   // Collect submitted / accepted timesheet rows across candidates
   const allTimesheetRows = useMemo(() => {
     const rows = [];
-    (candidates || []).forEach((cand) => {
+    const safeCandidates = Array.isArray(candidates) ? candidates : [];
+    safeCandidates.forEach((cand) => {
       (cand.contractDeliverables || []).forEach((contract) => {
         const contractStartDateStr = contract.contractStartDate
           ? String(contract.contractStartDate).slice(0, 10)
+          : contract.startDate
+          ? String(contract.startDate).slice(0, 10)
           : new Date().toISOString().slice(0, 10);
 
         // Standard Services
@@ -61,8 +89,8 @@ function TimesheetPage() {
             const empName =
               slotEmpObj?.employee || (q === 0 ? svc.employee || "" : "");
             const isSubmitted =
-              slotEmpObj?.approvalState === "Accepted" ||
               slotEmpObj?.isSubmitted === true ||
+              slotEmpObj?.approvalState === "Accepted" ||
               Boolean(slotEmpObj?.actualStartTime);
 
             if (empName && empName.trim() !== "" && isSubmitted) {
@@ -96,9 +124,10 @@ function TimesheetPage() {
     return ["All", ...new Set(names)];
   }, [allTimesheetRows]);
 
-  // Filtered rows
+  // Filtered rows (excluding hidden rows)
   const filteredRows = useMemo(() => {
     return allTimesheetRows.filter((r) => {
+      if (hiddenRowIds.includes(r.id)) return false;
       if (
         selectedCustomer !== "All" &&
         r.customer.toLowerCase() !== selectedCustomer.toLowerCase()
@@ -115,7 +144,7 @@ function TimesheetPage() {
       }
       return true;
     });
-  }, [allTimesheetRows, selectedCustomer, searchQuery]);
+  }, [allTimesheetRows, selectedCustomer, searchQuery, hiddenRowIds]);
 
   return (
     <div className="timesheet">
@@ -173,6 +202,7 @@ function TimesheetPage() {
                 <th className="timesheatsheading">Start Time</th>
                 <th className="timesheatsheading">End Time</th>
                 <th className="timesheatsheading">Summary</th>
+                <th className="timesheatsheading" style={{ textAlign: "center" }}>Action</th>
               </tr>
             </thead>
 
@@ -198,6 +228,16 @@ function TimesheetPage() {
                   </td>
                   <td>
                     <span className="summaryBadge">⏱️ {row.summary}</span>
+                  </td>
+                  <td style={{ textAlign: "center" }}>
+                    <button
+                      type="button"
+                      className="deleteTimesheetRowBtn"
+                      title="Delete from Timesheets view"
+                      onClick={() => handleDeleteRow(row.id)}
+                    >
+                      🗑️
+                    </button>
                   </td>
                 </tr>
               ))}

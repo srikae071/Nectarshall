@@ -13,6 +13,16 @@ function RosterShiftsMain() {
   const [actualTimesMap, setActualTimesMap] = useState({});
   const [submittingRowId, setSubmittingRowId] = useState(null);
   const [submitSuccessRowId, setSubmitSuccessRowId] = useState(null);
+  const [submittedRowIds, setSubmittedRowIds] = useState([]);
+
+  // Scope of Work Notepad Pop-up Modal State
+  const [scopeModalData, setScopeModalData] = useState({
+    isOpen: false,
+    scopeOfWork: "",
+    companyName: "",
+    siteName: "",
+    employeeName: "",
+  });
 
   useEffect(() => {
     fetchCandidates();
@@ -31,7 +41,10 @@ function RosterShiftsMain() {
       }
       setCandidates(res.data || []);
     } catch (err) {
-      console.error("Error fetching candidates in OP Main Page:", err);
+      console.error(
+        "Error fetching candidates in Roster Shifts Main Page:",
+        err,
+      );
     } finally {
       setLoading(false);
     }
@@ -74,6 +87,7 @@ function RosterShiftsMain() {
                 actualEndTime:
                   slotEmpObj?.actualEndTime || svc.shiftEndTime || "16:00",
                 approvalState: slotEmpObj?.approvalState || "Pending",
+                isSubmitted: slotEmpObj?.isSubmitted === true,
                 contractObj: contract,
                 candObj: cand,
               });
@@ -108,7 +122,9 @@ function RosterShiftsMain() {
             actualStartTime:
               adhoc.actualStartTime || adhoc.shiftStartTime || "08:00",
             actualEndTime: adhoc.actualEndTime || adhoc.shiftEndTime || "16:00",
+            scopeOfWork: adhoc.scopeOfWork || "",
             approvalState: adhoc.approvalState || "Pending",
+            isSubmitted: adhoc.isSubmitted === true,
             contractObj: contract,
             candObj: cand,
           });
@@ -215,6 +231,7 @@ function RosterShiftsMain() {
       }
 
       setSubmitSuccessRowId(rowItem.rowId);
+      setSubmittedRowIds((prev) => [...prev, rowItem.rowId]);
       await fetchCandidates();
       setTimeout(() => setSubmitSuccessRowId(null), 3000);
     } catch (err) {
@@ -309,6 +326,8 @@ function RosterShiftsMain() {
   const renderApprovalRow = (row) => {
     const isAccepted = row.approvalState === "Accepted";
     const isRejected = row.approvalState === "Rejected";
+    const isRowSubmitted =
+      row.isSubmitted || submittedRowIds.includes(row.rowId);
 
     return (
       <tr
@@ -343,6 +362,30 @@ function RosterShiftsMain() {
         <td className="shiftTimeCol">
           <span className="shiftTimeTxt">🕒 {row.shiftEndTime}</span>
         </td>
+
+        {/* Scope of Work Notepad Icon Column for Adhoc Rows */}
+        {row.isAdhoc && (
+          <td className="scopeCol">
+            <button
+              type="button"
+              className="scopeNotepadBtn"
+              title="Click to view Scope of Work"
+              onClick={() =>
+                setScopeModalData({
+                  isOpen: true,
+                  scopeOfWork:
+                    row.scopeOfWork ||
+                    "No scope of work provided for this adhoc shift.",
+                  companyName: row.companyName,
+                  siteName: row.siteName,
+                  employeeName: row.employeeName,
+                })
+              }
+            >
+              📝 View Scope
+            </button>
+          </td>
+        )}
 
         <td className="actionCol">
           {!row.hasEmployee ? (
@@ -411,11 +454,17 @@ function RosterShiftsMain() {
 
                 <button
                   type="button"
-                  className="submitActualTimesBtn"
+                  className={`submitActualTimesBtn ${
+                    isRowSubmitted ? "submittedBtn" : ""
+                  }`}
                   disabled={submittingRowId === row.rowId}
                   onClick={() => handleSaveActualTimes(row)}
                 >
-                  {submittingRowId === row.rowId ? "Submitting..." : "Submit"}
+                  {submittingRowId === row.rowId
+                    ? "Submitting..."
+                    : isRowSubmitted
+                      ? "✓ Submitted"
+                      : "Submit"}
                 </button>
 
                 {submitSuccessRowId === row.rowId && (
@@ -560,6 +609,7 @@ function RosterShiftsMain() {
                             <th>Position</th>
                             <th>Shift Start Time</th>
                             <th>Shift End Time</th>
+                            <th>Scope of Work</th>
                             <th>Accept / Reject</th>
                           </tr>
                         </thead>
@@ -575,6 +625,48 @@ function RosterShiftsMain() {
           })
         )}
       </div>
+
+      {/* Scope of Work Notepad Pop-up Modal */}
+      {scopeModalData.isOpen && (
+        <div className="scopeModalOverlay">
+          <div className="scopeModalBox">
+            <div className="scopeModalHeader">
+              <h3>📝 Scope of Work</h3>
+              <button
+                className="closeModalX"
+                onClick={() => setScopeModalData({ isOpen: false })}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="scopeModalMeta">
+              <div>
+                🏢 <strong>Company:</strong> {scopeModalData.companyName}
+              </div>
+              <div>
+                📍 <strong>Site:</strong> {scopeModalData.siteName}
+              </div>
+              <div>
+                👤 <strong>Employee:</strong> {scopeModalData.employeeName}
+              </div>
+            </div>
+
+            <div className="scopeModalContent">
+              {scopeModalData.scopeOfWork}
+            </div>
+
+            <div className="scopeModalFooter">
+              <button
+                className="closeScopeBtn"
+                onClick={() => setScopeModalData({ isOpen: false })}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

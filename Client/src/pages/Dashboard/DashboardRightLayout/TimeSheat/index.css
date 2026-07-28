@@ -152,3 +152,25 @@ tr:last-child td {
   display: inline-block;
   border: 1px solid #bbf7d0;
 }
+
+.deleteTimesheetRowBtn {
+  background: #fff5f5;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 5px 9px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deleteTimesheetRowBtn:hover {
+  background: #fee2e2;
+  border-color: #f87171;
+  color: #b91c1c;
+  transform: scale(1.08);
+  box-shadow: 0 2px 5px rgba(220, 38, 38, 0.15);
+}

@@ -148,6 +148,10 @@ const BoardingCandidatesSchema = new mongoose.Schema(
                   type: String,
                   default: "",
                 },
+                isSubmitted: {
+                  type: Boolean,
+                  default: false,
+                },
               },
             ],
 
@@ -245,6 +249,14 @@ const BoardingCandidatesSchema = new mongoose.Schema(
             actualEndTime: {
               type: String,
               default: "",
+            },
+            scopeOfWork: {
+              type: String,
+              default: "",
+            },
+            isSubmitted: {
+              type: Boolean,
+              default: false,
             },
           },
         ],

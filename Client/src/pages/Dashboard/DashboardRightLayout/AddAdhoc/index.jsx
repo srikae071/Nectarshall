@@ -16,6 +16,7 @@ function AddAdhoc() {
   const [shiftEndTime, setShiftEndTime] = useState("16:00");
   const [shiftStartDate, setShiftStartDate] = useState(todayStr);
   const [shiftEndDate, setShiftEndDate] = useState(todayStr);
+  const [scopeOfWork, setScopeOfWork] = useState("");
 
   useEffect(() => {
     fetchCandidates();
@@ -89,6 +90,7 @@ function AddAdhoc() {
         companyName: selectedCandidate.companyName,
         siteName: contract.siteName,
         siteAddress: contract.siteAddress,
+        scopeOfWork: scopeOfWork.trim(),
         employee: "",
       };
 
@@ -220,6 +222,17 @@ function AddAdhoc() {
                   required
                 />
               </div>
+            </div>
+
+            <div className="formField">
+              <label htmlFor="scopeOfWorkInput">Scope of Work</label>
+              <textarea
+                id="scopeOfWorkInput"
+                rows={3}
+                placeholder="Enter detailed scope of work for this adhoc request..."
+                value={scopeOfWork}
+                onChange={(e) => setScopeOfWork(e.target.value)}
+              />
             </div>
 
             <div className="formActions">

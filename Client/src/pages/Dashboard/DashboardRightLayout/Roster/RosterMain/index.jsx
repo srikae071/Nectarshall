@@ -648,7 +648,14 @@ function RosterMain() {
             <h2>Roster Management</h2>
           </div>
 
-          <div style={{ marginLeft: "auto", display: "flex", gap: "10px", alignItems: "center" }}>
+          <div
+            style={{
+              marginLeft: "auto",
+              display: "flex",
+              gap: "10px",
+              alignItems: "center",
+            }}
+          >
             <button
               type="button"
               style={{
@@ -666,7 +673,7 @@ function RosterMain() {
               }}
               onClick={() => navigate("/roster-shifts")}
             >
-              📅 Roster Shifts Main ➔
+              ppp ➔
             </button>
 
             {(selectedCustomer ||
