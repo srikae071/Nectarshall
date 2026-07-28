@@ -388,21 +388,83 @@ function OnBoardingSaves() {
       },
     }));
   };
-  const handleWorkingDayChange = (index, serviceIndex, day, checked) => {
-    const updated = [...contractDeliverables];
+  const getWorkingDayObj = (workingDays, dayValue) => {
+    if (!Array.isArray(workingDays)) return null;
+    return workingDays.find((item) => {
+      if (typeof item === "string") return item === dayValue;
+      if (typeof item === "object" && item !== null) return item.day === dayValue;
+      return false;
+    });
+  };
 
+  const isWorkingDaySelected = (workingDays, dayValue) => {
+    return Boolean(getWorkingDayObj(workingDays, dayValue));
+  };
+
+  const getWorkingDayTasks = (workingDays, dayValue) => {
+    const obj = getWorkingDayObj(workingDays, dayValue);
+    if (typeof obj === "object" && obj !== null && Array.isArray(obj.tasks)) {
+      return obj.tasks;
+    }
+    return [];
+  };
+
+  const handleWorkingDayChange = (index, serviceIndex, dayValue, checked) => {
+    const updated = JSON.parse(JSON.stringify(contractDeliverables));
     let days = updated[index].services[serviceIndex].workingDays || [];
+    if (!Array.isArray(days)) days = [];
 
     if (checked) {
-      if (!days.includes(day)) {
-        days = [...days, day];
+      const exists = days.some(
+        (d) => (typeof d === "string" ? d === dayValue : d?.day === dayValue)
+      );
+      if (!exists) {
+        days.push({ day: dayValue, tasks: [] });
       }
     } else {
-      days = days.filter((d) => d !== day);
+      days = days.filter(
+        (d) => (typeof d === "string" ? d !== dayValue : d?.day !== dayValue)
+      );
     }
 
     updated[index].services[serviceIndex].workingDays = days;
+    setContractDeliverables(updated);
+  };
 
+  const handleTaskChange = (index, serviceIndex, dayValue, taskName, checked) => {
+    const updated = JSON.parse(JSON.stringify(contractDeliverables));
+    let days = updated[index].services[serviceIndex].workingDays || [];
+    if (!Array.isArray(days)) days = [];
+
+    let dayObjIndex = days.findIndex(
+      (d) => (typeof d === "string" ? d === dayValue : d?.day === dayValue)
+    );
+
+    if (dayObjIndex === -1) {
+      if (checked) {
+        days.push({ day: dayValue, tasks: [taskName] });
+      }
+    } else {
+      let existingItem = days[dayObjIndex];
+      let tasks = [];
+      if (
+        typeof existingItem === "object" &&
+        existingItem !== null &&
+        Array.isArray(existingItem.tasks)
+      ) {
+        tasks = [...existingItem.tasks];
+      }
+
+      if (checked) {
+        if (!tasks.includes(taskName)) tasks.push(taskName);
+      } else {
+        tasks = tasks.filter((t) => t !== taskName);
+      }
+
+      days[dayObjIndex] = { day: dayValue, tasks: tasks };
+    }
+
+    updated[index].services[serviceIndex].workingDays = days;
     setContractDeliverables(updated);
   };
   const handleSave = async () => {
@@ -1034,9 +1096,9 @@ function OnBoardingSaves() {
                         </div>
                         {/* </div> */}
                         <div className="deliverable-field deliverable-full">
-                          <label className="onbdsaveslabel">Working Days</label>
+                          <label className="onbdsaveslabel">Working Days & Tasks</label>
 
-                          <div className="working-days">
+                          <div className="vertical-working-days-grid">
                             {[
                               { label: "MO", value: "Monday" },
                               { label: "TU", value: "Tuesday" },
@@ -1045,25 +1107,62 @@ function OnBoardingSaves() {
                               { label: "FR", value: "Friday" },
                               { label: "SA", value: "Saturday" },
                               { label: "SU", value: "Sunday" },
-                            ].map((day) => (
-                              <label key={day.value}>
-                                <input
-                                  type="checkbox"
-                                  checked={(service.workingDays || []).includes(
-                                    day.value,
-                                  )}
-                                  onChange={(e) =>
-                                    handleWorkingDayChange(
-                                      index,
-                                      serviceIndex,
-                                      day.value,
-                                      e.target.checked,
-                                    )
-                                  }
-                                />
-                                {day.label}
-                              </label>
-                            ))}
+                            ].map((day) => {
+                              const isDayChecked = isWorkingDaySelected(
+                                service.workingDays,
+                                day.value
+                              );
+                              const selectedTasks = getWorkingDayTasks(
+                                service.workingDays,
+                                day.value
+                              );
+
+                              return (
+                                <div className="vertical-day-col" key={day.value}>
+                                  <div className="vertical-day-header">
+                                    <label className="day-header-label">
+                                      <input
+                                        type="checkbox"
+                                        checked={isDayChecked}
+                                        onChange={(e) =>
+                                          handleWorkingDayChange(
+                                            index,
+                                            serviceIndex,
+                                            day.value,
+                                            e.target.checked
+                                          )
+                                        }
+                                      />
+                                      <strong>{day.label}</strong>
+                                      <span className="day-full-name">({day.value})</span>
+                                    </label>
+                                  </div>
+
+                                  <div className="vertical-task-list">
+                                    {["Task 1", "Task 2", "Task 3", "Task 4", "Task 5"].map(
+                                      (taskName) => (
+                                        <label className="task-checkbox-label" key={taskName}>
+                                          <input
+                                            type="checkbox"
+                                            checked={selectedTasks.includes(taskName)}
+                                            onChange={(e) =>
+                                              handleTaskChange(
+                                                index,
+                                                serviceIndex,
+                                                day.value,
+                                                taskName,
+                                                e.target.checked
+                                              )
+                                            }
+                                          />
+                                          <span>{taskName}</span>
+                                        </label>
+                                      )
+                                    )}
+                                  </div>
+                                </div>
+                              );
+                            })}
                           </div>
                         </div>
                       </div>

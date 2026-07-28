@@ -444,7 +444,23 @@ function RosterMain() {
       contractEndDate: card.contractEndDate
         ? String(card.contractEndDate).slice(0, 10)
         : "N/A",
-      workingDays: card.workingDays ? card.workingDays.join(", ") : "All Days",
+      rawWorkingDays: card.workingDays || [],
+      workingDays: card.workingDays
+        ? Array.isArray(card.workingDays)
+          ? card.workingDays
+              .map((d) =>
+                typeof d === "string"
+                  ? d
+                  : `${d?.day || ""}${
+                      d?.tasks && d.tasks.length > 0
+                        ? ` (${d.tasks.join(", ")})`
+                        : ""
+                    }`
+              )
+              .filter(Boolean)
+              .join(", ")
+          : String(card.workingDays)
+        : "All Days",
       currentEmployee: slotEmp || row.requester || "",
     });
     setNewEmployeeName(slotEmp || row.requester || "");
@@ -1100,9 +1116,13 @@ function RosterMain() {
                           const matchingServices = row.services.filter(
                             (svc) => {
                               const workingDays = svc.workingDays || [];
-                              if (workingDays.length > 0) {
-                                if (!workingDays.includes(currentDayName))
-                                  return false;
+                              if (Array.isArray(workingDays) && workingDays.length > 0) {
+                                const isMatch = workingDays.some((d) =>
+                                  typeof d === "string"
+                                    ? d === currentDayName
+                                    : d?.day === currentDayName
+                                );
+                                if (!isMatch) return false;
                               }
                               if (svc.contractStartDate) {
                                 const start = new Date(svc.contractStartDate);
@@ -1327,6 +1347,10 @@ function RosterMain() {
                 <p>
                   <strong>Contract End Date:</strong>{" "}
                   {assignModal.contractEndDate}
+                </p>
+                <p>
+                  <strong>Working Days & Tasks:</strong>{" "}
+                  {assignModal.workingDays || "All Days"}
                 </p>
                 <p>
                   {/* <strong>Slot:</strong> Card #{assignModal.cardIndex} */}

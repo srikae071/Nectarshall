@@ -200,3 +200,87 @@
   width: 16px;
   height: 16px;
 }
+
+/* VERTICAL WORKING DAYS MATRIX (STRICT SINGLE LINE 7-COLUMNS) */
+.vertical-working-days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  margin-top: 10px;
+  background: #ffffff;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.vertical-day-col {
+  display: flex;
+  flex-direction: column;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 6px 4px;
+  transition: all 0.2s ease;
+  min-width: 0; /* allows shrinking to fit all 7 days in one line */
+  box-sizing: border-box;
+}
+
+.vertical-day-col:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.vertical-day-header {
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 5px;
+  margin-bottom: 5px;
+}
+
+.day-header-label {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11.5px;
+  color: #0f172a;
+  cursor: pointer;
+  margin: 0 !important;
+  white-space: nowrap;
+}
+
+.day-header-label input[type="checkbox"] {
+  width: 13px !important;
+  height: 13px !important;
+  cursor: pointer;
+}
+
+.day-full-name {
+  font-size: 10px;
+  color: #64748b;
+}
+
+.vertical-task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.task-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  color: #334155;
+  cursor: pointer;
+  margin: 0 !important;
+  font-weight: 500 !important;
+  white-space: nowrap;
+}
+
+.task-checkbox-label input[type="checkbox"] {
+  width: 12px !important;
+  height: 12px !important;
+  cursor: pointer;
+}
+
