@@ -153,24 +153,80 @@ tr:last-child td {
   border: 1px solid #bbf7d0;
 }
 
-.deleteTimesheetRowBtn {
-  background: #fff5f5;
-  border: 1px solid #fecaca;
-  color: #dc2626;
-  padding: 5px 9px;
-  border-radius: 6px;
-  font-size: 13px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+/* TIMESHEET APPROVAL ACTION BUTTONS & BADGES */
+.tsBtnGroup {
   display: inline-flex;
   align-items: center;
+  gap: 8px;
   justify-content: center;
 }
 
-.deleteTimesheetRowBtn:hover {
-  background: #fee2e2;
-  border-color: #f87171;
-  color: #b91c1c;
-  transform: scale(1.08);
-  box-shadow: 0 2px 5px rgba(220, 38, 38, 0.15);
+.tsAcceptBtn {
+  background: #16a34a;
+  color: #ffffff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tsAcceptBtn:hover:not(:disabled) {
+  background: #15803d;
+}
+
+.tsRejectBtn {
+  background: #dc2626;
+  color: #ffffff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tsRejectBtn:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+.tsAcceptBtn:disabled,
+.tsRejectBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.tsStatusBadge {
+  font-weight: 700;
+  font-size: 12.5px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.acceptedBadge {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.changeStatusBtn {
+  background: transparent;
+  border: 1px solid currentColor;
+  color: inherit;
+  font-size: 10.5px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity 0.15s ease;
+}
+
+.changeStatusBtn:hover {
+  opacity: 1;
 }

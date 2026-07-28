@@ -78,7 +78,7 @@ function RosterShiftsMain() {
                   cand.companyName || cand.requester || "Unnamed Company",
                 siteName: contract.siteName || "N/A",
                 siteAddress: contract.siteAddress || contract.siteName || "N/A",
-                typeOfService: svc.serviceType || svc.position || "Shift",
+                typeOfService: "General",
                 position: svc.position || "N/A",
                 shiftStartTime: svc.shiftStartTime || "08:00",
                 shiftEndTime: svc.shiftEndTime || "16:00",
@@ -114,9 +114,8 @@ function RosterShiftsMain() {
               cand.companyName || cand.requester || "Unnamed Company",
             siteName: contract.siteName || "N/A",
             siteAddress: contract.siteAddress || contract.siteName || "N/A",
-            typeOfService: adhoc.serviceType || "Adhoc Service",
-            position:
-              adhoc.position || contract.services?.[0]?.position || "Adhoc",
+            typeOfService: "Adhoc",
+            position: "Adhoc",
             shiftStartTime: adhoc.shiftStartTime || "08:00",
             shiftEndTime: adhoc.shiftEndTime || "16:00",
             actualStartTime:
@@ -522,7 +521,7 @@ function RosterShiftsMain() {
           />
         </div>
         <div className="navTitle">Shift Approvals</div>
-        <button
+        {/* <button
           type="button"
           style={{
             marginLeft: "auto",
@@ -539,7 +538,7 @@ function RosterShiftsMain() {
           onClick={() => navigate("/roster")}
         >
           📋 Go to Roster Main ➔
-        </button>
+        </button> */}
       </div>
 
       <div className="opContentContainer">
@@ -579,7 +578,7 @@ function RosterShiftsMain() {
                         <tr>
                           <th>Employee Name</th>
                           <th>Site Address</th>
-                          <th>Type of Service</th>
+                          <th>Type</th>
                           <th>Position</th>
                           <th>Shift Start Time</th>
                           <th>Shift End Time</th>
@@ -605,7 +604,7 @@ function RosterShiftsMain() {
                           <tr>
                             <th>Employee Name</th>
                             <th>Site Address</th>
-                            <th>Type of Service</th>
+                            <th>Type</th>
                             <th>Position</th>
                             <th>Shift Start Time</th>
                             <th>Shift End Time</th>

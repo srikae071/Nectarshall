@@ -5,6 +5,7 @@ import "./index.css";
 function TimesheetPage() {
   const [candidates, setCandidates] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [actionLoadingId, setActionLoadingId] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCustomer, setSelectedCustomer] = useState("All");
 
@@ -46,14 +47,74 @@ function TimesheetPage() {
     }
   };
 
-  const handleDeleteRow = (rowId) => {
-    setHiddenRowIds((prev) => {
-      const next = [...prev, rowId];
+  const handleTimesheetApproval = async (rowItem, isApprove) => {
+    const actionKey = `${rowItem.id}_${isApprove ? "Approve" : "Reject"}`;
+    try {
+      setActionLoadingId(actionKey);
+
+      const candidate = candidates.find((c) => c._id === rowItem.candidateId);
+      if (!candidate) return;
+
+      const contract = (candidate.contractDeliverables || []).find(
+        (c) => c._id === rowItem.contractId
+      );
+      if (!contract) return;
+
+      let updatedServices = JSON.parse(JSON.stringify(contract.services || []));
+      let updatedAdhocServices = JSON.parse(
+        JSON.stringify(contract.adhocServices || [])
+      );
+
+      if (rowItem.isAdhoc) {
+        if (updatedAdhocServices[rowItem.adhocIndex]) {
+          updatedAdhocServices[rowItem.adhocIndex].timesheetApproved = isApprove;
+          updatedAdhocServices[rowItem.adhocIndex].timeSheatsApproved = isApprove;
+        }
+      } else {
+        if (updatedServices[rowItem.serviceIndex]) {
+          const targetSvc = updatedServices[rowItem.serviceIndex];
+          const qty = Math.max(1, Number(targetSvc.quantity) || 1);
+          let assigned = targetSvc.assignedEmployees || [];
+          while (assigned.length < qty) {
+            assigned.push({
+              employee: "",
+              isYellow: false,
+              approvalState: "Pending",
+            });
+          }
+
+          assigned[rowItem.slotIndex] = {
+            ...assigned[rowItem.slotIndex],
+            timesheetApproved: isApprove,
+            timeSheatsApproved: isApprove,
+          };
+
+          targetSvc.assignedEmployees = assigned;
+        }
+      }
+
+      const remoteUrl = `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/${rowItem.candidateId}/contracts/${rowItem.contractId}/services`;
+      const localUrl = `/api/BoardingCandidates/${rowItem.candidateId}/contracts/${rowItem.contractId}/services`;
+
       try {
-        localStorage.setItem("timesheet_hidden_rows", JSON.stringify(next));
-      } catch (e) {}
-      return next;
-    });
+        await axios.put(remoteUrl, {
+          services: updatedServices,
+          adhocServices: updatedAdhocServices,
+        });
+      } catch (err) {
+        await axios.put(localUrl, {
+          services: updatedServices,
+          adhocServices: updatedAdhocServices,
+        });
+      }
+
+      await fetchCandidates();
+    } catch (err) {
+      console.error("Error saving timesheet approval state:", err);
+      alert(`Failed to update timesheet approval: ${err.message}`);
+    } finally {
+      setActionLoadingId(null);
+    }
   };
 
   const calculateSummary = (startTimeStr, endTimeStr) => {
@@ -69,7 +130,7 @@ function TimesheetPage() {
     return `${hours} Hours ${mins} Mins`;
   };
 
-  // Collect submitted / accepted timesheet rows across candidates
+  // Collect submitted / accepted timesheet rows across candidates (Standard & Adhoc)
   const allTimesheetRows = useMemo(() => {
     const rows = [];
     const safeCandidates = Array.isArray(candidates) ? candidates : [];
@@ -101,16 +162,64 @@ function TimesheetPage() {
 
               rows.push({
                 id: `${cand._id}_${contract._id}_${sIdx}_${q}`,
+                candidateId: cand._id,
+                contractId: contract._id,
+                serviceIndex: sIdx,
+                slotIndex: q,
+                isAdhoc: false,
                 date: contractStartDateStr,
                 customer: cand.companyName || cand.clientId || "Client",
                 employeeName: empName.trim(),
                 position: svc.position || "N/A",
-                typeOfService: svc.serviceType || svc.position || "Shift",
+                typeOfService: "General",
                 startTime: actStart,
                 endTime: actEnd,
                 summary: calculateSummary(actStart, actEnd),
+                timesheetApproved: Boolean(
+                  slotEmpObj?.timesheetApproved || slotEmpObj?.timeSheatsApproved
+                ),
               });
             }
+          }
+        });
+
+        // Adhoc Services
+        (contract.adhocServices || []).forEach((adhoc, aIdx) => {
+          const empName = adhoc.employee || "";
+          const isSubmitted =
+            adhoc?.isSubmitted === true ||
+            adhoc?.approvalState === "Accepted" ||
+            Boolean(adhoc?.actualStartTime);
+
+          if (empName && empName.trim() !== "" && isSubmitted) {
+            const actStart =
+              adhoc.actualStartTime || adhoc.shiftStartTime || "08:00";
+            const actEnd =
+              adhoc.actualEndTime || adhoc.shiftEndTime || "16:00";
+            const adhocDateStr = adhoc.shiftStartDate
+              ? String(adhoc.shiftStartDate).slice(0, 10)
+              : adhoc.serviceDate
+              ? String(adhoc.serviceDate).slice(0, 10)
+              : contractStartDateStr;
+
+            rows.push({
+              id: `${cand._id}_${contract._id}_adhoc_${aIdx}`,
+              candidateId: cand._id,
+              contractId: contract._id,
+              adhocIndex: aIdx,
+              isAdhoc: true,
+              date: adhocDateStr,
+              customer: cand.companyName || cand.clientId || "Client",
+              employeeName: empName.trim(),
+              position: "Adhoc",
+              typeOfService: "Adhoc",
+              startTime: actStart,
+              endTime: actEnd,
+              summary: calculateSummary(actStart, actEnd),
+              timesheetApproved: Boolean(
+                adhoc?.timesheetApproved || adhoc?.timeSheatsApproved
+              ),
+            });
           }
         });
       });
@@ -198,49 +307,80 @@ function TimesheetPage() {
                 <th className="timesheatsheading">Customer</th>
                 <th className="timesheatsheading">Employee Name</th>
                 <th className="timesheatsheading">Position</th>
-                <th className="timesheatsheading">Type of Service</th>
+                <th className="timesheatsheading">Type</th>
                 <th className="timesheatsheading">Start Time</th>
                 <th className="timesheatsheading">End Time</th>
                 <th className="timesheatsheading">Summary</th>
-                <th className="timesheatsheading" style={{ textAlign: "center" }}>Action</th>
+                <th className="timesheatsheading" style={{ textAlign: "center" }}>
+                  Action
+                </th>
               </tr>
             </thead>
 
             <tbody>
-              {filteredRows.map((row) => (
-                <tr key={row.id}>
-                  <td style={{ fontWeight: 600 }}>{row.date}</td>
-                  <td>🏢 {row.customer}</td>
-                  <td style={{ fontWeight: 700, color: "#0f172a" }}>
-                    👤 {row.employeeName}
-                  </td>
-                  <td>
-                    <span className="posBadge">{row.position}</span>
-                  </td>
-                  <td>
-                    <span className="svcBadge">{row.typeOfService}</span>
-                  </td>
-                  <td style={{ color: "#2563eb", fontWeight: 600 }}>
-                    🕒 {row.startTime}
-                  </td>
-                  <td style={{ color: "#2563eb", fontWeight: 600 }}>
-                    🕒 {row.endTime}
-                  </td>
-                  <td>
-                    <span className="summaryBadge">⏱️ {row.summary}</span>
-                  </td>
-                  <td style={{ textAlign: "center" }}>
-                    <button
-                      type="button"
-                      className="deleteTimesheetRowBtn"
-                      title="Delete from Timesheets view"
-                      onClick={() => handleDeleteRow(row.id)}
-                    >
-                      🗑️
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {filteredRows.map((row) => {
+                const isApproved = row.timesheetApproved === true;
+
+                return (
+                  <tr key={row.id}>
+                    <td style={{ fontWeight: 600 }}>{row.date}</td>
+                    <td>🏢 {row.customer}</td>
+                    <td style={{ fontWeight: 700, color: "#0f172a" }}>
+                      👤 {row.employeeName}
+                    </td>
+                    <td>
+                      <span className="posBadge">{row.position}</span>
+                    </td>
+                    <td>
+                      <span className="svcBadge">{row.typeOfService}</span>
+                    </td>
+                    <td style={{ color: "#2563eb", fontWeight: 600 }}>
+                      🕒 {row.startTime}
+                    </td>
+                    <td style={{ color: "#2563eb", fontWeight: 600 }}>
+                      🕒 {row.endTime}
+                    </td>
+                    <td>
+                      <span className="summaryBadge">⏱️ {row.summary}</span>
+                    </td>
+                    <td style={{ textAlign: "center" }}>
+                      {isApproved ? (
+                        <div className="tsStatusBadge acceptedBadge">
+                          <span>✓ Approved</span>
+                          <button
+                            className="changeStatusBtn"
+                            onClick={() => handleTimesheetApproval(row, false)}
+                            title="Re-evaluate"
+                          >
+                            Reset
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="tsBtnGroup">
+                          <button
+                            className="tsAcceptBtn"
+                            disabled={actionLoadingId !== null}
+                            onClick={() => handleTimesheetApproval(row, true)}
+                          >
+                            {actionLoadingId === `${row.id}_Approve`
+                              ? "Saving..."
+                              : "Approve"}
+                          </button>
+                          <button
+                            className="tsRejectBtn"
+                            disabled={actionLoadingId !== null}
+                            onClick={() => handleTimesheetApproval(row, false)}
+                          >
+                            {actionLoadingId === `${row.id}_Reject`
+                              ? "Saving..."
+                              : "Reject"}
+                          </button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         )}

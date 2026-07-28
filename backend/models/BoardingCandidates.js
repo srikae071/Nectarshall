@@ -152,6 +152,10 @@ const BoardingCandidatesSchema = new mongoose.Schema(
                   type: Boolean,
                   default: false,
                 },
+                timeSheatsApproved: {
+                  type: Boolean,
+                  default: false,
+                },
               },
             ],
 
@@ -255,6 +259,14 @@ const BoardingCandidatesSchema = new mongoose.Schema(
               default: "",
             },
             isSubmitted: {
+              type: Boolean,
+              default: false,
+            },
+            timeSheatsApproved: {
+              type: Boolean,
+              default: false,
+            },
+            timesheetApproved: {
               type: Boolean,
               default: false,
             },

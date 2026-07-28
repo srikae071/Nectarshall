@@ -656,7 +656,7 @@ function RosterMain() {
               alignItems: "center",
             }}
           >
-            <button
+            {/* <button
               type="button"
               style={{
                 background: "#0284c7",
@@ -674,7 +674,7 @@ function RosterMain() {
               onClick={() => navigate("/roster-shifts")}
             >
               ppp ➔
-            </button>
+            </button> */}
 
             {(selectedCustomer ||
               selectedLegalEntity ||
@@ -1329,7 +1329,7 @@ function RosterMain() {
                   {assignModal.contractEndDate}
                 </p>
                 <p>
-                  <strong>Slot:</strong> Card #{assignModal.cardIndex}
+                  {/* <strong>Slot:</strong> Card #{assignModal.cardIndex} */}
                 </p>
               </div>
 
