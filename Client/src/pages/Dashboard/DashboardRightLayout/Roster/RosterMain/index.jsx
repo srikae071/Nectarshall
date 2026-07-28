@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import "./index.css";
 
 function RosterMain() {
+  const navigate = useNavigate();
   const [candidates, setCandidates] = useState([]);
   const [dbEmployees, setDbEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -299,6 +301,15 @@ function RosterMain() {
     setShowCustomerSearch(false);
     setShowEmployeeSearch(false);
     setShowSiteSearch(false);
+  };
+
+  // Helper to parse "HH:MM" time strings to total minutes from midnight
+  const parseTimeToMinutes = (timeStr) => {
+    if (!timeStr) return 8 * 60;
+    const parts = String(timeStr).split(":");
+    const h = parseInt(parts[0], 10) || 0;
+    const m = parseInt(parts[1], 10) || 0;
+    return h * 60 + m;
   };
 
   // Helper for timeline bar style
@@ -637,17 +648,39 @@ function RosterMain() {
             <h2>Roster Management</h2>
           </div>
 
-          {(selectedCustomer ||
-            selectedLegalEntity ||
-            selectedEmployee ||
-            selectedSite ||
-            customerSearchQuery ||
-            employeeSearchQuery ||
-            siteSearchQuery) && (
-            <button className="resetFilterBtn" onClick={handleResetFilters}>
-              Clear Filters
+          <div style={{ marginLeft: "auto", display: "flex", gap: "10px", alignItems: "center" }}>
+            <button
+              type="button"
+              style={{
+                background: "#0284c7",
+                color: "#ffffff",
+                border: "none",
+                padding: "6px 14px",
+                borderRadius: "6px",
+                fontWeight: "600",
+                fontSize: "12.5px",
+                cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+              }}
+              onClick={() => navigate("/roster-shifts")}
+            >
+              📅 Roster Shifts Main ➔
             </button>
-          )}
+
+            {(selectedCustomer ||
+              selectedLegalEntity ||
+              selectedEmployee ||
+              selectedSite ||
+              customerSearchQuery ||
+              employeeSearchQuery ||
+              siteSearchQuery) && (
+              <button className="resetFilterBtn" onClick={handleResetFilters}>
+                Clear Filters
+              </button>
+            )}
+          </div>
         </div>
 
         {/* 4 FILTER TABS GRID */}

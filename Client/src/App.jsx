@@ -103,6 +103,7 @@ import OnbCOpen from "./pages/Hrms/OnBoarding/OnBoardingClinet/OnBoardingComplia
 import OprationsClientOnbTab from "./pages/Dashboard/DashboardRightLayout/OprationsClientOnbTab";
 import AdhocAllTab from "./pages/Dashboard/DashboardRightLayout/AdhocServices/AdhocAllTab";
 import AddAdhoc from "./pages/Dashboard/DashboardRightLayout/AddAdhoc";
+import RosterShiftsMain from "./pages/Home/RosterShifts/RosterShiftsMain";
 // import BEWorkInProgress from "./pages/Cnc/CncRightSide/BEWorkInProgress";
 function App() {
   return (
@@ -278,6 +279,7 @@ function App() {
       <Route path="/onboaeding-complience/Open" element={<OnbCOpen />} />
 
       <Route path="/adhoc/all" element={<AdhocAllTab />} />
+      <Route path="/roster-shifts" element={<RosterShiftsMain />} />
     </Routes>
   );
 }

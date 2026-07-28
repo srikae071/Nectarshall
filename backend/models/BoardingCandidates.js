@@ -140,6 +140,14 @@ const BoardingCandidatesSchema = new mongoose.Schema(
                   type: String,
                   default: "Pending",
                 },
+                actualStartTime: {
+                  type: String,
+                  default: "",
+                },
+                actualEndTime: {
+                  type: String,
+                  default: "",
+                },
               },
             ],
 
@@ -227,6 +235,16 @@ const BoardingCandidatesSchema = new mongoose.Schema(
             isYellow: {
               type: Boolean,
               default: false,
+            },
+
+            actualStartTime: {
+              type: String,
+              default: "",
+            },
+
+            actualEndTime: {
+              type: String,
+              default: "",
             },
           },
         ],

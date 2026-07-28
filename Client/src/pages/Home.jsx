@@ -67,7 +67,7 @@ function Home() {
       title: "Roster / Shift",
       desc: "Plan Shifts Smarter and Faster",
       img: rosterImg,
-      route: "/schedule",
+      route: "/roster-shifts",
     },
     {
       title: "Organization Policies",

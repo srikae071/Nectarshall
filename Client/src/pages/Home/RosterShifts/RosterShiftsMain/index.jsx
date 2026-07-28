@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import logo from "../../../images/logo.png";
+import logo from "../../../../images/logo.png";
 import "./index.css";
 
-function OpMainPage() {
+function RosterShiftsMain() {
   const navigate = useNavigate();
   const [candidates, setCandidates] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,7 +24,7 @@ function OpMainPage() {
       let res;
       try {
         res = await axios.get(
-          "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates"
+          "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates",
         );
       } catch (err) {
         res = await axios.get("/api/BoardingCandidates");
@@ -61,15 +61,18 @@ function OpMainPage() {
                 isAdhoc: false,
                 employeeName: empName.trim(),
                 hasEmployee: true,
-                companyName: cand.companyName || cand.requester || "Unnamed Company",
+                companyName:
+                  cand.companyName || cand.requester || "Unnamed Company",
                 siteName: contract.siteName || "N/A",
                 siteAddress: contract.siteAddress || contract.siteName || "N/A",
                 typeOfService: svc.serviceType || svc.position || "Shift",
                 position: svc.position || "N/A",
                 shiftStartTime: svc.shiftStartTime || "08:00",
                 shiftEndTime: svc.shiftEndTime || "16:00",
-                actualStartTime: slotEmpObj?.actualStartTime || svc.shiftStartTime || "08:00",
-                actualEndTime: slotEmpObj?.actualEndTime || svc.shiftEndTime || "16:00",
+                actualStartTime:
+                  slotEmpObj?.actualStartTime || svc.shiftStartTime || "08:00",
+                actualEndTime:
+                  slotEmpObj?.actualEndTime || svc.shiftEndTime || "16:00",
                 approvalState: slotEmpObj?.approvalState || "Pending",
                 contractObj: contract,
                 candObj: cand,
@@ -93,14 +96,17 @@ function OpMainPage() {
                 ? empName.trim()
                 : "Unassigned (Assign in Roster)",
             hasEmployee: Boolean(empName && empName.trim() !== ""),
-            companyName: cand.companyName || cand.requester || "Unnamed Company",
+            companyName:
+              cand.companyName || cand.requester || "Unnamed Company",
             siteName: contract.siteName || "N/A",
             siteAddress: contract.siteAddress || contract.siteName || "N/A",
             typeOfService: adhoc.serviceType || "Adhoc Service",
-            position: adhoc.position || (contract.services?.[0]?.position) || "Adhoc",
+            position:
+              adhoc.position || contract.services?.[0]?.position || "Adhoc",
             shiftStartTime: adhoc.shiftStartTime || "08:00",
             shiftEndTime: adhoc.shiftEndTime || "16:00",
-            actualStartTime: adhoc.actualStartTime || adhoc.shiftStartTime || "08:00",
+            actualStartTime:
+              adhoc.actualStartTime || adhoc.shiftStartTime || "08:00",
             actualEndTime: adhoc.actualEndTime || adhoc.shiftEndTime || "16:00",
             approvalState: adhoc.approvalState || "Pending",
             contractObj: contract,
@@ -144,25 +150,26 @@ function OpMainPage() {
       if (!candidate) return;
 
       const contract = (candidate.contractDeliverables || []).find(
-        (c) => c._id === rowItem.contractId
+        (c) => c._id === rowItem.contractId,
       );
       if (!contract) return;
 
-      let updatedServices = JSON.parse(
-        JSON.stringify(contract.services || [])
-      );
+      let updatedServices = JSON.parse(JSON.stringify(contract.services || []));
       let updatedAdhocServices = JSON.parse(
-        JSON.stringify(contract.adhocServices || [])
+        JSON.stringify(contract.adhocServices || []),
       );
 
       const curTimes = actualTimesMap[rowItem.rowId] || {};
-      const actStart = curTimes.actualStartTime || rowItem.actualStartTime || "08:00";
+      const actStart =
+        curTimes.actualStartTime || rowItem.actualStartTime || "08:00";
       const actEnd = curTimes.actualEndTime || rowItem.actualEndTime || "16:00";
 
       if (rowItem.isAdhoc) {
         if (updatedAdhocServices[rowItem.adhocIndex]) {
           updatedAdhocServices[rowItem.adhocIndex].actualStartTime = actStart;
           updatedAdhocServices[rowItem.adhocIndex].actualEndTime = actEnd;
+          updatedAdhocServices[rowItem.adhocIndex].approvalState = "Accepted";
+          updatedAdhocServices[rowItem.adhocIndex].isSubmitted = true;
         }
       } else {
         if (updatedServices[rowItem.serviceIndex]) {
@@ -170,7 +177,11 @@ function OpMainPage() {
           const qty = Math.max(1, Number(targetSvc.quantity) || 1);
           let assigned = targetSvc.assignedEmployees || [];
           while (assigned.length < qty) {
-            assigned.push({ employee: "", isYellow: false, approvalState: "Pending" });
+            assigned.push({
+              employee: "",
+              isYellow: false,
+              approvalState: "Pending",
+            });
           }
 
           assigned[rowItem.slotIndex] = {
@@ -178,6 +189,8 @@ function OpMainPage() {
             employee: rowItem.employeeName,
             actualStartTime: actStart,
             actualEndTime: actEnd,
+            approvalState: "Accepted",
+            isSubmitted: true,
           };
 
           targetSvc.assignedEmployees = assigned;
@@ -197,7 +210,7 @@ function OpMainPage() {
           {
             services: updatedServices,
             adhocServices: updatedAdhocServices,
-          }
+          },
         );
       }
 
@@ -214,7 +227,9 @@ function OpMainPage() {
 
   const handleUpdateApproval = async (rowItem, newStatus) => {
     if (!rowItem.hasEmployee) {
-      alert("Please assign an employee to this Adhoc shift in the Roster first before approving/rejecting.");
+      alert(
+        "Please assign an employee to this Adhoc shift in the Roster first before approving/rejecting.",
+      );
       return;
     }
 
@@ -226,15 +241,13 @@ function OpMainPage() {
       if (!candidate) return;
 
       const contract = (candidate.contractDeliverables || []).find(
-        (c) => c._id === rowItem.contractId
+        (c) => c._id === rowItem.contractId,
       );
       if (!contract) return;
 
-      let updatedServices = JSON.parse(
-        JSON.stringify(contract.services || [])
-      );
+      let updatedServices = JSON.parse(JSON.stringify(contract.services || []));
       let updatedAdhocServices = JSON.parse(
-        JSON.stringify(contract.adhocServices || [])
+        JSON.stringify(contract.adhocServices || []),
       );
 
       if (rowItem.isAdhoc) {
@@ -249,7 +262,11 @@ function OpMainPage() {
           const qty = Math.max(1, Number(targetSvc.quantity) || 1);
           let assigned = targetSvc.assignedEmployees || [];
           while (assigned.length < qty) {
-            assigned.push({ employee: "", isYellow: false, approvalState: "Pending" });
+            assigned.push({
+              employee: "",
+              isYellow: false,
+              approvalState: "Pending",
+            });
           }
 
           assigned[rowItem.slotIndex] = {
@@ -276,7 +293,7 @@ function OpMainPage() {
           {
             services: updatedServices,
             adhocServices: updatedAdhocServices,
-          }
+          },
         );
       }
 
@@ -297,11 +314,7 @@ function OpMainPage() {
       <tr
         key={row.rowId}
         className={
-          isAccepted
-            ? "rowAccepted"
-            : isRejected
-            ? "rowRejected"
-            : "rowPending"
+          isAccepted ? "rowAccepted" : isRejected ? "rowRejected" : "rowPending"
         }
       >
         <td className="empNameCol">
@@ -333,7 +346,13 @@ function OpMainPage() {
 
         <td className="actionCol">
           {!row.hasEmployee ? (
-            <span style={{ fontSize: "11.5px", color: "#64748b", fontStyle: "italic" }}>
+            <span
+              style={{
+                fontSize: "11.5px",
+                color: "#64748b",
+                fontStyle: "italic",
+              }}
+            >
               Pending Assignment in Roster
             </span>
           ) : isAccepted ? (
@@ -364,7 +383,7 @@ function OpMainPage() {
                       handleTimeChange(
                         row.rowId,
                         "actualStartTime",
-                        e.target.value
+                        e.target.value,
                       )
                     }
                   />
@@ -384,7 +403,7 @@ function OpMainPage() {
                       handleTimeChange(
                         row.rowId,
                         "actualEndTime",
-                        e.target.value
+                        e.target.value,
                       )
                     }
                   />
@@ -453,14 +472,33 @@ function OpMainPage() {
             onClick={() => navigate("/")}
           />
         </div>
-        <div className="navTitle">Organisation Policies Approvals and Adhoc Approvals</div>
+        <div className="navTitle">Shift Approvals</div>
+        <button
+          type="button"
+          style={{
+            marginLeft: "auto",
+            marginRight: "20px",
+            background: "#2563eb",
+            color: "#ffffff",
+            border: "none",
+            padding: "8px 16px",
+            borderRadius: "6px",
+            fontWeight: "600",
+            fontSize: "13px",
+            cursor: "pointer",
+          }}
+          onClick={() => navigate("/roster")}
+        >
+          📋 Go to Roster Main ➔
+        </button>
       </div>
 
       <div className="opContentContainer">
         <div className="opHeaderBlock">
           <h2>Employee Shift Assignment Approval List</h2>
           <p>
-            Review assigned shift employees & adhoc requests from the Roster, grouped by company name.
+            Review assigned shift employees & adhoc requests from the Roster,
+            grouped by company name.
           </p>
         </div>
 
@@ -541,4 +579,4 @@ function OpMainPage() {
   );
 }
 
-export default OpMainPage;
+export default RosterShiftsMain;

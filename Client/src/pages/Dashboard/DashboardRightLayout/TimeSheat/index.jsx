@@ -1,224 +1,212 @@
-import { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import axios from "axios";
 import "./index.css";
 
 function TimesheetPage() {
-  const [showModal, setShowModal] = useState(false);
-  const [selectedDate, setSelectedDate] = useState("");
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [tableData, setTableData] = useState(data);
-  const getWeekRange = (date) => {
-    const start = new Date(date);
-    start.setDate(start.getDate() - start.getDay() + 1); // Monday
+  const [candidates, setCandidates] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCustomer, setSelectedCustomer] = useState("All");
 
-    const end = new Date(start);
-    end.setDate(start.getDate() + 6);
+  useEffect(() => {
+    fetchCandidates();
+  }, []);
 
-    const format = (d) =>
-      d.toLocaleDateString("en-GB", {
-        month: "short",
-        day: "numeric",
+  const fetchCandidates = async () => {
+    try {
+      setLoading(true);
+      let res;
+      try {
+        res = await axios.get(
+          "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates"
+        );
+      } catch (err) {
+        res = await axios.get("/api/BoardingCandidates");
+      }
+      setCandidates(res.data || []);
+    } catch (err) {
+      console.error("Error fetching candidates in TimesheetPage:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const calculateSummary = (startTimeStr, endTimeStr) => {
+    if (!startTimeStr || !endTimeStr) return "8 Hours";
+    const [sH, sM] = String(startTimeStr).split(":").map(Number);
+    const [eH, eM] = String(endTimeStr).split(":").map(Number);
+    if (isNaN(sH) || isNaN(eH)) return "8 Hours";
+    let diffMins = (eH * 60 + (eM || 0)) - (sH * 60 + (sM || 0));
+    if (diffMins <= 0) diffMins += 24 * 60;
+    const hours = Math.floor(diffMins / 60);
+    const mins = diffMins % 60;
+    if (mins === 0) return `${hours} Hours`;
+    return `${hours} Hours ${mins} Mins`;
+  };
+
+  // Collect submitted / accepted timesheet rows across candidates
+  const allTimesheetRows = useMemo(() => {
+    const rows = [];
+    (candidates || []).forEach((cand) => {
+      (cand.contractDeliverables || []).forEach((contract) => {
+        const contractStartDateStr = contract.contractStartDate
+          ? String(contract.contractStartDate).slice(0, 10)
+          : new Date().toISOString().slice(0, 10);
+
+        // Standard Services
+        (contract.services || []).forEach((svc, sIdx) => {
+          const qty = Math.max(1, Number(svc.quantity) || 1);
+          for (let q = 0; q < qty; q++) {
+            const slotEmpObj = svc.assignedEmployees?.[q];
+            const empName =
+              slotEmpObj?.employee || (q === 0 ? svc.employee || "" : "");
+            const isSubmitted =
+              slotEmpObj?.approvalState === "Accepted" ||
+              slotEmpObj?.isSubmitted === true ||
+              Boolean(slotEmpObj?.actualStartTime);
+
+            if (empName && empName.trim() !== "" && isSubmitted) {
+              const actStart =
+                slotEmpObj?.actualStartTime || svc.shiftStartTime || "08:00";
+              const actEnd =
+                slotEmpObj?.actualEndTime || svc.shiftEndTime || "16:00";
+
+              rows.push({
+                id: `${cand._id}_${contract._id}_${sIdx}_${q}`,
+                date: contractStartDateStr,
+                customer: cand.companyName || cand.clientId || "Client",
+                employeeName: empName.trim(),
+                position: svc.position || "N/A",
+                typeOfService: svc.serviceType || svc.position || "Shift",
+                startTime: actStart,
+                endTime: actEnd,
+                summary: calculateSummary(actStart, actEnd),
+              });
+            }
+          }
+        });
       });
+    });
+    return rows;
+  }, [candidates]);
 
-    return `${format(start)} - ${format(end)}`;
-  };
+  // Unique customer options
+  const customerOptions = useMemo(() => {
+    const names = allTimesheetRows.map((r) => r.customer);
+    return ["All", ...new Set(names)];
+  }, [allTimesheetRows]);
 
-  const goPrevWeek = () => {
-    const newDate = new Date(currentDate);
-    newDate.setDate(newDate.getDate() - 7);
-    setCurrentDate(newDate);
-  };
+  // Filtered rows
+  const filteredRows = useMemo(() => {
+    return allTimesheetRows.filter((r) => {
+      if (
+        selectedCustomer !== "All" &&
+        r.customer.toLowerCase() !== selectedCustomer.toLowerCase()
+      ) {
+        return false;
+      }
+      if (searchQuery.trim()) {
+        const q = searchQuery.trim().toLowerCase();
+        const matchEmp = r.employeeName.toLowerCase().includes(q);
+        const matchCust = r.customer.toLowerCase().includes(q);
+        const matchPos = r.position.toLowerCase().includes(q);
+        const matchSvc = r.typeOfService.toLowerCase().includes(q);
+        if (!matchEmp && !matchCust && !matchPos && !matchSvc) return false;
+      }
+      return true;
+    });
+  }, [allTimesheetRows, selectedCustomer, searchQuery]);
 
-  const goNextWeek = () => {
-    const newDate = new Date(currentDate);
-    newDate.setDate(newDate.getDate() + 7);
-    setCurrentDate(newDate);
-  };
-
-  const goToday = () => {
-    setCurrentDate(new Date());
-  };
-  const handleTimeChange = (index, field, value) => {
-    const updated = [...tableData];
-    updated[index][field] = value;
-    setTableData(updated);
-  };
-
-  const handleNoteClick = (date) => {
-    setSelectedDate(date);
-    setShowModal(true);
-  };
   return (
     <div className="timesheet">
+      <div className="timesheetHeader">
+        <h2>Operations Timesheets Dashboard</h2>
+        <p>
+          View submitted shift times, employee assignments, positions, service types, and working summaries.
+        </p>
+      </div>
+
       {/* FILTER BAR */}
       <div className="filterBar">
         <div className="filterGroup">
           <label>SELECT CUSTOMER:</label>
-          <select>
-            <option>CBRE</option>
-          </select>
-        </div>
-
-        <div className="filterGroup">
-          <label>SELECT SITE:</label>
-          <select>
-            <option>All</option>
+          <select
+            value={selectedCustomer}
+            onChange={(e) => setSelectedCustomer(e.target.value)}
+          >
+            {customerOptions.map((cust) => (
+              <option key={cust} value={cust}>
+                {cust}
+              </option>
+            ))}
           </select>
         </div>
 
         <div className="filterGroup searchBox">
           <label>SEARCH:</label>
-          <input placeholder="Search ..." />
+          <input
+            type="text"
+            placeholder="Search by employee, customer, position..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
-
-        <div className="filterGroup">
-          <label>GROUP ENTRIES BY:</label>
-          <select>
-            <option>Site</option>
-          </select>
-        </div>
-
-        <div className="filterGroup">
-          <label>VIEW:</label>
-          <select>
-            <option>Awaiting Approval</option>
-          </select>
-        </div>
-      </div>
-
-      {/* DATE ROW */}
-      <div className="dateRow">
-        <button onClick={goToday}>Today</button>
-        <button onClick={goPrevWeek}>{"<"}</button>
-
-        <span>{getWeekRange(currentDate)}</span>
-
-        <button onClick={goNextWeek}>{">"}</button>
-        <button className="actionsBtn">Actions ▾</button>
       </div>
 
       {/* TABLE */}
       <div className="tableContainer">
-        {showModal && (
-          <div className="modalOverlay">
-            <div className="modalBox">
-              <h3>Notes for {selectedDate}</h3>
-
-              <label>Note:</label>
-              <textarea placeholder="Enter your note..." />
-
-              <div className="modalActions">
-                <button onClick={() => setShowModal(false)}>Cancel</button>
-
-                {/* NEW: Attachment Button */}
-                <label className="attachBtn">
-                  📎 Attach
-                  <input type="file" multiple style={{ display: "none" }} />
-                </label>
-
-                <button className="saveBtn">Save</button>
-              </div>
-            </div>
+        {loading ? (
+          <div className="timesheetLoading">Loading submitted timesheets...</div>
+        ) : filteredRows.length === 0 ? (
+          <div className="timesheetEmptyState">
+            No submitted timesheet records found. Submit actual shift times in Roster Shifts Main to display them here.
           </div>
-        )}
-        <table>
-          <thead>
-            <tr>
-              <th className="timesheatsheading">Date</th>
-              <th className="timesheatsheading">Customer</th>
-              <th className="timesheatsheading">Staff</th>
-              <th className="timesheatsheading">Entry Type</th>
-              <th className="timesheatsheading">Position</th>
-              <th className="timesheatsheading">Scheduled</th>
-              <th className="timesheatsheading">Start Time</th>
-              <th className="timesheatsheading">End Time</th>
-              <th className="timesheatsheading">Break</th>
-              <th className="timesheatsheading">Summary</th>
-              <th className="timesheatsheading">Notes</th>
-              <th className="timesheatsheading">Approved</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {tableData.map((row, index) => (
-              <tr key={index}>
-                <td>{row.date}</td>
-                <td>{row.customer}</td>
-                <td>{row.staff}</td>
-                <td>{row.type}</td>
-                <td>{row.position}</td>
-                <td>{row.schedule}</td>
-                <td>
-                  <input
-                    type="time"
-                    value={row.start}
-                    onChange={(e) =>
-                      handleTimeChange(index, "start", e.target.value)
-                    }
-                  />
-                </td>
-
-                <td>
-                  <input
-                    type="time"
-                    value={row.end}
-                    onChange={(e) =>
-                      handleTimeChange(index, "end", e.target.value)
-                    }
-                  />
-                </td>
-
-                <td>
-                  <input
-                    type="number"
-                    value={row.break}
-                    onChange={(e) =>
-                      handleTimeChange(index, "break", e.target.value)
-                    }
-                    style={{ width: "70px" }}
-                  />
-                </td>
-                <td>{row.summary}</td>
-                <td className="notes" onClick={() => handleNoteClick(row.date)}>
-                  + note
-                </td>
-                <td>
-                  <button className="approve">✓</button>
-                  <button className="reject">✕</button>
-                </td>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th className="timesheatsheading">Date</th>
+                <th className="timesheatsheading">Customer</th>
+                <th className="timesheatsheading">Employee Name</th>
+                <th className="timesheatsheading">Position</th>
+                <th className="timesheatsheading">Type of Service</th>
+                <th className="timesheatsheading">Start Time</th>
+                <th className="timesheatsheading">End Time</th>
+                <th className="timesheatsheading">Summary</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+
+            <tbody>
+              {filteredRows.map((row) => (
+                <tr key={row.id}>
+                  <td style={{ fontWeight: 600 }}>{row.date}</td>
+                  <td>🏢 {row.customer}</td>
+                  <td style={{ fontWeight: 700, color: "#0f172a" }}>
+                    👤 {row.employeeName}
+                  </td>
+                  <td>
+                    <span className="posBadge">{row.position}</span>
+                  </td>
+                  <td>
+                    <span className="svcBadge">{row.typeOfService}</span>
+                  </td>
+                  <td style={{ color: "#2563eb", fontWeight: 600 }}>
+                    🕒 {row.startTime}
+                  </td>
+                  <td style={{ color: "#2563eb", fontWeight: 600 }}>
+                    🕒 {row.endTime}
+                  </td>
+                  <td>
+                    <span className="summaryBadge">⏱️ {row.summary}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );
 }
-
-const data = [
-  {
-    date: "Mon 23 Mar",
-    customer: "CBRE",
-    staff: "Akash Deep",
-    type: "Work",
-    position: "L1 PT v7",
-    schedule: "07:00 - 15:00",
-    start: "07:00",
-    end: "15:00",
-    break: "0 mins",
-    summary: "8 hrs | $0",
-  },
-  {
-    date: "Mon 23 Mar",
-    customer: "CBRE",
-    staff: "Peter Golong",
-    type: "Work",
-    position: "L1 PT v7",
-    schedule: "15:00 - 23:00",
-    start: "15:00",
-    end: "23:00",
-    break: "0 mins",
-    summary: "8 hrs | $0",
-  },
-];
 
 export default TimesheetPage;
