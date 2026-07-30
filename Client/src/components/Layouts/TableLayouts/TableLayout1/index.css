@@ -176,3 +176,34 @@
 .TL1Table tbody tr:last-child td {
   border-bottom: none;
 }
+
+/* GREEN THEME OVERRIDES */
+html[data-theme="green"] .TL1Container,
+body.theme-green .TL1Container,
+[data-theme="green"] .TL1Container {
+  background-color: #f0f7f4 !important;
+  background: #f0f7f4 !important;
+}
+
+html[data-theme="green"] .TL1Heading,
+body.theme-green .TL1Heading,
+[data-theme="green"] .TL1Heading {
+  color: #000000 !important;
+}
+
+html[data-theme="green"] .TL1TableContainer,
+body.theme-green .TL1TableContainer,
+[data-theme="green"] .TL1TableContainer {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  border: 1px solid #d8eee4 !important;
+}
+
+html[data-theme="green"] .TL1Table th,
+body.theme-green .TL1Table th,
+[data-theme="green"] .TL1Table th {
+  background-color: #eef7f2 !important;
+  background: #eef7f2 !important;
+  color: #064e3b !important;
+  border-bottom: 1px solid #d8eee4 !important;
+}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { fetchApiData, sendApiData, extractArrayData } from "../../../../utils/apiClient";
 import "./index.css";
 
 function AddAdhoc() {
@@ -25,17 +26,11 @@ function AddAdhoc() {
   const fetchCandidates = async () => {
     try {
       setLoading(true);
-      let res;
-      try {
-        res = await axios.get(
-          "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates"
-        );
-      } catch (err) {
-        res = await axios.get("/api/BoardingCandidates");
-      }
-      setCandidates(res.data || []);
+      const res = await fetchApiData("/api/BoardingCandidates");
+      setCandidates(extractArrayData(res.data));
     } catch (err) {
       console.error("Error fetching candidates for Add Adhoc:", err);
+      setCandidates([]);
     } finally {
       setLoading(false);
     }
@@ -97,22 +92,14 @@ function AddAdhoc() {
       const updatedAdhocServices = [...existingAdhocServices, newAdhoc];
       const updatedServices = contract.services || [];
 
-      const apiUrl = `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/${selectedCandidateId}/contracts/${selectedContractId}/services`;
-
-      try {
-        await axios.put(apiUrl, {
+      await sendApiData(
+        "PUT",
+        `/api/BoardingCandidates/${selectedCandidateId}/contracts/${selectedContractId}/services`,
+        {
           services: updatedServices,
           adhocServices: updatedAdhocServices,
-        });
-      } catch (err) {
-        await axios.put(
-          `/api/BoardingCandidates/${selectedCandidateId}/contracts/${selectedContractId}/services`,
-          {
-            services: updatedServices,
-            adhocServices: updatedAdhocServices,
-          }
-        );
-      }
+        }
+      );
 
       alert("Adhoc service added successfully!");
       navigate("/roster");

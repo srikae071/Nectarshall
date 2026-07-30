@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { fetchApiData, sendApiData, extractArrayData } from "../../../../utils/apiClient";
 import logo from "../../../../images/logo.png";
 import "./index.css";
 
@@ -31,20 +32,14 @@ function RosterShiftsMain() {
   const fetchCandidates = async () => {
     try {
       setLoading(true);
-      let res;
-      try {
-        res = await axios.get(
-          "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates",
-        );
-      } catch (err) {
-        res = await axios.get("/api/BoardingCandidates");
-      }
-      setCandidates(res.data || []);
+      const res = await fetchApiData("/api/BoardingCandidates");
+      setCandidates(extractArrayData(res.data));
     } catch (err) {
       console.error(
         "Error fetching candidates in Roster Shifts Main Page:",
         err,
       );
+      setCandidates([]);
     } finally {
       setLoading(false);
     }
@@ -212,22 +207,14 @@ function RosterShiftsMain() {
         }
       }
 
-      const apiUrl = `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/${rowItem.candidateId}/contracts/${rowItem.contractId}/services`;
-
-      try {
-        await axios.put(apiUrl, {
+      await sendApiData(
+        "PUT",
+        `/api/BoardingCandidates/${rowItem.candidateId}/contracts/${rowItem.contractId}/services`,
+        {
           services: updatedServices,
           adhocServices: updatedAdhocServices,
-        });
-      } catch (err) {
-        await axios.put(
-          `/api/BoardingCandidates/${rowItem.candidateId}/contracts/${rowItem.contractId}/services`,
-          {
-            services: updatedServices,
-            adhocServices: updatedAdhocServices,
-          },
-        );
-      }
+        }
+      );
 
       setSubmitSuccessRowId(rowItem.rowId);
       setSubmittedRowIds((prev) => [...prev, rowItem.rowId]);
@@ -296,22 +283,14 @@ function RosterShiftsMain() {
         }
       }
 
-      const apiUrl = `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/${rowItem.candidateId}/contracts/${rowItem.contractId}/services`;
-
-      try {
-        await axios.put(apiUrl, {
+      await sendApiData(
+        "PUT",
+        `/api/BoardingCandidates/${rowItem.candidateId}/contracts/${rowItem.contractId}/services`,
+        {
           services: updatedServices,
           adhocServices: updatedAdhocServices,
-        });
-      } catch (err) {
-        await axios.put(
-          `/api/BoardingCandidates/${rowItem.candidateId}/contracts/${rowItem.contractId}/services`,
-          {
-            services: updatedServices,
-            adhocServices: updatedAdhocServices,
-          },
-        );
-      }
+        }
+      );
 
       await fetchCandidates();
     } catch (err) {

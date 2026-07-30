@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { fetchApiData, sendApiData, extractArrayData } from "../../../../../utils/apiClient";
 import "./index.css";
 
 function RosterMain() {
@@ -96,27 +97,11 @@ function RosterMain() {
       setLoading(true);
       setError("");
 
-      // Fetch Boarding Candidates
-      let candRes;
-      try {
-        candRes = await axios.get(
-          "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates",
-        );
-      } catch (err) {
-        candRes = await axios.get("/api/BoardingCandidates");
-      }
-      setCandidates(Array.isArray(candRes.data) ? candRes.data : []);
+      const candRes = await fetchApiData("/api/BoardingCandidates");
+      setCandidates(extractArrayData(candRes.data));
 
-      // Fetch Employees from DB
-      let empRes;
-      try {
-        empRes = await axios.get(
-          "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/employees",
-        );
-      } catch (err) {
-        empRes = await axios.get("/api/employees");
-      }
-      setDbEmployees(Array.isArray(empRes.data) ? empRes.data : []);
+      const empRes = await fetchApiData("/api/employees");
+      setDbEmployees(extractArrayData(empRes.data));
     } catch (err) {
       console.error("Error loading roster data:", err);
       setError("Failed to load customer and employee data.");
@@ -521,22 +506,14 @@ function RosterMain() {
         }
       }
 
-      const apiUrl = `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/${assignModal.candidateId}/contracts/${assignModal.contractId}/services`;
-
-      try {
-        await axios.put(apiUrl, {
+      await sendApiData(
+        "PUT",
+        `/api/BoardingCandidates/${assignModal.candidateId}/contracts/${assignModal.contractId}/services`,
+        {
           services: updatedServices,
           adhocServices: contract.adhocServices || [],
-        });
-      } catch (err) {
-        await axios.put(
-          `/api/BoardingCandidates/${assignModal.candidateId}/contracts/${assignModal.contractId}/services`,
-          {
-            services: updatedServices,
-            adhocServices: contract.adhocServices || [],
-          },
-        );
-      }
+        }
+      );
 
       setSaveSuccessMsg("Employee assigned successfully!");
       await fetchAllData();
@@ -603,22 +580,14 @@ function RosterMain() {
         updatedAdhocServices[adhocAssignModal.adhocIndex].isYellow = true;
       }
 
-      const apiUrl = `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/${adhocAssignModal.candidateId}/contracts/${adhocAssignModal.contractId}/services`;
-
-      try {
-        await axios.put(apiUrl, {
+      await sendApiData(
+        "PUT",
+        `/api/BoardingCandidates/${adhocAssignModal.candidateId}/contracts/${adhocAssignModal.contractId}/services`,
+        {
           services: contract.services || [],
           adhocServices: updatedAdhocServices,
-        });
-      } catch (err) {
-        await axios.put(
-          `/api/BoardingCandidates/${adhocAssignModal.candidateId}/contracts/${adhocAssignModal.contractId}/services`,
-          {
-            services: contract.services || [],
-            adhocServices: updatedAdhocServices,
-          },
-        );
-      }
+        }
+      );
 
       setSaveAdhocSuccessMsg("Adhoc Employee assigned successfully!");
       await fetchAllData();

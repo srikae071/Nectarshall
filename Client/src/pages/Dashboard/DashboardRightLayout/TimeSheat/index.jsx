@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
+import { fetchApiData, sendApiData, extractArrayData } from "../../../../utils/apiClient";
 import "./index.css";
 
 function TimesheetPage() {
@@ -25,20 +26,8 @@ function TimesheetPage() {
   const fetchCandidates = async () => {
     try {
       setLoading(true);
-      let res;
-      try {
-        res = await axios.get(
-          "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates"
-        );
-      } catch (err) {
-        res = await axios.get("/api/BoardingCandidates");
-      }
-      const dataArr = Array.isArray(res.data)
-        ? res.data
-        : Array.isArray(res.data?.data)
-        ? res.data.data
-        : [];
-      setCandidates(dataArr);
+      const res = await fetchApiData("/api/BoardingCandidates");
+      setCandidates(extractArrayData(res.data));
     } catch (err) {
       console.error("Error fetching candidates in TimesheetPage:", err);
       setCandidates([]);
@@ -93,20 +82,14 @@ function TimesheetPage() {
         }
       }
 
-      const remoteUrl = `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/${rowItem.candidateId}/contracts/${rowItem.contractId}/services`;
-      const localUrl = `/api/BoardingCandidates/${rowItem.candidateId}/contracts/${rowItem.contractId}/services`;
-
-      try {
-        await axios.put(remoteUrl, {
+      await sendApiData(
+        "PUT",
+        `/api/BoardingCandidates/${rowItem.candidateId}/contracts/${rowItem.contractId}/services`,
+        {
           services: updatedServices,
           adhocServices: updatedAdhocServices,
-        });
-      } catch (err) {
-        await axios.put(localUrl, {
-          services: updatedServices,
-          adhocServices: updatedAdhocServices,
-        });
-      }
+        }
+      );
 
       await fetchCandidates();
     } catch (err) {
@@ -334,10 +317,10 @@ function TimesheetPage() {
                     <td>
                       <span className="svcBadge">{row.typeOfService}</span>
                     </td>
-                    <td style={{ color: "#2563eb", fontWeight: 600 }}>
+                    <td className="tsTimeCell">
                       🕒 {row.startTime}
                     </td>
-                    <td style={{ color: "#2563eb", fontWeight: 600 }}>
+                    <td className="tsTimeCell">
                       🕒 {row.endTime}
                     </td>
                     <td>

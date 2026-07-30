@@ -1,6 +1,7 @@
 import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { fetchApiData, extractArrayData } from "../../../utils/apiClient";
 
 import "./index.css";
 import DashbordNavbar from "../DashbordNavbar/index.jsx";
@@ -50,16 +51,16 @@ function DashboardLayout({ children }) {
       setLoadingCustomers(true);
       setCustomerError("");
 
-      const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates",
-      );
-
-      const data = Array.isArray(response.data) ? response.data : [];
+      const response = await fetchApiData("/api/BoardingCandidates");
+      const data = extractArrayData(response.data);
 
       const approvedCustomers = data.filter(
         (item) =>
-          item.operationsClientApproved === true &&
-          item.status === "On Boarded",
+          (item.operationsClientApproved === true ||
+            !item.operationsClientApproved) &&
+          (item.status === "On Boarded" ||
+            item.status === "Onboarded" ||
+            !item.status),
       );
 
       const uniqueCustomers = [
@@ -141,114 +142,7 @@ function DashboardLayout({ children }) {
             {!sidebarCollapsed && <span className="menuText">Dashboard</span>}
           </div>
 
-          {/* SCHEDULE */}
 
-          <div className="menuBlock">
-            <div
-              className="submenuItem toggleHeader"
-              onClick={() => {
-                navigate("/schedule");
-                setManualToggle(false);
-              }}
-            >
-              <div className="menuLeft">
-                <span className="menuIcon">📅</span>
-
-                {!sidebarCollapsed && (
-                  <span className="menuText">Schedule</span>
-                )}
-              </div>
-
-              {!sidebarCollapsed && <span>{openSchedule ? "-" : "+"}</span>}
-            </div>
-
-            {openSchedule && !sidebarCollapsed && (
-              <div className="schedulePanel">
-                <div className="publishBox">
-                  <div>Publish & Notify</div>
-
-                  <small>0 Shifts Unpublished</small>
-                </div>
-
-                {/* CUSTOMER */}
-                {/* CUSTOMER */}
-
-                <div className="section">
-                  <label>SELECT CUSTOMER:</label>
-
-                  {loadingCustomers ? (
-                    <div className="customerLoading">Loading customers...</div>
-                  ) : customerError ? (
-                    <div className="customerError">{customerError}</div>
-                  ) : (
-                    <select
-                      value={selectedCustomer}
-                      // onChange={(e) => setSelectedCustomer(e.target.value)}
-                      onChange={(e) => {
-                        const customer = e.target.value;
-
-                        setSelectedCustomer(customer);
-
-                        if (location.pathname === "/employe-sites") {
-                          navigate("/employe-sites", {
-                            replace: true,
-                            state: { requester: customer },
-                          });
-                        }
-
-                        if (location.pathname.startsWith("/schedule")) {
-                          navigate("/schedule", {
-                            replace: true,
-                            state: { requester: customer },
-                          });
-                        }
-                      }}
-                    >
-                      {customers.length === 0 ? (
-                        <option value="">No Approved Customers</option>
-                      ) : (
-                        customers.map((customer) => (
-                          <option key={customer} value={customer}>
-                            {customer}
-                          </option>
-                        ))
-                      )}
-                    </select>
-                  )}
-                </div>
-
-                {/* SCHEDULE BY */}
-
-                <div className="section">
-                  <label>SCHEDULE BY:</label>
-
-                  <div className="btnGroup">
-                    <button
-                      className={
-                        location.pathname.startsWith("/schedule")
-                          ? "activeBtn"
-                          : ""
-                      }
-                      onClick={openEmployeeSchedule}
-                    >
-                      Employees
-                    </button>
-
-                    <button
-                      className={
-                        location.pathname.startsWith("/employe-sites")
-                          ? "activeBtn"
-                          : ""
-                      }
-                      onClick={openSiteSchedule}
-                    >
-                      Sites
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
 
           {/* TIMESHEETS */}
 

@@ -13,6 +13,7 @@ import corosolimg from "../images/corosolimg.jpg";
 import empreq from "../images/emloyereq.jpg";
 import offboarding from "../images/offboarding.jpg";
 import busineseng from "../images/businesseng.avif";
+import ThemeSelector from "../components/ThemeSelector";
 
 function Home() {
   const navigate = useNavigate();
@@ -160,9 +161,9 @@ function Home() {
           <a
             role="button"
             tabIndex={0}
-            onClick={() => navigate("/schedule")}
+            onClick={() => navigate("/timesheets")}
             onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") navigate("/schedule");
+              if (e.key === "Enter" || e.key === " ") navigate("/timesheets");
             }}
           >
             OPERATIONS
@@ -204,6 +205,7 @@ function Home() {
           <a role="button" tabIndex={0} onClick={() => navigate("/my-tickets")}>
             MY TICKETS
           </a>
+          <ThemeSelector />
           <div className="profile">👤</div>
         </div>
       </div>

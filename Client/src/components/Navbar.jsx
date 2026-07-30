@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import logo from "../images/logo.png";
+import ThemeSelector from "./ThemeSelector";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -10,7 +11,10 @@ function Navbar() {
         <img src={logo} alt="logo" className="logoimage" />
       </div>
 
-      <div className="profile">👤</div>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <ThemeSelector />
+        <div className="profile">👤</div>
+      </div>
     </div>
   );
 }

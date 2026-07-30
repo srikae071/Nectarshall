@@ -193,7 +193,7 @@ const BoardingCandidatesSchema = new mongoose.Schema(
               default: null,
             },
             workingDays: {
-              type: Schema.Types.Mixed,
+              type: mongoose.Schema.Types.Mixed,
               default: [],
             },
           },

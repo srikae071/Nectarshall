@@ -32,6 +32,31 @@
   margin-left: 4px;
 }
 .opentable thead {
+  background-color: #2b2b2b;
+}
+
+/* GREEN THEME OVERRIDES */
+html[data-theme="green"] .Openhome,
+body.theme-green .Openhome,
+[data-theme="green"] .Openhome {
+  background-color: #f0f7f4 !important;
+  background: #f0f7f4 !important;
+}
+
+html[data-theme="green"] .OpentableCard,
+body.theme-green .OpentableCard,
+[data-theme="green"] .OpentableCard {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  border: 1px solid #d8eee4 !important;
+}
+
+html[data-theme="green"] .openheading,
+body.theme-green .openheading,
+[data-theme="green"] .openheading {
+  color: #000000 !important;
+}
+.opentable thead {
   background: #a2a1a1 !important;
   color: #fff;
 }

@@ -1,5 +1,6 @@
 import CncLeftLayout from "../../../../../Cnc/CncLeftLayout";
 import TableLayout1 from "../../../../../../components/Layouts/TableLayouts/TableLayout1";
+import { fetchApiData, extractArrayData } from "../../../../../../utils/apiClient";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -36,13 +37,13 @@ function OnBoardingSupplierTab() {
 
   const fetchBoarding = async () => {
     try {
-      const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates",
-      );
+      const response = await fetchApiData("/api/BoardingCandidates");
+      const allCandidates = extractArrayData(response.data);
 
-      setData(
-        response.data.filter((item) => item.category === "Client Onboarding"),
+      const filtered = allCandidates.filter(
+        (item) => item.category === "Client Onboarding" || !item.category
       );
+      setData(filtered.length > 0 ? filtered : allCandidates);
     } catch (error) {
       console.log(error);
     }

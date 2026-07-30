@@ -4,6 +4,20 @@
   min-height: 100vh;
 }
 
+/* GREEN THEME OVERRIDES */
+html[data-theme="green"] .LMAHome,
+body.theme-green .LMAHome,
+[data-theme="green"] .LMAHome {
+  background-color: #f0f7f4 !important;
+  background: #f0f7f4 !important;
+}
+
+html[data-theme="green"] .LMAHeading,
+body.theme-green .LMAHeading,
+[data-theme="green"] .LMAHeading {
+  color: #000000 !important;
+}
+
 .LMATopSection {
   display: flex;
   justify-content: space-between;

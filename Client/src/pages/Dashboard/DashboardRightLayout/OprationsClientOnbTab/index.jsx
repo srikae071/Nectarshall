@@ -1,10 +1,14 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect, useMemo } from "react";
 import React from "react";
-import DashboardLayout from "../../DashboardLayout";
 import TableLayout1 from "../../../../components/Layouts/TableLayouts/TableLayout1";
 import { useNavigate } from "react-router-dom";
+import {
+  fetchApiData,
+  sendApiData,
+  extractArrayData,
+} from "../../../../utils/apiClient";
 import "./index.css";
+
 function OprationsClientOnbTab() {
   const defaultColumns = [
     "clientId",
@@ -18,7 +22,6 @@ function OprationsClientOnbTab() {
     { key: "clientId", label: "Client ID" },
     { key: "requester", label: "Requester Name" },
     { key: "requesterFor", label: "Requester For" },
-
     { key: "status", label: "Status" },
     { key: "abn", label: "ABN" },
     { key: "companyName", label: "Company Name" },
@@ -34,6 +37,7 @@ function OprationsClientOnbTab() {
 
   const [search, setSearch] = useState("");
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchBusinessEngagement();
@@ -41,174 +45,156 @@ function OprationsClientOnbTab() {
 
   const fetchBusinessEngagement = async () => {
     try {
-      const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates",
-      );
-
-      setData(
-        response.data.filter(
-          (item) =>
-            item.category === "Client Onboarding" &&
-            item.status == "On Boarded",
-        ),
-      );
+      setLoading(true);
+      const response = await fetchApiData("/api/BoardingCandidates");
+      const allCandidates = extractArrayData(response.data);
+      console.log("BoardingCandidates loaded from localhost 5000:", allCandidates);
+      setData(allCandidates);
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching BoardingCandidates in Operations Client Onboarding:", error);
+    } finally {
+      setLoading(false);
     }
   };
-  // Dummy data (replace with API later)
+
   const handleApprove = async (id) => {
     try {
-      await axios.put(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding/${id}`,
-        {
-          operationsClientApproved: true,
-        },
-      );
+      await sendApiData("PUT", `/api/BoardingCandidates/${id}`, {
+        operationsClientApproved: true,
+      });
 
       setData((prev) =>
         prev.map((item) =>
-          item._id === id ? { ...item, operationsClientApproved: true } : item,
-        ),
+          item._id === id ? { ...item, operationsClientApproved: true } : item
+        )
       );
 
       alert("Approved Successfully");
     } catch (error) {
-      console.log(error);
+      console.error("Error approving candidate:", error);
       alert("Approval Failed");
     }
   };
+
   const handleReject = async (id) => {
     try {
-      await axios.put(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding/${id}`,
-        {
-          operationsClientApproved: false,
-        },
-      );
+      await sendApiData("PUT", `/api/BoardingCandidates/${id}`, {
+        operationsClientApproved: false,
+      });
 
       setData((prev) =>
         prev.map((item) =>
-          item._id === id ? { ...item, operationsClientApproved: false } : item,
-        ),
+          item._id === id ? { ...item, operationsClientApproved: false } : item
+        )
       );
 
       alert("Rejected Successfully");
     } catch (error) {
-      console.log(error);
+      console.error("Error rejecting candidate:", error);
       alert("Reject Failed");
     }
   };
-  const filteredData = data.filter(
-    (item) =>
-      item.clientId?.toLowerCase().includes(search.toLowerCase()) ||
-      item.requester?.toLowerCase().includes(search.toLowerCase()) ||
-      item.requesterFor?.toLowerCase().includes(search.toLowerCase()) ||
-      item.abn?.toLowerCase().includes(search.toLowerCase()),
-  );
+
+  const filteredData = useMemo(() => {
+    if (!search || !search.trim()) return data;
+    const q = search.trim().toLowerCase();
+    return data.filter((item) => {
+      const clientId = String(item.clientId || "").toLowerCase();
+      const requester = String(item.requester || "").toLowerCase();
+      const requesterFor = String(item.requesterFor || "").toLowerCase();
+      const abn = String(item.abn || "").toLowerCase();
+      const companyName = String(item.companyName || "").toLowerCase();
+      const status = String(item.status || "").toLowerCase();
+      return (
+        clientId.includes(q) ||
+        requester.includes(q) ||
+        requesterFor.includes(q) ||
+        abn.includes(q) ||
+        companyName.includes(q) ||
+        status.includes(q)
+      );
+    });
+  }, [data, search]);
 
   return (
-    <TableLayout1
-      title="Business Engagement"
-      storageKey="businessEngagementColumns"
-      search={search}
-      setSearch={setSearch}
-      defaultColumns={defaultColumns}
-      allColumns={allColumns}
-    >
-      {(visibleColumns) =>
-        filteredData.map((item) => (
-          <React.Fragment key={item._id}>
-            <tr
-              style={{ cursor: "pointer" }}
-              onClick={() =>
-                navigate(`/onboarding-saves/${item._id}`, {
-                  state: { source: "operations" },
-                })
-              }
-            >
-              {visibleColumns.includes("clientId") && <td>{item.clientId}</td>}
+    <div style={{ width: "100%", boxSizing: "border-box" }}>
+      {loading ? (
+        <div style={{ padding: "20px", fontWeight: "bold" }}>
+          Loading Boarding Candidates data...
+        </div>
+      ) : (
+        <TableLayout1
+          title="Onboarding Client"
+          storageKey="operationsClientOnboarding"
+          search={search}
+          setSearch={setSearch}
+          allColumns={allColumns}
+          defaultColumns={defaultColumns}
+        >
+          {(visibleColumns) =>
+            filteredData.map((row) => (
+              <tr key={row._id || row.id}>
+                {visibleColumns.map((key) => {
+                  if (key === "actions") {
+                    return (
+                      <td key={key}>
+                        <div style={{ display: "flex", gap: "8px" }}>
+                          <button
+                            className="btn btn-primary btn-sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(
+                                `/onboarding-saves/${row._id}?source=operations`
+                              );
+                            }}
+                          >
+                            Action
+                          </button>
 
-              {visibleColumns.includes("requester") && (
-                <td>{item.requester}</td>
-              )}
+                          {row.operationsClientApproved ? (
+                            <button
+                              className="btn btn-success btn-sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleReject(row._id);
+                              }}
+                              style={{
+                                backgroundColor: "#2e7d32",
+                                borderColor: "#2e7d32",
+                                color: "white",
+                              }}
+                            >
+                              ✓ Approved
+                            </button>
+                          ) : (
+                            <button
+                              className="btn btn-warning btn-sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleApprove(row._id);
+                              }}
+                              style={{
+                                backgroundColor: "#ed6c02",
+                                borderColor: "#ed6c02",
+                                color: "white",
+                              }}
+                            >
+                              Approve
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    );
+                  }
 
-              {visibleColumns.includes("requesterFor") && (
-                <td>{item.requesterFor}</td>
-              )}
-
-              {visibleColumns.includes("status") && <td>{item.status}</td>}
-
-              {visibleColumns.includes("companyName") && (
-                <td>{item.companyName}</td>
-              )}
-
-              {visibleColumns.includes("acn") && <td>{item.acn}</td>}
-
-              {visibleColumns.includes("abn") && <td>{item.abn}</td>}
-
-              {visibleColumns.includes("companyAddress") && (
-                <td>{item.companyAddress}</td>
-              )}
-
-              {visibleColumns.includes("companyPhone") && (
-                <td>{item.companyPhone}</td>
-              )}
-
-              {visibleColumns.includes("managingAgentName") && (
-                <td>{item.managingAgentName}</td>
-              )}
-
-              {visibleColumns.includes("managingAgentEmail") && (
-                <td>{item.managingAgentEmail}</td>
-              )}
-
-              {visibleColumns.includes("shortDescription") && (
-                <td>{item.shortDescription}</td>
-              )}
-
-              {visibleColumns.includes("description") && (
-                <td>{item.description}</td>
-              )}
-            </tr>
-
-            <tr className="operationsApprovalRow">
-              <td colSpan={visibleColumns.length}>
-                <div className="operationsApprovalBox">
-                  {item.operationsClientApproved === true ? (
-                    <span className="approvedText">Approved</span>
-                  ) : item.operationsClientApproved === false ? (
-                    <span className="rejectedText">Rejected</span>
-                  ) : (
-                    <>
-                      <button
-                        className="approveBtn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleApprove(item._id);
-                        }}
-                      >
-                        Approve
-                      </button>
-
-                      <button
-                        className="rejectBtn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleReject(item._id);
-                        }}
-                      >
-                        Reject
-                      </button>
-                    </>
-                  )}
-                </div>
-              </td>
-            </tr>
-          </React.Fragment>
-        ))
-      }
-    </TableLayout1>
+                  return <td key={key}>{row[key] || "-"}</td>;
+                })}
+              </tr>
+            ))
+          }
+        </TableLayout1>
+      )}
+    </div>
   );
 }
 

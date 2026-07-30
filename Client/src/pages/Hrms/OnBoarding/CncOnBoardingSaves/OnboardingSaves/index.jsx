@@ -1,9 +1,9 @@
-import axios from "axios";
+import React, { useState, useEffect } from "react";
 import CncLeftLayout from "../../../../Cnc/CncLeftLayout";
 import DashboardLayout from "../../../../Dashboard/DashboardLayout";
 import RegularForm from "../../../../../components/Layouts/FormLayouts/RegularForm";
-import { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { fetchApiData, sendApiData } from "../../../../../utils/apiClient";
 
 import "./index.css";
 
@@ -83,10 +83,7 @@ function OnBoardingSaves() {
   ]);
   const fetchBoarding = async () => {
     try {
-      const response = await axios.get(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/${id}`,
-      );
-
+      const response = await fetchApiData(`/api/BoardingCandidates/${id}`);
       const data = response.data;
       console.log(data.contractDeliverables);
       setBackendStatus(data.status);
@@ -474,13 +471,14 @@ function OnBoardingSaves() {
         ...formData,
       });
 
-      await axios.put(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/${id}`,
+      await sendApiData(
+        "PUT",
+        `/api/BoardingCandidates/${id}`,
         {
           ...formData,
           contractDeliverables,
           financialDetails,
-        },
+        }
       );
       setBackendStatus(formData.status);
 

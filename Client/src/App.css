@@ -243,3 +243,252 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* LIGHT THEME 2 - TEAL (DARK GREEN LEFT SIDEBARS & LIGHT GREEN RIGHT DASHBOARDS) */
+[data-theme="green"] body,
+body.theme-green {
+  background-color: #f0f7f4 !important;
+}
+
+/* HOME PAGE CLEANUP - NO UNWANTED VERTICAL BORDER LINES ON HOME PAGE */
+[data-theme="green"] .HomeServices,
+[data-theme="green"] .HomeCard,
+[data-theme="green"] .navbarbgc,
+[data-theme="green"] .hero-img,
+[data-theme="green"] .hero-content {
+  border-left: none !important;
+  border-right: none !important;
+  border-top: none !important;
+}
+
+/* ALL LEFT SIDEBARS & LEFT LAYOUTS - DARK GREEN (#064e3b) */
+[data-theme="green"] .hrmssidebar,
+[data-theme="green"] .operationssidebar,
+[data-theme="green"] .menuBlock,
+[data-theme="green"] .hrmssubmenuItem,
+[data-theme="green"] .submenuItem,
+[data-theme="green"] .opsidebar,
+[data-theme="green"] .cncsidebar,
+[data-theme="green"] .itsidebar,
+[data-theme="green"] .patrollingsidebar,
+[data-theme="green"] .payrollsidebar,
+[data-theme="green"] .it-sidebar,
+[data-theme="green"] .cnc-sidebar,
+[data-theme="green"] .sidebar,
+[data-theme="green"] .dashboard-sidebar,
+[data-theme="green"] .PatrollingLeftLayout,
+[data-theme="green"] .PayrollLeftLayout,
+[data-theme="green"] .hrmsleftContainer,
+[data-theme="green"] .cncleftContainer,
+[data-theme="green"] .itleftContainer,
+[data-theme="green"] .dashboard-layout-left {
+  background-color: #064e3b !important;
+  background: #064e3b !important;
+  border-right: 1px solid #047857 !important;
+}
+
+[data-theme="green"] .hrmsmenuHeader:hover,
+[data-theme="green"] .hrmssubmenuItem:hover,
+[data-theme="green"] .hrmssubmenuItem.active,
+[data-theme="green"] .submenuItem:hover,
+[data-theme="green"] .submenuItem.active,
+[data-theme="green"] .menuBlock:hover,
+[data-theme="green"] .menuHeader:hover,
+[data-theme="green"] .submenu {
+  background-color: #047857 !important;
+  background: #047857 !important;
+}
+
+/* ALL TOP NAVBARS, HEADERS & RIGHT PAGE CONTAINERS - LIGHT GREEN TINT (#f0f7f4) */
+[data-theme="green"] .navbar,
+[data-theme="green"] .opnavbar,
+[data-theme="green"] .hrmsnavbar,
+[data-theme="green"] .HrmsNavbarContainer,
+[data-theme="green"] .ItNavbarContainer,
+[data-theme="green"] .CncNavbarContainer,
+[data-theme="green"] .DashbordNavbarContainer,
+[data-theme="green"] .payroll-navbar,
+[data-theme="green"] .patrolling-navbar,
+[data-theme="green"] .header {
+  background-color: #f0f7f4 !important;
+  background: #f0f7f4 !important;
+  border-bottom: 1px solid #d8eee4 !important;
+}
+
+/* RIGHT SIDE PAGE CONTAINERS - EXACT COLOR OF NAVBAR (#f0f7f4) */
+[data-theme="green"] .TL1Container,
+[data-theme="green"] .rightContent,
+[data-theme="green"] .mainLayout,
+[data-theme="green"] .layoutContainer,
+[data-theme="green"] .dashboard-layout-right,
+[data-theme="green"] .main-dashboard-container,
+[data-theme="green"] .page-container,
+[data-theme="green"] .hrms-right-content,
+[data-theme="green"] .it-right-content,
+[data-theme="green"] .cnc-right-content,
+[data-theme="green"] .leave-management-container,
+[data-theme="green"] .payroll-container,
+[data-theme="green"] .rosterShiftsContainer,
+[data-theme="green"] .addAdhocPage,
+[data-theme="green"] .rightSideContainer,
+[data-theme="green"] .rightContainer,
+[data-theme="green"] .mainContent,
+[data-theme="green"] .contentContainer,
+[data-theme="green"] .CreateContainer,
+[data-theme="green"] .OfferContainer,
+[data-theme="green"] .createContainer,
+[data-theme="green"] .HRSavesContainer,
+[data-theme="green"] .openCasesContainer,
+[data-theme="green"] .resolvedCasesContainer,
+[data-theme="green"] .assignedContainer,
+[data-theme="green"] .OBSContainer,
+[data-theme="green"] .OnboardContainer,
+[data-theme="green"] .allContainer,
+[data-theme="green"] .preAllContainer,
+[data-theme="green"] .OBSTaskContainer {
+  background-color: #f0f7f4 !important;
+  background: #f0f7f4 !important;
+  border-bottom: none !important;
+}
+
+/* RIGHT SIDE PAGE HEADINGS - BLACK COLOR */
+[data-theme="green"] .TL1Heading,
+[data-theme="green"] .hrsavesHeader,
+[data-theme="green"] .openHeader,
+[data-theme="green"] .resolvedHeader,
+[data-theme="green"] .assignedHeader,
+[data-theme="green"] .rightContent h1,
+[data-theme="green"] .rightContent h2,
+[data-theme="green"] .rightContent h3,
+[data-theme="green"] .TL1TopBar h1,
+[data-theme="green"] .TL1TopBar h2,
+[data-theme="green"] .TL1TopBar h3,
+[data-theme="green"] .headerTitle,
+[data-theme="green"] .titleHeader,
+[data-theme="green"] .CreateContainer h1,
+[data-theme="green"] .CreateContainer h2,
+[data-theme="green"] .CreateContainer h3 {
+  color: #000000 !important;
+}
+
+/* ALL FORMS, CARDS, TABLES, INCIDENTS & HR CASES - PURE CRISP WHITE WITH MINT BORDER */
+[data-theme="green"] .regularFormCard,
+[data-theme="green"] .formCard,
+[data-theme="green"] .form-container,
+[data-theme="green"] .leave-form,
+[data-theme="green"] .it-form,
+[data-theme="green"] .cnc-form,
+[data-theme="green"] .addAdhocCard,
+[data-theme="green"] .card,
+[data-theme="green"] .TL1TableContainer,
+[data-theme="green"] .TL1SearchBox,
+[data-theme="green"] .table-container,
+[data-theme="green"] .form-card,
+[data-theme="green"] .RegularFormContainer,
+[data-theme="green"] .modal-content,
+[data-theme="green"] .rosterCard,
+[data-theme="green"] .shiftCard,
+[data-theme="green"] .timesheetCard,
+[data-theme="green"] .vertical-working-days-grid,
+[data-theme="green"] .caseCard,
+[data-theme="green"] .incidentCard,
+[data-theme="green"] .hrmsCard,
+[data-theme="green"] .itCard,
+[data-theme="green"] .cncCard,
+[data-theme="green"] .table-wrapper,
+[data-theme="green"] .formGroup,
+[data-theme="green"] .cardBody,
+[data-theme="green"] .TL1Table,
+[data-theme="green"] .TL1Table tr,
+[data-theme="green"] .TL1Table td {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  border: 1px solid #d8eee4 !important;
+}
+
+/* Form Section Headers & Sub-Cards - Soft Mint Accent */
+[data-theme="green"] .formSectionHeader,
+[data-theme="green"] .card-header,
+[data-theme="green"] .vertical-day-col,
+[data-theme="green"] .formHeader,
+[data-theme="green"] .cardHeader,
+[data-theme="green"] .tableHeader,
+[data-theme="green"] .TL1Table th {
+  background-color: #eef7f2 !important;
+  background: #eef7f2 !important;
+  color: #064e3b !important;
+  border-bottom: 1px solid #d8eee4 !important;
+}
+
+/* Active Nav Links / Selected Menu Pills */
+[data-theme="green"] .nav-link.active,
+[data-theme="green"] .sidebar-item.active,
+[data-theme="green"] .active-tab {
+  background-color: #d8eee4 !important;
+  background: #d8eee4 !important;
+}
+
+/* Primary Action Buttons (Save, Submit, Action) - Teal Accent */
+[data-theme="green"] .btn-primary,
+[data-theme="green"] .btn-success,
+[data-theme="green"] button[type="submit"],
+[data-theme="green"] .save-btn {
+  background-color: #008075 !important;
+  background: #008075 !important;
+  border-color: #008075 !important;
+}
+
+/* TIMESHEET SPECIFIC GREEN THEME RULES */
+[data-theme="green"] .timesheet {
+  background-color: #f0f7f4 !important;
+  background: #f0f7f4 !important;
+}
+
+[data-theme="green"] .timesheetHeader h2,
+[data-theme="green"] .timesheetHeader p {
+  color: #000000 !important;
+}
+
+[data-theme="green"] .timesheet thead,
+[data-theme="green"] .timesheet th,
+[data-theme="green"] .timesheatsheading {
+  background-color: #eef7f2 !important;
+  background: #eef7f2 !important;
+  color: #064e3b !important;
+  border-bottom: 2px solid #d8eee4 !important;
+}
+
+[data-theme="green"] .svcBadge {
+  background-color: #d8eee4 !important;
+  background: #d8eee4 !important;
+  color: #008075 !important;
+  border: 1px solid #008075 !important;
+}
+
+[data-theme="green"] .posBadge {
+  background-color: #eef7f2 !important;
+  background: #eef7f2 !important;
+  color: #064e3b !important;
+  border: 1px solid #d8eee4 !important;
+}
+
+[data-theme="green"] .summaryBadge {
+  background-color: #d1e7dd !important;
+  background: #d1e7dd !important;
+  color: #008075 !important;
+  border: 1px solid #008075 !important;
+}
+
+[data-theme="green"] .tsTimeCell {
+  color: #008075 !important;
+}
+
+[data-theme="green"] .publish-btn,
+[data-theme="green"] .notify-btn,
+[data-theme="green"] .publish-notify-bar,
+[data-theme="green"] .publishZeroShiftBtn {
+  background-color: #008075 !important;
+  background: #008075 !important;
+  color: #ffffff !important;
+  border-color: #008075 !important;
+}

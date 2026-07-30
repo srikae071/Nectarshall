@@ -30,7 +30,8 @@ function ApprovalTable() {
   const fetchLeaves = async () => {
     try {
       const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves",
+        // "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves",
+        "http://localhost:5000/api/leaves",
       );
 
       setData(response.data.filter((item) => item.status === "Pending"));

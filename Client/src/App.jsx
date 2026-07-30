@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import LeaveRequest from "./pages/LeaveRequest/LeaveRequest";
@@ -106,6 +107,17 @@ import AddAdhoc from "./pages/Dashboard/DashboardRightLayout/AddAdhoc";
 import RosterShiftsMain from "./pages/Home/RosterShifts/RosterShiftsMain";
 // import BEWorkInProgress from "./pages/Cnc/CncRightSide/BEWorkInProgress";
 function App() {
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("app_theme") || "regular";
+    if (savedTheme === "green") {
+      document.documentElement.setAttribute("data-theme", "green");
+      document.body.classList.add("theme-green");
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+      document.body.classList.remove("theme-green");
+    }
+  }, []);
+
   return (
     <Routes>
       <Route path="/" element={<Home />} />
