@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { sendApiData } from "../../../../utils/apiClient";
 import { useEffect } from "react";
 import BusinessEngagementNavBar from "../../CncRightSide/BusinessEngagementNav";
 import TableLayout2 from "../../../../components/Layouts/TableLayouts/TableLayout2";
@@ -122,14 +123,11 @@ function BusinessEngagement() {
     }
 
     try {
-      await axios.post(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/create",
-        {
-          ...formData,
-          category: "Client Onboarding",
-          status: "Open",
-        },
-      );
+      await sendApiData("/api/BoardingCandidates/create", {
+        ...formData,
+        category: "Client Onboarding",
+        status: "Open",
+      });
 
       navigate("/");
       alert("Business Request Saved Successfully");

@@ -4,19 +4,19 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import "./index.css";
 
+import { fetchApiData } from "../../../../../utils/apiClient";
+
 function ItClosed() {
-  const navigate = useNavigate();
   const [data, setData] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchclosedCases();
+    fetchRequests();
   }, []);
 
-  const fetchclosedCases = async () => {
+  const fetchRequests = async () => {
     try {
-      const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests",
-      );
+      const response = await fetchApiData("/api/itrequests");
 
       const closedCases = response.data.filter(
         (item) => item.status === "Closed",

@@ -5,6 +5,8 @@ import axios from "axios";
 import AskForItNavBar from "../AskForItNavBar";
 import "./index.css";
 
+import { fetchApiData, sendApiData } from "../../../utils/apiClient";
+
 function MainAFI() {
   const [formData, setFormData] = useState({
     requester: "",
@@ -22,9 +24,7 @@ function MainAFI() {
   useEffect(() => {
     const fetchRequest = async () => {
       try {
-        const response = await axios.get(
-          `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests/${id}`,
-        );
+        const response = await fetchApiData(`/api/itrequests/${id}`);
 
         setFormData({
           requester: response.data.requester || "",
@@ -64,13 +64,10 @@ function MainAFI() {
     try {
       console.log("Sending:", formData);
 
-      const response = await axios.post(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests/create",
-        {
-          ...formData,
-          requestType: "IT",
-        },
-      );
+      const response = await sendApiData("/api/itrequests/create", {
+        ...formData,
+        requestType: "IT",
+      });
 
       console.log(response.data);
       navigate("/"); // Home page route

@@ -4,18 +4,18 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./index.css";
 
+import { fetchApiData } from "../../../../../utils/apiClient";
+
 function ItResolved() {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
   useEffect(() => {
-    fetchResolvedCases();
+    fetchRequests();
   }, []);
 
-  const fetchResolvedCases = async () => {
+  const fetchRequests = async () => {
     try {
-      const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests",
-      );
+      const response = await fetchApiData("/api/itrequests");
 
       const resolvedCases = response.data.filter(
         (item) => item.status === "Resolved",

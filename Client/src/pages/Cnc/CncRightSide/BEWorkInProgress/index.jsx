@@ -3,6 +3,8 @@ import axios from "axios";
 import CncLeftLayout from "../../CncLeftLayout";
 import TableLayout1 from "../../../../components/Layouts/TableLayouts/TableLayout1";
 import { useNavigate } from "react-router-dom";
+import { fetchApiData } from "../../../../utils/apiClient";
+
 function BEWorkInProgress() {
   const defaultColumns = ["clientId", "requester", "requesterFor", "status"];
   const navigate = useNavigate();
@@ -31,9 +33,7 @@ function BEWorkInProgress() {
 
   const fetchBusinessEngagement = async () => {
     try {
-      const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding",
-      );
+      const response = await fetchApiData("/api/boarding");
 
       setData(
         response.data.filter(

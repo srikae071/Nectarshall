@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { fetchApiData } from "../../../../../utils/apiClient";
 import LeaveManagementLeftSide from "./../../LeaveManagementLeftSide";
 import "./index.css";
 
@@ -26,9 +27,7 @@ function HomeLeaveBalance() {
     setTotalAllocated(allocated);
 
     try {
-      const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves",
-      );
+      const response = await fetchApiData("/api/leaves");
 
       const approvedLeaves = response.data.filter(
         (item) => item.leaveType === selectedType && item.status === "Approved",

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { fetchApiData, sendApiData } from "../../../../utils/apiClient";
 
 import ItLeftSide from "../../../NavItems/IT/ItLeftSide";
 
@@ -26,9 +27,7 @@ function ItSaves() {
   useEffect(() => {
     const fetchRequest = async () => {
       try {
-        const response = await axios.get(
-          `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests/${id}`,
-        );
+        const response = await fetchApiData(`/api/itrequests/${id}`);
 
         setFormData({
           caseId: response.data.incidentNumber || "",
@@ -63,9 +62,10 @@ function ItSaves() {
   };
   const handleSave = async () => {
     try {
-      await axios.put(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests/${id}`,
+      await sendApiData(
+        `/api/itrequests/${id}`,
         formData,
+        "put"
       );
 
       alert("Case Updated Successfully");

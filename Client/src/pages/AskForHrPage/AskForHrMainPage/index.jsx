@@ -2,9 +2,9 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
-import axios from "axios";
 import AshrNavBar from "../AshrNavBar";
 import "./index.css";
+import { fetchApiData, sendApiData } from "../../../utils/apiClient";
 
 function AskForHrMainPage() {
   const [formData, setFormData] = useState({
@@ -20,9 +20,7 @@ function AskForHrMainPage() {
   useEffect(() => {
     const fetchRequest = async () => {
       try {
-        const response = await axios.get(
-          `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests/${id}`,
-        );
+        const response = await fetchApiData(`/api/itrequests/${id}`);
         setFormData({
           requester: response.data.requester || "",
           requesterFor: response.data.requesterFor || "",
@@ -58,13 +56,10 @@ function AskForHrMainPage() {
     try {
       console.log("Sending:", formData);
 
-      const response = await axios.post(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/hrrequests/create",
-        {
-          ...formData,
-          requestType: "HR",
-        },
-      );
+      const response = await sendApiData("/api/hrrequests/create", {
+        ...formData,
+        requestType: "HR",
+      });
 
       console.log(response.data);
 

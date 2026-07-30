@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./index.css";
 
+import { fetchApiData } from "../../../../utils/apiClient";
+
 function OffBoardingEmployesAll() {
   const [data, setData] = useState([]);
 
@@ -15,9 +17,7 @@ function OffBoardingEmployesAll() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests",
-      );
+      const response = await fetchApiData("/api/jobrequests");
 
       const filteredData = response.data.filter(
         (item) =>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import CncLeftLayout from "../../../Cnc/CncLeftLayout";
+import { fetchApiData, sendApiData } from "../../../../utils/apiClient";
 import axios from "axios";
 import "./index.css";
 
@@ -24,9 +25,7 @@ function OffBoardingSaves() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
-      );
+      const response = await fetchApiData(`/api/jobrequests/${id}`);
 
       setFormData(response.data);
     } catch (error) {
@@ -40,24 +39,14 @@ function OffBoardingSaves() {
       [e.target.name]: e.target.value,
     });
   };
-  // const openITTask = async () => {
-  //   try {
-  //     await axios.post(
-  //       `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/create-it-task/${id}`,
-  //     );
-
-  //     navigate("/hrreq-all");
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
 
   const openITTask = async () => {
     console.log("Clicked Task 1");
 
     try {
-      await axios.post(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/create-it-task/${id}`,
+      await sendApiData(
+        `/api/jobrequests/create-it-task/${id}`,
+        {}
       );
 
       console.log("Navigating to /hrreq-all");
@@ -70,9 +59,10 @@ function OffBoardingSaves() {
 
   const handleSave = async () => {
     try {
-      await axios.put(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
+      await sendApiData(
+        `/api/jobrequests/${id}`,
         formData,
+        "put"
       );
 
       alert("Saved Successfully");

@@ -5,6 +5,8 @@ import HrmsLeftLayout from "../Hrmsleftlayout";
 import "./index.css";
 // const data = [...];
 
+import { fetchApiData } from "../../../utils/apiClient";
+
 function HrmsHome() {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
@@ -15,9 +17,7 @@ function HrmsHome() {
 
   const fetchRequests = async () => {
     try {
-      const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests",
-      );
+      const response = await fetchApiData("/api/itrequests");
       console.log(response.data);
 
       setData(response.data);

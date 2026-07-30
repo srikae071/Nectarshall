@@ -14,6 +14,7 @@ import empreq from "../images/emloyereq.jpg";
 import offboarding from "../images/offboarding.jpg";
 import busineseng from "../images/businesseng.avif";
 import ThemeSelector from "../components/ThemeSelector";
+import { fetchApiData } from "../utils/apiClient";
 
 function Home() {
   const navigate = useNavigate();
@@ -26,12 +27,8 @@ function Home() {
   const fetchPendingLeaves = async () => {
     try {
       const [leaveResponse, jobResponse] = await Promise.all([
-        axios.get(
-          "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves",
-        ),
-        axios.get(
-          "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests",
-        ),
+        fetchApiData("/api/leaves"),
+        fetchApiData("/api/jobrequests"),
       ]);
 
       const pendingLeaves = leaveResponse.data.filter(

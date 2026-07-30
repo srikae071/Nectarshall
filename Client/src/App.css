@@ -245,8 +245,7 @@ body {
 }
 
 /* LIGHT THEME 2 - TEAL (DARK GREEN LEFT SIDEBARS & LIGHT GREEN RIGHT DASHBOARDS) */
-[data-theme="green"] body,
-body.theme-green {
+[data-theme="green"] body {
   background-color: #f0f7f4 !important;
 }
 

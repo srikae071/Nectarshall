@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext, useMemo } from "react";
 import axios from "axios";
+import { fetchApiData, sendApiData } from "../../../../utils/apiClient";
 import { EmployeeContext } from "../EmployeeContext";
 import { useLocation } from "react-router-dom";
 import "./index.css";
@@ -92,9 +93,7 @@ function Employeesites() {
 
   const fetchApprovedSites = async () => {
     try {
-      const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates",
-      );
+      const response = await fetchApiData("/api/BoardingCandidates");
 
       const approvedSites = [];
 
@@ -284,11 +283,12 @@ function Employeesites() {
       updatedServices[sitePopup.serviceIndex].assignedEmployees =
         sitePopup.services[0].assignedEmployees;
 
-      await axios.put(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/${sitePopup.boardingId}/contracts/${sitePopup.contractId}/services`,
+      await sendApiData(
+        `/api/BoardingCandidates/${sitePopup.boardingId}/contracts/${sitePopup.contractId}/services`,
         {
           services: updatedServices,
         },
+        "put"
       );
 
       alert("Updated Successfully");
@@ -324,12 +324,13 @@ function Employeesites() {
       ];
       const updatedServices = [...(selectedSite.services || [])];
 
-      await axios.put(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/${adhocPopup.boardingId}/contracts/${adhocPopup.contractId}/services`,
+      await sendApiData(
+        `/api/BoardingCandidates/${adhocPopup.boardingId}/contracts/${adhocPopup.contractId}/services`,
         {
           services: updatedServices,
           adhocServices: updatedAdhocServices,
         },
+        "put"
       );
 
       alert("Adhoc Service Added Successfully");

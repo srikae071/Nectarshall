@@ -4,17 +4,20 @@ import { useNavigate } from "react-router-dom";
 import ResonanceNav from "../ResonanceNav/index.jsx";
 import "./index.css";
 
+import { sendApiData } from "../../../../utils/apiClient";
+
 function ResonanceMain() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    requesterName: "",
-    department: "",
-    skillSet: "",
-    experience: "",
+    requester: "",
+    requesterFor: "",
+    category: "",
+    subCategory: "",
     urgency: "",
     shortDescription: "",
     description: "",
+    workNotes: "",
   });
-  const navigate = useNavigate();
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -24,15 +27,12 @@ function ResonanceMain() {
 
   const handleSave = async () => {
     try {
-      const response = await axios.post(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests",
-        {
-          ...formData,
-          category: "Employee Save",
-          status: "Open",
-          requestType: "Resonance",
-        },
-      );
+      const response = await sendApiData("/api/jobrequests", {
+        ...formData,
+        category: "Employee Save",
+        status: "Open",
+        requestType: "Resonance",
+      });
       navigate("/");
 
       console.log(response.data);

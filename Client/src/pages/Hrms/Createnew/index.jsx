@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import RegularForm from "../../../components/Layouts/FormLayouts/RegularForm";
 import HrmsLeftLayout from "../Hrmsleftlayout";
+import { sendApiData } from "../../../utils/apiClient";
 
 import "./index.css";
 
@@ -33,10 +34,7 @@ function CreateCase() {
 
   const handleSave = async () => {
     try {
-      const response = await axios.post(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/cases/create",
-        formData,
-      );
+      const response = await sendApiData("/api/cases/create", formData);
 
       alert("Case Saved Successfully");
 

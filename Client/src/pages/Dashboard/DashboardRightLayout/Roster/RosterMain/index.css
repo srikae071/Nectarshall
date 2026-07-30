@@ -648,49 +648,65 @@
 
 /* COLOR THEMES */
 
+.shiftCard.theme-green,
 .theme-green {
-  background: #dcfce7;
-  border-left: 4px solid #16a34a;
-  color: #14532d;
+  background-color: #dcfce7 !important;
+  background: #dcfce7 !important;
+  border-left: 4px solid #16a34a !important;
+  color: #14532d !important;
 }
 
+.shiftCard.theme-blue,
 .theme-blue {
-  background: #dbeafe;
-  border-left: 4px solid #2563eb;
-  color: #1e3a8a;
+  background-color: #dbeafe !important;
+  background: #dbeafe !important;
+  border-left: 4px solid #2563eb !important;
+  color: #1e3a8a !important;
 }
 
+.shiftCard.theme-pink,
 .theme-pink {
-  background: #fce7f3;
-  border-left: 4px solid #db2777;
-  color: #831843;
+  background-color: #fce7f3 !important;
+  background: #fce7f3 !important;
+  border-left: 4px solid #db2777 !important;
+  color: #831843 !important;
 }
 
+.shiftCard.theme-orange,
 .theme-orange {
-  background: #ffedd5;
-  border-left: 4px solid #ea580c;
-  color: #7c2d12;
+  background-color: #ffedd5 !important;
+  background: #ffedd5 !important;
+  border-left: 4px solid #ea580c !important;
+  color: #7c2d12 !important;
 }
 
+.shiftCard.theme-purple,
 .theme-purple {
-  background: #f3e8ff;
-  border-left: 4px solid #9333ea;
-  color: #581c87;
+  background-color: #f3e8ff !important;
+  background: #f3e8ff !important;
+  border-left: 4px solid #9333ea !important;
+  color: #581c87 !important;
 }
 
+.shiftCard.theme-yellow,
 .theme-yellow {
+  background-color: #fef08a !important;
   background: #fef08a !important;
   border-left: 4px solid #eab308 !important;
   color: #713f12 !important;
 }
 
+.shiftCard.theme-red,
 .theme-red {
+  background-color: #fee2e2 !important;
   background: #fee2e2 !important;
   border-left: 4px solid #dc2626 !important;
   color: #991b1b !important;
 }
 
+.shiftCard.theme-gray,
 .theme-gray {
+  background-color: #e2e8f0 !important;
   background: #e2e8f0 !important;
   border-left: 4px solid #94a3b8 !important;
   color: #334155 !important;

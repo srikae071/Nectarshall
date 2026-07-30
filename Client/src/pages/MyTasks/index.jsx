@@ -1,6 +1,7 @@
 import MyTasksNavBar from "./MyTaskNavvar";
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { fetchApiData } from "../../utils/apiClient";
 
 import "./index.css";
 
@@ -14,9 +15,7 @@ function ApprovalTable() {
   }, []);
   const fetchOffboarding = async () => {
     try {
-      const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests",
-      );
+      const response = await fetchApiData("/api/jobrequests");
 
       setOffboardingData(
         response.data.filter(
@@ -29,10 +28,7 @@ function ApprovalTable() {
   };
   const fetchLeaves = async () => {
     try {
-      const response = await axios.get(
-        // "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves",
-        "http://localhost:5000/api/leaves",
-      );
+      const response = await fetchApiData("/api/leaves");
 
       setData(response.data.filter((item) => item.status === "Pending"));
     } catch (error) {
@@ -42,12 +38,8 @@ function ApprovalTable() {
   const fetchPendingLeaves = async () => {
     try {
       const [leaveResponse, offboardingResponse] = await Promise.all([
-        axios.get(
-          "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves",
-        ),
-        axios.get(
-          "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests",
-        ),
+        fetchApiData("/api/leaves"),
+        fetchApiData("/api/jobrequests"),
       ]);
 
       const pendingLeaves = leaveResponse.data.filter(

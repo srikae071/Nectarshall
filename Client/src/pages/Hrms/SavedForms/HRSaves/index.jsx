@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { fetchApiData, sendApiData } from "../../../../utils/apiClient";
 // import axios from "axios";
 
 import HrmsLeftLayout from "../../Hrmsleftlayout";
@@ -27,9 +28,7 @@ function HRSaves() {
   useEffect(() => {
     const fetchRequest = async () => {
       try {
-        const response = await axios.get(
-          `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/hrrequests/${id}`,
-        );
+        const response = await fetchApiData(`/api/hrrequests/${id}`);
 
         setFormData({
           caseId: response.data.incidentNumber || "",
@@ -65,9 +64,10 @@ function HRSaves() {
   };
   const handleSave = async () => {
     try {
-      await axios.put(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/hrrequests/${id}`,
+      await sendApiData(
+        `/api/hrrequests/${id}`,
         formData,
+        "put"
       );
 
       alert("Case Updated Successfully");

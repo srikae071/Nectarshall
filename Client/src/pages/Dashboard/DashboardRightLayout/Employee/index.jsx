@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
+import { fetchApiData, sendApiData } from "../../../../utils/apiClient";
 import "./index.css";
 
 function Employees() {
@@ -52,15 +53,7 @@ function Employees() {
       setLoading(true);
       setError("");
 
-      let response;
-      try {
-        response = await axios.get(
-          "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/employees",
-        );
-      } catch (err) {
-        response = await axios.get("/api/employees");
-      }
-
+      const response = await fetchApiData("/api/employees");
       setEmployees(Array.isArray(response.data) ? response.data : []);
     } catch (err) {
       console.error("Error fetching employees:", err);
@@ -130,14 +123,7 @@ function Employees() {
               ],
       };
 
-      try {
-        await axios.post(
-          "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/employees/create",
-          payload,
-        );
-      } catch (err) {
-        await axios.post("/api/employees/create", payload);
-      }
+      await sendApiData("/api/employees/create", payload);
 
       setSuccessMsg("Employee created successfully!");
       setFormData({
@@ -247,13 +233,7 @@ function Employees() {
         locations: editModal.locations,
       };
 
-      const apiUrl = `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/employees/${editModal.id}`;
-
-      try {
-        await axios.put(apiUrl, payload);
-      } catch (err) {
-        await axios.put(`/api/employees/${editModal.id}`, payload);
-      }
+      await sendApiData(`/api/employees/${editModal.id}`, payload, "put");
 
       setUpdateMsg("Employee updated successfully!");
       await fetchEmployees();

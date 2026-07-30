@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { fetchApiData, sendApiData } from "../../../utils/apiClient";
 import HrmsLeftLayout from "../../Hrms/Hrmsleftlayout";
 import axios from "axios";
 import "./index.css";
@@ -147,9 +148,7 @@ function EmployeRequestSave() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
-      );
+      const response = await fetchApiData(`/api/jobrequests/${id}`);
 
       setFormData(response.data);
       if (response.data.candidateCompleted) {
@@ -161,12 +160,13 @@ function EmployeRequestSave() {
   };
   const handleQualificationSave = async () => {
     try {
-      await axios.put(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
+      await sendApiData(
+        `/api/jobrequests/${id}`,
         {
           ...formData,
           status: "Interview",
         },
+        "put"
       );
 
       setFormData({
@@ -181,8 +181,9 @@ function EmployeRequestSave() {
   };
   const handleSendEmail = async () => {
     try {
-      await axios.post(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/send-email/${formData.caseId}`,
+      await sendApiData(
+        `/api/jobrequests/send-email/${formData.caseId}`,
+        {}
       );
 
       alert("Email Sent Successfully");
@@ -276,12 +277,13 @@ function EmployeRequestSave() {
       nextStatus = "Closed";
     }
     try {
-      await axios.put(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
+      await sendApiData(
+        `/api/jobrequests/${id}`,
         {
           ...formData,
           status: nextStatus,
         },
+        "put"
       );
 
       // if (formData.interview === "PASS") {

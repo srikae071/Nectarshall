@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { fetchApiData } from "../../../utils/apiClient";
 import MyTicketsNavBar from "./MyTicketsNavvar/index.jsx";
 import "./index.css";
 
@@ -13,12 +14,8 @@ function MyTickets() {
   const fetchTickets = async () => {
     try {
       const [itResponse, hrResponse] = await Promise.all([
-        axios.get(
-          "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests",
-        ),
-        axios.get(
-          "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/hrrequests",
-        ),
+        fetchApiData("/api/itrequests"),
+        fetchApiData("/api/hrrequests"),
       ]);
 
       const itTickets = itResponse.data.map((item) => ({

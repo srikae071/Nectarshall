@@ -2,19 +2,20 @@ import ItLeftSide from "../../ItLeftSide";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "./index.css";
+import { useNavigate } from "react-router-dom";
+import { fetchApiData } from "../../../../../utils/apiClient";
 
 function ItOpen() {
   const [data, setData] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchOpenCases();
+    fetchRequests();
   }, []);
 
-  const fetchOpenCases = async () => {
+  const fetchRequests = async () => {
     try {
-      const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests",
-      );
+      const response = await fetchApiData("/api/itrequests");
 
       const openCases = response.data.filter((item) => item.status === "Open");
 

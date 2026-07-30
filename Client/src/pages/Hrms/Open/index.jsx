@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./index.css";
+import { fetchApiData } from "../../../utils/apiClient";
 
 function Open() {
   const [data, setData] = useState([]);
@@ -13,9 +14,7 @@ function Open() {
 
   const fetchOpenCases = async () => {
     try {
-      const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/hrrequests",
-      );
+      const response = await fetchApiData("/api/hrrequests");
 
       const openCases = response.data.filter((item) => item.status === "Open");
 

@@ -1,5 +1,6 @@
 // import { useState } from "react";
 import axios from "axios";
+import { fetchApiData, sendApiData } from "../../../../../utils/apiClient";
 import LeaveManagementLeftSide from "./../../LeaveManagementLeftSide";
 import { useNavigate } from "react-router-dom";
 import "./index.css";
@@ -39,9 +40,7 @@ function HomeLeaveRequest() {
 
       const allocated = leaveAllocation[leaveType] || 0;
 
-      const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves",
-      );
+      const response = await fetchApiData("/api/leaves");
 
       const approvedLeaves = response.data.filter(
         (item) => item.leaveType === leaveType && item.status === "Approved",
@@ -65,10 +64,8 @@ function HomeLeaveRequest() {
         return;
       }
 
-      await axios.post(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves/create",
-        {
-          requester,
+      await sendApiData("/api/leaves/create", {
+        requester,
           requesterFor,
           startDate,
           leaveType,

@@ -1,13 +1,13 @@
 import Hrmsleftlayout from "../../pages/Hrms/Hrmsleftlayout";
-import { useState } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import "./LeaveBalance.css";
+import { fetchApiData } from "../../utils/apiClient";
 
 function LeaveBalance() {
-  const [leaveType, setLeaveType] = useState("");
-  const [totalAllocated, setTotalAllocated] = useState("");
-  const [leaveConsumed, setLeaveConsumed] = useState("");
-  const [leaveBalance, setLeaveBalance] = useState("");
+  const [leaveType, setLeaveType] = useState("Paid Leave");
+  const [totalAllocated, setTotalAllocated] = useState(0);
+  const [leaveConsumed, setLeaveConsumed] = useState(0);
+  const [leaveBalance, setLeaveBalance] = useState(0);
 
   const leaveAllocation = {
     "Casual Leave": 5,
@@ -17,21 +17,19 @@ function LeaveBalance() {
     "Paternity Leave": 12,
   };
 
-  const handleLeaveTypeChange = async (e) => {
-    const selectedType = e.target.value;
+  useEffect(() => {
+    fetchLeaves();
+  }, [leaveType]);
 
-    setLeaveType(selectedType);
-
-    const allocated = leaveAllocation[selectedType] || 0;
+  const fetchLeaves = async () => {
+    const allocated = leaveAllocation[leaveType] || 0;
     setTotalAllocated(allocated);
 
     try {
-      const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves",
-      );
+      const response = await fetchApiData("/api/leaves");
 
       const approvedLeaves = response.data.filter(
-        (item) => item.leaveType === selectedType && item.status === "Approved",
+        (item) => item.leaveType === leaveType && item.status === "Approved",
       );
 
       const consumed = approvedLeaves.reduce(

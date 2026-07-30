@@ -3,6 +3,8 @@ import axios from "axios";
 import LeaveManagementLeftSide from "./../../LeaveManagementLeftSide";
 import "./index.css";
 
+import { fetchApiData } from "../../../../../utils/apiClient";
+
 function HomeLeaveStatus() {
   const [data, setData] = useState([]);
 
@@ -12,9 +14,7 @@ function HomeLeaveStatus() {
 
   const fetchLeaves = async () => {
     try {
-      const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves",
-      );
+      const response = await fetchApiData("/api/leaves");
 
       setData(response.data);
     } catch (error) {

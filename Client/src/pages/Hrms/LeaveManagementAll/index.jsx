@@ -1,7 +1,8 @@
 import HrmsLeftLayout from "../Hrmsleftlayout";
 import TableLayout1 from "../../../components/Layouts/TableLayouts/TableLayout1";
-import { useEffect, useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import { fetchApiData } from "../../../utils/apiClient";
 import { FiSettings, FiSearch } from "react-icons/fi";
 import "./index.css";
 
@@ -76,9 +77,7 @@ function LeaveManagementAll() {
 
   const fetchLeaves = async () => {
     try {
-      const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves",
-      );
+      const response = await fetchApiData("/api/leaves");
 
       setData(response.data);
     } catch (error) {

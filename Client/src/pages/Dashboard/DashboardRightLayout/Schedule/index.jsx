@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import { fetchApiData } from "../../../../utils/apiClient";
 // import { useContext } from "react";
 import { EmployeeContext } from "../EmployeeContext.js";
 
@@ -95,9 +96,7 @@ function Schedule() {
   useEffect(() => {
     const fetchSiteNames = async () => {
       try {
-        const response = await axios.get(
-          "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding",
-        );
+        const response = await fetchApiData("/api/boarding");
 
         const sites = [];
 
