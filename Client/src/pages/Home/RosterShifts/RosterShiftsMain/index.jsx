@@ -304,7 +304,6 @@ function RosterShiftsMain() {
       setActionLoadingId(null);
     }
   };
-  //added
 
   const renderApprovalRow = (row) => {
     const isAccepted = row.approvalState === "Accepted";
