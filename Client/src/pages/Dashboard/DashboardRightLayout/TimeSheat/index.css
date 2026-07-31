@@ -230,3 +230,217 @@ tr:last-child td {
 .changeStatusBtn:hover {
   opacity: 1;
 }
+
+/* NOTES BUTTON & MODAL POPUP */
+.notesBtn {
+  background: #0284c7;
+  color: #ffffff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: background 0.2s ease;
+}
+
+.notesBtn:hover {
+  background: #0369a1;
+}
+
+.notesModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.notesModalContainer {
+  background: #ffffff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 580px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.notesModalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.notesModalHeader h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.closeNotesBtn {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.notesModalBody {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 75vh;
+  overflow-y: auto;
+}
+
+.notesBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.notesBox h4 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.notesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  font-size: 13px;
+}
+
+.notesDiffHighlight {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.diffRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.diffRow:last-child {
+  margin-bottom: 0;
+}
+
+.diffRow strong {
+  color: #1e293b;
+}
+
+.diffBadge {
+  font-weight: 700;
+  color: #0369a1;
+}
+
+.attachmentSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.attachmentSection label {
+  font-weight: 700;
+  font-size: 13px;
+  color: #334155;
+}
+
+.notesModalFooter {
+  padding: 14px 20px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.saveNotesBtn {
+  background: #0284c7;
+  color: #ffffff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.saveNotesBtn:hover {
+  background: #0369a1;
+}
+
+/* GREEN THEME OVERRIDES FOR NOTES MODAL */
+html[data-theme="green"] .notesBtn,
+body.theme-green .notesBtn,
+[data-theme="green"] .notesBtn {
+  background: #047857 !important;
+}
+
+html[data-theme="green"] .notesBtn:hover,
+body.theme-green .notesBtn:hover,
+[data-theme="green"] .notesBtn:hover {
+  background: #064e3b !important;
+}
+
+html[data-theme="green"] .notesModalHeader,
+body.theme-green .notesModalHeader,
+[data-theme="green"] .notesModalHeader {
+  background: #047857 !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="green"] .notesDiffHighlight,
+body.theme-green .notesDiffHighlight,
+[data-theme="green"] .notesDiffHighlight {
+  background: #f0fdf4 !important;
+  border-color: #bbf7d0 !important;
+}
+
+html[data-theme="green"] .diffBadge,
+body.theme-green .diffBadge,
+[data-theme="green"] .diffBadge {
+  color: #047857 !important;
+}
+
+html[data-theme="green"] .saveNotesBtn,
+body.theme-green .saveNotesBtn,
+[data-theme="green"] .saveNotesBtn {
+  background: #047857 !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="green"] .saveNotesBtn:hover,
+body.theme-green .saveNotesBtn:hover,
+[data-theme="green"] .saveNotesBtn:hover {
+  background: #064e3b !important;
+}

@@ -249,6 +249,29 @@ body {
   background-color: #f0f7f4 !important;
 }
 
+/* ABSOLUTE ELIMINATION OF ALL LEFT VERTICAL BORDER LINES ACROSS EVERY SINGLE PAGE WHEN GREEN THEME IS ACTIVE */
+html[data-theme="green"] *,
+body[data-theme="green"] *,
+[data-theme="green"] *,
+[data-theme="green"] *::before,
+[data-theme="green"] *::after {
+  border-left: none !important;
+  border-left-width: 0 !important;
+  border-left-style: none !important;
+  border-left-color: transparent !important;
+}
+
+/* RE-ENABLE SPECIFIC BORDERS ONLY FOR INPUT FIELDS / TABLES WHERE REQUIRED */
+[data-theme="green"] th,
+[data-theme="green"] td,
+[data-theme="green"] input,
+[data-theme="green"] select,
+[data-theme="green"] textarea {
+  border-left-style: solid !important;
+  border-left-width: 1px !important;
+  border-left-color: #cbd5e1 !important;
+}
+
 /* HOME PAGE CLEANUP - NO UNWANTED VERTICAL BORDER LINES ON HOME PAGE */
 [data-theme="green"] .HomeServices,
 [data-theme="green"] .HomeCard,

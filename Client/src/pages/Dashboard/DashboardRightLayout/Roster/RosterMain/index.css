@@ -773,29 +773,30 @@
 }
 
 .assignModalContainer {
-  width: 440px;
-  max-width: 90%;
+  width: 720px;
+  max-width: 92%;
   background: #ffffff;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  max-height: 90vh;
 }
 
 .assignModalHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 18px;
+  padding: 16px 22px;
   background: #f8fafc;
   border-bottom: 1px solid #e2e8f0;
 }
 
 .assignModalHeader h3 {
   margin: 0;
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 700;
   color: #0f172a;
 }
@@ -804,7 +805,7 @@
   background: transparent;
   border: none;
   color: #64748b;
-  font-size: 16px;
+  font-size: 20px;
   cursor: pointer;
 }
 
@@ -813,26 +814,63 @@
 }
 
 .assignModalBody {
-  padding: 16px 18px;
+  padding: 20px 22px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+  overflow-y: auto;
 }
 
 .shiftInfoBox {
-  background: #f1f5f9;
-  padding: 10px 12px;
-  border-radius: 6px;
-  border-left: 4px solid #2563eb;
-  font-size: 12px;
-  color: #334155;
+  background: #f8fafc;
+  padding: 16px 18px;
+  border-radius: 8px;
+  border-left: 5px solid #2563eb;
+  border-top: 1px solid #e2e8f0;
+  border-right: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 14.5px;
+  color: #1e293b;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 }
 
 .shiftInfoBox p {
   margin: 0;
+  line-height: 1.5;
+  font-size: 14.5px;
+}
+
+.shiftInfoBox strong {
+  color: #0f172a;
+  font-size: 15px;
+}
+
+.bigScopeLabel {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  color: #0f172a !important;
+}
+
+.bigScopeTextarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+  min-height: 90px;
+  resize: vertical;
+  background: #ffffff;
+  color: #0f172a;
+}
+
+.bigScopeTextarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
 .saveSuccessAlert {

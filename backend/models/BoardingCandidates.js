@@ -162,6 +162,10 @@ const BoardingCandidatesSchema = new mongoose.Schema(
                   type: Boolean,
                   default: false,
                 },
+                scopeOfWork: {
+                  type: String,
+                  default: "",
+                },
               },
             ],
 

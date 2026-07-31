@@ -378,6 +378,7 @@ function RosterMain() {
           requester: candidate.requester || "Requester",
           siteName: contract.siteName || `Site ${cIdx + 1}`,
           siteAddress: contract.siteAddress || "",
+          scopeOfWork: contract.scopeOfWork || "",
           services: contract.services || [],
           adhocServices: contract.adhocServices || [],
         });
@@ -403,6 +404,8 @@ function RosterMain() {
     "theme-purple",
   ];
 
+  const [scopeOfWorkText, setScopeOfWorkText] = useState("");
+
   const handleOpenAssignModal = (row, card, sIdx) => {
     const slotIdx = card.slotIndex ?? card.cardIndex - 1;
     const slotEmp =
@@ -410,6 +413,13 @@ function RosterMain() {
       card.assignedEmployees?.[slotIdx]?.employee ||
       (slotIdx === 0 ? card.employee : "") ||
       "";
+
+    const initialScopeOfWork =
+      card.assignedEmployees?.[slotIdx]?.scopeOfWork ||
+      card.scopeOfWork ||
+      row.scopeOfWork ||
+      "";
+
     setAssignModal({
       isOpen: true,
       candidateId: row.candidateId,
@@ -451,6 +461,7 @@ function RosterMain() {
       currentEmployee: slotEmp || row.requester || "",
     });
     setNewEmployeeName(slotEmp || row.requester || "");
+    setScopeOfWorkText(initialScopeOfWork);
     setSaveSuccessMsg("");
   };
 
@@ -499,6 +510,7 @@ function RosterMain() {
           isYellow: true,
           isUpdated: true,
           approvalState: "Pending",
+          scopeOfWork: scopeOfWorkText,
         };
 
         targetService.assignedEmployees = existingAssigned;
@@ -513,6 +525,7 @@ function RosterMain() {
         {
           services: updatedServices,
           adhocServices: contract.adhocServices || [],
+          scopeOfWork: scopeOfWorkText,
         },
         "put"
       );
@@ -1359,7 +1372,7 @@ function RosterMain() {
                 </p>
                 <p>
                   <strong>Tasks for {assignModal.dayName}:</strong>{" "}
-                  <span style={{ color: "#047857", fontWeight: "700" }}>
+                  <span style={{ color: "#047857", fontWeight: "700", fontSize: "15px" }}>
                     {assignModal.dayTasksStr}
                   </span>
                 </p>
@@ -1367,9 +1380,21 @@ function RosterMain() {
                   <strong>All Working Days & Tasks:</strong>{" "}
                   {assignModal.workingDays || "All Days"}
                 </p>
-                <p>
-                  {/* <strong>Slot:</strong> Card #{assignModal.cardIndex} */}
-                </p>
+              </div>
+
+              {/* SCOPE OF WORK FIELD BELOW ALL WORKING DAYS & TASKS */}
+              <div className="formGroup" style={{ marginTop: "10px" }}>
+                <label htmlFor="scopeOfWorkInput" className="bigScopeLabel">
+                  Scope Of Work
+                </label>
+                <textarea
+                  id="scopeOfWorkInput"
+                  className="bigScopeTextarea"
+                  value={scopeOfWorkText}
+                  onChange={(e) => setScopeOfWorkText(e.target.value)}
+                  placeholder="Enter scope of work details..."
+                  rows={4}
+                />
               </div>
 
               {saveSuccessMsg && (
@@ -1377,7 +1402,9 @@ function RosterMain() {
               )}
 
               <div className="formGroup">
-                <label htmlFor="assignEmployeeInput">Asign To</label>
+                <label htmlFor="assignEmployeeInput" className="bigScopeLabel">
+                  Assign To
+                </label>
                 <input
                   id="assignEmployeeInput"
                   type="text"
@@ -1386,6 +1413,7 @@ function RosterMain() {
                   onChange={(e) => setNewEmployeeName(e.target.value)}
                   placeholder="Type or select employee..."
                   className="assignInput"
+                  style={{ fontSize: "14px", padding: "10px 12px" }}
                   autoFocus
                 />
                 <datalist id="employeeSuggestions">

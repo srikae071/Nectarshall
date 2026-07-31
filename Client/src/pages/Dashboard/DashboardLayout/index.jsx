@@ -187,6 +187,7 @@ function DashboardLayout({ children }) {
 
           <div className="menuBlock">
             <div
+              className="menuHeader"
               onClick={() => {
                 if (sidebarCollapsed) {
                   setSidebarCollapsed(false);
@@ -205,7 +206,9 @@ function DashboardLayout({ children }) {
                 )}
               </div>
 
-              {!sidebarCollapsed && <span>{openOnboarding ? "-" : "+"}</span>}
+              {!sidebarCollapsed && (
+                <span className="togglePlus">{openOnboarding ? "-" : "+"}</span>
+              )}
             </div>
 
             {openOnboarding && (

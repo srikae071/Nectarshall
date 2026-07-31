@@ -197,9 +197,9 @@ function OnBoardingSaves() {
           ];
 
       setContractDeliverables(loadedCd);
-      setInitialContractDeliverables(loadedCd);
+      setInitialContractDeliverables(JSON.parse(JSON.stringify(loadedCd)));
       setFinancialDetails(loadedFin);
-      setInitialFinancialDetails(loadedFin);
+      setInitialFinancialDetails(JSON.parse(JSON.stringify(loadedFin)));
     } catch (err) {
       console.log(err);
     }
@@ -275,11 +275,8 @@ function OnBoardingSaves() {
   };
   const handleDeliverableChange = (index, e) => {
     const { name, value } = e.target;
-
-    const updated = [...contractDeliverables];
-
+    const updated = JSON.parse(JSON.stringify(contractDeliverables));
     updated[index][name] = value;
-
     setContractDeliverables(updated);
   };
 
@@ -291,13 +288,11 @@ function OnBoardingSaves() {
 
     setFinancialDetails(financialDetails.filter((_, i) => i !== index));
   };
+
   const handleFinancialChange = (index, e) => {
     const { name, value } = e.target;
-
-    const updated = [...financialDetails];
-
+    const updated = JSON.parse(JSON.stringify(financialDetails));
     updated[index][name] = value;
-
     setFinancialDetails(updated);
   };
   // const handleDeliverableAttachment = (index, e) => {
@@ -508,7 +503,7 @@ function OnBoardingSaves() {
     description: "Description",
   };
 
-  const contractFieldLabels = {
+  const cdFieldLabels = {
     siteName: "site name",
     siteAddress: "site address",
     siteManagerName: "site manager name",
@@ -517,6 +512,15 @@ function OnBoardingSaves() {
     contractState: "contract state",
     scopeOfWork: "scope of work",
     comments: "comments",
+    numberOfServices: "number of services",
+  };
+
+  const finFieldLabels = {
+    contractId: "contract ID",
+    invoiceDate: "invoice date",
+    invoiceNumber: "invoice number",
+    billingCycle: "billing cycle",
+    comments: "financial comments",
   };
 
   const handleSave = async () => {
@@ -534,7 +538,7 @@ function OnBoardingSaves() {
         });
       }
 
-      // 2. Compare contract deliverables per contract ID (e.g. CNT-001, CNT-002)
+      // 2. Compare Client Contract Deliverables per contract ID (e.g. CNT-001, CNT-002)
       if (
         Array.isArray(initialContractDeliverables) &&
         Array.isArray(contractDeliverables)
@@ -545,17 +549,101 @@ function OnBoardingSaves() {
             currCd.clientId || currCd.contractId || `CNT-00${cIdx + 1}`;
           const cdChanges = [];
 
-          Object.keys(contractFieldLabels).forEach((fieldKey) => {
+          // Compare basic contract fields
+          Object.keys(cdFieldLabels).forEach((fieldKey) => {
             const oldVal = (initCd[fieldKey] || "").toString().trim();
             const newVal = (currCd[fieldKey] || "").toString().trim();
             if (oldVal !== newVal) {
-              cdChanges.push(contractFieldLabels[fieldKey]);
+              cdChanges.push(cdFieldLabels[fieldKey]);
+            }
+          });
+
+          // Compare services array inside contract deliverable
+          const currServices = Array.isArray(currCd.services)
+            ? currCd.services
+            : [];
+          const initServices = Array.isArray(initCd.services)
+            ? initCd.services
+            : [];
+
+          currServices.forEach((currSvc, sIdx) => {
+            const initSvc = initServices[sIdx] || {};
+            const svcChanges = [];
+
+            [
+              "serviceType",
+              "position",
+              "quantity",
+              "shiftStartTime",
+              "shiftEndTime",
+            ].forEach((sKey) => {
+              const oldVal = (initSvc[sKey] || "").toString().trim();
+              const newVal = (currSvc[sKey] || "").toString().trim();
+              if (oldVal !== newVal) {
+                svcChanges.push(sKey);
+              }
+            });
+
+            // Date comparisons
+            const oldStart = (initSvc.contractStartDate || "")
+              .toString()
+              .slice(0, 10);
+            const newStart = (currSvc.contractStartDate || "")
+              .toString()
+              .slice(0, 10);
+            if (oldStart !== newStart) svcChanges.push("start date");
+
+            const oldEnd = (initSvc.contractEndDate || "")
+              .toString()
+              .slice(0, 10);
+            const newEnd = (currSvc.contractEndDate || "")
+              .toString()
+              .slice(0, 10);
+            if (oldEnd !== newEnd) svcChanges.push("end date");
+
+            // Working days & tasks comparison
+            const oldDays = JSON.stringify(initSvc.workingDays || []);
+            const newDays = JSON.stringify(currSvc.workingDays || []);
+            if (oldDays !== newDays) svcChanges.push("working days/tasks");
+
+            if (svcChanges.length > 0) {
+              cdChanges.push(`Service ${sIdx + 1} (${svcChanges.join(", ")})`);
             }
           });
 
           if (cdChanges.length > 0) {
             changedDetails.push(
               `client contract deliverables client ID ${contractId} ${cdChanges.join(", ")} changed`
+            );
+          }
+        });
+      }
+
+      // 3. Compare Financial Deliverables per contract ID (e.g. FIN-001, FIN-002)
+      if (
+        Array.isArray(initialFinancialDetails) &&
+        Array.isArray(financialDetails)
+      ) {
+        financialDetails.forEach((currFin, fIdx) => {
+          const initFin = initialFinancialDetails[fIdx] || {};
+          const contractId = currFin.contractId || `FIN-00${fIdx + 1}`;
+          const finChanges = [];
+
+          Object.keys(finFieldLabels).forEach((fieldKey) => {
+            let oldVal = (initFin[fieldKey] || "").toString().trim();
+            let newVal = (currFin[fieldKey] || "").toString().trim();
+            if (fieldKey === "invoiceDate") {
+              oldVal = oldVal.slice(0, 10);
+              newVal = newVal.slice(0, 10);
+            }
+            if (oldVal !== newVal) {
+              finChanges.push(finFieldLabels[fieldKey]);
+            }
+          });
+
+          if (finChanges.length > 0) {
+            changedDetails.push(
+              `financial contract deliverables contract ID ${contractId} ${finChanges.join(", ")} changed`
             );
           }
         });

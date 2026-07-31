@@ -100,6 +100,85 @@ function TimesheetPage() {
     }
   };
 
+  const [notesModal, setNotesModal] = useState({
+    isOpen: false,
+    row: null,
+    attachment: null,
+  });
+
+  const getMins = (timeStr) => {
+    if (!timeStr) return 0;
+    const [h, m] = String(timeStr).split(":").map(Number);
+    return (isNaN(h) ? 0 : h) * 60 + (isNaN(m) ? 0 : m);
+  };
+
+  const calculateTimeDifferences = (shiftStart, shiftEnd, actualStart, actualEnd) => {
+    const sStart = getMins(shiftStart);
+    const sEnd = getMins(shiftEnd);
+    const aStart = getMins(actualStart);
+    const aEnd = getMins(actualEnd);
+
+    let sDuration = sEnd - sStart;
+    if (sDuration <= 0) sDuration += 24 * 60;
+
+    let aDuration = aEnd - aStart;
+    if (aDuration <= 0) aDuration += 24 * 60;
+
+    // Start Time Variance
+    const startDiff = aStart - sStart;
+    let startVarianceText = "On Time (0 Mins)";
+    if (startDiff > 0) {
+      startVarianceText = `${startDiff} Mins Late`;
+    } else if (startDiff < 0) {
+      startVarianceText = `${Math.abs(startDiff)} Mins Early`;
+    }
+
+    // End Time Variance
+    const endDiff = aEnd - sEnd;
+    let endVarianceText = "On Time (0 Mins)";
+    if (endDiff > 0) {
+      endVarianceText = `${endDiff} Mins Overtime / Extra`;
+    } else if (endDiff < 0) {
+      endVarianceText = `${Math.abs(endDiff)} Mins Left Early`;
+    }
+
+    // Net Duration Variance
+    const netExtraMins = aDuration - sDuration;
+    let netExtraText = "0 Mins Difference";
+    if (netExtraMins > 0) {
+      const h = Math.floor(netExtraMins / 60);
+      const m = netExtraMins % 60;
+      netExtraText = `+${h > 0 ? `${h}h ` : ""}${m} Mins Extra Worked`;
+    } else if (netExtraMins < 0) {
+      const absMins = Math.abs(netExtraMins);
+      const h = Math.floor(absMins / 60);
+      const m = absMins % 60;
+      netExtraText = `-${h > 0 ? `${h}h ` : ""}${m} Mins Less Worked`;
+    }
+
+    return {
+      startVarianceText,
+      endVarianceText,
+      netExtraText,
+    };
+  };
+
+  const handleOpenNotes = (row) => {
+    setNotesModal({
+      isOpen: true,
+      row,
+      attachment: null,
+    });
+  };
+
+  const handleCloseNotes = () => {
+    setNotesModal({
+      isOpen: false,
+      row: null,
+      attachment: null,
+    });
+  };
+
   const calculateSummary = (startTimeStr, endTimeStr) => {
     if (!startTimeStr || !endTimeStr) return "8 Hours";
     const [sH, sM] = String(startTimeStr).split(":").map(Number);
@@ -138,10 +217,12 @@ function TimesheetPage() {
               Boolean(slotEmpObj?.actualStartTime);
 
             if (empName && empName.trim() !== "" && isSubmitted) {
+              const shiftStart = svc.shiftStartTime || "08:00";
+              const shiftEnd = svc.shiftEndTime || "16:00";
               const actStart =
-                slotEmpObj?.actualStartTime || svc.shiftStartTime || "08:00";
+                slotEmpObj?.actualStartTime || shiftStart;
               const actEnd =
-                slotEmpObj?.actualEndTime || svc.shiftEndTime || "16:00";
+                slotEmpObj?.actualEndTime || shiftEnd;
 
               rows.push({
                 id: `${cand._id}_${contract._id}_${sIdx}_${q}`,
@@ -155,9 +236,13 @@ function TimesheetPage() {
                 employeeName: empName.trim(),
                 position: svc.position || "N/A",
                 typeOfService: "General",
-                startTime: actStart,
-                endTime: actEnd,
-                summary: calculateSummary(actStart, actEnd),
+                shiftStartTime: shiftStart,
+                shiftEndTime: shiftEnd,
+                actualStartTime: actStart,
+                actualEndTime: actEnd,
+                shiftSummary: calculateSummary(shiftStart, shiftEnd),
+                actualSummary: calculateSummary(actStart, actEnd),
+                summary: calculateSummary(shiftStart, shiftEnd),
                 timesheetApproved: Boolean(
                   slotEmpObj?.timesheetApproved || slotEmpObj?.timeSheatsApproved
                 ),
@@ -175,10 +260,12 @@ function TimesheetPage() {
             Boolean(adhoc?.actualStartTime);
 
           if (empName && empName.trim() !== "" && isSubmitted) {
+            const shiftStart = adhoc.shiftStartTime || "08:00";
+            const shiftEnd = adhoc.shiftEndTime || "16:00";
             const actStart =
-              adhoc.actualStartTime || adhoc.shiftStartTime || "08:00";
+              adhoc.actualStartTime || shiftStart;
             const actEnd =
-              adhoc.actualEndTime || adhoc.shiftEndTime || "16:00";
+              adhoc.actualEndTime || shiftEnd;
             const adhocDateStr = adhoc.shiftStartDate
               ? String(adhoc.shiftStartDate).slice(0, 10)
               : adhoc.serviceDate
@@ -196,9 +283,13 @@ function TimesheetPage() {
               employeeName: empName.trim(),
               position: "Adhoc",
               typeOfService: "Adhoc",
-              startTime: actStart,
-              endTime: actEnd,
-              summary: calculateSummary(actStart, actEnd),
+              shiftStartTime: shiftStart,
+              shiftEndTime: shiftEnd,
+              actualStartTime: actStart,
+              actualEndTime: actEnd,
+              shiftSummary: calculateSummary(shiftStart, shiftEnd),
+              actualSummary: calculateSummary(actStart, actEnd),
+              summary: calculateSummary(shiftStart, shiftEnd),
               timesheetApproved: Boolean(
                 adhoc?.timesheetApproved || adhoc?.timeSheatsApproved
               ),
@@ -243,7 +334,7 @@ function TimesheetPage() {
       <div className="timesheetHeader">
         <h2>Operations Timesheets Dashboard</h2>
         <p>
-          View submitted shift times, employee assignments, positions, service types, and working summaries.
+          View shift schedule times, actual employee logged times, positions, service types, and shift notes.
         </p>
       </div>
 
@@ -291,9 +382,12 @@ function TimesheetPage() {
                 <th className="timesheatsheading">Employee Name</th>
                 <th className="timesheatsheading">Position</th>
                 <th className="timesheatsheading">Type</th>
-                <th className="timesheatsheading">Start Time</th>
-                <th className="timesheatsheading">End Time</th>
+                <th className="timesheatsheading">Shift Start</th>
+                <th className="timesheatsheading">Shift End</th>
+                <th className="timesheatsheading">Actual Start</th>
+                <th className="timesheatsheading">Actual End</th>
                 <th className="timesheatsheading">Summary</th>
+                <th className="timesheatsheading">Notes</th>
                 <th className="timesheatsheading" style={{ textAlign: "center" }}>
                   Action
                 </th>
@@ -318,13 +412,28 @@ function TimesheetPage() {
                       <span className="svcBadge">{row.typeOfService}</span>
                     </td>
                     <td className="tsTimeCell">
-                      🕒 {row.startTime}
+                      🕒 {row.shiftStartTime}
                     </td>
                     <td className="tsTimeCell">
-                      🕒 {row.endTime}
+                      🕒 {row.shiftEndTime}
+                    </td>
+                    <td className="tsTimeCell" style={{ color: "#047857", fontWeight: 700 }}>
+                      🕒 {row.actualStartTime}
+                    </td>
+                    <td className="tsTimeCell" style={{ color: "#047857", fontWeight: 700 }}>
+                      🕒 {row.actualEndTime}
                     </td>
                     <td>
                       <span className="summaryBadge">⏱️ {row.summary}</span>
+                    </td>
+                    <td>
+                      <button
+                        type="button"
+                        className="notesBtn"
+                        onClick={() => handleOpenNotes(row)}
+                      >
+                        📝 Notes
+                      </button>
                     </td>
                     <td style={{ textAlign: "center" }}>
                       {isApproved ? (
@@ -368,6 +477,90 @@ function TimesheetPage() {
           </table>
         )}
       </div>
+
+      {/* NOTES MODAL POPUP */}
+      {notesModal.isOpen && notesModal.row && (() => {
+        const r = notesModal.row;
+        const diffs = calculateTimeDifferences(
+          r.shiftStartTime,
+          r.shiftEndTime,
+          r.actualStartTime,
+          r.actualEndTime
+        );
+
+        return (
+          <div className="notesModalOverlay">
+            <div className="notesModalContainer">
+              <div className="notesModalHeader">
+                <h3>Timesheet Shift & Attendance Notes - {r.employeeName}</h3>
+                <button className="closeNotesBtn" onClick={handleCloseNotes}>✕</button>
+              </div>
+
+              <div className="notesModalBody">
+                <div className="notesBox">
+                  <h4>📅 Shift Schedule Times</h4>
+                  <div className="notesGrid">
+                    <p><strong>Shift Start Time:</strong> {r.shiftStartTime}</p>
+                    <p><strong>Shift End Time:</strong> {r.shiftEndTime}</p>
+                    <p><strong>Shift Scheduled Duration:</strong> {r.shiftSummary}</p>
+                  </div>
+                </div>
+
+                <div className="notesBox">
+                  <h4>👤 Actual Employee Logged Times</h4>
+                  <div className="notesGrid">
+                    <p><strong>Actual Start Time:</strong> {r.actualStartTime}</p>
+                    <p><strong>Actual End Time:</strong> {r.actualEndTime}</p>
+                    <p><strong>Actual Duration Worked:</strong> {r.actualSummary}</p>
+                  </div>
+                </div>
+
+                <div className="notesDiffHighlight">
+                  <h4>⏱️ Time Differences & Extra Time Breakdown</h4>
+                  <div className="diffRow">
+                    <span><strong>Start Time Difference:</strong></span>
+                    <span className="diffBadge">{diffs.startVarianceText}</span>
+                  </div>
+                  <div className="diffRow">
+                    <span><strong>End Time Difference:</strong></span>
+                    <span className="diffBadge">{diffs.endVarianceText}</span>
+                  </div>
+                  <div className="diffRow">
+                    <span><strong>Net Extra Time Difference:</strong></span>
+                    <span className="diffBadge" style={{ fontSize: "14px", color: "#047857" }}>
+                      {diffs.netExtraText}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="attachmentSection">
+                  <label>📎 Attach Timesheet Proof / Document:</label>
+                  <input
+                    type="file"
+                    onChange={(e) =>
+                      setNotesModal((prev) => ({
+                        ...prev,
+                        attachment: e.target.files[0] ? e.target.files[0].name : null,
+                      }))
+                    }
+                  />
+                  {notesModal.attachment && (
+                    <span style={{ fontSize: "12.5px", color: "#047857", fontWeight: 600 }}>
+                      Selected File: {notesModal.attachment}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="notesModalFooter">
+                <button type="button" className="saveNotesBtn" onClick={handleCloseNotes}>
+                  Done / Close
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
