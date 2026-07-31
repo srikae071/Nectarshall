@@ -63,6 +63,11 @@ const BoardingCandidatesSchema = new mongoose.Schema(
     },
     contractDeliverables: [
       {
+        entries: {
+          type: String,
+          default: "",
+        },
+
         clientId: {
           type: String,
           default: "",

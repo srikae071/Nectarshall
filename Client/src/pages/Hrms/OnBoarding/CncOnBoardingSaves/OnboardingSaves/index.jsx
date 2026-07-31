@@ -90,6 +90,8 @@ function OnBoardingSaves() {
     },
   ]);
   const [initialFormData, setInitialFormData] = useState(null);
+  const [initialContractDeliverables, setInitialContractDeliverables] = useState(null);
+  const [initialFinancialDetails, setInitialFinancialDetails] = useState(null);
   const [entries, setEntries] = useState([]);
   const [showEntriesDropdown, setShowEntriesDropdown] = useState(false);
 
@@ -151,24 +153,11 @@ function OnBoardingSaves() {
 
       setFormData(loadedForm);
       setInitialFormData(loadedForm);
-      setContractDeliverables(
-        data.contractDeliverables && data.contractDeliverables.length > 0
-          ? data.contractDeliverables
-          : [
-              // {
-              //   clientId: "",
-              //   siteName: "",
-              //   siteAddress: "",
-              //   siteManagerName: "",
-              //   siteEmail: "",
-              //   siteMobile: "",
-              //   contractState: "Active",
-              //   adhoc: "No",
-              //   comments: "",
-              //   attachment: "",
-              // },
 
-              // new code
+      const loadedCd =
+        data.contractDeliverables && data.contractDeliverables.length > 0
+          ? JSON.parse(JSON.stringify(data.contractDeliverables))
+          : [
               {
                 clientId: "CNT-001",
                 siteName: "",
@@ -179,9 +168,7 @@ function OnBoardingSaves() {
                 contractState: "Active",
                 adhoc: "No",
                 comments: "",
-
                 numberOfServices: 1,
-
                 services: [
                   {
                     serviceType: "",
@@ -195,21 +182,24 @@ function OnBoardingSaves() {
                   },
                 ],
               },
-            ],
-      );
-      setFinancialDetails(
-        data.financialDetails?.length
-          ? data.financialDetails
-          : [
-              {
-                contractId: "FIN-001",
-                invoiceDate: "",
-                invoiceNumber: "",
-                billingCycle: "Monthly",
-                comments: "",
-              },
-            ],
-      );
+            ];
+
+      const loadedFin = data.financialDetails?.length
+        ? JSON.parse(JSON.stringify(data.financialDetails))
+        : [
+            {
+              contractId: "FIN-001",
+              invoiceDate: "",
+              invoiceNumber: "",
+              billingCycle: "Monthly",
+              comments: "",
+            },
+          ];
+
+      setContractDeliverables(loadedCd);
+      setInitialContractDeliverables(loadedCd);
+      setFinancialDetails(loadedFin);
+      setInitialFinancialDetails(loadedFin);
     } catch (err) {
       console.log(err);
     }
@@ -368,11 +358,12 @@ function OnBoardingSaves() {
 
   const handleApprove = async () => {
     try {
-      await axios.put(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/${id}`,
+      await sendApiData(
+        "PUT",
+        `/api/BoardingCandidates/${id}`,
         {
           operationsClientApproved: true,
-        },
+        }
       );
 
       setFormData((prev) => ({
@@ -387,11 +378,12 @@ function OnBoardingSaves() {
   };
   const handleReject = async () => {
     try {
-      await axios.put(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/BoardingCandidates/${id}`,
+      await sendApiData(
+        "PUT",
+        `/api/BoardingCandidates/${id}`,
         {
           operationsClientApproved: false,
-        },
+        }
       );
 
       setFormData((prev) => ({
@@ -516,29 +508,68 @@ function OnBoardingSaves() {
     description: "Description",
   };
 
+  const contractFieldLabels = {
+    siteName: "site name",
+    siteAddress: "site address",
+    siteManagerName: "site manager name",
+    siteEmail: "site email",
+    siteMobile: "site mobile",
+    contractState: "contract state",
+    scopeOfWork: "scope of work",
+    comments: "comments",
+  };
+
   const handleSave = async () => {
     try {
-      const changedFields = [];
+      const changedDetails = [];
 
+      // 1. Compare top-level form fields
       if (initialFormData) {
         Object.keys(fieldLabels).forEach((key) => {
           const oldVal = (initialFormData[key] || "").toString().trim();
           const newVal = (formData[key] || "").toString().trim();
           if (oldVal !== newVal) {
-            changedFields.push(fieldLabels[key]);
+            changedDetails.push(`${fieldLabels[key]} changed`);
+          }
+        });
+      }
+
+      // 2. Compare contract deliverables per contract ID (e.g. CNT-001, CNT-002)
+      if (
+        Array.isArray(initialContractDeliverables) &&
+        Array.isArray(contractDeliverables)
+      ) {
+        contractDeliverables.forEach((currCd, cIdx) => {
+          const initCd = initialContractDeliverables[cIdx] || {};
+          const contractId =
+            currCd.clientId || currCd.contractId || `CNT-00${cIdx + 1}`;
+          const cdChanges = [];
+
+          Object.keys(contractFieldLabels).forEach((fieldKey) => {
+            const oldVal = (initCd[fieldKey] || "").toString().trim();
+            const newVal = (currCd[fieldKey] || "").toString().trim();
+            if (oldVal !== newVal) {
+              cdChanges.push(contractFieldLabels[fieldKey]);
+            }
+          });
+
+          if (cdChanges.length > 0) {
+            changedDetails.push(
+              `client contract deliverables client ID ${contractId} ${cdChanges.join(", ")} changed`
+            );
           }
         });
       }
 
       let updatedEntries = [...entries];
-      if (changedFields.length > 0) {
+      if (changedDetails.length > 0) {
         const newEntry = {
           serialNo: updatedEntries.length + 1,
           timestamp: new Date().toLocaleString("en-US", {
             dateStyle: "short",
             timeStyle: "short",
           }),
-          summary: `${changedFields.join(", ")} changed`,
+          summary: changedDetails.join("; "),
           changedBy: "admin",
         };
         updatedEntries.push(newEntry);
@@ -566,6 +597,12 @@ function OnBoardingSaves() {
       setBackendStatus(formData.status);
       setEntries(updatedEntries);
       setInitialFormData({ ...formData });
+      setInitialContractDeliverables(
+        JSON.parse(JSON.stringify(contractDeliverables))
+      );
+      setInitialFinancialDetails(
+        JSON.parse(JSON.stringify(financialDetails))
+      );
 
       alert("Saved Successfully");
       navigate("/");
