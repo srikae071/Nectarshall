@@ -249,38 +249,90 @@ body {
   background-color: #f0f7f4 !important;
 }
 
-/* ABSOLUTE ELIMINATION OF ALL LEFT VERTICAL BORDER LINES ACROSS EVERY SINGLE PAGE WHEN GREEN THEME IS ACTIVE */
-html[data-theme="green"] *,
-body[data-theme="green"] *,
-[data-theme="green"] *,
-[data-theme="green"] *::before,
-[data-theme="green"] *::after {
+/* STRUCTURAL PAGE CONTAINER LEFT BORDER REMOVAL ONLY (PRESERVES INPUT BORDERS) */
+[data-theme="green"] .mainLayout,
+[data-theme="green"] .layoutContainer,
+[data-theme="green"] .dashboard-layout-left,
+[data-theme="green"] .dashboard-layout-right,
+[data-theme="green"] .hrmsleftContainer,
+[data-theme="green"] .hrms-right-content,
+[data-theme="green"] .PatrollingLeftLayout,
+[data-theme="green"] .PayrollLeftLayout,
+[data-theme="green"] .opsidebar,
+[data-theme="green"] .cncsidebar,
+[data-theme="green"] .itsidebar,
+[data-theme="green"] .patrollingsidebar,
+[data-theme="green"] .payrollsidebar,
+[data-theme="green"] .hrmssidebar,
+[data-theme="green"] .operationssidebar,
+[data-theme="green"] .sidebar,
+[data-theme="green"] .page-container,
+[data-theme="green"] .rightContent,
+[data-theme="green"] .TL1Container,
+[data-theme="green"] .navbar,
+[data-theme="green"] .navbarbgc,
+[data-theme="green"] .hero-img,
+[data-theme="green"] .hero-content,
+[data-theme="green"] .HomeServices,
+[data-theme="green"] .HomeCard {
   border-left: none !important;
   border-left-width: 0 !important;
-  border-left-style: none !important;
   border-left-color: transparent !important;
 }
 
-/* RE-ENABLE SPECIFIC BORDERS ONLY FOR INPUT FIELDS / TABLES WHERE REQUIRED */
-[data-theme="green"] th,
-[data-theme="green"] td,
-[data-theme="green"] input,
+/* ALL INPUT FIELDS, TEXTAREAS & SELECT BOXES IN GREEN THEME - COMPLETE VISIBLE 4-SIDE BLACK BORDER */
+[data-theme="green"] input:not([type="checkbox"]):not([type="radio"]),
 [data-theme="green"] select,
-[data-theme="green"] textarea {
-  border-left-style: solid !important;
-  border-left-width: 1px !important;
-  border-left-color: #cbd5e1 !important;
+[data-theme="green"] textarea,
+[data-theme="green"] .form-input,
+[data-theme="green"] .form-select,
+[data-theme="green"] .deliverable-input,
+[data-theme="green"] .deliverable-textarea,
+[data-theme="green"] .form-short-textarea,
+[data-theme="green"] .form-description-textarea,
+[data-theme="green"] .assignInput,
+[data-theme="green"] .tabSearchInput,
+[data-theme="green"] .bigScopeTextarea,
+[data-theme="green"] .regularFormCard input,
+[data-theme="green"] .regularFormCard select,
+[data-theme="green"] .regularFormCard textarea {
+  border: 1px solid #000000 !important;
+  border-left: 1px solid #000000 !important;
+  border-right: 1px solid #000000 !important;
+  border-top: 1px solid #000000 !important;
+  border-bottom: 1px solid #000000 !important;
+  background-color: #f0f7f4 !important;
+  background: #f0f7f4 !important;
+  color: #000000 !important;
+  border-radius: 6px;
 }
 
-/* HOME PAGE CLEANUP - NO UNWANTED VERTICAL BORDER LINES ON HOME PAGE */
-[data-theme="green"] .HomeServices,
-[data-theme="green"] .HomeCard,
-[data-theme="green"] .navbarbgc,
-[data-theme="green"] .hero-img,
-[data-theme="green"] .hero-content {
-  border-left: none !important;
-  border-right: none !important;
-  border-top: none !important;
+[data-theme="green"] input:focus,
+[data-theme="green"] select:focus,
+[data-theme="green"] textarea:focus,
+[data-theme="green"] .form-input:focus,
+[data-theme="green"] .form-select:focus,
+[data-theme="green"] .deliverable-input:focus,
+[data-theme="green"] .deliverable-textarea:focus {
+  border-color: #047857 !important;
+  box-shadow: 0 0 0 2px rgba(4, 120, 87, 0.2) !important;
+}
+
+/* BUSINESS ENGAGEMENT & ONBOARDING SALES LABELS, HEADINGS & REQUESTER TEXT IN GREEN THEME */
+[data-theme="green"] .form-label,
+[data-theme="green"] .deliverable-section-heading,
+[data-theme="green"] .service-title,
+[data-theme="green"] .onbdsaveslabel,
+[data-theme="green"] label,
+[data-theme="green"] .BusinessEngagementTitle,
+[data-theme="green"] .requesterText,
+[data-theme="green"] .beRequester,
+[data-theme="green"] .formHeader,
+[data-theme="green"] .regularFormTitle,
+[data-theme="green"] .card-header,
+[data-theme="green"] .day-header-label {
+  color: #064e3b !important;
+  font-weight: 700;
 }
 
 /* ALL LEFT SIDEBARS & LEFT LAYOUTS - VERY LIGHT GREEN (#e2f2eb) */

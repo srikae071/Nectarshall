@@ -39,8 +39,41 @@ function RegularForm({
             {attachmentName && <span>{attachmentName}</span>}
             {onApprove && (
               <>
-                {formData?.operationsClientApproved === null ||
-                formData?.operationsClientApproved === undefined ? (
+                {formData?.operationsClientApproved === true ? (
+                  <span
+                    className="approvedBadge"
+                    style={{
+                      backgroundColor: "#dcfce7",
+                      color: "#15803d",
+                      padding: "6px 14px",
+                      borderRadius: "6px",
+                      fontWeight: "700",
+                      fontSize: "13px",
+                      border: "1px solid #bbf7d0",
+                      display: "inline-flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    ✓ Approved
+                  </span>
+                ) : formData?.operationsClientApproved === false ? (
+                  <span
+                    className="rejectedBadge"
+                    style={{
+                      backgroundColor: "#fee2e2",
+                      color: "#dc2626",
+                      padding: "6px 14px",
+                      borderRadius: "6px",
+                      fontWeight: "700",
+                      fontSize: "13px",
+                      border: "1px solid #fecaca",
+                      display: "inline-flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    ✕ Rejected
+                  </span>
+                ) : (
                   <>
                     <button
                       type="button"
@@ -58,10 +91,6 @@ function RegularForm({
                       Reject
                     </button>
                   </>
-                ) : formData.operationsClientApproved ? (
-                  <span className="approvedText">Approved</span>
-                ) : (
-                  <span className="rejectedText">Rejected</span>
                 )}
               </>
             )}

@@ -11,7 +11,10 @@ function OnBoardingSaves() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const source = location.state?.source;
+  const searchParams = new URLSearchParams(location.search);
+  const source = location.state?.source || searchParams.get("source");
+  const isOperations =
+    source === "operations" || searchParams.get("source") === "operations";
   const { id } = useParams();
   const [expanded, setExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState("Client Contract Deliverables");
@@ -90,7 +93,8 @@ function OnBoardingSaves() {
     },
   ]);
   const [initialFormData, setInitialFormData] = useState(null);
-  const [initialContractDeliverables, setInitialContractDeliverables] = useState(null);
+  const [initialContractDeliverables, setInitialContractDeliverables] =
+    useState(null);
   const [initialFinancialDetails, setInitialFinancialDetails] = useState(null);
   const [entries, setEntries] = useState([]);
   const [showEntriesDropdown, setShowEntriesDropdown] = useState(false);
@@ -145,6 +149,7 @@ function OnBoardingSaves() {
         description: data.description || "",
         category: data.category || "",
         status: data.status || "Open",
+        operationsClientApproved: data.operationsClientApproved ?? null,
         attachment: data.attachment || {
           fileName: "",
           filePath: "",
@@ -353,13 +358,9 @@ function OnBoardingSaves() {
 
   const handleApprove = async () => {
     try {
-      await sendApiData(
-        "PUT",
-        `/api/BoardingCandidates/${id}`,
-        {
-          operationsClientApproved: true,
-        }
-      );
+      await sendApiData("PUT", `/api/BoardingCandidates/${id}`, {
+        operationsClientApproved: true,
+      });
 
       setFormData((prev) => ({
         ...prev,
@@ -373,13 +374,9 @@ function OnBoardingSaves() {
   };
   const handleReject = async () => {
     try {
-      await sendApiData(
-        "PUT",
-        `/api/BoardingCandidates/${id}`,
-        {
-          operationsClientApproved: false,
-        }
-      );
+      await sendApiData("PUT", `/api/BoardingCandidates/${id}`, {
+        operationsClientApproved: false,
+      });
 
       setFormData((prev) => ({
         ...prev,
@@ -410,7 +407,8 @@ function OnBoardingSaves() {
     if (!Array.isArray(workingDays)) return null;
     return workingDays.find((item) => {
       if (typeof item === "string") return item === dayValue;
-      if (typeof item === "object" && item !== null) return item.day === dayValue;
+      if (typeof item === "object" && item !== null)
+        return item.day === dayValue;
       return false;
     });
   };
@@ -433,15 +431,15 @@ function OnBoardingSaves() {
     if (!Array.isArray(days)) days = [];
 
     if (checked) {
-      const exists = days.some(
-        (d) => (typeof d === "string" ? d === dayValue : d?.day === dayValue)
+      const exists = days.some((d) =>
+        typeof d === "string" ? d === dayValue : d?.day === dayValue,
       );
       if (!exists) {
         days.push({ day: dayValue, tasks: [] });
       }
     } else {
-      days = days.filter(
-        (d) => (typeof d === "string" ? d !== dayValue : d?.day !== dayValue)
+      days = days.filter((d) =>
+        typeof d === "string" ? d !== dayValue : d?.day !== dayValue,
       );
     }
 
@@ -449,13 +447,19 @@ function OnBoardingSaves() {
     setContractDeliverables(updated);
   };
 
-  const handleTaskChange = (index, serviceIndex, dayValue, taskName, checked) => {
+  const handleTaskChange = (
+    index,
+    serviceIndex,
+    dayValue,
+    taskName,
+    checked,
+  ) => {
     const updated = JSON.parse(JSON.stringify(contractDeliverables));
     let days = updated[index].services[serviceIndex].workingDays || [];
     if (!Array.isArray(days)) days = [];
 
-    let dayObjIndex = days.findIndex(
-      (d) => (typeof d === "string" ? d === dayValue : d?.day === dayValue)
+    let dayObjIndex = days.findIndex((d) =>
+      typeof d === "string" ? d === dayValue : d?.day === dayValue,
     );
 
     if (dayObjIndex === -1) {
@@ -613,7 +617,7 @@ function OnBoardingSaves() {
 
           if (cdChanges.length > 0) {
             changedDetails.push(
-              `client contract deliverables client ID ${contractId} ${cdChanges.join(", ")} changed`
+              `client contract deliverables client ID ${contractId} ${cdChanges.join(", ")} changed`,
             );
           }
         });
@@ -643,7 +647,7 @@ function OnBoardingSaves() {
 
           if (finChanges.length > 0) {
             changedDetails.push(
-              `financial contract deliverables contract ID ${contractId} ${finChanges.join(", ")} changed`
+              `financial contract deliverables contract ID ${contractId} ${finChanges.join(", ")} changed`,
             );
           }
         });
@@ -669,28 +673,22 @@ function OnBoardingSaves() {
         (cd) => ({
           ...cd,
           entries: entriesString,
-        })
+        }),
       );
 
-      await sendApiData(
-        "PUT",
-        `/api/BoardingCandidates/${id}`,
-        {
-          ...formData,
-          contractDeliverables: updatedContractDeliverables,
-          financialDetails,
-          entries: entriesString,
-        }
-      );
+      await sendApiData("PUT", `/api/BoardingCandidates/${id}`, {
+        ...formData,
+        contractDeliverables: updatedContractDeliverables,
+        financialDetails,
+        entries: entriesString,
+      });
       setBackendStatus(formData.status);
       setEntries(updatedEntries);
       setInitialFormData({ ...formData });
       setInitialContractDeliverables(
-        JSON.parse(JSON.stringify(contractDeliverables))
+        JSON.parse(JSON.stringify(contractDeliverables)),
       );
-      setInitialFinancialDetails(
-        JSON.parse(JSON.stringify(financialDetails))
-      );
+      setInitialFinancialDetails(JSON.parse(JSON.stringify(financialDetails)));
 
       alert("Saved Successfully");
       navigate("/");
@@ -702,7 +700,7 @@ function OnBoardingSaves() {
 
   // const Layout =
   //   backendStatus === "On Boarded" ? DashboardLayout : CncLeftLayout;
-  const Layout = source === "operations" ? DashboardLayout : CncLeftLayout;
+  const Layout = isOperations ? DashboardLayout : CncLeftLayout;
   return (
     <Layout>
       <RegularForm
@@ -711,26 +709,18 @@ function OnBoardingSaves() {
         onCancel={() => {}}
         onAttachment={handleAttachment}
         attachmentName={formData.attachment?.fileName}
-        actions={
-          <button
-            type="button"
-            className="entriesToggleBtn"
-            onClick={() => setShowEntriesDropdown(!showEntriesDropdown)}
-          >
-            📋 Temporary Entries ({entries.length}) {showEntriesDropdown ? "▲" : "▼"}
-          </button>
-        }
+        // actions={
+        //   <button
+        //     type="button"
+        //     className="entriesToggleBtn"
+        //     onClick={() => setShowEntriesDropdown(!showEntriesDropdown)}
+        //   >
+        //     📋 Temporary Entries ({entries.length}) {showEntriesDropdown ? "▲" : "▼"}
+        //   </button>
+        // }
         formData={formData}
-        onApprove={
-          backendStatus === "On Boarded" && source === "operations"
-            ? handleApprove
-            : undefined
-        }
-        onReject={
-          backendStatus === "On Boarded" && source === "operations"
-            ? handleReject
-            : undefined
-        }
+        onApprove={isOperations ? handleApprove : undefined}
+        onReject={isOperations ? handleReject : undefined}
       >
         <div className="form-row">
           <label className="form-label">Client ID</label>
@@ -923,7 +913,7 @@ function OnBoardingSaves() {
               className="entriesToggleBtn"
               onClick={() => setShowEntriesDropdown(!showEntriesDropdown)}
             >
-              📋 Temporary Entries ({entries.length}) {showEntriesDropdown ? "▲" : "▼"}
+              📋 Entries ({entries.length}) {showEntriesDropdown ? "▲" : "▼"}
             </button>
           </div>
 
@@ -935,10 +925,13 @@ function OnBoardingSaves() {
                 <div className="entriesList">
                   {entries.map((entry) => (
                     <div key={entry.serialNo} className="entryItem">
-                      <span className="entryBadge">Serial #{entry.serialNo}</span>
+                      <span className="entryBadge">
+                        Serial #{entry.serialNo}
+                      </span>
                       <span className="entrySummary">{entry.summary}</span>
                       <span className="entryMeta">
-                        changed by {entry.changedBy || "admin"} on {entry.timestamp}
+                        changed by {entry.changedBy || "admin"} on{" "}
+                        {entry.timestamp}
                       </span>
                     </div>
                   ))}
@@ -974,7 +967,10 @@ function OnBoardingSaves() {
                           : "deliverable-tab"
                       }
                       onClick={() =>
-                        handleSubTabChange(index, "Client Contract Deliverables")
+                        handleSubTabChange(
+                          index,
+                          "Client Contract Deliverables",
+                        )
                       }
                     >
                       Client Contract Variables
@@ -1168,8 +1164,12 @@ function OnBoardingSaves() {
                               >
                                 <option value="">Select</option>
 
-                                <option value="Site Manager">Site Manager</option>
-                                <option value="In Charge">Site In Charge</option>
+                                <option value="Site Manager">
+                                  Site Manager
+                                </option>
+                                <option value="In Charge">
+                                  Site In Charge
+                                </option>
                                 <option value="GL1">GL1</option>
                                 <option value="GL2">GL2</option>
                                 <option value="GL3">GL3</option>
@@ -1244,7 +1244,10 @@ function OnBoardingSaves() {
                                 name="contractEndDate"
                                 value={
                                   service.contractEndDate
-                                    ? String(service.contractEndDate).slice(0, 10)
+                                    ? String(service.contractEndDate).slice(
+                                        0,
+                                        10,
+                                      )
                                     : ""
                                 }
                                 onChange={(e) =>
@@ -1255,7 +1258,9 @@ function OnBoardingSaves() {
                           </div>
 
                           <div className="deliverable-field deliverable-full">
-                            <label className="onbdsaveslabel">Working Days & Tasks</label>
+                            <label className="onbdsaveslabel">
+                              Working Days & Tasks
+                            </label>
 
                             <div className="vertical-working-days-grid">
                               {[
@@ -1269,15 +1274,18 @@ function OnBoardingSaves() {
                               ].map((day) => {
                                 const isDayChecked = isWorkingDaySelected(
                                   service.workingDays,
-                                  day.value
+                                  day.value,
                                 );
                                 const selectedTasks = getWorkingDayTasks(
                                   service.workingDays,
-                                  day.value
+                                  day.value,
                                 );
 
                                 return (
-                                  <div className="vertical-day-col" key={day.value}>
+                                  <div
+                                    className="vertical-day-col"
+                                    key={day.value}
+                                  >
                                     <div className="vertical-day-header">
                                       <label className="day-header-label">
                                         <input
@@ -1288,36 +1296,47 @@ function OnBoardingSaves() {
                                               index,
                                               serviceIndex,
                                               day.value,
-                                              e.target.checked
+                                              e.target.checked,
                                             )
                                           }
                                         />
                                         <strong>{day.label}</strong>
-                                        <span className="day-full-name">({day.value})</span>
+                                        <span className="day-full-name">
+                                          ({day.value})
+                                        </span>
                                       </label>
                                     </div>
 
                                     <div className="vertical-task-list">
-                                      {["Task 1", "Task 2", "Task 3", "Task 4", "Task 5"].map(
-                                        (taskName) => (
-                                          <label className="task-checkbox-label" key={taskName}>
-                                            <input
-                                              type="checkbox"
-                                              checked={selectedTasks.includes(taskName)}
-                                              onChange={(e) =>
-                                                handleTaskChange(
-                                                  index,
-                                                  serviceIndex,
-                                                  day.value,
-                                                  taskName,
-                                                  e.target.checked
-                                                )
-                                              }
-                                            />
-                                            <span>{taskName}</span>
-                                          </label>
-                                        )
-                                      )}
+                                      {[
+                                        "Task 1",
+                                        "Task 2",
+                                        "Task 3",
+                                        "Task 4",
+                                        "Task 5",
+                                      ].map((taskName) => (
+                                        <label
+                                          className="task-checkbox-label"
+                                          key={taskName}
+                                        >
+                                          <input
+                                            type="checkbox"
+                                            checked={selectedTasks.includes(
+                                              taskName,
+                                            )}
+                                            onChange={(e) =>
+                                              handleTaskChange(
+                                                index,
+                                                serviceIndex,
+                                                day.value,
+                                                taskName,
+                                                e.target.checked,
+                                              )
+                                            }
+                                          />
+                                          <span>{taskName}</span>
+                                        </label>
+                                      ))}
                                     </div>
                                   </div>
                                 );

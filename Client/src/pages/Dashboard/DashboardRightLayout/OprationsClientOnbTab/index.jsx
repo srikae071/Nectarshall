@@ -141,24 +141,20 @@ function OprationsClientOnbTab() {
         >
           {(visibleColumns) =>
             filteredData.map((row) => (
-              <tr key={row._id || row.id}>
+              <tr
+                key={row._id || row.id}
+                style={{ cursor: "pointer" }}
+                onClick={() =>
+                  navigate(`/onboarding-saves/${row._id}?source=operations`, {
+                    state: { source: "operations" },
+                  })
+                }
+              >
                 {visibleColumns.map((key) => {
                   if (key === "actions") {
                     return (
-                      <td key={key}>
+                      <td key={key} onClick={(e) => e.stopPropagation()}>
                         <div style={{ display: "flex", gap: "8px" }}>
-                          <button
-                            className="btn btn-primary btn-sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate(
-                                `/onboarding-saves/${row._id}?source=operations`
-                              );
-                            }}
-                          >
-                            Action
-                          </button>
-
                           {row.operationsClientApproved ? (
                             <button
                               className="btn btn-success btn-sm"

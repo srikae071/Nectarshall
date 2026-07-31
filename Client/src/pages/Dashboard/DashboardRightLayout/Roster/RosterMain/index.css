@@ -659,10 +659,10 @@
   text-overflow: ellipsis;
 }
 
-/* COLOR THEMES */
+/* COLOR THEMES - SCOPED TO SHIFTCARDS & CELL CARDS ONLY (WILL NEVER APPLY TO BODY) */
 
 .shiftCard.theme-green,
-.theme-green {
+.rosterCard.theme-green {
   background-color: #dcfce7 !important;
   background: #dcfce7 !important;
   border-left: 4px solid #16a34a !important;
@@ -670,7 +670,7 @@
 }
 
 .shiftCard.theme-blue,
-.theme-blue {
+.rosterCard.theme-blue {
   background-color: #dbeafe !important;
   background: #dbeafe !important;
   border-left: 4px solid #2563eb !important;
@@ -678,7 +678,7 @@
 }
 
 .shiftCard.theme-pink,
-.theme-pink {
+.rosterCard.theme-pink {
   background-color: #fce7f3 !important;
   background: #fce7f3 !important;
   border-left: 4px solid #db2777 !important;
@@ -686,7 +686,7 @@
 }
 
 .shiftCard.theme-orange,
-.theme-orange {
+.rosterCard.theme-orange {
   background-color: #ffedd5 !important;
   background: #ffedd5 !important;
   border-left: 4px solid #ea580c !important;
@@ -694,7 +694,7 @@
 }
 
 .shiftCard.theme-purple,
-.theme-purple {
+.rosterCard.theme-purple {
   background-color: #f3e8ff !important;
   background: #f3e8ff !important;
   border-left: 4px solid #9333ea !important;
@@ -702,7 +702,7 @@
 }
 
 .shiftCard.theme-yellow,
-.theme-yellow {
+.rosterCard.theme-yellow {
   background-color: #fef08a !important;
   background: #fef08a !important;
   border-left: 4px solid #eab308 !important;
@@ -710,7 +710,7 @@
 }
 
 .shiftCard.theme-red,
-.theme-red {
+.rosterCard.theme-red {
   background-color: #fee2e2 !important;
   background: #fee2e2 !important;
   border-left: 4px solid #dc2626 !important;
@@ -718,39 +718,48 @@
 }
 
 .shiftCard.theme-gray,
-.theme-gray {
+.rosterCard.theme-gray {
   background-color: #e2e8f0 !important;
   background: #e2e8f0 !important;
   border-left: 4px solid #94a3b8 !important;
   color: #334155 !important;
 }
 
-.theme-adhoc {
+/* BLACKISH ADHOC CARDS (BLACK BACKGROUND WITH COLORED BORDER LINES) */
+.shiftCard.theme-adhoc,
+.shiftCard.theme-adhoc-silver,
+.theme-adhoc,
+.theme-adhoc-silver,
+[data-theme="green"] .shiftCard.theme-adhoc,
+[data-theme="green"] .shiftCard.theme-adhoc-silver {
+  background-color: #1e293b !important;
   background: #1e293b !important;
-  border-left: 4px solid #cbd5e1 !important;
+  border-left: 4px solid #ffffff !important;
   color: #ffffff !important;
 }
 
-/* Blackish Adhoc Card Themes */
-.theme-adhoc-silver {
-  background: #1e293b !important;
-  border-left: 4px solid #cbd5e1 !important;
-  color: #f1f5f9 !important;
-}
-
-.theme-adhoc-yellow {
-  background: #26230f !important;
+.shiftCard.theme-adhoc-yellow,
+.theme-adhoc-yellow,
+[data-theme="green"] .shiftCard.theme-adhoc-yellow {
+  background-color: #1a1a1a !important;
+  background: #1a1a1a !important;
   border-left: 4px solid #facc15 !important;
   color: #fef08a !important;
 }
 
-.theme-adhoc-green {
+.shiftCard.theme-adhoc-green,
+.theme-adhoc-green,
+[data-theme="green"] .shiftCard.theme-adhoc-green {
+  background-color: #0f291e !important;
   background: #0f291e !important;
   border-left: 4px solid #4ade80 !important;
   color: #bbf7d0 !important;
 }
 
-.theme-adhoc-red {
+.shiftCard.theme-adhoc-red,
+.theme-adhoc-red,
+[data-theme="green"] .shiftCard.theme-adhoc-red {
+  background-color: #2d1517 !important;
   background: #2d1517 !important;
   border-left: 4px solid #f87171 !important;
   color: #fecaca !important;

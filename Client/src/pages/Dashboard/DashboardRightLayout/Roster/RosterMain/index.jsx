@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { fetchApiData, sendApiData, extractArrayData } from "../../../../../utils/apiClient";
+import {
+  fetchApiData,
+  sendApiData,
+  extractArrayData,
+} from "../../../../../utils/apiClient";
 import "./index.css";
 
 function RosterMain() {
@@ -452,7 +456,7 @@ function RosterMain() {
                       d?.tasks && d.tasks.length > 0
                         ? ` (${d.tasks.join(", ")})`
                         : ""
-                    }`
+                    }`,
               )
               .filter(Boolean)
               .join(", ")
@@ -527,7 +531,7 @@ function RosterMain() {
           adhocServices: contract.adhocServices || [],
           scopeOfWork: scopeOfWorkText,
         },
-        "put"
+        "put",
       );
 
       setSaveSuccessMsg("Employee assigned successfully!");
@@ -601,7 +605,7 @@ function RosterMain() {
           services: contract.services || [],
           adhocServices: updatedAdhocServices,
         },
-        "put"
+        "put",
       );
 
       setSaveAdhocSuccessMsg("Adhoc Employee assigned successfully!");
@@ -1100,11 +1104,14 @@ function RosterMain() {
                           const matchingServices = row.services.filter(
                             (svc) => {
                               const workingDays = svc.workingDays || [];
-                              if (Array.isArray(workingDays) && workingDays.length > 0) {
+                              if (
+                                Array.isArray(workingDays) &&
+                                workingDays.length > 0
+                              ) {
                                 const isMatch = workingDays.some((d) =>
                                   typeof d === "string"
                                     ? d === currentDayName
-                                    : d?.day === currentDayName
+                                    : d?.day === currentDayName,
                                 );
                                 if (!isMatch) return false;
                               }
@@ -1129,7 +1136,8 @@ function RosterMain() {
                           const expandedCards = [];
                           matchingServices.forEach((svc, sIdx) => {
                             const dayObj = (svc.workingDays || []).find((d) => {
-                              if (typeof d === "string") return d === cellDayName;
+                              if (typeof d === "string")
+                                return d === cellDayName;
                               if (typeof d === "object" && d !== null)
                                 return d.day === cellDayName;
                               return false;
@@ -1247,9 +1255,7 @@ function RosterMain() {
 
                                       <div className="shiftEmployee">
                                         👤{" "}
-                                        {card.slotEmployee ||
-                                          row.requester ||
-                                          "Click to Assign"}
+                                        {card.slotEmployee || "Click to Assign"}
                                       </div>
                                     </div>
                                   ))}
@@ -1372,7 +1378,13 @@ function RosterMain() {
                 </p>
                 <p>
                   <strong>Tasks for {assignModal.dayName}:</strong>{" "}
-                  <span style={{ color: "#047857", fontWeight: "700", fontSize: "15px" }}>
+                  <span
+                    style={{
+                      color: "#047857",
+                      fontWeight: "700",
+                      fontSize: "15px",
+                    }}
+                  >
                     {assignModal.dayTasksStr}
                   </span>
                 </p>
