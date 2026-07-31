@@ -638,6 +638,19 @@
   font-weight: 500;
 }
 
+.shiftTasks {
+  font-size: 9.5px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 2px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: rgba(255, 255, 255, 0.45);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
 .shiftEmployee {
   font-size: 10px;
   font-weight: 600;

@@ -231,3 +231,16 @@
   color: #555;
   font-size: 13px;
 }
+
+/* GREEN THEME BUTTON & ACCENT OVERRIDES */
+html[data-theme="green"] .primary-button,
+[data-theme="green"] .primary-button {
+  background: linear-gradient(135deg, #059669, #047857) !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="green"] .primary-button:hover,
+[data-theme="green"] .primary-button:hover {
+  background: linear-gradient(135deg, #047857, #064e3b) !important;
+  box-shadow: 0 4px 10px rgba(4, 120, 87, 0.3) !important;
+}

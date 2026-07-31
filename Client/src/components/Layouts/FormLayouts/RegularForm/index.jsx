@@ -7,7 +7,7 @@ function RegularForm({
   onCancel,
   onAttachment,
   attachmentName,
-
+  actions,
   formData,
   onApprove,
   onReject,
@@ -19,6 +19,7 @@ function RegularForm({
         <div className="form-layout-header">
           <h2>{title}</h2>
           <div className="form-layout-header-actions">
+            {actions}
             <input
               ref={fileInputRef}
               type="file"

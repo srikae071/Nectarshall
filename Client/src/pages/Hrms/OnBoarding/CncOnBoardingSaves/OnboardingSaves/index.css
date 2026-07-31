@@ -284,3 +284,116 @@
   cursor: pointer;
 }
 
+/* SECTION HEADINGS & GREEN THEME OVERRIDES */
+.deliverable-section-heading {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 15px 0 10px 0;
+  padding-bottom: 6px;
+  border-bottom: 2px solid #cbd5e1;
+}
+
+html[data-theme="green"] .add-contract-btn,
+[data-theme="green"] .add-contract-btn {
+  background: #047857 !important;
+  color: #ffffff !important;
+}
+
+html[data-theme="green"] .add-contract-btn:hover,
+[data-theme="green"] .add-contract-btn:hover {
+  background: #064e3b !important;
+}
+
+html[data-theme="green"] .deliverable-tab.active,
+[data-theme="green"] .deliverable-tab.active {
+  background: #047857 !important;
+  color: #ffffff !important;
+  border-color: #047857 !important;
+}
+
+html[data-theme="green"] .deliverable-section-heading,
+[data-theme="green"] .deliverable-section-heading {
+  color: #064e3b !important;
+  border-bottom-color: #047857 !important;
+}
+
+/* TEMPORARY ENTRIES / AUDIT LOG DROPDOWN STYLING */
+.entriesSection {
+  margin: 15px 0 20px 0 !important;
+  width: 100%;
+}
+
+.entriesToggleBtn {
+  background: #047857;
+  color: #ffffff;
+  border: none;
+  padding: 9px 16px;
+  border-radius: 6px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.entriesToggleBtn:hover {
+  background: #064e3b;
+}
+
+.entriesCard {
+  margin-top: 10px;
+  background: #ffffff;
+  border: 1px solid #d8eee4;
+  border-radius: 8px;
+  padding: 14px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.noEntriesText {
+  color: #64748b;
+  font-size: 13.5px;
+  margin: 0;
+}
+
+.entriesList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.entryItem {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 8px 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+}
+
+.entryBadge {
+  background: #047857;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.entrySummary {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #0f172a;
+  flex: 1;
+}
+
+.entryMeta {
+  font-size: 12px;
+  color: #64748b;
+  font-style: italic;
+}
+

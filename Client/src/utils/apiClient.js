@@ -27,14 +27,31 @@ export const fetchApiData = async (endpoint, options = {}) => {
   return await axios.get(targetUrl, options);
 };
 
-export const sendApiData = async (endpoint, data = {}, method = "post", options = {}) => {
+export const sendApiData = async (arg1, arg2, arg3, options = {}) => {
+  let endpoint = arg1;
+  let data = arg2 || {};
+  let method = arg3 || "post";
+
+  // Dual-signature support: sendApiData("PUT", "/api/...", payload) OR sendApiData("/api/...", payload, "put")
+  if (
+    typeof arg1 === "string" &&
+    ["get", "post", "put", "delete", "patch"].includes(arg1.toLowerCase())
+  ) {
+    method = arg1;
+    endpoint = arg2;
+    data = arg3 || {};
+  }
+
   const targetUrl = getApiUrl(endpoint);
-  const normalizedMethod = method.toLowerCase();
-  
+  const normalizedMethod =
+    typeof method === "string" ? method.toLowerCase() : "post";
+
   if (normalizedMethod === "put") {
     return await axios.put(targetUrl, data, options);
   } else if (normalizedMethod === "delete") {
     return await axios.delete(targetUrl, options);
+  } else if (normalizedMethod === "patch") {
+    return await axios.patch(targetUrl, data, options);
   } else {
     return await axios.post(targetUrl, data, options);
   }

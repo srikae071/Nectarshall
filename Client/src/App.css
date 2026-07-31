@@ -260,7 +260,7 @@ body {
   border-top: none !important;
 }
 
-/* ALL LEFT SIDEBARS & LEFT LAYOUTS - DARK GREEN (#064e3b) */
+/* ALL LEFT SIDEBARS & LEFT LAYOUTS - VERY LIGHT GREEN (#e2f2eb) */
 [data-theme="green"] .hrmssidebar,
 [data-theme="green"] .operationssidebar,
 [data-theme="green"] .menuBlock,
@@ -281,9 +281,30 @@ body {
 [data-theme="green"] .cncleftContainer,
 [data-theme="green"] .itleftContainer,
 [data-theme="green"] .dashboard-layout-left {
-  background-color: #064e3b !important;
-  background: #064e3b !important;
-  border-right: 1px solid #047857 !important;
+  background-color: #e2f2eb !important;
+  background: #e2f2eb !important;
+  color: #064e3b !important;
+  border-right: none !important;
+  border-left: none !important;
+  box-shadow: none !important;
+}
+
+[data-theme="green"] .hrmssidebar *,
+[data-theme="green"] .operationssidebar *,
+[data-theme="green"] .opsidebar *,
+[data-theme="green"] .cncsidebar *,
+[data-theme="green"] .itsidebar *,
+[data-theme="green"] .sidebar *,
+[data-theme="green"] .dashboard-sidebar *,
+[data-theme="green"] .hrmsleftContainer *,
+[data-theme="green"] .cncleftContainer *,
+[data-theme="green"] .itleftContainer *,
+[data-theme="green"] .dashboard-layout-left *,
+[data-theme="green"] .hrmsmenuHeader,
+[data-theme="green"] .menuHeader {
+  color: #064e3b !important;
+  border-left: none !important;
+  border-right: none !important;
 }
 
 [data-theme="green"] .hrmsmenuHeader:hover,
@@ -294,8 +315,11 @@ body {
 [data-theme="green"] .menuBlock:hover,
 [data-theme="green"] .menuHeader:hover,
 [data-theme="green"] .submenu {
-  background-color: #047857 !important;
-  background: #047857 !important;
+  background-color: #c6e6d8 !important;
+  background: #c6e6d8 !important;
+  color: #064e3b !important;
+  border-left: none !important;
+  border-right: none !important;
 }
 
 /* ALL TOP NAVBARS, HEADERS & RIGHT PAGE CONTAINERS - LIGHT GREEN TINT (#f0f7f4) */
@@ -312,6 +336,8 @@ body {
   background-color: #f0f7f4 !important;
   background: #f0f7f4 !important;
   border-bottom: 1px solid #d8eee4 !important;
+  border-left: none !important;
+  border-right: none !important;
 }
 
 /* RIGHT SIDE PAGE CONTAINERS - EXACT COLOR OF NAVBAR (#f0f7f4) */
@@ -348,6 +374,8 @@ body {
   background-color: #f0f7f4 !important;
   background: #f0f7f4 !important;
   border-bottom: none !important;
+  border-left: none !important;
+  border-right: none !important;
 }
 
 /* RIGHT SIDE PAGE HEADINGS - BLACK COLOR */

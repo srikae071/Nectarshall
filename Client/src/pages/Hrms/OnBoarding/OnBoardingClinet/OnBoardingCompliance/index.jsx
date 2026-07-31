@@ -8,6 +8,14 @@ function OnBoardingCompliance() {
   const [expanded, setExpanded] = useState(false);
 
   const [activeTab, setActiveTab] = useState("Client Contract Deliverables");
+  const [activeContractSubTabs, setActiveContractSubTabs] = useState({});
+
+  const handleSubTabChange = (index, tabName) => {
+    setActiveContractSubTabs((prev) => ({
+      ...prev,
+      [index]: tabName,
+    }));
+  };
   const [formData, setFormData] = useState({
     SupplierId: "",
 
@@ -82,9 +90,8 @@ function OnBoardingCompliance() {
     setFinancialDetails(updated);
   };
   const addDeliverable = () => {
-    setContractDeliverables([
-      ...contractDeliverables,
-
+    setContractDeliverables((prev) => [
+      ...prev,
       {
         contractId: "",
         siteName: "",
@@ -96,18 +103,9 @@ function OnBoardingCompliance() {
         comments: "",
       },
     ]);
-  };
-  const removeDeliverable = (index) => {
-    if (index === 0) return;
 
-    const updated = contractDeliverables.filter((_, i) => i !== index);
-
-    setContractDeliverables(updated);
-  };
-  const addFinancial = () => {
-    setFinancialDetails([
-      ...financialDetails,
-
+    setFinancialDetails((prev) => [
+      ...prev,
       {
         invoiceDate: "",
         invoiceNumber: "",
@@ -117,26 +115,18 @@ function OnBoardingCompliance() {
     ]);
   };
 
-  const handleDeliverableAttachment = (index, e) => {
-    const updated = [...contractDeliverables];
-
-    updated[index].attachment = e.target.files[0];
-
-    setContractDeliverables(updated);
-  };
-  const handleFinancialAttachment = (index, e) => {
-    const updated = [...financialDetails];
-
-    updated[index].attachment = e.target.files[0];
-
-    setFinancialDetails(updated);
-  };
-  const removeFinancial = (index) => {
+  const removeDeliverable = (index) => {
     if (index === 0) return;
+    setContractDeliverables((prev) => prev.filter((_, i) => i !== index));
+    setFinancialDetails((prev) => prev.filter((_, i) => i !== index));
+  };
 
-    const updated = financialDetails.filter((_, i) => i !== index);
+  const addFinancial = () => {
+    addDeliverable();
+  };
 
-    setFinancialDetails(updated);
+  const removeFinancial = (index) => {
+    removeDeliverable(index);
   };
 
   const handleSave = async () => {
@@ -349,6 +339,9 @@ function OnBoardingCompliance() {
                 <>
                   {contractDeliverables.map((item, index) => (
                     <div className="deliverable-form" key={index}>
+                      <h4 className="deliverable-section-heading">
+                        Client Contract Variables
+                      </h4>
                       {index > 0 && (
                         <div className="deliverable-remove">
                           <button
@@ -546,6 +539,9 @@ function OnBoardingCompliance() {
                 <>
                   {financialDetails.map((item, index) => (
                     <div className="deliverable-form" key={index}>
+                      <h4 className="deliverable-section-heading">
+                        Financial Contract Variables
+                      </h4>
                       {index > 0 && (
                         <div className="deliverable-remove">
                           <button

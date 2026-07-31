@@ -59,9 +59,13 @@ function OprationsClientOnbTab() {
 
   const handleApprove = async (id) => {
     try {
-      await sendApiData("PUT", `/api/BoardingCandidates/${id}`, {
-        operationsClientApproved: true,
-      });
+      await sendApiData(
+        `/api/BoardingCandidates/${id}`,
+        {
+          operationsClientApproved: true,
+        },
+        "put"
+      );
 
       setData((prev) =>
         prev.map((item) =>
@@ -78,9 +82,13 @@ function OprationsClientOnbTab() {
 
   const handleReject = async (id) => {
     try {
-      await sendApiData("PUT", `/api/BoardingCandidates/${id}`, {
-        operationsClientApproved: false,
-      });
+      await sendApiData(
+        `/api/BoardingCandidates/${id}`,
+        {
+          operationsClientApproved: false,
+        },
+        "put"
+      );
 
       setData((prev) =>
         prev.map((item) =>

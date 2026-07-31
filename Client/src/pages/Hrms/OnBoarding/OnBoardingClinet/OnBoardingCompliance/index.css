@@ -509,3 +509,31 @@
     flex-wrap: wrap;
   }
 }
+
+/* GREEN THEME OVERRIDES FOR ONBOARDING COMPLIANCE */
+.deliverable-section-heading {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 15px 0 10px 0;
+  padding-bottom: 6px;
+  border-bottom: 2px solid #cbd5e1;
+}
+
+html[data-theme="green"] .deliverable-tab.active,
+[data-theme="green"] .deliverable-tab.active {
+  border-bottom-color: #047857 !important;
+  color: #064e3b !important;
+}
+
+html[data-theme="green"] .deliverable-section-heading,
+[data-theme="green"] .deliverable-section-heading {
+  color: #064e3b !important;
+  border-bottom-color: #047857 !important;
+}
+
+html[data-theme="green"] .deliverable-add button,
+[data-theme="green"] .deliverable-add button {
+  background: #047857 !important;
+  color: #ffffff !important;
+}

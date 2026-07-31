@@ -429,6 +429,8 @@ function RosterMain() {
       contractEndDate: card.contractEndDate
         ? String(card.contractEndDate).slice(0, 10)
         : "N/A",
+      dayName: card.cellDayName || "N/A",
+      dayTasksStr: card.cellDayTasksStr || "No specific tasks",
       rawWorkingDays: card.workingDays || [],
       workingDays: card.workingDays
         ? Array.isArray(card.workingDays)
@@ -507,12 +509,12 @@ function RosterMain() {
       }
 
       await sendApiData(
-        "PUT",
         `/api/BoardingCandidates/${assignModal.candidateId}/contracts/${assignModal.contractId}/services`,
         {
           services: updatedServices,
           adhocServices: contract.adhocServices || [],
-        }
+        },
+        "put"
       );
 
       setSaveSuccessMsg("Employee assigned successfully!");
@@ -581,12 +583,12 @@ function RosterMain() {
       }
 
       await sendApiData(
-        "PUT",
         `/api/BoardingCandidates/${adhocAssignModal.candidateId}/contracts/${adhocAssignModal.contractId}/services`,
         {
           services: contract.services || [],
           adhocServices: updatedAdhocServices,
-        }
+        },
+        "put"
       );
 
       setSaveAdhocSuccessMsg("Adhoc Employee assigned successfully!");
@@ -1107,8 +1109,31 @@ function RosterMain() {
                             },
                           );
 
+                          const cellDayName = date.toLocaleDateString("en-US", {
+                            weekday: "long",
+                          });
+
                           const expandedCards = [];
                           matchingServices.forEach((svc, sIdx) => {
+                            const dayObj = (svc.workingDays || []).find((d) => {
+                              if (typeof d === "string") return d === cellDayName;
+                              if (typeof d === "object" && d !== null)
+                                return d.day === cellDayName;
+                              return false;
+                            });
+
+                            const cellDayTasks =
+                              typeof dayObj === "object" &&
+                              dayObj !== null &&
+                              Array.isArray(dayObj.tasks)
+                                ? dayObj.tasks
+                                : [];
+
+                            const cellDayTasksStr =
+                              cellDayTasks.length > 0
+                                ? cellDayTasks.join(", ")
+                                : "";
+
                             const qty = Math.max(1, Number(svc.quantity) || 1);
                             for (let q = 0; q < qty; q++) {
                               const slotEmpObj = svc.assignedEmployees?.[q];
@@ -1138,6 +1163,9 @@ function RosterMain() {
                                 slotEmployee: slotEmployee,
                                 approvalState: approvalState,
                                 themeClass: themeClass,
+                                cellDayName: cellDayName,
+                                cellDayTasks: cellDayTasks,
+                                cellDayTasksStr: cellDayTasksStr,
                               });
                             }
                           });
@@ -1194,6 +1222,15 @@ function RosterMain() {
                                         🕒 {card.shiftStartTime || "08:00"} -{" "}
                                         {card.shiftEndTime || "16:00"}
                                       </div>
+
+                                      {card.cellDayTasksStr && (
+                                        <div
+                                          className="shiftTasks"
+                                          title={`Tasks: ${card.cellDayTasksStr}`}
+                                        >
+                                          📋 Tasks: {card.cellDayTasksStr}
+                                        </div>
+                                      )}
 
                                       <div className="shiftEmployee">
                                         👤{" "}
@@ -1318,7 +1355,16 @@ function RosterMain() {
                   {assignModal.contractEndDate}
                 </p>
                 <p>
-                  <strong>Working Days & Tasks:</strong>{" "}
+                  <strong>Day:</strong> {assignModal.dayName}
+                </p>
+                <p>
+                  <strong>Tasks for {assignModal.dayName}:</strong>{" "}
+                  <span style={{ color: "#047857", fontWeight: "700" }}>
+                    {assignModal.dayTasksStr}
+                  </span>
+                </p>
+                <p>
+                  <strong>All Working Days & Tasks:</strong>{" "}
                   {assignModal.workingDays || "All Days"}
                 </p>
                 <p>

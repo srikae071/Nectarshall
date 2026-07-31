@@ -15,6 +15,14 @@ function OnBoardingSaves() {
   const { id } = useParams();
   const [expanded, setExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState("Client Contract Deliverables");
+  const [activeContractSubTabs, setActiveContractSubTabs] = useState({});
+
+  const handleSubTabChange = (index, tabName) => {
+    setActiveContractSubTabs((prev) => ({
+      ...prev,
+      [index]: tabName,
+    }));
+  };
   const [pageTitle, setPageTitle] = useState("");
   const [backendStatus, setBackendStatus] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
@@ -81,12 +89,34 @@ function OnBoardingSaves() {
       comments: "",
     },
   ]);
+  const [initialFormData, setInitialFormData] = useState(null);
+  const [entries, setEntries] = useState([]);
+  const [showEntriesDropdown, setShowEntriesDropdown] = useState(false);
+
   const fetchBoarding = async () => {
     try {
       const response = await fetchApiData(`/api/BoardingCandidates/${id}`);
       const data = response.data;
       console.log(data.contractDeliverables);
       setBackendStatus(data.status);
+      const rawEntries =
+        data.entries ||
+        (Array.isArray(data.contractDeliverables) &&
+          data.contractDeliverables[0]?.entries) ||
+        [];
+
+      let parsedEntries = [];
+      if (typeof rawEntries === "string") {
+        try {
+          parsedEntries = JSON.parse(rawEntries);
+        } catch (e) {
+          parsedEntries = [];
+        }
+      } else if (Array.isArray(rawEntries)) {
+        parsedEntries = rawEntries;
+      }
+      setEntries(parsedEntries);
+
       const titleMap = {
         "Supplier Onboarding": "Onboarding Supplier",
         "Client Onboarding": "Onboarding Client",
@@ -94,7 +124,7 @@ function OnBoardingSaves() {
       };
 
       setPageTitle(titleMap[data.category] || "Onboarding");
-      setFormData({
+      const loadedForm = {
         clientId: data.clientId || "",
         type: data.type || "",
         companyName: data.companyName || "",
@@ -117,7 +147,10 @@ function OnBoardingSaves() {
           fileName: "",
           filePath: "",
         },
-      });
+      };
+
+      setFormData(loadedForm);
+      setInitialFormData(loadedForm);
       setContractDeliverables(
         data.contractDeliverables && data.contractDeliverables.length > 0
           ? data.contractDeliverables
@@ -191,8 +224,12 @@ function OnBoardingSaves() {
 
     const nextNumber = parseInt(lastId.replace("CNT-", ""), 10) + 1;
 
-    setContractDeliverables([
-      ...contractDeliverables,
+    const lastFinId =
+      financialDetails[financialDetails.length - 1]?.contractId || "FIN-000";
+    const nextFinNumber = parseInt(lastFinId.replace("FIN-", ""), 10) + 1;
+
+    setContractDeliverables((prev) => [
+      ...prev,
       {
         clientId: `CNT-${String(nextNumber).padStart(3, "0")}`,
         siteName: "",
@@ -220,17 +257,11 @@ function OnBoardingSaves() {
         ],
       },
     ]);
-  };
-  const addFinancialDetail = () => {
-    const lastId =
-      financialDetails[financialDetails.length - 1]?.contractId || "FIN-000";
 
-    const nextNumber = parseInt(lastId.replace("FIN-", ""), 10) + 1;
-
-    setFinancialDetails([
-      ...financialDetails,
+    setFinancialDetails((prev) => [
+      ...prev,
       {
-        contractId: `FIN-${String(nextNumber).padStart(3, "0")}`,
+        contractId: `FIN-${String(nextFinNumber).padStart(3, "0")}`,
         invoiceDate: "",
         invoiceNumber: "",
         billingCycle: "Monthly",
@@ -239,15 +270,18 @@ function OnBoardingSaves() {
     ]);
   };
 
+  const addFinancialDetail = () => {
+    addContractDeliverable();
+  };
+
   const deleteContractDeliverable = (index) => {
     if (contractDeliverables.length === 1) {
-      alert("At least one Client Contract Deliverable is required.");
+      alert("At least one Client Contract Variable is required.");
       return;
     }
 
-    const updated = contractDeliverables.filter((_, i) => i !== index);
-
-    setContractDeliverables(updated);
+    setContractDeliverables((prev) => prev.filter((_, i) => i !== index));
+    setFinancialDetails((prev) => prev.filter((_, i) => i !== index));
   };
   const handleDeliverableChange = (index, e) => {
     const { name, value } = e.target;
@@ -464,23 +498,74 @@ function OnBoardingSaves() {
     updated[index].services[serviceIndex].workingDays = days;
     setContractDeliverables(updated);
   };
+  const fieldLabels = {
+    clientId: "Client ID",
+    companyName: "Company Name",
+    abn: "ABN",
+    acn: "ACN",
+    companyAddress: "Company Address",
+    companyPhone: "Company Phone",
+    managingAgentName: "Managing Agent Name",
+    managingAgentEmail: "Managing Agent Email",
+    email: "Email",
+    contactNumber: "Contact Number",
+    onboardingDate: "Onboarding Date",
+    validTill: "Valid Till",
+    status: "Status",
+    shortDescription: "Short Description",
+    description: "Description",
+  };
+
   const handleSave = async () => {
     try {
-      console.log("Sending:");
-      console.log({
-        ...formData,
-      });
+      const changedFields = [];
+
+      if (initialFormData) {
+        Object.keys(fieldLabels).forEach((key) => {
+          const oldVal = (initialFormData[key] || "").toString().trim();
+          const newVal = (formData[key] || "").toString().trim();
+          if (oldVal !== newVal) {
+            changedFields.push(fieldLabels[key]);
+          }
+        });
+      }
+
+      let updatedEntries = [...entries];
+      if (changedFields.length > 0) {
+        const newEntry = {
+          serialNo: updatedEntries.length + 1,
+          timestamp: new Date().toLocaleString("en-US", {
+            dateStyle: "short",
+            timeStyle: "short",
+          }),
+          summary: `${changedFields.join(", ")} changed`,
+          changedBy: "admin",
+        };
+        updatedEntries.push(newEntry);
+      }
+
+      const entriesString = JSON.stringify(updatedEntries);
+
+      const updatedContractDeliverables = (contractDeliverables || []).map(
+        (cd) => ({
+          ...cd,
+          entries: entriesString,
+        })
+      );
 
       await sendApiData(
         "PUT",
         `/api/BoardingCandidates/${id}`,
         {
           ...formData,
-          contractDeliverables,
+          contractDeliverables: updatedContractDeliverables,
           financialDetails,
+          entries: entriesString,
         }
       );
       setBackendStatus(formData.status);
+      setEntries(updatedEntries);
+      setInitialFormData({ ...formData });
 
       alert("Saved Successfully");
       navigate("/");
@@ -501,6 +586,15 @@ function OnBoardingSaves() {
         onCancel={() => {}}
         onAttachment={handleAttachment}
         attachmentName={formData.attachment?.fileName}
+        actions={
+          <button
+            type="button"
+            className="entriesToggleBtn"
+            onClick={() => setShowEntriesDropdown(!showEntriesDropdown)}
+          >
+            📋 Temporary Entries ({entries.length}) {showEntriesDropdown ? "▲" : "▼"}
+          </button>
+        }
         formData={formData}
         onApprove={
           backendStatus === "On Boarded" && source === "operations"
@@ -696,6 +790,38 @@ function OnBoardingSaves() {
             onChange={handleChange}
           />
         </div>
+
+        <div className="form-row form-full entriesSection">
+          <div className="entriesHeaderRow">
+            <button
+              type="button"
+              className="entriesToggleBtn"
+              onClick={() => setShowEntriesDropdown(!showEntriesDropdown)}
+            >
+              📋 Temporary Entries ({entries.length}) {showEntriesDropdown ? "▲" : "▼"}
+            </button>
+          </div>
+
+          {showEntriesDropdown && (
+            <div className="entriesCard">
+              {entries.length === 0 ? (
+                <p className="noEntriesText">No change entries recorded yet.</p>
+              ) : (
+                <div className="entriesList">
+                  {entries.map((entry) => (
+                    <div key={entry.serialNo} className="entryItem">
+                      <span className="entryBadge">Serial #{entry.serialNo}</span>
+                      <span className="entrySummary">{entry.summary}</span>
+                      <span className="entryMeta">
+                        changed by {entry.changedBy || "admin"} on {entry.timestamp}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
         <div className="deliverable-container">
           <div
             className="deliverable-header"
@@ -707,491 +833,465 @@ function OnBoardingSaves() {
           </div>
 
           <>
-            <div className="deliverable-tabs">
-              <button
-                type="button"
-                className={
-                  activeTab === "Client Contract Deliverables"
-                    ? "deliverable-tab active"
-                    : "deliverable-tab"
-                }
-                onClick={() => setActiveTab("Client Contract Deliverables")}
-              >
-                Client Contract Deliverables
-              </button>
+            {contractDeliverables.map((item, index) => {
+              const currentTab =
+                activeContractSubTabs[index] || "Client Contract Deliverables";
+              const finItem = financialDetails[index] || {};
 
-              <button
-                type="button"
-                className={
-                  activeTab === "Financial Details"
-                    ? "deliverable-tab active"
-                    : "deliverable-tab"
-                }
-                onClick={() => setActiveTab("Financial Details")}
-              >
-                Financial Details
-              </button>
-            </div>
-            {activeTab === "Financial Details" && (
-              <>
-                {financialDetails.map((item, index) => (
-                  <div className="deliverable-form" key={index}>
-                    <div className="deliverable-grid">
-                      <div className="deliverable-field">
-                        <label>Contract ID</label>
-                        <input
-                          name="contractId"
-                          value={item.contractId}
-                          onChange={(e) => handleFinancialChange(index, e)}
-                        />
-                      </div>
+              return (
+                <div className="contract-block-container" key={index}>
+                  <div className="deliverable-tabs">
+                    <button
+                      type="button"
+                      className={
+                        currentTab === "Client Contract Deliverables"
+                          ? "deliverable-tab active"
+                          : "deliverable-tab"
+                      }
+                      onClick={() =>
+                        handleSubTabChange(index, "Client Contract Deliverables")
+                      }
+                    >
+                      Client Contract Variables
+                    </button>
 
-                      <div className="deliverable-field">
-                        <label>Invoice Date</label>
-                        <input
-                          type="date"
-                          name="invoiceDate"
-                          value={item.invoiceDate}
-                          onChange={(e) => handleFinancialChange(index, e)}
-                        />
-                      </div>
-
-                      <div className="deliverable-field">
-                        <label>Invoice Number</label>
-                        <input
-                          name="invoiceNumber"
-                          value={item.invoiceNumber}
-                          onChange={(e) => handleFinancialChange(index, e)}
-                        />
-                      </div>
-
-                      <div className="deliverable-field">
-                        <label>Billing Cycle</label>
-
-                        <select
-                          name="billingCycle"
-                          value={item.billingCycle}
-                          onChange={(e) => handleFinancialChange(index, e)}
-                        >
-                          <option value="Monthly">Monthly</option>
-                          <option value="Weekly">Weekly</option>
-                          <option value="Adaptive">Adaptive</option>
-                        </select>
-                      </div>
-
-                      <div className="deliverable-field deliverable-full">
-                        <label>Comments</label>
-
-                        <textarea
-                          className="deliverable-textarea"
-                          name="comments"
-                          value={item.comments}
-                          onChange={(e) => handleFinancialChange(index, e)}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="deliverable-action">
-                      <button
-                        type="button"
-                        className="add-contract-btn"
-                        onClick={addFinancialDetail}
-                      >
-                        + Add Financial Detail
-                      </button>
-
-                      {financialDetails.length > 1 && (
-                        <button
-                          type="button"
-                          className="delete-contract-btn"
-                          onClick={() => deleteFinancialDetail(index)}
-                        >
-                          Delete Financial Detail
-                        </button>
-                      )}
-                    </div>
-
-                    {index !== financialDetails.length - 1 && (
-                      <div className="contract-divider"></div>
-                    )}
+                    <button
+                      type="button"
+                      className={
+                        currentTab === "Financial Details"
+                          ? "deliverable-tab active"
+                          : "deliverable-tab"
+                      }
+                      onClick={() =>
+                        handleSubTabChange(index, "Financial Details")
+                      }
+                    >
+                      Financial Contract Variables
+                    </button>
                   </div>
-                ))}
-              </>
-            )}
-            {activeTab === "Client Contract Deliverables" && (
-              <>
-                {contractDeliverables.map((item, index) => (
-                  <div className="deliverable-form" key={index}>
-                    <div className="deliverable-grid">
-                      <div className="deliverable-field">
-                        <label>Client ID</label>
-                        <input
-                          name="clientId"
-                          value={item.clientId}
-                          onChange={(e) => handleDeliverableChange(index, e)}
-                        />
-                      </div>
 
-                      <div className="deliverable-field">
-                        <label>Site Name</label>
-                        <input
-                          name="siteName"
-                          value={item.siteName}
-                          onChange={(e) => handleDeliverableChange(index, e)}
-                        />
-                      </div>
-
-                      <div className="deliverable-field">
-                        <label>Site Address</label>
-                        <input
-                          name="siteAddress"
-                          value={item.siteAddress}
-                          onChange={(e) => handleDeliverableChange(index, e)}
-                        />
-                      </div>
-
-                      <div className="deliverable-field">
-                        <label>Site Manager Name</label>
-                        <input
-                          name="siteManagerName"
-                          value={item.siteManagerName}
-                          onChange={(e) => handleDeliverableChange(index, e)}
-                        />
-                      </div>
-
-                      <div className="deliverable-field">
-                        <label>Site Email</label>
-                        <input
-                          type="email"
-                          name="siteEmail"
-                          value={item.siteEmail}
-                          onChange={(e) => handleDeliverableChange(index, e)}
-                        />
-                      </div>
-
-                      <div className="deliverable-field">
-                        <label>Site Mobile Number</label>
-                        <input
-                          name="siteMobile"
-                          value={item.siteMobile}
-                          onChange={(e) => handleDeliverableChange(index, e)}
-                        />
-                      </div>
-
-                      <div className="deliverable-field">
-                        <label>Contract State</label>
-
-                        <div className="radio-group">
-                          <label>
-                            <input
-                              type="radio"
-                              name={`contractState-${index}`}
-                              checked={item.contractState === "Active"}
-                              onChange={() =>
-                                handleDeliverableChange(index, {
-                                  target: {
-                                    name: "contractState",
-                                    value: "Active",
-                                  },
-                                })
-                              }
-                            />
-                            Active
-                          </label>
-
-                          <label>
-                            <input
-                              type="radio"
-                              name={`contractState-${index}`}
-                              checked={item.contractState === "Inactive"}
-                              onChange={() =>
-                                handleDeliverableChange(index, {
-                                  target: {
-                                    name: "contractState",
-                                    value: "Inactive",
-                                  },
-                                })
-                              }
-                            />
-                            Inactive
-                          </label>
-                        </div>
-                      </div>
-
-                      <div className="deliverable-field deliverable-full">
-                        <label>Scope Of Work</label>
-                        <textarea
-                          className="deliverable-textarea"
-                          name="scopeOfWork"
-                          value={item.scopeOfWork}
-                          onChange={(e) => handleDeliverableChange(index, e)}
-                        />
-                      </div>
-                      <div className="deliverable-field deliverable-full">
-                        <label>Comments</label>
-                        <textarea
-                          className="deliverable-textarea"
-                          name="comments"
-                          value={item.comments || ""}
-                          onChange={(e) => handleDeliverableChange(index, e)}
-                        />
-                      </div>
-                      <div className="deliverable-field deliverable-full">
-                        <label>Number Of Services</label>
-
-                        <select
-                          className="deliverable-input"
-                          value={item.numberOfServices}
-                          onChange={(e) =>
-                            handleNumberOfServices(index, e.target.value)
-                          }
-                        >
-                          {Array.from({ length: 10 }, (_, i) => (
-                            <option key={i + 1} value={i + 1}>
-                              {i + 1}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-
-                      {/* <div className="deliverable-field deliverable-full">
-                        <label>Attachment</label>
-                        <input
-                          type="file"
-                          onChange={(e) =>
-                            handleDeliverableAttachment(index, e)
-                          }
-                        />
-
-                        <div className="attachment-name">
-                          <input
-                            type="file"
-                            onChange={(e) => e.target.files[0]}
-                          />
-                        </div>
-                      </div> */}
-                    </div>
-                    {(item.services || []).map((service, serviceIndex) => (
-                      <div key={serviceIndex} className="service-container">
-                        <h4 className="service-title">
-                          Service {serviceIndex + 1}
-                        </h4>
-
-                        <div className="deliverable-grid">
-                          <div className="deliverable-field">
-                            <label>Type Of Service</label>
-
-                            <select
-                              name="serviceType"
-                              value={service.serviceType}
-                              onChange={(e) =>
-                                handleServiceChange(index, serviceIndex, e)
-                              }
-                            >
-                              <option value="">Select</option>
-                              <option value="Security">Security</option>
-                              <option value="Patrolling">Patrolling</option>
-                              <option value="Electronics">Electronics</option>
-                            </select>
-                          </div>
-
-                          <div className="deliverable-field">
-                            <label>Position</label>
-
-                            <select
-                              name="position"
-                              value={service.position}
-                              onChange={(e) =>
-                                handleServiceChange(index, serviceIndex, e)
-                              }
-                            >
-                              <option value="">Select</option>
-
-                              <option value="Site Manager">Site Manager</option>
-                              <option value="In Charge">Site In Charge</option>
-                              <option value="GL1">GL1</option>
-                              <option value="GL2">GL2</option>
-                              <option value="GL3">GL3</option>
-                              <option value="GL4">GL4</option>
-                            </select>
-                          </div>
-                        </div>
+                  {currentTab === "Client Contract Deliverables" && (
+                    <div className="deliverable-form">
+                      <h4 className="deliverable-section-heading">
+                        Client Contract Variables
+                      </h4>
+                      <div className="deliverable-grid">
                         <div className="deliverable-field">
-                          <label>Quantity</label>
-
+                          <label>Client ID</label>
                           <input
-                            type="number"
-                            name="quantity"
-                            min="0"
-                            step="1"
-                            value={service.quantity}
-                            onChange={(e) =>
-                              handleServiceChange(index, serviceIndex, e)
-                            }
+                            name="clientId"
+                            value={item.clientId}
+                            onChange={(e) => handleDeliverableChange(index, e)}
                           />
                         </div>
-                        <div className="deliverable-grid">
-                          <div className="deliverable-field">
-                            <label>Shift Start Time</label>
 
-                            <input
-                              type="time"
-                              name="shiftStartTime"
-                              value={service.shiftStartTime}
-                              onChange={(e) =>
-                                handleServiceChange(index, serviceIndex, e)
-                              }
-                            />
-                          </div>
+                        <div className="deliverable-field">
+                          <label>Site Name</label>
+                          <input
+                            name="siteName"
+                            value={item.siteName}
+                            onChange={(e) => handleDeliverableChange(index, e)}
+                          />
+                        </div>
 
-                          <div className="deliverable-field">
-                            <label>Shift End Time</label>
+                        <div className="deliverable-field">
+                          <label>Site Address</label>
+                          <input
+                            name="siteAddress"
+                            value={item.siteAddress}
+                            onChange={(e) => handleDeliverableChange(index, e)}
+                          />
+                        </div>
 
-                            <input
-                              type="time"
-                              name="shiftEndTime"
-                              value={service.shiftEndTime}
-                              onChange={(e) =>
-                                handleServiceChange(index, serviceIndex, e)
-                              }
-                            />
-                          </div>
-                          <div className="deliverable-field">
-                            <label>Contract Start Date</label>
+                        <div className="deliverable-field">
+                          <label>Site Manager Name</label>
+                          <input
+                            name="siteManagerName"
+                            value={item.siteManagerName}
+                            onChange={(e) => handleDeliverableChange(index, e)}
+                          />
+                        </div>
 
-                            <input
-                              type="date"
-                              name="contractStartDate"
-                              value={
-                                service.contractStartDate
-                                  ? String(service.contractStartDate).slice(
-                                      0,
-                                      10,
-                                    )
-                                  : ""
-                              }
-                              onChange={(e) =>
-                                handleServiceChange(index, serviceIndex, e)
-                              }
-                            />
-                          </div>
-                          <div className="deliverable-field">
-                            <label>Contract End Date</label>
+                        <div className="deliverable-field">
+                          <label>Site Email</label>
+                          <input
+                            type="email"
+                            name="siteEmail"
+                            value={item.siteEmail}
+                            onChange={(e) => handleDeliverableChange(index, e)}
+                          />
+                        </div>
 
-                            <input
-                              type="date"
-                              name="contractEndDate"
-                              value={
-                                service.contractEndDate
-                                  ? String(service.contractEndDate).slice(0, 10)
-                                  : ""
-                              }
-                              onChange={(e) =>
-                                handleServiceChange(index, serviceIndex, e)
-                              }
-                            />
+                        <div className="deliverable-field">
+                          <label>Site Mobile Number</label>
+                          <input
+                            name="siteMobile"
+                            value={item.siteMobile}
+                            onChange={(e) => handleDeliverableChange(index, e)}
+                          />
+                        </div>
+
+                        <div className="deliverable-field">
+                          <label>Contract State</label>
+
+                          <div className="radio-group">
+                            <label>
+                              <input
+                                type="radio"
+                                name={`contractState-${index}`}
+                                checked={item.contractState === "Active"}
+                                onChange={() =>
+                                  handleDeliverableChange(index, {
+                                    target: {
+                                      name: "contractState",
+                                      value: "Active",
+                                    },
+                                  })
+                                }
+                              />
+                              Active
+                            </label>
+
+                            <label>
+                              <input
+                                type="radio"
+                                name={`contractState-${index}`}
+                                checked={item.contractState === "Inactive"}
+                                onChange={() =>
+                                  handleDeliverableChange(index, {
+                                    target: {
+                                      name: "contractState",
+                                      value: "Inactive",
+                                    },
+                                  })
+                                }
+                              />
+                              Inactive
+                            </label>
                           </div>
                         </div>
-                        {/* </div> */}
+
                         <div className="deliverable-field deliverable-full">
-                          <label className="onbdsaveslabel">Working Days & Tasks</label>
+                          <label>Scope Of Work</label>
+                          <textarea
+                            className="deliverable-textarea"
+                            name="scopeOfWork"
+                            value={item.scopeOfWork}
+                            onChange={(e) => handleDeliverableChange(index, e)}
+                          />
+                        </div>
+                        <div className="deliverable-field deliverable-full">
+                          <label>Comments</label>
+                          <textarea
+                            className="deliverable-textarea"
+                            name="comments"
+                            value={item.comments || ""}
+                            onChange={(e) => handleDeliverableChange(index, e)}
+                          />
+                        </div>
+                        <div className="deliverable-field deliverable-full">
+                          <label>Number Of Services</label>
 
-                          <div className="vertical-working-days-grid">
-                            {[
-                              { label: "MO", value: "Monday" },
-                              { label: "TU", value: "Tuesday" },
-                              { label: "WE", value: "Wednesday" },
-                              { label: "TH", value: "Thursday" },
-                              { label: "FR", value: "Friday" },
-                              { label: "SA", value: "Saturday" },
-                              { label: "SU", value: "Sunday" },
-                            ].map((day) => {
-                              const isDayChecked = isWorkingDaySelected(
-                                service.workingDays,
-                                day.value
-                              );
-                              const selectedTasks = getWorkingDayTasks(
-                                service.workingDays,
-                                day.value
-                              );
-
-                              return (
-                                <div className="vertical-day-col" key={day.value}>
-                                  <div className="vertical-day-header">
-                                    <label className="day-header-label">
-                                      <input
-                                        type="checkbox"
-                                        checked={isDayChecked}
-                                        onChange={(e) =>
-                                          handleWorkingDayChange(
-                                            index,
-                                            serviceIndex,
-                                            day.value,
-                                            e.target.checked
-                                          )
-                                        }
-                                      />
-                                      <strong>{day.label}</strong>
-                                      <span className="day-full-name">({day.value})</span>
-                                    </label>
-                                  </div>
-
-                                  <div className="vertical-task-list">
-                                    {["Task 1", "Task 2", "Task 3", "Task 4", "Task 5"].map(
-                                      (taskName) => (
-                                        <label className="task-checkbox-label" key={taskName}>
-                                          <input
-                                            type="checkbox"
-                                            checked={selectedTasks.includes(taskName)}
-                                            onChange={(e) =>
-                                              handleTaskChange(
-                                                index,
-                                                serviceIndex,
-                                                day.value,
-                                                taskName,
-                                                e.target.checked
-                                              )
-                                            }
-                                          />
-                                          <span>{taskName}</span>
-                                        </label>
-                                      )
-                                    )}
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
+                          <select
+                            className="deliverable-input"
+                            value={item.numberOfServices}
+                            onChange={(e) =>
+                              handleNumberOfServices(index, e.target.value)
+                            }
+                          >
+                            {Array.from({ length: 10 }, (_, i) => (
+                              <option key={i + 1} value={i + 1}>
+                                {i + 1}
+                              </option>
+                            ))}
+                          </select>
                         </div>
                       </div>
-                    ))}
-                    <div className="deliverable-action">
+                      {(item.services || []).map((service, serviceIndex) => (
+                        <div key={serviceIndex} className="service-container">
+                          <h4 className="service-title">
+                            Service {serviceIndex + 1}
+                          </h4>
+
+                          <div className="deliverable-grid">
+                            <div className="deliverable-field">
+                              <label>Type Of Service</label>
+
+                              <select
+                                name="serviceType"
+                                value={service.serviceType}
+                                onChange={(e) =>
+                                  handleServiceChange(index, serviceIndex, e)
+                                }
+                              >
+                                <option value="">Select</option>
+                                <option value="Security">Security</option>
+                                <option value="Patrolling">Patrolling</option>
+                                <option value="Electronics">Electronics</option>
+                              </select>
+                            </div>
+
+                            <div className="deliverable-field">
+                              <label>Position</label>
+
+                              <select
+                                name="position"
+                                value={service.position}
+                                onChange={(e) =>
+                                  handleServiceChange(index, serviceIndex, e)
+                                }
+                              >
+                                <option value="">Select</option>
+
+                                <option value="Site Manager">Site Manager</option>
+                                <option value="In Charge">Site In Charge</option>
+                                <option value="GL1">GL1</option>
+                                <option value="GL2">GL2</option>
+                                <option value="GL3">GL3</option>
+                                <option value="GL4">GL4</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div className="deliverable-field">
+                            <label>Quantity</label>
+
+                            <input
+                              type="number"
+                              name="quantity"
+                              min="0"
+                              step="1"
+                              value={service.quantity}
+                              onChange={(e) =>
+                                handleServiceChange(index, serviceIndex, e)
+                              }
+                            />
+                          </div>
+                          <div className="deliverable-grid">
+                            <div className="deliverable-field">
+                              <label>Shift Start Time</label>
+
+                              <input
+                                type="time"
+                                name="shiftStartTime"
+                                value={service.shiftStartTime}
+                                onChange={(e) =>
+                                  handleServiceChange(index, serviceIndex, e)
+                                }
+                              />
+                            </div>
+
+                            <div className="deliverable-field">
+                              <label>Shift End Time</label>
+
+                              <input
+                                type="time"
+                                name="shiftEndTime"
+                                value={service.shiftEndTime}
+                                onChange={(e) =>
+                                  handleServiceChange(index, serviceIndex, e)
+                                }
+                              />
+                            </div>
+                            <div className="deliverable-field">
+                              <label>Contract Start Date</label>
+
+                              <input
+                                type="date"
+                                name="contractStartDate"
+                                value={
+                                  service.contractStartDate
+                                    ? String(service.contractStartDate).slice(
+                                        0,
+                                        10,
+                                      )
+                                    : ""
+                                }
+                                onChange={(e) =>
+                                  handleServiceChange(index, serviceIndex, e)
+                                }
+                              />
+                            </div>
+                            <div className="deliverable-field">
+                              <label>Contract End Date</label>
+
+                              <input
+                                type="date"
+                                name="contractEndDate"
+                                value={
+                                  service.contractEndDate
+                                    ? String(service.contractEndDate).slice(0, 10)
+                                    : ""
+                                }
+                                onChange={(e) =>
+                                  handleServiceChange(index, serviceIndex, e)
+                                }
+                              />
+                            </div>
+                          </div>
+
+                          <div className="deliverable-field deliverable-full">
+                            <label className="onbdsaveslabel">Working Days & Tasks</label>
+
+                            <div className="vertical-working-days-grid">
+                              {[
+                                { label: "MO", value: "Monday" },
+                                { label: "TU", value: "Tuesday" },
+                                { label: "WE", value: "Wednesday" },
+                                { label: "TH", value: "Thursday" },
+                                { label: "FR", value: "Friday" },
+                                { label: "SA", value: "Saturday" },
+                                { label: "SU", value: "Sunday" },
+                              ].map((day) => {
+                                const isDayChecked = isWorkingDaySelected(
+                                  service.workingDays,
+                                  day.value
+                                );
+                                const selectedTasks = getWorkingDayTasks(
+                                  service.workingDays,
+                                  day.value
+                                );
+
+                                return (
+                                  <div className="vertical-day-col" key={day.value}>
+                                    <div className="vertical-day-header">
+                                      <label className="day-header-label">
+                                        <input
+                                          type="checkbox"
+                                          checked={isDayChecked}
+                                          onChange={(e) =>
+                                            handleWorkingDayChange(
+                                              index,
+                                              serviceIndex,
+                                              day.value,
+                                              e.target.checked
+                                            )
+                                          }
+                                        />
+                                        <strong>{day.label}</strong>
+                                        <span className="day-full-name">({day.value})</span>
+                                      </label>
+                                    </div>
+
+                                    <div className="vertical-task-list">
+                                      {["Task 1", "Task 2", "Task 3", "Task 4", "Task 5"].map(
+                                        (taskName) => (
+                                          <label className="task-checkbox-label" key={taskName}>
+                                            <input
+                                              type="checkbox"
+                                              checked={selectedTasks.includes(taskName)}
+                                              onChange={(e) =>
+                                                handleTaskChange(
+                                                  index,
+                                                  serviceIndex,
+                                                  day.value,
+                                                  taskName,
+                                                  e.target.checked
+                                                )
+                                              }
+                                            />
+                                            <span>{taskName}</span>
+                                          </label>
+                                        )
+                                      )}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {currentTab === "Financial Details" && (
+                    <div className="deliverable-form">
+                      <h4 className="deliverable-section-heading">
+                        Financial Contract Variables
+                      </h4>
+                      <div className="deliverable-grid">
+                        <div className="deliverable-field">
+                          <label>Contract ID</label>
+                          <input
+                            name="contractId"
+                            value={finItem.contractId || ""}
+                            onChange={(e) => handleFinancialChange(index, e)}
+                          />
+                        </div>
+
+                        <div className="deliverable-field">
+                          <label>Invoice Date</label>
+                          <input
+                            type="date"
+                            name="invoiceDate"
+                            value={finItem.invoiceDate || ""}
+                            onChange={(e) => handleFinancialChange(index, e)}
+                          />
+                        </div>
+
+                        <div className="deliverable-field">
+                          <label>Invoice Number</label>
+                          <input
+                            name="invoiceNumber"
+                            value={finItem.invoiceNumber || ""}
+                            onChange={(e) => handleFinancialChange(index, e)}
+                          />
+                        </div>
+
+                        <div className="deliverable-field">
+                          <label>Billing Cycle</label>
+
+                          <select
+                            name="billingCycle"
+                            value={finItem.billingCycle || "Monthly"}
+                            onChange={(e) => handleFinancialChange(index, e)}
+                          >
+                            <option value="Monthly">Monthly</option>
+                            <option value="Weekly">Weekly</option>
+                            <option value="Adaptive">Adaptive</option>
+                          </select>
+                        </div>
+
+                        <div className="deliverable-field deliverable-full">
+                          <label>Comments</label>
+
+                          <textarea
+                            className="deliverable-textarea"
+                            name="comments"
+                            value={finItem.comments || ""}
+                            onChange={(e) => handleFinancialChange(index, e)}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="deliverable-action">
+                    <button
+                      type="button"
+                      className="add-contract-btn"
+                      onClick={addContractDeliverable}
+                    >
+                      + Add Client Contract Variable
+                    </button>
+
+                    {contractDeliverables.length > 1 && (
                       <button
                         type="button"
-                        className="add-contract-btn"
-                        onClick={addContractDeliverable}
+                        className="delete-contract-btn"
+                        onClick={() => deleteContractDeliverable(index)}
                       >
-                        + Add Client Contract Deliverable
+                        Delete Client Contract Variable
                       </button>
-
-                      {contractDeliverables.length > 1 && (
-                        <button
-                          type="button"
-                          className="delete-contract-btn"
-                          onClick={() => deleteContractDeliverable(index)}
-                        >
-                          Delete Client Contract Deliverable
-                        </button>
-                      )}
-                    </div>
-
-                    {index !== contractDeliverables.length - 1 && (
-                      <div className="contract-divider"></div>
                     )}
                   </div>
-                ))}
-              </>
-            )}
+
+                  {index !== contractDeliverables.length - 1 && (
+                    <div className="contract-divider"></div>
+                  )}
+                </div>
+              );
+            })}
           </>
         </div>
       </RegularForm>
