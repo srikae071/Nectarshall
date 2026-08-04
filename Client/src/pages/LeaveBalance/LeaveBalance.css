@@ -6,12 +6,19 @@
   padding: 24px;
   min-height: 100vh;
 
-  background: #e9e5e5;
+  background: #f1f5f9;
 
   font-family: "Inter", "Segoe UI", sans-serif;
 
   box-sizing: border-box;
   overflow-x: hidden;
+}
+
+[data-theme="green"] .LeaveBalanceContainer,
+body.theme-green .LeaveBalanceContainer {
+  background-color: #e2f2eb !important;
+  background: #e2f2eb !important;
+  color: #064e3b !important;
 }
 
 /* =========================

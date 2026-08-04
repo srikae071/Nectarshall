@@ -104,15 +104,48 @@ function ApprovalTable() {
     }
   };
 
+  const handleResetLeaves = async () => {
+    try {
+      await axios.put(
+        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/leaves/reset-all`,
+      );
+      alert("All leave requests and consumed balances have been reset successfully!");
+      fetchLeaves();
+    } catch (error) {
+      console.log(error);
+      alert("Error resetting leave balances");
+    }
+  };
+
   return (
     <>
       <MyTasksNavBar />
 
       <div className="approval-container">
-        {data.length > 0 && (
-          <>
-            <h2 className="approval-title">Request Approval List</h2>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", flexWrap: "wrap", gap: "10px" }}>
+          <h2 className="approval-title" style={{ margin: 0 }}>Request Approval List</h2>
+          <button
+            type="button"
+            className="resetTaskBtn"
+            onClick={handleResetLeaves}
+            style={{
+              backgroundColor: "#ef4444",
+              color: "#ffffff",
+              padding: "8px 16px",
+              borderRadius: "6px",
+              fontWeight: "700",
+              border: "none",
+              cursor: "pointer",
+              fontSize: "13.5px",
+              boxShadow: "0 2px 5px rgba(0,0,0,0.15)",
+            }}
+          >
+            🔄 Reset Leave Balances
+          </button>
+        </div>
 
+        {data.length > 0 ? (
+          <>
             <div className="table-wrapper">
               <table className="MyTaskTable">
                 <thead>
@@ -178,6 +211,10 @@ function ApprovalTable() {
               </table>
             </div>
           </>
+        ) : (
+          <div style={{ color: "#64748b", padding: "15px 0", fontSize: "14px" }}>
+            No pending leave approval requests.
+          </div>
         )}
         {offboardingData.length > 0 && (
           <>

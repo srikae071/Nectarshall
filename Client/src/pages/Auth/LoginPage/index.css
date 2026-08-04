@@ -1,0 +1,171 @@
+.loginContainer {
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f291e 100%);
+  padding: 20px;
+  box-sizing: border-box;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.loginCard {
+  width: 100%;
+  max-width: 440px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 32px 28px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.loginHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.loginLogo {
+  height: 48px;
+  object-fit: contain;
+  margin-bottom: 12px;
+}
+
+.loginTitle {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.loginSubtitle {
+  margin: 6px 0 0 0;
+  font-size: 13.5px;
+  color: #64748b;
+}
+
+.loginErrorAlert {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.loginFormGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.loginFormGroup label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.passwordWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.loginInput {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+  color: #0f172a;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+}
+
+.loginInput:focus {
+  border-color: #047857;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(4, 120, 87, 0.15);
+}
+
+.togglePasswordBtn {
+  position: absolute;
+  right: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  opacity: 0.7;
+}
+
+.togglePasswordBtn:hover {
+  opacity: 1;
+}
+
+.loginSubmitBtn {
+  width: 100%;
+  padding: 12px;
+  background: #047857;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+  margin-top: 4px;
+}
+
+.loginSubmitBtn:hover {
+  background: #064e3b;
+}
+
+.loginSubmitBtn:active {
+  transform: scale(0.99);
+}
+
+.loginHintBox {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 12px;
+  color: #334155;
+}
+
+.hintTitle {
+  margin: 0 0 6px 0;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.loginHintBox ul {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.loginHintBox code {
+  background: #e2e8f0;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-family: monospace;
+  color: #0f172a;
+}

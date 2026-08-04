@@ -105,7 +105,14 @@ import OprationsClientOnbTab from "./pages/Dashboard/DashboardRightLayout/Oprati
 import AdhocAllTab from "./pages/Dashboard/DashboardRightLayout/AdhocServices/AdhocAllTab";
 import AddAdhoc from "./pages/Dashboard/DashboardRightLayout/AddAdhoc";
 import RosterShiftsMain from "./pages/Home/RosterShifts/RosterShiftsMain";
-// import BEWorkInProgress from "./pages/Cnc/CncRightSide/BEWorkInProgress";
+import { AuthProvider } from "./context/AuthContext";
+import LoginPage from "./pages/Auth/LoginPage";
+import ProtectedRoute from "./components/ProtectedRoute";
+import AccountsLayout from "./pages/Accounts/AccountsLayout";
+import AccountsParent from "./pages/Accounts/AccountsParent";
+import AccountsExpenditure from "./pages/Accounts/AccountsExpenditure";
+import AccountsReconciliation from "./pages/Accounts/AccountsReconciliation";
+
 function App() {
   useEffect(() => {
     const savedTheme = localStorage.getItem("app_theme") || "regular";
@@ -119,20 +126,108 @@ function App() {
   }, []);
 
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/leave-request" element={<LeaveRequest />} />
-      <Route path="/leave-balance" element={<LeaveBalance />} />
-      <Route path="/leave-calendar" element={<LeaveCalendar />} />
-      <Route path="/leave-status" element={<LeaveStatus />} />
-      <Route path="/payroll" element={<PayrollMain />} />
-      <Route path="/hrms" element={<HrmsHome />} />
-      <Route path="/hrms/createnew" element={<Createnew />} />
-      <Route path="/hrms/open" element={<Open />} />
-      <Route path="/hrms/resolved-cases" element={<Resolved />} />
-      <Route path="/hrms/assigned-cases" element={<Assingtome />} />
-      {/* <Route path="/onboarding/clint" element={<OnboardingCompliance />} /> */}
-      <Route path="/organisation-policies" element={<OpMainPage />} />
+    <AuthProvider>
+      <Routes>
+        {/* PUBLIC AUTH ROUTE */}
+        <Route path="/login" element={<LoginPage />} />
+
+        {/* PROTECTED ROUTES */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/leave-request"
+          element={
+            <ProtectedRoute requiredModule="HRMS">
+              <LeaveRequest />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/leave-balance"
+          element={
+            <ProtectedRoute requiredModule="HRMS">
+              <LeaveBalance />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/leave-calendar"
+          element={
+            <ProtectedRoute requiredModule="HRMS">
+              <LeaveCalendar />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/leave-status"
+          element={
+            <ProtectedRoute requiredModule="HRMS">
+              <LeaveStatus />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/payroll"
+          element={
+            <ProtectedRoute requiredModule="HRMS">
+              <PayrollMain />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/hrms"
+          element={
+            <ProtectedRoute requiredModule="HRMS">
+              <HrmsHome />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/hrms/createnew"
+          element={
+            <ProtectedRoute requiredModule="HRMS">
+              <Createnew />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/hrms/open"
+          element={
+            <ProtectedRoute requiredModule="HRMS">
+              <Open />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/hrms/resolved-cases"
+          element={
+            <ProtectedRoute requiredModule="HRMS">
+              <Resolved />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/hrms/assigned-cases"
+          element={
+            <ProtectedRoute requiredModule="HRMS">
+              <Assingtome />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/organisation-policies"
+          element={
+            <ProtectedRoute>
+              <OpMainPage />
+            </ProtectedRoute>
+          }
+        />
 
       <Route element={<DashboardLayout />}>
         <Route path="/main-dashboard" element={<MainDashboard />} />
@@ -292,7 +387,50 @@ function App() {
 
       <Route path="/adhoc/all" element={<AdhocAllTab />} />
       <Route path="/roster-shifts" element={<RosterShiftsMain />} />
+
+      {/* ACCOUNTS MODULE ROUTES */}
+      <Route
+        path="/accounts/payrun"
+        element={
+          <ProtectedRoute>
+            <AccountsLayout>
+              <AccountsParent />
+            </AccountsLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/accounts/parent"
+        element={
+          <ProtectedRoute>
+            <AccountsLayout>
+              <AccountsParent />
+            </AccountsLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/accounts/expenditure"
+        element={
+          <ProtectedRoute>
+            <AccountsLayout>
+              <AccountsExpenditure />
+            </AccountsLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/accounts/reconciliation"
+        element={
+          <ProtectedRoute>
+            <AccountsLayout>
+              <AccountsReconciliation />
+            </AccountsLayout>
+          </ProtectedRoute>
+        }
+      />
     </Routes>
+    </AuthProvider>
   );
 }
 

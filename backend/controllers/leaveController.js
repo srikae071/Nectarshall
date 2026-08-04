@@ -96,3 +96,18 @@ exports.approveLeave = async (req, res) => {
     });
   }
 };
+
+exports.resetLeaves = async (req, res) => {
+  try {
+    await Leave.updateMany({}, { status: "Pending" });
+    const allLeaves = await Leave.find();
+    res.json({
+      message: "All Leave Balances & Consumed Values Reset Successfully",
+      leaves: allLeaves,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};

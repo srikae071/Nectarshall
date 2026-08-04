@@ -5,17 +5,33 @@
   min-height: 100vh;
 }
 
-/* MAIN CONTAINER */
+/* MAIN CONTAINER - REGULAR THEME BLENDED BG (#f1f5f9) */
 .LeaveRequestContainer {
   flex: 1;
-  padding: 10px 20px;
-  background: #e9e5e5;
+  padding: 20px 30px;
+  background: #f1f5f9;
+}
+
+/* GREEN THEME DYNAMIC OVERRIDE (#e2f2eb) */
+[data-theme="green"] .LeaveRequestContainer,
+[data-theme="green"] .LeaveRequestPage,
+body.theme-green .LeaveRequestContainer,
+body.theme-green .LeaveRequestPage {
+  background-color: #e2f2eb !important;
+  background: #e2f2eb !important;
+  color: #064e3b !important;
+}
+
+[data-theme="green"] .LeaveRequestTitle,
+body.theme-green .LeaveRequestTitle {
+  color: #064e3b !important;
 }
 
 /* TITLE */
 .LeaveRequestTitle {
   font-size: 18px;
   margin-bottom: 15px;
+  color: #0f172a;
 }
 
 /* ROW (3 FIELDS) */

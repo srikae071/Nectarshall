@@ -124,9 +124,35 @@ function LeaveManagementAll() {
           ))}
         headers={allColumns.filter((col) => visibleColumns.includes(col.key))}
       >
-        {filteredData.map((item) => (
-          <tr key={item._id}>{/* Your td elements */}</tr>
-        ))}
+        {filteredData.map((item) => {
+          const currentHeaders = allColumns.filter((col) => visibleColumns.includes(col.key));
+          return (
+            <tr key={item._id}>
+              {currentHeaders.map((col) => {
+                let cellVal = item[col.key];
+                if (col.key === "halfDay") {
+                  cellVal = item.halfDay ? "Yes" : "No";
+                } else if (col.key === "leaveBalance") {
+                  cellVal = getLeaveBalance(item);
+                } else if (!cellVal) {
+                  cellVal = "-";
+                }
+
+                if (col.key === "status") {
+                  return (
+                    <td key={col.key}>
+                      <span className={`badge ${(item.status || "Pending").toLowerCase()}`}>
+                        {item.status || "Pending"}
+                      </span>
+                    </td>
+                  );
+                }
+
+                return <td key={col.key}>{String(cellVal)}</td>;
+              })}
+            </tr>
+          );
+        })}
       </TableLayout1>
     </HrmsLeftLayout>
   );

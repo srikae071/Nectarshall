@@ -15,7 +15,7 @@ body {
   width: 290px;
   min-width: 290px;
   max-width: 290px;
-  background: #2e2e2e;
+  background: #1e293b;
   overflow-y: auto;
 }
 .menuHeader {
@@ -211,7 +211,7 @@ body {
   min-width: 270px;
   max-width: 270px;
 
-  background: #202124;
+  background: #1e293b;
 
   transition: 0.3s;
 }

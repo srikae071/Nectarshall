@@ -18,32 +18,41 @@ function LeaveBalance() {
   };
 
   useEffect(() => {
-    fetchLeaves();
-  }, [leaveType]);
+    loadBalance("Paid Leave");
+  }, []);
 
-  const fetchLeaves = async () => {
-    const allocated = leaveAllocation[leaveType] || 0;
+  const loadBalance = async (selectedType) => {
+    if (!selectedType) {
+      setTotalAllocated(0);
+      setLeaveConsumed(0);
+      setLeaveBalance(0);
+      return;
+    }
+
+    const allocated = leaveAllocation[selectedType] || 0;
     setTotalAllocated(allocated);
 
     try {
       const response = await fetchApiData("/api/leaves");
-
-      const approvedLeaves = response.data.filter(
-        (item) => item.leaveType === leaveType && item.status === "Approved",
+      const approvedLeaves = (response.data || []).filter(
+        (item) => item.leaveType === selectedType && item.status === "Approved",
       );
-
       const consumed = approvedLeaves.reduce(
         (sum, item) => sum + Number(item.totalLeaves || 0),
         0,
       );
-
       const balance = allocated - consumed;
-
       setLeaveConsumed(consumed);
       setLeaveBalance(balance);
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleLeaveTypeChange = (e) => {
+    const selectedType = e.target.value;
+    setLeaveType(selectedType);
+    loadBalance(selectedType);
   };
   return (
     <Hrmsleftlayout>

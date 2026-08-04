@@ -15,14 +15,22 @@ import offboarding from "../images/offboarding.jpg";
 import busineseng from "../images/businesseng.avif";
 import ThemeSelector from "../components/ThemeSelector";
 import { fetchApiData } from "../utils/apiClient";
+import { useAuth } from "../context/AuthContext";
 
 function Home() {
   const navigate = useNavigate();
+  const { user, logout, hasModuleAccess } = useAuth();
   const [pendingCount, setPendingCount] = useState(0);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   useEffect(() => {
     fetchPendingLeaves();
   }, []);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   const fetchPendingLeaves = async () => {
     try {
@@ -48,162 +56,227 @@ function Home() {
     }
   };
 
-  const services = [
+  const allServices = [
     {
       title: "Leaves Management",
       desc: "Smart Leave Management for Modern Teams",
       img: leaveImg,
       route: "/Home-leave-request",
+      module: "HRMS",
     },
     {
       title: "Payrolls",
       desc: "Reliable & Accurate Payroll Management",
       img: payrollImg,
       route: "/payroll",
+      module: "HRMS",
     },
     {
       title: "Roster / Shift",
       desc: "Plan Shifts Smarter and Faster",
       img: rosterImg,
       route: "/roster-shifts",
+      module: "OPERATIONS",
     },
     {
       title: "Organization Policies",
       desc: "Clear policies for a stronger organization",
       img: orgImg,
       route: "/organisation-policies",
+      module: "COMMON",
     },
     {
       title: "Ask for IT",
       desc: "Report technical issues instantly",
       img: askItImg,
       route: "/ask-for-it",
+      module: "IT",
     },
     {
       title: "Ask for HR",
       desc: "A simple way to communicate HR issues",
       img: askHrImg,
       route: "/ask-for-hr",
+      module: "HRMS",
     },
     {
       title: "Employe Request",
       desc: "A simple way to communicate HR issues",
       img: empreq,
       route: "/Resonancereq",
+      module: "HRMS",
     },
     {
       title: "Exit",
       desc: "A simple way to communicate HR issues",
       img: offboarding,
       route: "/exit",
+      module: "HRMS",
     },
     {
       title: "Business Engagement",
       desc: "A simple way to communicate HR issues",
       img: busineseng,
       route: "/business-engagement",
+      module: "CNC",
     },
   ];
+
+  const visibleServices = allServices.filter((item) => {
+    if (!user) return true;
+    if (user.role === "ADMIN") return true;
+    if (user.role === "HRMS") {
+      return ["HRMS", "COMMON"].includes(item.module);
+    }
+    if (user.role === "IT_OPERATIONS") {
+      return ["IT", "OPERATIONS", "COMMON"].includes(item.module);
+    }
+    return true;
+  });
 
   return (
     <div>
       <div className="navbar">
         <div className="logo">
-          <img src={logo} className="logoimage" />
+          <img src={logo} className="logoimage" alt="logo" />
         </div>
 
         <div className="nav-links">
-          <a
-            role="button"
-            tabIndex={0}
-            onClick={() => navigate("/regular-form")}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") navigate("/regular-form");
-            }}
-          >
-            test
-          </a>
-          <a
-            role="button"
-            tabIndex={0}
-            onClick={() => navigate("/Client/onboarding-compliance")}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ")
-                navigate("/Client/onboarding-compliance");
-            }}
-          >
-            C&C
-          </a>
-          <a
-            role="button"
-            tabIndex={0}
-            onClick={() => navigate("/it/open")}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") navigate("/it/open");
-            }}
-          >
-            IT
-          </a>
-          <a
-            role="button"
-            tabIndex={0}
-            onClick={() => navigate("/PatrolingSchedule")}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ")
-                navigate("/PatrolingSchedule");
-            }}
-          >
-            PATROLLING
-          </a>
-          <a
-            role="button"
-            tabIndex={0}
-            onClick={() => navigate("/timesheets")}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") navigate("/timesheets");
-            }}
-          >
-            OPERATIONS
-          </a>
+          {hasModuleAccess("ALL") && (
+            <>
+              <a
+                role="button"
+                tabIndex={0}
+                onClick={() => navigate("/regular-form")}
+              >
+                test
+              </a>
+              <a
+                role="button"
+                tabIndex={0}
+                onClick={() => navigate("/accounts/payrun")}
+              >
+                ACCOUNTS
+              </a>
+            </>
+          )}
+          {(hasModuleAccess("ALL") || hasModuleAccess("CNC")) && (
+            <a
+              role="button"
+              tabIndex={0}
+              onClick={() => navigate("/Client/onboarding-compliance")}
+            >
+              C&C
+            </a>
+          )}
+          {(hasModuleAccess("ALL") || hasModuleAccess("IT")) && (
+            <a
+              role="button"
+              tabIndex={0}
+              onClick={() => navigate("/it/open")}
+            >
+              IT
+            </a>
+          )}
+          {(hasModuleAccess("ALL") || hasModuleAccess("PATROLLING")) && (
+            <a
+              role="button"
+              tabIndex={0}
+              onClick={() => navigate("/PatrolingSchedule")}
+            >
+              PATROLLING
+            </a>
+          )}
+          {(hasModuleAccess("ALL") || hasModuleAccess("OPERATIONS")) && (
+            <a
+              role="button"
+              tabIndex={0}
+              onClick={() => navigate("/timesheets")}
+            >
+              OPERATIONS
+            </a>
+          )}
+          {(hasModuleAccess("ALL") || hasModuleAccess("HRMS")) && (
+            <a
+              role="button"
+              tabIndex={0}
+              onClick={() => navigate("/hrms/hrsavescases")}
+            >
+              HRMS
+            </a>
+          )}
 
-          <a
-            role="button"
-            tabIndex={0}
-            onClick={() => navigate("/hrms/hrsavescases")}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ")
-                navigate("/hrms/hrsavescases");
-            }}
-          >
-            HRMS
-          </a>
-          {/* <a
-            role="button"
-            tabIndex={0}
-            onClick={() => navigate("/my-tasks")}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") navigate("/my-tasks");
-            }}
-          >
-            MY TASK
-          </a> */}
+          {/* MY TASK IS VISIBLE FOR EVERYONE */}
           <div
             className="MyTaskNotificationWrapper"
             role="button"
             tabIndex={0}
             onClick={() => navigate("/my-tasks")}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") navigate("/my-tasks");
-            }}
           >
             <a>MY TASK</a>
             <span className="MyTaskNotificationBadge">{pendingCount}</span>
           </div>
+
           <a role="button" tabIndex={0} onClick={() => navigate("/my-tickets")}>
             MY TICKETS
           </a>
+
           <ThemeSelector />
-          <div className="profile">👤</div>
+
+          {/* PROFILE USER MENU WITH LOGOUT */}
+          <div className="userProfileMenuContainer" style={{ position: "relative" }}>
+            <div
+              className="profile"
+              onClick={() => setShowProfileMenu(!showProfileMenu)}
+              title="User Account Options"
+              style={{ cursor: "pointer", userSelect: "none" }}
+            >
+              👤 {user?.username || "User"}
+            </div>
+
+            {showProfileMenu && (
+              <div
+                className="userProfileDropdown"
+                style={{
+                  position: "absolute",
+                  right: 0,
+                  top: "40px",
+                  background: "#ffffff",
+                  border: "1px solid #cbd5e1",
+                  borderRadius: "8px",
+                  boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
+                  padding: "12px 14px",
+                  width: "200px",
+                  zIndex: 9999,
+                  color: "#0f172a",
+                }}
+              >
+                <div style={{ fontWeight: "700", fontSize: "14px", borderBottom: "1px solid #e2e8f0", paddingBottom: "8px", marginBottom: "8px" }}>
+                  {user?.displayName || user?.username}
+                </div>
+                <div style={{ fontSize: "12px", color: "#64748b", marginBottom: "12px" }}>
+                  Role: <strong>{user?.role}</strong>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    background: "#ef4444",
+                    color: "#ffffff",
+                    border: "none",
+                    borderRadius: "6px",
+                    fontWeight: "700",
+                    cursor: "pointer",
+                    fontSize: "13px",
+                  }}
+                >
+                  🚪 Logout
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <div className="navbarbgc">
@@ -241,7 +314,7 @@ function Home() {
         ))}
       </div> */}
       <div className="HomeServices">
-        {services.map((item, index) => (
+        {visibleServices.map((item, index) => (
           <div
             className="HomeCard"
             key={index}

@@ -19,17 +19,23 @@ function TableLayout1({
 
   // Load columns from localStorage or use defaults
   useEffect(() => {
+    if (!storageKey) return;
     const saved = localStorage.getItem(storageKey);
 
     if (saved) {
-      setVisibleColumns(JSON.parse(saved));
+      try {
+        setVisibleColumns(JSON.parse(saved));
+      } catch (e) {
+        setVisibleColumns(defaultColumns);
+      }
     } else {
       setVisibleColumns(defaultColumns);
     }
-  }, [storageKey, defaultColumns]);
+  }, [storageKey]);
 
   // Save selected columns
   useEffect(() => {
+    if (!storageKey) return;
     localStorage.setItem(storageKey, JSON.stringify(visibleColumns));
   }, [visibleColumns, storageKey]);
 

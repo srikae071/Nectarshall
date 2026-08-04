@@ -1,3 +1,18 @@
+.LeaveRequestContainer {
+  flex: 1;
+  padding: 20px 30px;
+  background: #f1f5f9;
+}
+
+[data-theme="green"] .LeaveRequestContainer,
+[data-theme="green"] .LeaveRequestPage,
+body.theme-green .LeaveRequestContainer,
+body.theme-green .LeaveRequestPage {
+  background-color: #e2f2eb !important;
+  background: #e2f2eb !important;
+  color: #064e3b !important;
+}
+
 .LeaveRequestRow {
   display: flex;
   gap: 30px;

@@ -16,17 +16,26 @@ function HomeLeaveRequest() {
   const [requester, setRequester] = useState("");
   const [requesterFor, setRequesterFor] = useState("");
   const navigate = useNavigate();
+  const leaveAllocationMap = {
+    "Casual Leave": 5,
+    "Sick Leave": 10,
+    "Paid Leave": 15,
+    "Maternity Leave": 20,
+    "Paternity Leave": 12,
+  };
+
   const calculateLeaves = () => {
-    if (!startDate || !endDate) return "";
-
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-
-    const diffTime = end.getTime() - start.getTime();
-
-    const totalDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
-
-    return halfDay ? totalDays / 2 : totalDays;
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      const diffTime = end.getTime() - start.getTime();
+      const totalDays = Math.max(1, Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1);
+      return halfDay ? totalDays / 2 : totalDays;
+    }
+    if (leaveType && leaveAllocationMap[leaveType]) {
+      return leaveAllocationMap[leaveType];
+    }
+    return 1;
   };
   const handleSave = async () => {
     try {
@@ -126,10 +135,11 @@ function HomeLeaveRequest() {
                 onChange={(e) => setLeaveType(e.target.value)}
               >
                 <option value="">Select Leave Type</option>
-                <option value="Casual Leave">Casual Leave</option>
-                <option value="Maternity Leave">Maternity Leave</option>
-                <option value="Paternity Leave">Paternity Leave</option>
-                <option value="Paid Leave">Paid Leave</option>
+                <option value="Casual Leave">Casual Leave (5 Days)</option>
+                <option value="Sick Leave">Sick Leave (10 Days)</option>
+                <option value="Paid Leave">Paid Leave (15 Days)</option>
+                <option value="Maternity Leave">Maternity Leave (20 Days)</option>
+                <option value="Paternity Leave">Paternity Leave (12 Days)</option>
               </select>
             </div>
 

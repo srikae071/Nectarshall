@@ -1,0 +1,38 @@
+.accountssidebar {
+  width: 250px;
+  min-width: 250px;
+  max-width: 250px;
+  background: #1e293b;
+  transition: width 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  color: #f8fafc;
+}
+
+.accountssidebar.collapsed {
+  width: 70px;
+  min-width: 70px;
+  max-width: 70px;
+}
+
+.sidebarNavList {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 0;
+}
+
+[data-theme="green"] .accountssidebar {
+  background-color: #e2f2eb !important;
+  background: #e2f2eb !important;
+  color: #064e3b !important;
+}
+
+[data-theme="green"] .accountssidebar .submenuItem {
+  color: #064e3b !important;
+}
+
+[data-theme="green"] .accountssidebar .submenuItem:hover,
+[data-theme="green"] .accountssidebar .submenuItem.active {
+  background-color: #c6e6d8 !important;
+  color: #064e3b !important;
+}
