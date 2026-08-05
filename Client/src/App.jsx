@@ -14,6 +14,7 @@ import Createnew from "../src/pages/Hrms/Createnew/index.jsx";
 import Open from "./pages/Hrms/Open/index.jsx";
 import Resolved from "../src/pages/Hrms/Resolved/index.jsx";
 import Assingtome from "../src/pages/Hrms/Assigntome/index.jsx";
+import AddEmployee from "./pages/Hrms/AddEmployee/index.jsx";
 
 import All from "../src/pages/Hrms/Employee/ResourceRequirement/All/index.jsx";
 import EmployeeCreateNew from "../src/pages/Hrms/Employee/ResourceRequirement/EmployeeCreateNew/index.jsx";
@@ -30,7 +31,7 @@ import Reportss from "./pages/Dashboard/DashboardRightLayout/Reportss/index.jsx"
 import Incidents from "./pages/Dashboard/DashboardRightLayout/Incidents/index.jsx";
 import MainDashboard from "./pages/Dashboard/DashboardRightLayout/MainDashboard/index.jsx";
 import RosterMain from "./pages/Dashboard/DashboardRightLayout/Roster/RosterMain";
-import Employees from "./pages/Dashboard/DashboardRightLayout/Employee/index.jsx";
+import Employees from "./pages/Dashboard/DashboardRightLayout/Employessites/index.jsx";
 import PatrollingSchedule from "./pages/Patrolling/PatrollingRightContent/PatrollingSchedule/index.jsx";
 import PatrollingMainDashboard from "./pages/Patrolling/PatrollingRightContent/PatrollingMainDashboard/index.jsx";
 import PatrollingTimesheets from "./pages/Patrolling/PatrollingRightContent/PatrollingTimeSheat/index.jsx";
@@ -217,6 +218,14 @@ function App() {
           element={
             <ProtectedRoute requiredModule="HRMS">
               <Assingtome />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/hrms/add-employee"
+          element={
+            <ProtectedRoute requiredModule="HRMS">
+              <AddEmployee />
             </ProtectedRoute>
           }
         />

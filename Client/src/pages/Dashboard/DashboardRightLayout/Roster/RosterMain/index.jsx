@@ -195,12 +195,21 @@ function RosterMain() {
     );
   }, [rawCustomerOptions, customerSearchQuery]);
 
+  // Helper to extract employee name (displayName preferred)
+  const getEmpName = (emp) => {
+    if (emp.displayName && emp.displayName.trim()) return emp.displayName.trim();
+    if (emp.employeeName && emp.employeeName.trim()) return emp.employeeName.trim();
+    const full = `${emp.firstName || ""} ${emp.lastName || ""}`.trim();
+    return full || "";
+  };
+
   // 2. Employee Options (sourced ONLY from /api/employees table as requested)
   const rawEmployeeOptions = useMemo(() => {
     const employees = new Set();
     dbEmployees.forEach((emp) => {
-      if (emp.employeeName && emp.employeeName.trim()) {
-        employees.add(emp.employeeName.trim());
+      const name = getEmpName(emp);
+      if (name) {
+        employees.add(name);
       }
     });
     return [...employees].sort();
@@ -220,7 +229,7 @@ function RosterMain() {
     return (
       dbEmployees.find(
         (emp) =>
-          (emp.employeeName || "").trim().toLowerCase() ===
+          getEmpName(emp).toLowerCase() ===
           selectedEmployee.trim().toLowerCase(),
       ) || null
     );

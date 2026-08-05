@@ -57,10 +57,10 @@
 .form-select {
   width: 50%;
   padding: 10px 12px;
-  border: 1px solid #0a0a0a;
+  border: 1.5px solid #475569;
   border-radius: 6px;
-  background-color: #e8e8e8;
-  font-size: 18px;
+  background-color: #ffffff;
+  font-size: 15px;
   outline: none;
   transition: 0.2s;
   box-sizing: border-box;
@@ -71,8 +71,8 @@
   width: 80%;
   height: 45px;
   padding: 10px 12px;
-  border: 1px solid #191818;
-  background-color: #e8e8e8;
+  border: 1.5px solid #475569;
+  background-color: #ffffff;
   border-radius: 6px;
   font-size: 14px;
   resize: none;
@@ -84,8 +84,8 @@
   width: 80%;
   min-height: 100px;
   padding: 10px 12px;
-  border: 1px solid #050505;
-  background-color: #e8e8e8;
+  border: 1.5px solid #475569;
+  background-color: #ffffff;
   border-radius: 6px;
   font-size: 14px;
   resize: vertical;

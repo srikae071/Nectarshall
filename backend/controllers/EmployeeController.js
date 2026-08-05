@@ -33,9 +33,22 @@ const deleteEmployee = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+const updateEmployee = async (req, res) => {
+  try {
+    const updated = await Employee.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!updated) return res.status(404).json({ message: "Employee not found" });
+    res.status(200).json(updated);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 module.exports = {
   createEmployee,
   getEmployees,
   getEmployeeById,
+  updateEmployee,
   deleteEmployee,
 };
