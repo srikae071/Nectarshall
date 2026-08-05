@@ -205,6 +205,20 @@ function OnBoardingSaves() {
       setInitialContractDeliverables(JSON.parse(JSON.stringify(loadedCd)));
       setFinancialDetails(loadedFin);
       setInitialFinancialDetails(JSON.parse(JSON.stringify(loadedFin)));
+
+      let loadedEntries = [];
+      if (data.entries) {
+        try {
+          loadedEntries =
+            typeof data.entries === "string"
+              ? JSON.parse(data.entries)
+              : data.entries;
+        } catch (e) {
+          loadedEntries = [];
+        }
+      }
+      if (!Array.isArray(loadedEntries)) loadedEntries = [];
+      setEntries(loadedEntries);
     } catch (err) {
       console.log(err);
     }
@@ -358,30 +372,61 @@ function OnBoardingSaves() {
 
   const handleApprove = async () => {
     try {
+      const updatedEntries = [...entries];
+      const newEntry = {
+        serialNo: updatedEntries.length + 1,
+        timestamp: new Date().toLocaleString("en-US", {
+          dateStyle: "short",
+          timeStyle: "short",
+        }),
+        summary: "Operations status changed to Approved",
+        changedBy: "admin",
+      };
+      updatedEntries.push(newEntry);
+      const entriesString = JSON.stringify(updatedEntries);
+
       await sendApiData("PUT", `/api/BoardingCandidates/${id}`, {
         operationsClientApproved: true,
+        entries: entriesString,
       });
 
       setFormData((prev) => ({
         ...prev,
         operationsClientApproved: true,
       }));
+      setEntries(updatedEntries);
 
       alert("Approved Successfully");
     } catch (error) {
       console.log(error);
     }
   };
+
   const handleReject = async () => {
     try {
+      const updatedEntries = [...entries];
+      const newEntry = {
+        serialNo: updatedEntries.length + 1,
+        timestamp: new Date().toLocaleString("en-US", {
+          dateStyle: "short",
+          timeStyle: "short",
+        }),
+        summary: "Operations status changed to Rejected",
+        changedBy: "admin",
+      };
+      updatedEntries.push(newEntry);
+      const entriesString = JSON.stringify(updatedEntries);
+
       await sendApiData("PUT", `/api/BoardingCandidates/${id}`, {
         operationsClientApproved: false,
+        entries: entriesString,
       });
 
       setFormData((prev) => ({
         ...prev,
         operationsClientApproved: false,
       }));
+      setEntries(updatedEntries);
 
       alert("Rejected Successfully");
     } catch (error) {
@@ -1437,6 +1482,47 @@ function OnBoardingSaves() {
               );
             })}
           </>
+        </div>
+
+        {/* ENTRIES / CHANGE HISTORY LOGS */}
+        <div className="onboardingEntriesSection" style={{ marginTop: "30px" }}>
+          <div className="onboardingEntriesHeader" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "15px", background: "#f8fafc", padding: "12px 18px", borderRadius: "8px", border: "1px solid #cbd5e1" }}>
+            <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "700", color: "#0f172a" }}>
+              📋 Entries ({entries.length})
+            </h3>
+            <span style={{ fontSize: "12px", color: "#64748b", fontWeight: "600" }}>
+              History Log of all changes & updates
+            </span>
+          </div>
+
+          {entries.length === 0 ? (
+            <div style={{ padding: "20px", textAlign: "center", background: "#ffffff", borderRadius: "8px", border: "1px solid #e2e8f0", color: "#64748b", fontSize: "13.5px" }}>
+              No entries logged yet. Updates and status changes will appear here.
+            </div>
+          ) : (
+            <div className="onboardingEntriesTableWrapper" style={{ background: "#ffffff", borderRadius: "8px", border: "1px solid #cbd5e1", overflow: "hidden" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13.5px", textAlign: "left" }}>
+                <thead>
+                  <tr style={{ background: "#f1f5f9", borderBottom: "1px solid #cbd5e1", color: "#1e293b" }}>
+                    <th style={{ padding: "12px 16px", width: "60px" }}>#</th>
+                    <th style={{ padding: "12px 16px", width: "180px" }}>Timestamp</th>
+                    <th style={{ padding: "12px 16px" }}>Summary of Changes</th>
+                    <th style={{ padding: "12px 16px", width: "120px" }}>Changed By</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {entries.map((entry, idx) => (
+                    <tr key={idx} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                      <td style={{ padding: "12px 16px", fontWeight: "600", color: "#64748b" }}>{entry.serialNo || idx + 1}</td>
+                      <td style={{ padding: "12px 16px", whiteSpace: "nowrap", color: "#047857", fontWeight: "600" }}>📅 {entry.timestamp}</td>
+                      <td style={{ padding: "12px 16px", color: "#334155" }}>{entry.summary}</td>
+                      <td style={{ padding: "12px 16px", color: "#0f172a", fontWeight: "600" }}>👤 {entry.changedBy || "Admin"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </RegularForm>
     </Layout>

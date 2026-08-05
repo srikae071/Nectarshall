@@ -39,7 +39,7 @@ const BoardingCandidatesSchema = new mongoose.Schema(
 
     description: String,
     supplierType: String,
-    entries: String,
+    entries: mongoose.Schema.Types.Mixed,
 
     operationsClientApproved: {
       type: Boolean,
