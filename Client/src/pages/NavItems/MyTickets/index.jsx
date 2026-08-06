@@ -39,7 +39,7 @@ function MyTickets() {
       <MyTicketsNavBar />
       <div className="MyTicketsContainer">
         <div className="MyTicketsHeader">
-          <h2>My Tickets</h2>
+          <h2>My Ticket</h2>
         </div>
         <table className="MyTicketsTable">
           <thead>

@@ -1,9 +1,14 @@
+<<<<<<< HEAD
 import React, { useMemo, useState, useEffect } from "react";
 import { fetchApiData } from "../../../utils/apiClient";
+=======
+import React, { useMemo, useState } from "react";
+>>>>>>> 2166f75135388bcdb179843d165b9572caa4a1ee
 import "./index.css";
 
 function AccountsParent() {
   const [selectedWeek, setSelectedWeek] = useState(1);
+<<<<<<< HEAD
   const [employees, setEmployees] = useState([]);
   const [candidates, setCandidates] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -198,6 +203,56 @@ function AccountsParent() {
   const totalWeeklyPay = useMemo(() => {
     return selectedWeekShifts.reduce((sum, s) => sum + s.totalPay, 0);
   }, [selectedWeekShifts]);
+=======
+
+  const weekOptions = useMemo(() => {
+    const createWeekData = (weekNumber) => ({
+      id: weekNumber,
+      label: `Week ${weekNumber}`,
+      workers: [
+        {
+          id: 1,
+          name: "Alex Carter",
+          role: "Security Officer",
+          sites: [
+            { siteName: "North Gate Site", hours: 2, ratePerHour: 22.5 },
+            { siteName: "Harbor Entry Site", hours: 2, ratePerHour: 22.5 },
+          ],
+        },
+        {
+          id: 2,
+          name: "Maria Gomez",
+          role: "Cleaner",
+          sites: [
+            { siteName: "Main Office", hours: 4, ratePerHour: 18.0 },
+          ],
+        },
+        {
+          id: 3,
+          name: "David Lewis",
+          role: "Site Support",
+          sites: [
+            { siteName: "Warehouse Block", hours: 3, ratePerHour: 20.0 },
+            { siteName: "South Yard", hours: 1, ratePerHour: 20.0 },
+          ],
+        },
+      ],
+    });
+
+    return Array.from({ length: 52 }, (_, index) => createWeekData(index + 1));
+  }, []);
+
+  const selectedWeekData = useMemo(() => {
+    return weekOptions.find((week) => week.id === selectedWeek) || weekOptions[0];
+  }, [selectedWeek, weekOptions]);
+
+  const totalWeeklyPay = useMemo(() => {
+    return selectedWeekData.workers.reduce((total, worker) => {
+      const workerTotal = worker.sites.reduce((sum, site) => sum + site.hours * site.ratePerHour, 0);
+      return total + workerTotal;
+    }, 0);
+  }, [selectedWeekData]);
+>>>>>>> 2166f75135388bcdb179843d165b9572caa4a1ee
 
   const formatCurrency = (value) =>
     new Intl.NumberFormat("en-US", {
@@ -210,17 +265,26 @@ function AccountsParent() {
     <div className="accountsParentContainer">
       <div className="accountsHeader">
         <div>
+<<<<<<< HEAD
           <h2>📋 PayRun Accounts Dashboard (52 Weeks View)</h2>
           <p className="accountsSubtext">
             Select a week to review matched worker placements, assigned sites,
             shift dates, actual hours worked, and payable wages.
+=======
+          <h2>📋 PayRun Accounts Dashboard</h2>
+          <p className="accountsSubtext">
+            Select a week to review worker placements, assigned sites, hours worked, and payable wages.
+>>>>>>> 2166f75135388bcdb179843d165b9572caa4a1ee
           </p>
         </div>
 
         <div className="accountsSearchBox">
+<<<<<<< HEAD
           <label style={{ fontSize: "12.5px", fontWeight: "700", marginRight: "8px", color: "#475569" }}>
             Select Week:
           </label>
+=======
+>>>>>>> 2166f75135388bcdb179843d165b9572caa4a1ee
           <select
             className="accountsSearchInput"
             value={selectedWeek}
@@ -237,11 +301,60 @@ function AccountsParent() {
 
       <div className="accountsTabButtons">
         <button className="accountsTabBtn active">
+<<<<<<< HEAD
           📋{" "}
           {weekOptions.find((w) => w.id === selectedWeek)?.label ||
             `Week ${selectedWeek}`}{" "}
           Weekly Wage View ({selectedWeekShifts.length} Shift Placements)
         </button>
+=======
+          📋 {selectedWeekData.label} Weekly Wage View
+        </button>
+      </div>
+
+      <div className="accountsTableWrapper">
+        <table className="accountsTable">
+          <thead>
+            <tr>
+              <th>Worker Name</th>
+              <th>Role</th>
+              <th>Site</th>
+              <th>Hours</th>
+              <th>Rate / Hour</th>
+              <th>Site Pay</th>
+            </tr>
+          </thead>
+          <tbody>
+            {selectedWeekData.workers.map((worker) =>
+              worker.sites.map((site, index) => (
+                <tr key={`${worker.id}-${site.siteName}`}>
+                  {index === 0 ? (
+                    <>
+                      <td className="empNameText">👤 {worker.name}</td>
+                      <td>{worker.role}</td>
+                    </>
+                  ) : (
+                    <>
+                      <td></td>
+                      <td></td>
+                    </>
+                  )}
+                  <td>{site.siteName}</td>
+                  <td>{site.hours}</td>
+                  <td>{formatCurrency(site.ratePerHour)}</td>
+                  <td>{formatCurrency(site.hours * site.ratePerHour)}</td>
+                </tr>
+              ))
+            )}
+            <tr>
+              <td colSpan="5" className="boldText">
+                Total Payable for {selectedWeekData.label}
+              </td>
+              <td className="boldText">{formatCurrency(totalWeeklyPay)}</td>
+            </tr>
+          </tbody>
+        </table>
+>>>>>>> 2166f75135388bcdb179843d165b9572caa4a1ee
       </div>
 
       {loading ? (
