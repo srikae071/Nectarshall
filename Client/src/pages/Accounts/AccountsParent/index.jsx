@@ -1,14 +1,9 @@
-<<<<<<< HEAD
 import React, { useMemo, useState, useEffect } from "react";
 import { fetchApiData } from "../../../utils/apiClient";
-=======
-import React, { useMemo, useState } from "react";
->>>>>>> 2166f75135388bcdb179843d165b9572caa4a1ee
 import "./index.css";
 
 function AccountsParent() {
   const [selectedWeek, setSelectedWeek] = useState(1);
-<<<<<<< HEAD
   const [employees, setEmployees] = useState([]);
   const [candidates, setCandidates] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -203,56 +198,6 @@ function AccountsParent() {
   const totalWeeklyPay = useMemo(() => {
     return selectedWeekShifts.reduce((sum, s) => sum + s.totalPay, 0);
   }, [selectedWeekShifts]);
-=======
-
-  const weekOptions = useMemo(() => {
-    const createWeekData = (weekNumber) => ({
-      id: weekNumber,
-      label: `Week ${weekNumber}`,
-      workers: [
-        {
-          id: 1,
-          name: "Alex Carter",
-          role: "Security Officer",
-          sites: [
-            { siteName: "North Gate Site", hours: 2, ratePerHour: 22.5 },
-            { siteName: "Harbor Entry Site", hours: 2, ratePerHour: 22.5 },
-          ],
-        },
-        {
-          id: 2,
-          name: "Maria Gomez",
-          role: "Cleaner",
-          sites: [
-            { siteName: "Main Office", hours: 4, ratePerHour: 18.0 },
-          ],
-        },
-        {
-          id: 3,
-          name: "David Lewis",
-          role: "Site Support",
-          sites: [
-            { siteName: "Warehouse Block", hours: 3, ratePerHour: 20.0 },
-            { siteName: "South Yard", hours: 1, ratePerHour: 20.0 },
-          ],
-        },
-      ],
-    });
-
-    return Array.from({ length: 52 }, (_, index) => createWeekData(index + 1));
-  }, []);
-
-  const selectedWeekData = useMemo(() => {
-    return weekOptions.find((week) => week.id === selectedWeek) || weekOptions[0];
-  }, [selectedWeek, weekOptions]);
-
-  const totalWeeklyPay = useMemo(() => {
-    return selectedWeekData.workers.reduce((total, worker) => {
-      const workerTotal = worker.sites.reduce((sum, site) => sum + site.hours * site.ratePerHour, 0);
-      return total + workerTotal;
-    }, 0);
-  }, [selectedWeekData]);
->>>>>>> 2166f75135388bcdb179843d165b9572caa4a1ee
 
   const formatCurrency = (value) =>
     new Intl.NumberFormat("en-US", {
@@ -265,26 +210,17 @@ function AccountsParent() {
     <div className="accountsParentContainer">
       <div className="accountsHeader">
         <div>
-<<<<<<< HEAD
           <h2>📋 PayRun Accounts Dashboard (52 Weeks View)</h2>
           <p className="accountsSubtext">
             Select a week to review matched worker placements, assigned sites,
             shift dates, actual hours worked, and payable wages.
-=======
-          <h2>📋 PayRun Accounts Dashboard</h2>
-          <p className="accountsSubtext">
-            Select a week to review worker placements, assigned sites, hours worked, and payable wages.
->>>>>>> 2166f75135388bcdb179843d165b9572caa4a1ee
           </p>
         </div>
 
-        <div className="accountsSearchBox">
-<<<<<<< HEAD
-          <label style={{ fontSize: "12.5px", fontWeight: "700", marginRight: "8px", color: "#475569" }}>
+        <div className="weekSelectorContainer">
+          <label style={{ fontWeight: "700", color: "#0f172a", fontSize: "14px" }}>
             Select Week:
           </label>
-=======
->>>>>>> 2166f75135388bcdb179843d165b9572caa4a1ee
           <select
             className="accountsSearchInput"
             value={selectedWeek}
@@ -301,60 +237,11 @@ function AccountsParent() {
 
       <div className="accountsTabButtons">
         <button className="accountsTabBtn active">
-<<<<<<< HEAD
           📋{" "}
           {weekOptions.find((w) => w.id === selectedWeek)?.label ||
             `Week ${selectedWeek}`}{" "}
           Weekly Wage View ({selectedWeekShifts.length} Shift Placements)
         </button>
-=======
-          📋 {selectedWeekData.label} Weekly Wage View
-        </button>
-      </div>
-
-      <div className="accountsTableWrapper">
-        <table className="accountsTable">
-          <thead>
-            <tr>
-              <th>Worker Name</th>
-              <th>Role</th>
-              <th>Site</th>
-              <th>Hours</th>
-              <th>Rate / Hour</th>
-              <th>Site Pay</th>
-            </tr>
-          </thead>
-          <tbody>
-            {selectedWeekData.workers.map((worker) =>
-              worker.sites.map((site, index) => (
-                <tr key={`${worker.id}-${site.siteName}`}>
-                  {index === 0 ? (
-                    <>
-                      <td className="empNameText">👤 {worker.name}</td>
-                      <td>{worker.role}</td>
-                    </>
-                  ) : (
-                    <>
-                      <td></td>
-                      <td></td>
-                    </>
-                  )}
-                  <td>{site.siteName}</td>
-                  <td>{site.hours}</td>
-                  <td>{formatCurrency(site.ratePerHour)}</td>
-                  <td>{formatCurrency(site.hours * site.ratePerHour)}</td>
-                </tr>
-              ))
-            )}
-            <tr>
-              <td colSpan="5" className="boldText">
-                Total Payable for {selectedWeekData.label}
-              </td>
-              <td className="boldText">{formatCurrency(totalWeeklyPay)}</td>
-            </tr>
-          </tbody>
-        </table>
->>>>>>> 2166f75135388bcdb179843d165b9572caa4a1ee
       </div>
 
       {loading ? (
@@ -371,97 +258,116 @@ function AccountsParent() {
                 <th>Company / Client</th>
                 <th>Site Name</th>
                 <th>Assigned Date</th>
-                <th>Shift Time</th>
+                <th>Scheduled Shift</th>
                 <th>Actual Worked Time</th>
                 <th>Hours</th>
-                <th>Rate / Hour</th>
-                <th>Site Pay</th>
+                <th>Rate / Hr</th>
+                <th>Total Pay</th>
               </tr>
             </thead>
             <tbody>
               {groupedWorkerShifts.length === 0 ? (
                 <tr>
-                  <td colSpan="10" style={{ textAlign: "center", padding: "30px", color: "#94a3b8" }}>
-                    No assigned shift placements found for Week {selectedWeek}.
+                  <td colSpan="10" className="accountsEmpty">
+                    No employee shift placements found for Week {selectedWeek}.
                   </td>
                 </tr>
               ) : (
                 groupedWorkerShifts.map((workerGroup) =>
-                      workerGroup.shifts.map((shift, index) => {
-                      const initialLetter = (
-                        workerGroup.empName || "E"
-                      )
-                        .charAt(0)
-                        .toUpperCase();
-                      return (
-                        <tr key={shift.id}>
-                          {index === 0 ? (
-                            <>
-                              <td
-                                className="empNameText"
-                                rowSpan={workerGroup.shifts.length}
-                              >
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: "8px",
-                                  }}
-                                >
-                                  <span className="empInitialAvatar">
-                                    {initialLetter}
-                                  </span>
-                                  <span>{workerGroup.empName}</span>
-                                </div>
-                              </td>
-                              <td rowSpan={workerGroup.shifts.length}>
-                                {workerGroup.role}
-                              </td>
-                            </>
-                          ) : null}
-                          <td>🏢 {shift.companyName}</td>
-                          <td>📍 {shift.siteName}</td>
-                          <td>📅 {shift.assignedDate}</td>
-                          <td>
-                            ⏰ {shift.shiftStartTime} - {shift.shiftEndTime}
-                          </td>
-                          <td>
-                            <span
-                              style={{
-                                padding: "2px 8px",
-                                borderRadius: "4px",
-                                fontSize: "11.5px",
-                                fontWeight: "600",
-                                background:
-                                  shift.actualStartTime !== "Not Logged"
-                                    ? "#dcfce7"
-                                    : "#f1f5f9",
-                                color:
-                                  shift.actualStartTime !== "Not Logged"
-                                    ? "#166534"
-                                    : "#64748b",
-                              }}
+                  workerGroup.shifts.map((shift, index) => {
+                    const initialLetter = (
+                      workerGroup.empName || "E"
+                    )
+                      .charAt(0)
+                      .toUpperCase();
+                    return (
+                      <tr key={shift.id}>
+                        {index === 0 ? (
+                          <>
+                            <td
+                              className="empNameText"
+                              rowSpan={workerGroup.shifts.length}
                             >
-                              ⏱️ {shift.actualStartTime} -{" "}
-                              {shift.actualEndTime}
-                            </span>
-                          </td>
-                          <td>{shift.hours} hrs</td>
-                          <td>{formatCurrency(shift.ratePerHour)}</td>
-                          <td style={{ fontWeight: "700", color: "#0f172a" }}>
-                            {formatCurrency(shift.totalPay)}
-                          </td>
-                        </tr>
-                      );
-                    })
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "8px",
+                                }}
+                              >
+                                <span className="empInitialAvatar">
+                                  {initialLetter}
+                                </span>
+                                <span>{workerGroup.empName}</span>
+                              </div>
+                            </td>
+                            <td rowSpan={workerGroup.shifts.length}>
+                              {workerGroup.role}
+                            </td>
+                          </>
+                        ) : null}
+                        <td>🏢 {shift.companyName}</td>
+                        <td>📍 {shift.siteName}</td>
+                        <td>📅 {shift.assignedDate}</td>
+                        <td>
+                          ⏰ {shift.shiftStartTime} - {shift.shiftEndTime}
+                        </td>
+                        <td>
+                          <span
+                            style={{
+                              padding: "2px 8px",
+                              borderRadius: "4px",
+                              fontSize: "11.5px",
+                              fontWeight: "600",
+                              background:
+                                shift.actualStartTime !== "Not Logged"
+                                  ? "#dcfce7"
+                                  : "#f1f5f9",
+                              color:
+                                shift.actualStartTime !== "Not Logged"
+                                  ? "#166534"
+                                  : "#64748b",
+                            }}
+                          >
+                            ⏱️ {shift.actualStartTime} -{" "}
+                            {shift.actualEndTime}
+                          </span>
+                        </td>
+                        <td>{shift.hours} hrs</td>
+                        <td>{formatCurrency(shift.ratePerHour)}</td>
+                        <td style={{ fontWeight: "700", color: "#0f172a" }}>
+                          {formatCurrency(shift.totalPay)}
+                        </td>
+                      </tr>
+                    );
+                  })
                 )
               )}
               {groupedWorkerShifts.length > 0 && (
-                <tr style={{ background: "#f8fafc" }}>
-                  <td colSpan="9" className="boldText" style={{ textAlign: "right", paddingRight: "15px" }}>
-                    Total Payable Wages for Week {selectedWeek}:
+                <tr
+                  style={{
+                    background: "#f8fafc",
+                    borderTop: "2px solid #e2e8f0",
+                  }}
+                >
+                  <td
+                    colSpan="9"
+                    style={{
+                      textAlign: "right",
+                      fontWeight: "700",
+                      padding: "12px 16px",
+                    }}
+                  >
+                    Total Weekly Payable Wages for Week {selectedWeek}:
                   </td>
-                  <td className="boldText" style={{ fontSize: "16px", color: "#047857" }}>
+                  <td
+                    style={{
+                      fontWeight: "800",
+                      color: "#047857",
+                      fontSize: "15px",
+                      padding: "12px 16px",
+                    }}
+                  >
                     {formatCurrency(totalWeeklyPay)}
                   </td>
                 </tr>
