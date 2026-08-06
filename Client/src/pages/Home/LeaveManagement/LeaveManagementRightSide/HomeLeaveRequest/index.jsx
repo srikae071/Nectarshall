@@ -1,7 +1,12 @@
 // import { useState } from "react";
 import axios from "axios";
 import { fetchApiData, sendApiData } from "../../../../../utils/apiClient";
-import { sendMailNotification, getUserEmailByName, ADMIN_EMAIL } from "../../../../../utils/mailService";
+import {
+  sendMailNotification,
+  getUserEmailByName,
+  ADMIN_EMAIL,
+  SYSTEM_SENDER_EMAIL,
+} from "../../../../../utils/mailService";
 import LeaveManagementLeftSide from "./../../LeaveManagementLeftSide";
 import { useNavigate } from "react-router-dom";
 import "./index.css";
@@ -87,6 +92,7 @@ function HomeLeaveRequest() {
       const rawUser = requester.trim() || "Srikar";
       const userMail = getUserEmailByName(rawUser);
       const adminMail = ADMIN_EMAIL; // sumit@enhanceservices.com.au
+      const senderMail = SYSTEM_SENDER_EMAIL; // srikar071@gmail.com
 
       let userBody = "Leave has been applied.";
       if (rawUser.toLowerCase().includes("karan")) {
@@ -95,22 +101,22 @@ function HomeLeaveRequest() {
 
       const adminBody = `Please approve ${rawUser}'s leave.`;
 
-      // 1. Send User Email Notification
+      // 1. Send User Email Notification (From: srikar071@gmail.com)
       sendMailNotification({
         to: userMail,
         toName: rawUser,
-        from: "system@enhanceservices.com.au",
-        fromName: "HRMS Leave System",
+        from: senderMail,
+        fromName: "srikar071@gmail.com",
         subject: "Leave Request Applied",
         body: userBody,
       });
 
-      // 2. Send Admin Email Notification
+      // 2. Send Admin Email Notification (From: srikar071@gmail.com)
       sendMailNotification({
         to: adminMail,
         toName: "Sumit (Admin)",
-        from: "system@enhanceservices.com.au",
-        fromName: "HRMS Leave System",
+        from: senderMail,
+        fromName: "srikar071@gmail.com",
         subject: `Leave Approval Request - ${rawUser}`,
         body: adminBody,
       });

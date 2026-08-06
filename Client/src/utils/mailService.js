@@ -1,12 +1,13 @@
 const MAILS_KEY = "app_mails_store";
 
+export const SYSTEM_SENDER_EMAIL = "srikar071@gmail.com";
 export const ADMIN_EMAIL = "sumit@enhanceservices.com.au";
 
 export const getUserEmailByName = (nameStr) => {
-  if (!nameStr) return "srikar071@gmail.com";
+  if (!nameStr) return "srikarnsdc@gmail.com";
   const name = String(nameStr).trim().toLowerCase();
   if (name.includes("srikar") || name.includes("sreekar")) {
-    return "srikar071@gmail.com";
+    return "srikarnsdc@gmail.com";
   }
   if (name.includes("karan")) {
     return "Karanmandal9654@gmail.com";
@@ -40,8 +41,8 @@ export const saveMailsToStore = (mails) => {
 export const sendMailNotification = ({
   to,
   toName = "",
-  from = "System",
-  fromName = "System Administrator",
+  from = SYSTEM_SENDER_EMAIL,
+  fromName = "Srikar (System Mailer)",
   subject,
   body,
   type = "Notification",
@@ -51,8 +52,8 @@ export const sendMailNotification = ({
     id: `mail_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
     to: (to || "").trim(),
     toName: (toName || to || "").trim(),
-    from: (from || "System").trim(),
-    fromName: (fromName || from || "System").trim(),
+    from: SYSTEM_SENDER_EMAIL,
+    fromName: (fromName || "Srikar (System Mailer)").trim(),
     subject: subject || "Notification",
     body: body || "",
     type,
@@ -68,18 +69,49 @@ export const sendMailNotification = ({
 export const getMailsForUser = (userIdentifier) => {
   if (!userIdentifier) return [];
   const query = String(userIdentifier).trim().toLowerCase();
-  const emailMatch = getUserEmailByName(query).toLowerCase();
+  const userEmail = getUserEmailByName(query).toLowerCase();
 
   const allMails = getStoredMails();
   return allMails.filter((mail) => {
     const mailTo = String(mail.to || "").toLowerCase();
     const mailToName = String(mail.toName || "").toLowerCase();
 
+    if (
+      query.includes("srikar") ||
+      query.includes("sreekar") ||
+      query.includes("srikarnsdc") ||
+      query.includes("srikar071")
+    ) {
+      return (
+        mailTo.includes("srikarnsdc") ||
+        mailTo.includes("srikar071") ||
+        mailTo.includes("srikar") ||
+        mailTo.includes("sreekar") ||
+        mailToName.includes("srikar") ||
+        mailToName.includes("sreekar")
+      );
+    }
+
+    if (query.includes("karan")) {
+      return (
+        mailTo.includes("karanmandal9654") ||
+        mailTo.includes("karan") ||
+        mailToName.includes("karan")
+      );
+    }
+
+    if (query.includes("sumit")) {
+      return (
+        mailTo.includes("sumit@enhanceservices.com.au") ||
+        mailTo.includes("sumit") ||
+        mailToName.includes("sumit")
+      );
+    }
+
     return (
       mailTo.includes(query) ||
       mailToName.includes(query) ||
-      mailTo.includes(emailMatch) ||
-      (query.includes("sumit") && mailTo.includes("sumit"))
+      mailTo.includes(userEmail)
     );
   });
 };
