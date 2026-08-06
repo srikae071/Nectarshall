@@ -51,6 +51,9 @@ function RosterMain() {
   const [newEmployeeName, setNewEmployeeName] = useState("");
   const [savingAssign, setSavingAssign] = useState(false);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState("");
+  const [isEditShift, setIsEditShift] = useState(false);
+  const [editedSiteName, setEditedSiteName] = useState("");
+  const [editedMealTime, setEditedMealTime] = useState("30 mins");
 
   // Assign Employee to Adhoc Modal State
   const [adhocAssignModal, setAdhocAssignModal] = useState({
@@ -473,6 +476,15 @@ function RosterMain() {
         : "All Days",
       currentEmployee: slotEmp || row.requester || "",
     });
+    const initialMealTime =
+      card.assignedEmployees?.[slotIdx]?.mealTime ||
+      card.mealTime ||
+      "30 mins";
+
+    setEditedSiteName(row.siteName || "");
+    setEditedMealTime(initialMealTime);
+    setIsEditShift(false);
+
     setNewEmployeeName(slotEmp || row.requester || "");
     setScopeOfWorkText(initialScopeOfWork);
     setSaveSuccessMsg("");
@@ -524,9 +536,11 @@ function RosterMain() {
           isUpdated: true,
           approvalState: "Pending",
           scopeOfWork: scopeOfWorkText,
+          mealTime: editedMealTime,
         };
 
         targetService.assignedEmployees = existingAssigned;
+        targetService.mealTime = editedMealTime;
 
         if (slotIdx === 0) {
           targetService.employee = newEmployeeName.trim();
@@ -539,6 +553,7 @@ function RosterMain() {
           services: updatedServices,
           adhocServices: contract.adhocServices || [],
           scopeOfWork: scopeOfWorkText,
+          siteName: editedSiteName,
         },
         "put",
       );
@@ -1351,16 +1366,43 @@ function RosterMain() {
           <div className="assignModalContainer">
             <div className="assignModalHeader">
               <h3>Assign Employee to Shift</h3>
-              <button className="closeModalBtn" onClick={handleCloseModal}>
-                ✕
-              </button>
+              <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                <button
+                  type="button"
+                  className={`editShiftToggleBtn ${isEditShift ? "active" : ""}`}
+                  onClick={() => setIsEditShift(!isEditShift)}
+                  title="Click to edit site name & meal time"
+                >
+                  {isEditShift ? "✓ Editing Mode" : "✏️ Edit"}
+                </button>
+                <button className="closeModalBtn" onClick={handleCloseModal}>
+                  ✕
+                </button>
+              </div>
             </div>
 
             <div className="assignModalBody">
               <div className="shiftInfoBox">
-                <p>
-                  <strong>Site Name:</strong> {assignModal.siteName}
-                </p>
+                {isEditShift ? (
+                  <div className="editFieldRow">
+                    <label style={{ display: "block", marginBottom: "4px", fontSize: "13px", fontWeight: "700", color: "#334155" }}>
+                      Site Name:
+                    </label>
+                    <input
+                      type="text"
+                      className="assignInput"
+                      style={{ fontSize: "13.5px", padding: "7px 10px", width: "100%", marginBottom: "10px" }}
+                      value={editedSiteName}
+                      onChange={(e) => setEditedSiteName(e.target.value)}
+                      placeholder="Enter Site Name"
+                    />
+                  </div>
+                ) : (
+                  <p>
+                    <strong>Site Name:</strong> {editedSiteName || assignModal.siteName}
+                  </p>
+                )}
+
                 <p>
                   <strong>Type of Service:</strong> {assignModal.serviceType}
                 </p>
@@ -1374,6 +1416,27 @@ function RosterMain() {
                 <p>
                   <strong>Shift End Time:</strong> {assignModal.shiftEndTime}
                 </p>
+
+                {isEditShift ? (
+                  <div className="editFieldRow">
+                    <label style={{ display: "block", marginBottom: "4px", fontSize: "13px", fontWeight: "700", color: "#334155" }}>
+                      Meal Time:
+                    </label>
+                    <input
+                      type="text"
+                      className="assignInput"
+                      style={{ fontSize: "13.5px", padding: "7px 10px", width: "100%", marginBottom: "10px" }}
+                      value={editedMealTime}
+                      onChange={(e) => setEditedMealTime(e.target.value)}
+                      placeholder="e.g. 30 mins, 1 hour, or 12:30"
+                    />
+                  </div>
+                ) : (
+                  <p>
+                    <strong>Meal Time:</strong> {editedMealTime || "30 mins"}
+                  </p>
+                )}
+
                 <p>
                   <strong>Contract Start Date:</strong>{" "}
                   {assignModal.contractStartDate}

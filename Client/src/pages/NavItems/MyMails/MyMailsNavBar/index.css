@@ -1,0 +1,42 @@
+.myMailsNavbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background-color: #1e293b;
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.myMailsLogo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.myMailsLogoImage {
+  height: 38px;
+  object-fit: contain;
+}
+
+.myMailsNavName p {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+.myMailsUserProfile {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f8fafc;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 6px 14px;
+  border-radius: 20px;
+}
+
+/* GREEN THEME OVERRIDE */
+[data-theme="green"] .myMailsNavbar {
+  background-color: #047857 !important;
+}

@@ -15,6 +15,9 @@ import Open from "./pages/Hrms/Open/index.jsx";
 import Resolved from "../src/pages/Hrms/Resolved/index.jsx";
 import Assingtome from "../src/pages/Hrms/Assigntome/index.jsx";
 import AddEmployee from "./pages/Hrms/AddEmployee/index.jsx";
+import AllEmployees from "./pages/Hrms/AllEmployees/index.jsx";
+import MainEmployeesSaves from "./pages/Hrms/Employee/MainEmployeesSaves/index.jsx";
+import MyMails from "./pages/NavItems/MyMails/index.jsx";
 
 import All from "../src/pages/Hrms/Employee/ResourceRequirement/All/index.jsx";
 import EmployeeCreateNew from "../src/pages/Hrms/Employee/ResourceRequirement/EmployeeCreateNew/index.jsx";
@@ -113,6 +116,7 @@ import AccountsLayout from "./pages/Accounts/AccountsLayout";
 import AccountsParent from "./pages/Accounts/AccountsParent";
 import AccountsExpenditure from "./pages/Accounts/AccountsExpenditure";
 import AccountsReconciliation from "./pages/Accounts/AccountsReconciliation";
+import AccountsCustomerBilling from "./pages/Accounts/AccountsCustomerBilling";
 
 function App() {
   useEffect(() => {
@@ -279,6 +283,9 @@ function App() {
       <Route path="/hrms/hrsaves/:id" element={<HRSaves />} />
       <Route path="/hrms/hrsavescases" element={<HRSavesCases />} />
       <Route path="/my-tickets" element={<MyTickets />} />
+      <Route path="/my-mails" element={<MyMails />} />
+      <Route path="/hrms/all-employees" element={<AllEmployees />} />
+      <Route path="/hrms/employee/:id" element={<MainEmployeesSaves />} />
       <Route path="/it-all" element={<ItNavMain />} />
       <Route path="/it/create-new" element={<ITCreateNew />} />
       <Route path="/it/open" element={<ItOpen />} />
@@ -434,6 +441,16 @@ function App() {
           <ProtectedRoute>
             <AccountsLayout>
               <AccountsReconciliation />
+            </AccountsLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/accounts/customer-billing"
+        element={
+          <ProtectedRoute>
+            <AccountsLayout>
+              <AccountsCustomerBilling />
             </AccountsLayout>
           </ProtectedRoute>
         }

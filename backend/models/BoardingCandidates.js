@@ -166,6 +166,10 @@ const BoardingCandidatesSchema = new mongoose.Schema(
                   type: String,
                   default: "",
                 },
+                mealTime: {
+                  type: String,
+                  default: "30 mins",
+                },
               },
             ],
 
@@ -206,6 +210,10 @@ const BoardingCandidatesSchema = new mongoose.Schema(
               type: mongoose.Schema.Types.Mixed,
               default: [],
             },
+            mealTime: {
+              type: String,
+              default: "30 mins",
+            },
           },
         ],
         adhocServices: [
@@ -233,6 +241,10 @@ const BoardingCandidatesSchema = new mongoose.Schema(
             shiftEndTime: {
               type: String,
               default: "",
+            },
+            mealTime: {
+              type: String,
+              default: "30 mins",
             },
 
             serviceDate: {

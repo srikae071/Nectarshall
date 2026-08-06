@@ -136,7 +136,7 @@ const updateContractService = async (req, res) => {
     console.log("===== updateContractService HIT =====");
     console.log(req.body);
     const { id, contractId } = req.params;
-    const { services, adhocServices = [], scopeOfWork } = req.body;
+    const { services, adhocServices = [], scopeOfWork, siteName } = req.body;
 
     const boarding = await BoardingCandidates.findById(id);
 
@@ -155,6 +155,10 @@ const updateContractService = async (req, res) => {
     contract.services = services;
     if (typeof scopeOfWork === "string") {
       contract.scopeOfWork = scopeOfWork;
+    }
+    if (typeof siteName === "string" && siteName.trim()) {
+      contract.siteName = siteName.trim();
+      contract.siteAddress = siteName.trim();
     }
     const existingAdhocServices = contract.adhocServices || [];
 

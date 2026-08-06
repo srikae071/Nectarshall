@@ -1,0 +1,13 @@
+.section-header-row {
+  grid-column: 1 / -1;
+  margin: 25px 0 10px 0;
+  border-bottom: 2px solid #008075;
+  padding-bottom: 6px;
+}
+
+.section-title {
+  margin: 0;
+  color: #008075;
+  font-size: 16px;
+  font-weight: 700;
+}

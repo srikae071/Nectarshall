@@ -10,6 +10,11 @@ function AccountsLayout({ children }) {
 
   const menuItems = [
     {
+      label: "Parent",
+      icon: "🏢",
+      path: "/accounts/parent",
+    },
+    {
       label: "PayRun",
       icon: "📋",
       path: "/accounts/payrun",
@@ -23,6 +28,11 @@ function AccountsLayout({ children }) {
       label: "Reconciliation",
       icon: "⚖️",
       path: "/accounts/reconciliation",
+    },
+    {
+      label: "Customer Billing",
+      icon: "💳",
+      path: "/accounts/customer-billing",
     },
   ];
 

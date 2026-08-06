@@ -94,7 +94,7 @@ const menuData = [
     title: "Employee Management",
     items: [
       { label: "Add Employee", path: "/hrms/add-employee" },
-      { label: "All Employees", path: "/dashboard/employee" },
+      { label: "All Employees", path: "/hrms/all-employees" },
     ],
   },
   {

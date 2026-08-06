@@ -221,6 +221,10 @@ function Home() {
             MY TICKETS
           </a>
 
+          <a role="button" tabIndex={0} onClick={() => navigate("/my-mails")}>
+            MY MAILS
+          </a>
+
           <ThemeSelector />
 
           {/* PROFILE USER MENU WITH LOGOUT */}
