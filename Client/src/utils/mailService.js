@@ -1,3 +1,5 @@
+import { sendApiData } from "./apiClient";
+
 const MAILS_KEY = "app_mails_store";
 
 export const SYSTEM_SENDER_EMAIL = "srikar071@gmail.com";
@@ -38,11 +40,11 @@ export const saveMailsToStore = (mails) => {
   }
 };
 
-export const sendMailNotification = ({
+export const sendMailNotification = async ({
   to,
   toName = "",
   from = SYSTEM_SENDER_EMAIL,
-  fromName = "Srikar (System Mailer)",
+  fromName = "srikar071@gmail.com",
   subject,
   body,
   type = "Notification",
@@ -53,7 +55,7 @@ export const sendMailNotification = ({
     to: (to || "").trim(),
     toName: (toName || to || "").trim(),
     from: SYSTEM_SENDER_EMAIL,
-    fromName: (fromName || "Srikar (System Mailer)").trim(),
+    fromName: (fromName || "srikar071@gmail.com").trim(),
     subject: subject || "Notification",
     body: body || "",
     type,
@@ -63,6 +65,18 @@ export const sendMailNotification = ({
 
   const updatedMails = [newMail, ...currentMails];
   saveMailsToStore(updatedMails);
+
+  try {
+    await sendApiData("/api/mail/send-notification", {
+      to: newMail.to,
+      toName: newMail.toName,
+      subject: newMail.subject,
+      body: newMail.body,
+    });
+  } catch (err) {
+    console.warn("Backend SMTP delivery result:", err);
+  }
+
   return newMail;
 };
 

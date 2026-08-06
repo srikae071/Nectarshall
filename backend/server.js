@@ -10,8 +10,8 @@ const leaveRoutes = require("./routes/leaveRoutes");
 const jobRequestRoutes = require("./routes/jobRequestRoutes");
 const complianceRoutes = require("./routes/complianceRoutes");
 const employeeRoutes = require("./routes/EmployeeRoutes");
-
 const boardingCandidatesRoutes = require("./routes/BoardingCandidatesRoutes");
+const mailRoutes = require("./routes/MailRoutes");
 
 const app = express();
 
@@ -26,6 +26,7 @@ app.use("/api/jobrequests", jobRequestRoutes);
 app.use("/api/compliance", complianceRoutes);
 app.use("/api/BoardingCandidates", boardingCandidatesRoutes);
 app.use("/api/employees", employeeRoutes);
+app.use("/api/mail", mailRoutes);
 // Middleware
 
 // MongoDB Connection
