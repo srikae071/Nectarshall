@@ -1,0 +1,85 @@
+const MAILS_KEY = "app_mails_store";
+
+export const ADMIN_EMAIL = "sumit@enhanceservices.com.au";
+
+export const getUserEmailByName = (nameStr) => {
+  if (!nameStr) return "srikar071@gmail.com";
+  const name = String(nameStr).trim().toLowerCase();
+  if (name.includes("srikar") || name.includes("sreekar")) {
+    return "srikar071@gmail.com";
+  }
+  if (name.includes("karan")) {
+    return "Karanmandal9654@gmail.com";
+  }
+  if (name.includes("sumit")) {
+    return "sumit@enhanceservices.com.au";
+  }
+  return `${name.replace(/\s+/g, "")}@gmail.com`;
+};
+
+export const getStoredMails = () => {
+  try {
+    const data = localStorage.getItem(MAILS_KEY);
+    if (data) {
+      return JSON.parse(data);
+    }
+  } catch (err) {
+    console.error("Error reading mails from storage:", err);
+  }
+  return [];
+};
+
+export const saveMailsToStore = (mails) => {
+  try {
+    localStorage.setItem(MAILS_KEY, JSON.stringify(mails));
+  } catch (err) {
+    console.error("Error saving mails to storage:", err);
+  }
+};
+
+export const sendMailNotification = ({
+  to,
+  toName = "",
+  from = "System",
+  fromName = "System Administrator",
+  subject,
+  body,
+  type = "Notification",
+}) => {
+  const currentMails = getStoredMails();
+  const newMail = {
+    id: `mail_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+    to: (to || "").trim(),
+    toName: (toName || to || "").trim(),
+    from: (from || "System").trim(),
+    fromName: (fromName || from || "System").trim(),
+    subject: subject || "Notification",
+    body: body || "",
+    type,
+    createdAt: new Date().toISOString(),
+    isRead: false,
+  };
+
+  const updatedMails = [newMail, ...currentMails];
+  saveMailsToStore(updatedMails);
+  return newMail;
+};
+
+export const getMailsForUser = (userIdentifier) => {
+  if (!userIdentifier) return [];
+  const query = String(userIdentifier).trim().toLowerCase();
+  const emailMatch = getUserEmailByName(query).toLowerCase();
+
+  const allMails = getStoredMails();
+  return allMails.filter((mail) => {
+    const mailTo = String(mail.to || "").toLowerCase();
+    const mailToName = String(mail.toName || "").toLowerCase();
+
+    return (
+      mailTo.includes(query) ||
+      mailToName.includes(query) ||
+      mailTo.includes(emailMatch) ||
+      (query.includes("sumit") && mailTo.includes("sumit"))
+    );
+  });
+};

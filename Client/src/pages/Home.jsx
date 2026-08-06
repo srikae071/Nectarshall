@@ -62,7 +62,7 @@ function Home() {
       desc: "Smart Leave Management for Modern Teams",
       img: leaveImg,
       route: "/Home-leave-request",
-      module: "HRMS",
+      module: "COMMON",
     },
     {
       title: "Payrolls",

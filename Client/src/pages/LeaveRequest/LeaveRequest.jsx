@@ -1,10 +1,11 @@
 // import { useState } from "react";
 import axios from "axios";
 import { fetchApiData, sendApiData } from "../../utils/apiClient";
+import { sendMailNotification, getUserEmailByName, ADMIN_EMAIL } from "../../utils/mailService";
 import Hrmsleftlayout from "../../pages/Hrms/Hrmsleftlayout";
 import "./LeaveRequest.css";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function LeaveRequest() {
   const [startDate, setStartDate] = useState("");
@@ -24,6 +25,7 @@ function LeaveRequest() {
       })
       .catch((err) => console.log(err));
   }, []);
+
   const handleSave = async () => {
     try {
       const leaveAllocation = {
@@ -62,17 +64,47 @@ function LeaveRequest() {
 
       await sendApiData("/api/leaves/create", {
         requester,
-          requesterFor,
-          startDate,
-          leaveType,
-          endDate,
-          totalLeaves: requestedLeaves,
-          halfDay,
-          description,
-        },
-      );
+        requesterFor,
+        startDate,
+        leaveType,
+        endDate,
+        totalLeaves: requestedLeaves,
+        halfDay,
+        description,
+      });
 
-      alert("Leave Request Saved Successfully");
+      const rawUser = requester.trim() || "Srikar";
+      const userMail = getUserEmailByName(rawUser);
+      const adminMail = ADMIN_EMAIL; // sumit@enhanceservices.com.au
+
+      let userBody = "Leave has been applied.";
+      if (rawUser.toLowerCase().includes("karan")) {
+        userBody = "Thank you, your leave has been applied.";
+      }
+
+      const adminBody = `Please approve ${rawUser}'s leave.`;
+
+      // 1. Send User Email Notification
+      sendMailNotification({
+        to: userMail,
+        toName: rawUser,
+        from: "system@enhanceservices.com.au",
+        fromName: "HRMS Leave System",
+        subject: "Leave Request Applied",
+        body: userBody,
+      });
+
+      // 2. Send Admin Email Notification
+      sendMailNotification({
+        to: adminMail,
+        toName: "Sumit (Admin)",
+        from: "system@enhanceservices.com.au",
+        fromName: "HRMS Leave System",
+        subject: `Leave Approval Request - ${rawUser}`,
+        body: adminBody,
+      });
+
+      alert("Leave Request Saved Successfully & Notification Mails Sent!");
 
       navigate("/");
     } catch (error) {
