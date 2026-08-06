@@ -13,9 +13,17 @@ function LeaveRequest() {
   const [description, setDescription] = useState("");
   const [requester, setRequester] = useState("");
   const [requesterFor, setRequesterFor] = useState("");
-  // const [leaveType, setLeaveType] = useState("Earned Leaves");
   const [leaveType, setLeaveType] = useState("");
+  const [employeeList, setEmployeeList] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchApiData("/api/employees")
+      .then((res) => {
+        setEmployeeList(res.data || []);
+      })
+      .catch((err) => console.log(err));
+  }, []);
   const handleSave = async () => {
     try {
       const leaveAllocation = {
@@ -107,6 +115,7 @@ function LeaveRequest() {
                 type="text"
                 className="LeaveRequestInput"
                 placeholder="Enter Requester"
+                list="employeeDatalist"
                 value={requester}
                 onChange={(e) => setRequester(e.target.value)}
               />
@@ -118,10 +127,18 @@ function LeaveRequest() {
                 type="text"
                 className="LeaveRequestInput"
                 placeholder="Enter Requester For"
+                list="employeeDatalist"
                 value={requesterFor}
                 onChange={(e) => setRequesterFor(e.target.value)}
               />
             </div>
+
+            <datalist id="employeeDatalist">
+              {employeeList.map((emp, i) => {
+                const name = emp.displayName || emp.employeeName || `${emp.firstName || ""} ${emp.lastName || ""}`.trim();
+                return name ? <option key={i} value={name} /> : null;
+              })}
+            </datalist>
           </div>
 
           {/* Row 2 */}

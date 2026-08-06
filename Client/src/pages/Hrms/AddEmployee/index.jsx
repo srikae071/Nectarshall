@@ -67,17 +67,21 @@ function AddEmployee() {
     }
 
     try {
-      await sendApiData("POST", "/api/employees/create", {
+      const payload = {
         ...formData,
+        employeeHireDate: formData.employeeHireDate || null,
         employeeName: formData.displayName,
         place: formData.officeLocation,
-      });
+      };
+
+      await sendApiData("POST", "/api/employees/create", payload);
 
       alert("Employee Created Successfully!");
       navigate("/dashboard/employee");
     } catch (error) {
       console.error("Error creating employee:", error);
-      alert("Failed to create employee. Please try again.");
+      const msg = error.response?.data?.message || error.message || "Failed to create employee.";
+      alert(`Failed to create employee: ${msg}`);
     }
   };
 
@@ -104,7 +108,7 @@ function AddEmployee() {
             name="displayName"
             value={formData.displayName}
             onChange={handleChange}
-            placeholder="e.g. Sumit Kumar"
+            placeholder="e.g. Sumith Sir"
             required
           />
         </div>
@@ -309,7 +313,7 @@ function AddEmployee() {
             name="streetAddress"
             value={formData.streetAddress}
             onChange={handleChange}
-            placeholder="e.g. 123 Main Street"
+            placeholder="Sydney"
           />
         </div>
 
@@ -471,7 +475,12 @@ function AddEmployee() {
               name="accountEnabled"
               checked={formData.accountEnabled}
               onChange={handleChange}
-              style={{ width: "20px", height: "20px", cursor: "pointer", marginLeft: "60px" }}
+              style={{
+                width: "20px",
+                height: "20px",
+                cursor: "pointer",
+                marginLeft: "60px",
+              }}
             />
           </div>
         </div>

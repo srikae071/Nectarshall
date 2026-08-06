@@ -52,14 +52,13 @@ const EmployeeSchema = new mongoose.Schema(
 );
 
 // Pre-save middleware to keep employeeName and place synced if missing
-EmployeeSchema.pre("save", function (next) {
+EmployeeSchema.pre("save", function () {
   if (!this.employeeName && this.displayName) {
     this.employeeName = this.displayName;
   }
   if (!this.place && this.officeLocation) {
     this.place = this.officeLocation;
   }
-  next();
 });
 
 module.exports = mongoose.model("Employee", EmployeeSchema);
