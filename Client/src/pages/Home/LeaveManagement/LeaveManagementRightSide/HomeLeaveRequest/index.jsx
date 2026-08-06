@@ -34,7 +34,10 @@ function HomeLeaveRequest() {
       const start = new Date(startDate);
       const end = new Date(endDate);
       const diffTime = end.getTime() - start.getTime();
-      const totalDays = Math.max(1, Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1);
+      const totalDays = Math.max(
+        1,
+        Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1,
+      );
       return halfDay ? totalDays / 2 : totalDays;
     }
     if (leaveType && leaveAllocationMap[leaveType]) {
@@ -99,7 +102,7 @@ function HomeLeaveRequest() {
         userBody = "Thank you, your leave has been applied.";
       }
 
-      const adminBody = `Please approve ${rawUser}'s leave.`;
+      const adminBody = `Plese Aprve ${rawUser}'s leave.`;
 
       // 1. Send User Email Notification (From: srikar071@gmail.com)
       sendMailNotification({
@@ -174,8 +177,12 @@ function HomeLeaveRequest() {
                 <option value="Casual Leave">Casual Leave (5 Days)</option>
                 <option value="Sick Leave">Sick Leave (10 Days)</option>
                 <option value="Paid Leave">Paid Leave (15 Days)</option>
-                <option value="Maternity Leave">Maternity Leave (20 Days)</option>
-                <option value="Paternity Leave">Paternity Leave (12 Days)</option>
+                <option value="Maternity Leave">
+                  Maternity Leave (20 Days)
+                </option>
+                <option value="Paternity Leave">
+                  Paternity Leave (12 Days)
+                </option>
               </select>
             </div>
 

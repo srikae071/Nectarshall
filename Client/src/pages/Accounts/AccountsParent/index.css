@@ -4,7 +4,11 @@
   flex-direction: column;
   gap: 20px;
   box-sizing: border-box;
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    sans-serif;
   color: #0f172a;
 }
 
@@ -138,3 +142,19 @@
   font-weight: 600;
   font-size: 14px;
 }
+
+/* EMPLOYEE INITIAL AVATAR */
+.empInitialAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #047857 0%, #0d9488 100%);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(4, 120, 87, 0.2);
+}
+

@@ -131,7 +131,10 @@ function LeaveRequest() {
       const start = new Date(startDate);
       const end = new Date(endDate);
       const diffTime = end.getTime() - start.getTime();
-      const totalDays = Math.max(1, Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1);
+      const totalDays = Math.max(
+        1,
+        Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1,
+      );
       return halfDay ? totalDays / 2 : totalDays;
     }
     if (leaveType && leaveAllocationMap[leaveType]) {
@@ -173,7 +176,10 @@ function LeaveRequest() {
 
             <datalist id="employeeDatalist">
               {employeeList.map((emp, i) => {
-                const name = emp.displayName || emp.employeeName || `${emp.firstName || ""} ${emp.lastName || ""}`.trim();
+                const name =
+                  emp.displayName ||
+                  emp.employeeName ||
+                  `${emp.firstName || ""} ${emp.lastName || ""}`.trim();
                 return name ? <option key={i} value={name} /> : null;
               })}
             </datalist>
@@ -193,8 +199,12 @@ function LeaveRequest() {
                 <option value="Casual Leave">Casual Leave (5 Days)</option>
                 <option value="Sick Leave">Sick Leave (10 Days)</option>
                 <option value="Paid Leave">Paid Leave (15 Days)</option>
-                <option value="Maternity Leave">Maternity Leave (20 Days)</option>
-                <option value="Paternity Leave">Paternity Leave (12 Days)</option>
+                <option value="Maternity Leave">
+                  Maternity Leave (20 Days)
+                </option>
+                <option value="Paternity Leave">
+                  Paternity Leave (12 Days)
+                </option>
               </select>
             </div>
 

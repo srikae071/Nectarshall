@@ -34,6 +34,11 @@ function AccountsLayout({ children }) {
       icon: "💳",
       path: "/accounts/customer-billing",
     },
+    {
+      label: "Onboarding Candidates",
+      icon: "👥",
+      path: "/accounts/onboarding-candidates",
+    },
   ];
 
   return (

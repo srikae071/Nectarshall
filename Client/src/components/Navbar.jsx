@@ -1,13 +1,31 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import logo from "../images/logo.png";
 import ThemeSelector from "./ThemeSelector";
 import { useAuth } from "../context/AuthContext";
 
 function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout } = useAuth();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+
+  const getModuleLabel = () => {
+    const p = location.pathname.toLowerCase();
+    if (p.includes("/accounts")) return "ACCOUNTS";
+    if (
+      p.includes("/operations") ||
+      p.includes("/timesheets") ||
+      p.includes("/roster") ||
+      p.includes("/client/onboarding-compliance")
+    )
+      return "OPERATIONS";
+    if (p.includes("/hrms")) return "HRMS";
+    if (p.includes("/it")) return "IT";
+    return "";
+  };
+
+  const moduleLabel = getModuleLabel();
 
   const handleLogout = () => {
     logout();
@@ -16,8 +34,25 @@ function Navbar() {
 
   return (
     <div className="opnavbar">
-      <div className="logo" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
+      <div
+        className="logo"
+        onClick={() => navigate("/")}
+        style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "10px" }}
+      >
         <img src={logo} alt="logo" className="logoimage" />
+        {moduleLabel && (
+          <span
+            style={{
+              fontSize: "15px",
+              fontWeight: "800",
+              color: "#047857",
+              letterSpacing: "1px",
+              textTransform: "uppercase",
+            }}
+          >
+            | {moduleLabel}
+          </span>
+        )}
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import CncLeftLayout from "../../../../Cnc/CncLeftLayout";
 import DashboardLayout from "../../../../Dashboard/DashboardLayout";
+import AccountsLayout from "../../../../Accounts/AccountsLayout";
 import RegularForm from "../../../../../components/Layouts/FormLayouts/RegularForm";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { fetchApiData, sendApiData } from "../../../../../utils/apiClient";
@@ -15,6 +16,8 @@ function OnBoardingSaves() {
   const source = location.state?.source || searchParams.get("source");
   const isOperations =
     source === "operations" || searchParams.get("source") === "operations";
+  const isAccounts =
+    source === "accounts" || searchParams.get("source") === "accounts";
   const { id } = useParams();
   const [expanded, setExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState("Client Contract Deliverables");
@@ -29,7 +32,13 @@ function OnBoardingSaves() {
   const [pageTitle, setPageTitle] = useState("");
   const [backendStatus, setBackendStatus] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
-  // const [selectedFile, setSelectedFile] = useState(null);
+
+  const Layout = isAccounts
+    ? AccountsLayout
+    : isOperations
+    ? DashboardLayout
+    : CncLeftLayout;
+
   const [formData, setFormData] = useState({
     clientId: "",
     SupplierType: "",
@@ -745,7 +754,6 @@ function OnBoardingSaves() {
 
   // const Layout =
   //   backendStatus === "On Boarded" ? DashboardLayout : CncLeftLayout;
-  const Layout = isOperations ? DashboardLayout : CncLeftLayout;
   return (
     <Layout>
       <RegularForm
@@ -1021,19 +1029,21 @@ function OnBoardingSaves() {
                       Client Contract Variables
                     </button>
 
-                    <button
-                      type="button"
-                      className={
-                        currentTab === "Financial Details"
-                          ? "deliverable-tab active"
-                          : "deliverable-tab"
-                      }
-                      onClick={() =>
-                        handleSubTabChange(index, "Financial Details")
-                      }
-                    >
-                      Financial Contract Variables
-                    </button>
+                    {!isOperations && (
+                      <button
+                        type="button"
+                        className={
+                          currentTab === "Financial Details"
+                            ? "deliverable-tab active"
+                            : "deliverable-tab"
+                        }
+                        onClick={() =>
+                          handleSubTabChange(index, "Financial Details")
+                        }
+                      >
+                        Financial Contract Variables
+                      </button>
+                    )}
                   </div>
 
                   {currentTab === "Client Contract Deliverables" && (
@@ -1194,6 +1204,7 @@ function OnBoardingSaves() {
                                 <option value="Security">Security</option>
                                 <option value="Patrolling">Patrolling</option>
                                 <option value="Electronics">Electronics</option>
+                                <option value="Gardening">Gardening</option>
                               </select>
                             </div>
 
@@ -1393,7 +1404,7 @@ function OnBoardingSaves() {
                     </div>
                   )}
 
-                  {currentTab === "Financial Details" && (
+                  {!isOperations && currentTab === "Financial Details" && (
                     <div className="deliverable-form">
                       <h4 className="deliverable-section-heading">
                         Financial Contract Variables
@@ -1409,20 +1420,12 @@ function OnBoardingSaves() {
                         </div>
 
                         <div className="deliverable-field">
-                          <label>Invoice Date</label>
+                          <label>Hourly Rate ($)</label>
                           <input
-                            type="date"
-                            name="invoiceDate"
-                            value={finItem.invoiceDate || ""}
-                            onChange={(e) => handleFinancialChange(index, e)}
-                          />
-                        </div>
-
-                        <div className="deliverable-field">
-                          <label>Invoice Number</label>
-                          <input
-                            name="invoiceNumber"
-                            value={finItem.invoiceNumber || ""}
+                            type="text"
+                            name="hourlyRate"
+                            placeholder="e.g. 25.00"
+                            value={finItem.hourlyRate || finItem.rate || ""}
                             onChange={(e) => handleFinancialChange(index, e)}
                           />
                         </div>

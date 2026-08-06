@@ -117,6 +117,7 @@ import AccountsParent from "./pages/Accounts/AccountsParent";
 import AccountsExpenditure from "./pages/Accounts/AccountsExpenditure";
 import AccountsReconciliation from "./pages/Accounts/AccountsReconciliation";
 import AccountsCustomerBilling from "./pages/Accounts/AccountsCustomerBilling";
+import AccountsOnboardingCandidates from "./pages/Accounts/AccountsOnboardingCandidates";
 
 function App() {
   useEffect(() => {
@@ -451,6 +452,16 @@ function App() {
           <ProtectedRoute>
             <AccountsLayout>
               <AccountsCustomerBilling />
+            </AccountsLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/accounts/onboarding-candidates"
+        element={
+          <ProtectedRoute>
+            <AccountsLayout>
+              <AccountsOnboardingCandidates />
             </AccountsLayout>
           </ProtectedRoute>
         }

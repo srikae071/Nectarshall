@@ -170,6 +170,10 @@ const BoardingCandidatesSchema = new mongoose.Schema(
                   type: String,
                   default: "30 mins",
                 },
+                assignedDate: {
+                  type: String,
+                  default: "",
+                },
               },
             ],
 
