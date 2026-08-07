@@ -276,6 +276,7 @@ function App() {
       <Route path="/askforhr/:id" element={<AskForHrMainPage />} />
       <Route path="/home-leave-status" element={<HomeLeaveStatus />} />
       <Route path="/home-leave-request" element={<HomeLeaveRequest />} />
+      <Route path="/Home-leave-request" element={<HomeLeaveRequest />} />
       <Route path="/home-leave-balance" element={<HomeLeaveBalance />} />
       <Route path="/home-leave-calendar" element={<HomeLeaveCalendar />} />
       <Route path="/my-tasks" element={<MyTasks />} />

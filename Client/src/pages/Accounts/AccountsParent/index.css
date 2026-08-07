@@ -77,23 +77,44 @@
   border-color: #047857;
 }
 
+/* TABLE WRAPPER WITH COMPACT COLUMN GAPS & DEDICATED SIDE SCROLLBAR */
 .accountsTableWrapper {
   background: #ffffff;
   border-radius: 12px;
   border: 1px solid #e2e8f0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
   overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #047857 #f1f5f9;
+}
+
+.accountsTableWrapper::-webkit-scrollbar {
+  height: 10px;
+}
+
+.accountsTableWrapper::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 8px;
+}
+
+.accountsTableWrapper::-webkit-scrollbar-thumb {
+  background: #047857;
+  border-radius: 8px;
+}
+
+.accountsTableWrapper::-webkit-scrollbar-thumb:hover {
+  background: #065f46;
 }
 
 .accountsTable {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13.5px;
+  font-size: 13px;
 }
 
 .accountsTable th {
   background: #f8fafc;
-  padding: 12px 16px;
+  padding: 8px 10px;
   font-weight: 700;
   color: #475569;
   border-bottom: 1px solid #e2e8f0;
@@ -102,7 +123,7 @@
 }
 
 .accountsTable td {
-  padding: 12px 16px;
+  padding: 8px 10px;
   border-bottom: 1px solid #f1f5f9;
   color: #334155;
   white-space: nowrap;
@@ -129,15 +150,147 @@
 
 /* EMPLOYEE INITIAL AVATAR */
 .empInitialAvatar {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   background: linear-gradient(135deg, #047857 0%, #0d9488 100%);
   color: #ffffff;
   font-weight: 700;
-  font-size: 13px;
+  font-size: 12px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 4px rgba(4, 120, 87, 0.2);
+}
+
+/* SMOOTH SLIDE-DOWN ACCORDION DRAWER WITH HORIZONTAL SCROLLBAR AT BOTTOM */
+.empClickableName {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.empClickableName:hover {
+  background: #f0fdf4;
+  box-shadow: 0 2px 6px rgba(4, 120, 87, 0.1);
+}
+
+.expandedDrawerWrapper {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease, padding 0.35s ease;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-left: 4px solid #047857;
+  border-radius: 8px;
+  margin: 6px 12px 14px 12px;
+}
+
+.expandedDrawerWrapper.open {
+  max-height: 1200px;
+  opacity: 1;
+  padding: 16px 20px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #047857 #cbd5e1;
+}
+
+.expandedDrawerWrapper::-webkit-scrollbar {
+  height: 10px;
+}
+
+.expandedDrawerWrapper::-webkit-scrollbar-track {
+  background: #cbd5e1;
+  border-radius: 6px;
+}
+
+.expandedDrawerWrapper::-webkit-scrollbar-thumb {
+  background: #047857;
+  border-radius: 6px;
+}
+
+.expandedDrawerWrapper::-webkit-scrollbar-thumb:hover {
+  background: #065f46;
+}
+
+.expandedDrawerInnerContent {
+  min-width: 980px;
+  box-sizing: border-box;
+}
+
+.multiCompanyBadge {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.companyBreakdownCard {
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  padding: 12px 16px;
+  margin-top: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+/* INNER DRAWER TABLE SCROLLWRAPPER & REDUCED COLUMN GAPS */
+.companyTableScrollWrapper {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #047857 #f1f5f9;
+  border-radius: 6px;
+}
+
+.companyTableScrollWrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.companyTableScrollWrapper::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 6px;
+}
+
+.companyTableScrollWrapper::-webkit-scrollbar-thumb {
+  background: #047857;
+  border-radius: 6px;
+}
+
+.companyTableScrollWrapper::-webkit-scrollbar-thumb:hover {
+  background: #065f46;
+}
+
+.drawerInnerTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.drawerInnerTable th {
+  padding: 6px 8px;
+  text-align: left;
+  font-weight: 700;
+  color: #475569;
+  border-bottom: 1.5px solid #cbd5e1;
+  white-space: nowrap;
+}
+
+.drawerInnerTable td {
+  padding: 6px 8px;
+  border-bottom: 1px solid #f1f5f9;
+  white-space: nowrap;
+  color: #334155;
 }

@@ -1,17 +1,27 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import logo from "../../../images/logo.png";
 import "./index.css";
 
 function LoginPage() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const location = useLocation();
+  const { login, allProfiles } = useAuth();
 
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const searchParams = new URLSearchParams(location.search);
+  const initialUsername = searchParams.get("username") || "";
+
+  const [username, setUsername] = useState(initialUsername);
+  const [password, setPassword] = useState("enhance123");
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+
+  useEffect(() => {
+    if (initialUsername) {
+      setUsername(initialUsername);
+    }
+  }, [initialUsername]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -28,6 +38,12 @@ function LoginPage() {
     } else {
       setErrorMsg(result.message || "Invalid credentials.");
     }
+  };
+
+  const handleSelectProfile = (profileUsername) => {
+    setUsername(profileUsername);
+    setPassword("enhance123");
+    setErrorMsg("");
   };
 
   return (
@@ -52,7 +68,7 @@ function LoginPage() {
               className="loginInput"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter username (Kuran)"
+              placeholder="Enter username (e.g. Rahul, Sumit, Srikar, Karan)"
               autoFocus
               required
             />
@@ -86,23 +102,32 @@ function LoginPage() {
           </button>
         </form>
 
-        {/* <div className="loginHintBox">
-          <p className="hintTitle">💡 Demo Credentials:</p>
-          <ul>
-            <li>
-              <strong>Sumit</strong> (Password: <code>ENHANCE123</code>) → All
-              Modules
-            </li>
-            <li>
-              <strong>Srikar</strong> (Password: <code>ENHANCE123</code>) → HRMS
-              + My Tasks
-            </li>
-            <li>
-              <strong>Karan</strong> (Password: <code>ENHANCE123</code>) → IT &
-              Operations + My Tasks
-            </li>
-          </ul>
-        </div> */}
+        <div className="loginHintBox" style={{ marginTop: "20px", textAlign: "left" }}>
+          <p className="hintTitle" style={{ fontWeight: "700", marginBottom: "8px", fontSize: "13px" }}>
+            👤 Select User Account Profile:
+          </p>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+            {(allProfiles || []).map((p, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => handleSelectProfile(p.username)}
+                style={{
+                  padding: "4px 10px",
+                  borderRadius: "6px",
+                  border: username === p.username ? "1.5px solid #047857" : "1px solid #cbd5e1",
+                  background: username === p.username ? "#dcfce7" : "#f8fafc",
+                  color: username === p.username ? "#15803d" : "#334155",
+                  fontWeight: "600",
+                  fontSize: "12px",
+                  cursor: "pointer",
+                }}
+              >
+                👤 {p.username}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

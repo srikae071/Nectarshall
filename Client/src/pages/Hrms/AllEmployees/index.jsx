@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Hrmsleftlayout from "../Hrmsleftlayout";
-import { fetchApiData, sendApiData } from "../../../utils/apiClient";
+import { fetchApiData } from "../../../utils/apiClient";
 import "./index.css";
 
 function AllEmployees() {
@@ -26,25 +26,19 @@ function AllEmployees() {
     }
   };
 
-  const handleDelete = async (id, name) => {
-    if (!window.confirm(`Are you sure you want to delete employee "${name}"?`)) return;
-    try {
-      await sendApiData("DELETE", `/api/employees/${id}`);
-      alert("Employee deleted successfully!");
-      loadEmployees();
-    } catch (err) {
-      console.error(err);
-      alert("Failed to delete employee.");
-    }
-  };
-
   const filteredEmployees = employees.filter((emp) => {
     const q = search.toLowerCase();
-    const name = (emp.displayName || emp.employeeName || `${emp.firstName || ""} ${emp.lastName || ""}`).toLowerCase();
+    const name = (
+      emp.displayName ||
+      emp.employeeName ||
+      `${emp.firstName || ""} ${emp.lastName || ""}`
+    ).toLowerCase();
     const title = (emp.jobTitle || "").toLowerCase();
     const dept = (emp.department || "").toLowerCase();
     const empId = (emp.employeeId || "").toLowerCase();
-    return name.includes(q) || title.includes(q) || dept.includes(q) || empId.includes(q);
+    return (
+      name.includes(q) || title.includes(q) || dept.includes(q) || empId.includes(q)
+    );
   });
 
   return (
@@ -52,8 +46,10 @@ function AllEmployees() {
       <div className="allEmployeesContainer">
         <div className="allEmployeesHeader">
           <div>
-            <h2>All Employees</h2>
-            <p className="allEmployeesSub">Manage core employee directory records</p>
+            <h2>All Employees Directory</h2>
+            <p className="allEmployeesSub">
+              Click anywhere on a line to view employee profile details
+            </p>
           </div>
 
           <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
@@ -88,30 +84,42 @@ function AllEmployees() {
                   <th>Email</th>
                   <th>Office Location</th>
                   <th>Status</th>
-                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredEmployees.length === 0 ? (
                   <tr>
-                    <td colSpan={9} style={{ textAlign: "center", padding: "30px", color: "#64748b" }}>
+                    <td
+                      colSpan={8}
+                      style={{
+                        textAlign: "center",
+                        padding: "30px",
+                        color: "#64748b",
+                      }}
+                    >
                       No employees found. Click "+ Add Employee" to create one.
                     </td>
                   </tr>
                 ) : (
                   filteredEmployees.map((emp, index) => {
-                    const dispName = emp.displayName || emp.employeeName || `${emp.firstName || ""} ${emp.lastName || ""}`.trim() || "Unnamed Employee";
+                    const dispName =
+                      emp.displayName ||
+                      emp.employeeName ||
+                      `${emp.firstName || ""} ${emp.lastName || ""}`.trim() ||
+                      "Unnamed Employee";
+
                     return (
-                      <tr key={emp._id || index}>
-                        <td style={{ fontWeight: "600", color: "#64748b" }}>{index + 1}</td>
-                        <td>
-                          <button
-                            className="empNameLink"
-                            onClick={() => navigate(`/hrms/employee/${emp._id}`)}
-                            title="Click to view & edit pre-filled details"
-                          >
-                            👤 {dispName}
-                          </button>
+                      <tr
+                        key={emp._id || index}
+                        style={{ cursor: "pointer" }}
+                        onClick={() => navigate(`/hrms/employee/${emp._id}`)}
+                        title="Click to open employee record"
+                      >
+                        <td style={{ fontWeight: "600", color: "#64748b" }}>
+                          {index + 1}
+                        </td>
+                        <td style={{ fontWeight: "700", color: "#047857" }}>
+                          👤 {dispName}
                         </td>
                         <td>{emp.jobTitle || "-"}</td>
                         <td>{emp.department || "-"}</td>
@@ -119,25 +127,17 @@ function AllEmployees() {
                         <td>{emp.email || "-"}</td>
                         <td>{emp.officeLocation || emp.place || "-"}</td>
                         <td>
-                          <span className={`statusBadge ${emp.accountEnabled !== false ? "active" : "inactive"}`}>
-                            {emp.accountEnabled !== false ? "Enabled" : "Disabled"}
+                          <span
+                            className={`statusBadge ${
+                              emp.accountEnabled !== false
+                                ? "active"
+                                : "inactive"
+                            }`}
+                          >
+                            {emp.accountEnabled !== false
+                              ? "Enabled"
+                              : "Disabled"}
                           </span>
-                        </td>
-                        <td>
-                          <div style={{ display: "flex", gap: "8px" }}>
-                            <button
-                              className="actionEditBtn"
-                              onClick={() => navigate(`/hrms/employee/${emp._id}`)}
-                            >
-                              Edit
-                            </button>
-                            <button
-                              className="actionDeleteBtn"
-                              onClick={() => handleDelete(emp._id, dispName)}
-                            >
-                              Delete
-                            </button>
-                          </div>
                         </td>
                       </tr>
                     );

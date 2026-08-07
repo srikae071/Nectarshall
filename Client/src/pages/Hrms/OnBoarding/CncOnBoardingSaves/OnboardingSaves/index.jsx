@@ -159,6 +159,7 @@ function OnBoardingSaves() {
         category: data.category || "",
         status: data.status || "Open",
         operationsClientApproved: data.operationsClientApproved ?? null,
+        accountsApproved: data.accountsApproved ?? null,
         attachment: data.attachment || {
           fileName: "",
           filePath: "",
@@ -440,6 +441,76 @@ function OnBoardingSaves() {
       alert("Rejected Successfully");
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const handleAccountsApprove = async () => {
+    try {
+      const updatedEntries = [...entries];
+      const newEntry = {
+        serialNo: updatedEntries.length + 1,
+        timestamp: new Date().toLocaleString("en-US", {
+          dateStyle: "short",
+          timeStyle: "short",
+        }),
+        summary: "Accounts status changed to Approved",
+        changedBy: "admin",
+      };
+      updatedEntries.push(newEntry);
+      const entriesString = JSON.stringify(updatedEntries);
+
+      await sendApiData("PUT", `/api/BoardingCandidates/${id}`, {
+        accountsApproved: true,
+        status: "Approved",
+        entries: entriesString,
+      });
+
+      setFormData((prev) => ({
+        ...prev,
+        accountsApproved: true,
+        status: "Approved",
+      }));
+      setEntries(updatedEntries);
+
+      alert("Accounts Approved Successfully");
+    } catch (error) {
+      console.log(error);
+      alert("Accounts Approval Failed");
+    }
+  };
+
+  const handleAccountsReject = async () => {
+    try {
+      const updatedEntries = [...entries];
+      const newEntry = {
+        serialNo: updatedEntries.length + 1,
+        timestamp: new Date().toLocaleString("en-US", {
+          dateStyle: "short",
+          timeStyle: "short",
+        }),
+        summary: "Accounts status changed to Rejected",
+        changedBy: "admin",
+      };
+      updatedEntries.push(newEntry);
+      const entriesString = JSON.stringify(updatedEntries);
+
+      await sendApiData("PUT", `/api/BoardingCandidates/${id}`, {
+        accountsApproved: false,
+        status: "Rejected",
+        entries: entriesString,
+      });
+
+      setFormData((prev) => ({
+        ...prev,
+        accountsApproved: false,
+        status: "Rejected",
+      }));
+      setEntries(updatedEntries);
+
+      alert("Accounts Rejected Successfully");
+    } catch (error) {
+      console.log(error);
+      alert("Accounts Rejection Failed");
     }
   };
   const handleAttachment = (e) => {
@@ -772,8 +843,27 @@ function OnBoardingSaves() {
         //   </button>
         // }
         formData={formData}
-        onApprove={isOperations ? handleApprove : undefined}
-        onReject={isOperations ? handleReject : undefined}
+        approvalStatus={
+          isAccounts
+            ? formData.accountsApproved
+            : isOperations
+            ? formData.operationsClientApproved
+            : null
+        }
+        onApprove={
+          isOperations
+            ? handleApprove
+            : isAccounts
+            ? handleAccountsApprove
+            : undefined
+        }
+        onReject={
+          isOperations
+            ? handleReject
+            : isAccounts
+            ? handleAccountsReject
+            : undefined
+        }
       >
         <div className="form-row">
           <label className="form-label">Client ID</label>

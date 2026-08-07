@@ -10,16 +10,25 @@ import {
 import LeaveManagementLeftSide from "./../../LeaveManagementLeftSide";
 import { useNavigate } from "react-router-dom";
 import "./index.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+import { useAuth } from "../../../../../context/AuthContext";
 
 function HomeLeaveRequest() {
+  const { user } = useAuth();
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [halfDay, setHalfDay] = useState(false);
   const [description, setDescription] = useState("");
   const [leaveType, setLeaveType] = useState("");
-  const [requester, setRequester] = useState("");
+  const [requester, setRequester] = useState(() => user?.displayName || user?.username || "");
   const [requesterFor, setRequesterFor] = useState("");
+
+  useEffect(() => {
+    if (user && !requester) {
+      setRequester(user.displayName || user.username);
+    }
+  }, [user]);
   const navigate = useNavigate();
   const leaveAllocationMap = {
     "Casual Leave": 5,

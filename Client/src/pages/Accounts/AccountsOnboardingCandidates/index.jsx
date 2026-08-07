@@ -51,13 +51,13 @@ function AccountsOnboardingCandidates() {
       const response = await fetchApiData("/api/BoardingCandidates");
       const allCandidates = extractArrayData(response.data);
       console.log(
-        "BoardingCandidates loaded from localhost 5000:",
+        "BoardingCandidates loaded for Accounts Onboarding Candidates:",
         allCandidates,
       );
       setData(allCandidates);
     } catch (error) {
       console.error(
-        "Error fetching BoardingCandidates in Operations Client Onboarding:",
+        "Error fetching BoardingCandidates in Accounts Client Onboarding:",
         error,
       );
     } finally {
@@ -70,21 +70,22 @@ function AccountsOnboardingCandidates() {
       await sendApiData(
         `/api/BoardingCandidates/${id}`,
         {
-          operationsClientApproved: true,
+          accountsApproved: true,
+          status: "Approved",
         },
         "put",
       );
 
       setData((prev) =>
         prev.map((item) =>
-          item._id === id ? { ...item, operationsClientApproved: true } : item,
+          item._id === id ? { ...item, accountsApproved: true, status: "Approved" } : item,
         ),
       );
 
-      alert("Approved Successfully");
+      alert("Accounts Approved Successfully");
     } catch (error) {
-      console.error("Error approving candidate:", error);
-      alert("Approval Failed");
+      console.error("Error approving candidate in Accounts:", error);
+      alert("Accounts Approval Failed");
     }
   };
 
@@ -93,21 +94,22 @@ function AccountsOnboardingCandidates() {
       await sendApiData(
         `/api/BoardingCandidates/${id}`,
         {
-          operationsClientApproved: false,
+          accountsApproved: false,
+          status: "Rejected",
         },
         "put",
       );
 
       setData((prev) =>
         prev.map((item) =>
-          item._id === id ? { ...item, operationsClientApproved: false } : item,
+          item._id === id ? { ...item, accountsApproved: false, status: "Rejected" } : item,
         ),
       );
 
-      alert("Rejected Successfully");
+      alert("Accounts Rejected Successfully");
     } catch (error) {
-      console.error("Error rejecting candidate:", error);
-      alert("Reject Failed");
+      console.error("Error rejecting candidate in Accounts:", error);
+      alert("Accounts Reject Failed");
     }
   };
 
@@ -136,12 +138,12 @@ function AccountsOnboardingCandidates() {
     <div style={{ width: "100%", boxSizing: "border-box" }}>
       {loading ? (
         <div style={{ padding: "20px", fontWeight: "bold" }}>
-          Loading Boarding Candidates data...
+          Loading Accounts Boarding Candidates data...
         </div>
       ) : (
         <TableLayout1
-          title="Onboarding Client"
-          storageKey="operationsClientOnboarding"
+          title="Accounts Onboarding Client Candidates"
+          storageKey="accountsClientOnboarding"
           search={search}
           setSearch={setSearch}
           allColumns={allColumns}
@@ -163,43 +165,100 @@ function AccountsOnboardingCandidates() {
                     return (
                       <td key={key} onClick={(e) => e.stopPropagation()}>
                         <div style={{ display: "flex", gap: "8px" }}>
-                          {row.operationsClientApproved ? (
+                          {row.accountsApproved === true ? (
                             <button
                               className="btn btn-success btn-sm"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleReject(row._id);
-                              }}
                               style={{
-                                backgroundColor: "#2e7d32",
-                                borderColor: "#2e7d32",
+                                backgroundColor: "#16a34a",
+                                borderColor: "#16a34a",
                                 color: "white",
+                                fontWeight: "700",
+                                padding: "6px 14px",
+                                borderRadius: "4px",
+                                cursor: "default",
                               }}
                             >
                               ✓ Approved
                             </button>
                           ) : (
-                            <button
-                              className="btn btn-warning btn-sm"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleApprove(row._id);
-                              }}
-                              style={{
-                                backgroundColor: "#ed6c02",
-                                borderColor: "#ed6c02",
-                                color: "white",
-                              }}
-                            >
-                              Approve
-                            </button>
+                            <>
+                              <button
+                                className="btn btn-success btn-sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleApprove(row._id);
+                                }}
+                                style={{
+                                  backgroundColor: "#16a34a",
+                                  borderColor: "#16a34a",
+                                  color: "white",
+                                  fontWeight: "700",
+                                  padding: "6px 14px",
+                                  borderRadius: "4px",
+                                }}
+                              >
+                                Approve
+                              </button>
+                              <button
+                                className="btn btn-danger btn-sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleReject(row._id);
+                                }}
+                                style={{
+                                  backgroundColor: "#dc2626",
+                                  borderColor: "#dc2626",
+                                  color: "white",
+                                  fontWeight: "700",
+                                  padding: "6px 14px",
+                                  borderRadius: "4px",
+                                }}
+                              >
+                                Reject
+                              </button>
+                            </>
                           )}
                         </div>
                       </td>
                     );
                   }
 
-                  return <td key={key}>{row[key] || "-"}</td>;
+                  if (key === "status") {
+                    const statusVal = row.accountsApproved === true
+                      ? "Approved"
+                      : row.accountsApproved === false
+                      ? "Rejected"
+                      : row.status || "Pending";
+                    return (
+                      <td key={key}>
+                        <span
+                          className={`badge ${statusVal.toLowerCase()}`}
+                          style={{
+                            padding: "4px 8px",
+                            borderRadius: "4px",
+                            fontSize: "12px",
+                            fontWeight: "700",
+                            background:
+                              statusVal === "Approved"
+                                ? "#dcfce7"
+                                : statusVal === "Rejected"
+                                ? "#fee2e2"
+                                : "#fef3c7",
+                            color:
+                              statusVal === "Approved"
+                                ? "#166534"
+                                : statusVal === "Rejected"
+                                ? "#991b1b"
+                                : "#92400e",
+                          }}
+                        >
+                          {statusVal}
+                        </span>
+                      </td>
+                    );
+                  }
+
+                  return <td key={key}>{row[key]}</td>;
                 })}
               </tr>
             ))

@@ -46,6 +46,11 @@ const BoardingCandidatesSchema = new mongoose.Schema(
       default: null,
     },
 
+    AccountsApproved: {
+      type: Boolean,
+      default: null,
+    },
+
     status: {
       type: String,
       default: "Open",

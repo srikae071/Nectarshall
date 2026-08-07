@@ -191,12 +191,16 @@
   padding: 8px 18px;
   border: none;
   border-radius: 6px;
-  background: #dc2626;
+  background: #2563eb;
   color: #fff;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: 0.2s;
+}
+
+.reject-button:hover {
+  background: #1d4ed8;
 }
 
 .reject-button:hover {

@@ -12,16 +12,25 @@ import "./LeaveRequest.css";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
+import { useAuth } from "../../context/AuthContext";
+
 function LeaveRequest() {
+  const { user } = useAuth();
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [halfDay, setHalfDay] = useState(false);
   const [description, setDescription] = useState("");
-  const [requester, setRequester] = useState("");
+  const [requester, setRequester] = useState(() => user?.displayName || user?.username || "");
   const [requesterFor, setRequesterFor] = useState("");
   const [leaveType, setLeaveType] = useState("");
   const [employeeList, setEmployeeList] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user && !requester) {
+      setRequester(user.displayName || user.username);
+    }
+  }, [user]);
 
   useEffect(() => {
     fetchApiData("/api/employees")

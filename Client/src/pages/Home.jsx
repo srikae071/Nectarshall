@@ -61,7 +61,7 @@ function Home() {
       title: "Leaves Management",
       desc: "Smart Leave Management for Modern Teams",
       img: leaveImg,
-      route: "/Home-leave-request",
+      route: "/home-leave-request",
       module: "COMMON",
     },
     {

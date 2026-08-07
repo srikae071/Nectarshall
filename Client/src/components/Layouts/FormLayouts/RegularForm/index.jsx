@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import "./index.css";
+
 function RegularForm({
   title,
   children,
@@ -9,10 +10,20 @@ function RegularForm({
   attachmentName,
   actions,
   formData,
+  approvalStatus,
   onApprove,
   onReject,
 }) {
   const fileInputRef = useRef(null);
+
+  // If approvalStatus is not explicitly passed, determine from formData based on current context
+  const currentApprovalState =
+    approvalStatus !== undefined
+      ? approvalStatus
+      : formData?.accountsApproved !== undefined && formData?.accountsApproved !== null
+      ? formData?.accountsApproved
+      : formData?.operationsClientApproved;
+
   return (
     <div className="form-layout-page">
       {title && (
@@ -39,7 +50,7 @@ function RegularForm({
             {attachmentName && <span>{attachmentName}</span>}
             {onApprove && (
               <>
-                {formData?.operationsClientApproved === true ? (
+                {currentApprovalState === true ? (
                   <span
                     className="approvedBadge"
                     style={{
@@ -56,7 +67,7 @@ function RegularForm({
                   >
                     ✓ Approved
                   </span>
-                ) : formData?.operationsClientApproved === false ? (
+                ) : currentApprovalState === false ? (
                   <span
                     className="rejectedBadge"
                     style={{
@@ -79,6 +90,15 @@ function RegularForm({
                       type="button"
                       className="approve-button"
                       onClick={onApprove}
+                      style={{
+                        backgroundColor: "#16a34a",
+                        color: "white",
+                        fontWeight: "700",
+                        padding: "8px 18px",
+                        border: "none",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                      }}
                     >
                       Approve
                     </button>
@@ -87,6 +107,15 @@ function RegularForm({
                       type="button"
                       className="reject-button"
                       onClick={onReject}
+                      style={{
+                        backgroundColor: "#dc2626",
+                        color: "white",
+                        fontWeight: "700",
+                        padding: "8px 18px",
+                        border: "none",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                      }}
                     >
                       Reject
                     </button>
@@ -108,9 +137,7 @@ function RegularForm({
         </div>
       )}
 
-      <div className="form-layout-card">
-        <div className="form-layout-grid">{children}</div>
-      </div>
+      <div className="form-layout-grid">{children}</div>
     </div>
   );
 }

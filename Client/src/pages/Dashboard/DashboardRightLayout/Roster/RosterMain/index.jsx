@@ -71,6 +71,7 @@ function RosterMain() {
   const [newAdhocEmployeeName, setNewAdhocEmployeeName] = useState("");
   const [savingAdhocAssign, setSavingAdhocAssign] = useState(false);
   const [saveAdhocSuccessMsg, setSaveAdhocSuccessMsg] = useState("");
+  const [leaves, setLeaves] = useState([]);
 
   // 24 Hours for Employee Timeline View
   const hours = useMemo(() => {
@@ -100,21 +101,65 @@ function RosterMain() {
   }, []);
 
   const fetchAllData = async () => {
-    try {
-      setLoading(true);
-      setError("");
+    setLoading(true);
+    setError("");
 
+    try {
       const candRes = await fetchApiData("/api/BoardingCandidates");
       setCandidates(extractArrayData(candRes.data));
+    } catch (e) {
+      console.error("BoardingCandidates fetch error:", e);
+    }
 
+    try {
       const empRes = await fetchApiData("/api/employees");
       setDbEmployees(extractArrayData(empRes.data));
-    } catch (err) {
-      console.error("Error loading roster data:", err);
-      setError("Failed to load customer and employee data.");
-    } finally {
-      setLoading(false);
+    } catch (e) {
+      console.error("Employees fetch error:", e);
     }
+
+    try {
+      const leaveRes = await fetchApiData("/api/leaves");
+      setLeaves(extractArrayData(leaveRes.data));
+    } catch (e) {
+      console.error("Leaves fetch error:", e);
+    }
+
+    setLoading(false);
+  };
+
+  const getEmployeeLeaveStatus = (empName, shiftDateObjStr) => {
+    if (!empName || empName === "Click to Assign" || !shiftDateObjStr || !leaves.length) return null;
+    const cleanEmp = empName.trim().toLowerCase();
+    const targetDate = new Date(shiftDateObjStr);
+    if (isNaN(targetDate.getTime())) return null;
+
+    const matchedLeave = leaves.find((l) => {
+      const requester = (l.requester || l.employeeName || "").trim().toLowerCase();
+      if (!requester || (requester !== cleanEmp && !cleanEmp.includes(requester) && !cleanEmp.includes(requester))) {
+        return false;
+      }
+
+      const sDate = new Date(l.startDate);
+      const eDate = new Date(l.endDate);
+      if (isNaN(sDate.getTime()) || isNaN(eDate.getTime())) return false;
+
+      sDate.setHours(0, 0, 0, 0);
+      eDate.setHours(23, 59, 59, 999);
+      targetDate.setHours(12, 0, 0, 0);
+
+      return targetDate >= sDate && targetDate <= eDate;
+    });
+
+    if (matchedLeave) {
+      return {
+        leaveType: matchedLeave.leaveType || "Leave",
+        status: matchedLeave.status || "Approved",
+        startDate: matchedLeave.startDate,
+        endDate: matchedLeave.endDate,
+      };
+    }
+    return null;
   };
 
   // Compute 7-day week starting on Sunday
@@ -171,21 +216,15 @@ function RosterMain() {
     setCurrentDate(new Date());
   };
 
-  // Filter approved & on-boarded candidates only
+  // All candidate records available for Roster view
   const approvedCandidates = useMemo(() => {
-    return (candidates || []).filter((item) => {
-      const isApproved = item.operationsClientApproved === true;
-      const statusStr = (item.status || "").trim().toLowerCase();
-      const isOnBoarded =
-        statusStr === "on boarded" || statusStr === "onboarded";
-      return isApproved && isOnBoarded;
-    });
+    return (candidates || []);
   }, [candidates]);
 
-  // 1. Customer Options (sourced from approved BoardingCandidates)
+  // 1. Customer Options (sourced from all BoardingCandidates)
   const rawCustomerOptions = useMemo(() => {
     const names = approvedCandidates
-      .map((item) => (item.companyName || item.clientId || "").trim())
+      .map((item) => (item.companyName || item.clientId || item.clientName || item.customerName || "").trim())
       .filter((name) => name !== "");
     return [...new Set(names)].sort();
   }, [approvedCandidates]);
@@ -255,7 +294,7 @@ function RosterMain() {
         }
       });
     } else {
-      // Sites come from approved BoardingCandidates contractDeliverables
+      // Sites come from BoardingCandidates contractDeliverables
       let filtered = approvedCandidates;
       if (selectedCustomer) {
         filtered = filtered.filter(
@@ -263,6 +302,8 @@ function RosterMain() {
             (item.companyName || "").trim().toLowerCase() ===
               selectedCustomer.trim().toLowerCase() ||
             (item.clientId || "").trim().toLowerCase() ===
+              selectedCustomer.trim().toLowerCase() ||
+            (item.clientName || "").trim().toLowerCase() ===
               selectedCustomer.trim().toLowerCase(),
         );
       }
@@ -330,26 +371,20 @@ function RosterMain() {
     };
   };
 
-  // Filtered Candidate Records
+  // Filtered Candidate Records for Roster Calendar Display
   const displayRecords = useMemo(() => {
-    // If no customer and no site and no employee, return empty array
-    if (!selectedCustomer && !selectedSite && !selectedEmployee) {
-      return [];
-    }
-
     return approvedCandidates.filter((item) => {
-      const custName = (item.companyName || item.clientId || "").trim();
+      const custName = (item.companyName || item.clientId || item.clientName || item.customerName || "").trim().toLowerCase();
+      
       if (
         selectedCustomer &&
-        custName.toLowerCase() !== selectedCustomer.trim().toLowerCase()
+        custName !== selectedCustomer.trim().toLowerCase()
       ) {
         return false;
       }
       if (
         customerSearchQuery.trim() &&
-        !custName
-          .toLowerCase()
-          .startsWith(customerSearchQuery.trim().toLowerCase())
+        !custName.startsWith(customerSearchQuery.trim().toLowerCase())
       ) {
         return false;
       }
@@ -373,32 +408,55 @@ function RosterMain() {
     customerSearchQuery,
   ]);
 
-  // Deliverable Site Rows
+  // Deliverable Site Rows (independent of employee filters)
   const deliverableRows = useMemo(() => {
     const rows = [];
     displayRecords.forEach((candidate) => {
-      (candidate.contractDeliverables || []).forEach((contract, cIdx) => {
-        if (
-          selectedSite &&
-          (contract.siteName || "").trim().toLowerCase() !==
-            selectedSite.trim().toLowerCase()
-        ) {
-          return;
-        }
+      const deliverables = candidate.contractDeliverables || [];
+      const companyName =
+        candidate.companyName ||
+        candidate.clientId ||
+        candidate.clientName ||
+        candidate.customerName ||
+        "Client";
 
+      if (deliverables.length === 0) {
         rows.push({
           candidateId: candidate._id,
-          contractId: contract._id,
-          rowId: `${candidate._id}_${contract._id || cIdx}`,
-          companyName: candidate.companyName || candidate.clientId || "Client",
+          contractId: candidate._id,
+          rowId: `${candidate._id}_default`,
+          companyName,
           requester: candidate.requester || "Requester",
-          siteName: contract.siteName || `Site ${cIdx + 1}`,
-          siteAddress: contract.siteAddress || "",
-          scopeOfWork: contract.scopeOfWork || "",
-          services: contract.services || [],
-          adhocServices: contract.adhocServices || [],
+          siteName: candidate.siteName || candidate.siteAddress || "Default Site",
+          siteAddress: candidate.siteAddress || "",
+          scopeOfWork: candidate.scopeOfWork || "",
+          services: candidate.services || [],
+          adhocServices: candidate.adhocServices || [],
         });
-      });
+      } else {
+        deliverables.forEach((contract, cIdx) => {
+          if (
+            selectedSite &&
+            (contract.siteName || "").trim().toLowerCase() !==
+              selectedSite.trim().toLowerCase()
+          ) {
+            return;
+          }
+
+          rows.push({
+            candidateId: candidate._id,
+            contractId: contract._id,
+            rowId: `${candidate._id}_${contract._id || cIdx}`,
+            companyName,
+            requester: candidate.requester || "Requester",
+            siteName: contract.siteName || `Site ${cIdx + 1}`,
+            siteAddress: contract.siteAddress || "",
+            scopeOfWork: contract.scopeOfWork || "",
+            services: contract.services || [],
+            adhocServices: contract.adhocServices || [],
+          });
+        });
+      }
     });
     return rows;
   }, [displayRecords, selectedSite]);
@@ -1281,6 +1339,33 @@ function RosterMain() {
                                         👤{" "}
                                         {card.slotEmployee || "Click to Assign"}
                                       </div>
+                                      {card.slotEmployee &&
+                                        getEmployeeLeaveStatus(
+                                          card.slotEmployee,
+                                          date,
+                                        ) && (
+                                          <div
+                                            style={{
+                                              fontSize: "11px",
+                                              fontWeight: "700",
+                                              color: "#dc2626",
+                                              background: "#fee2e2",
+                                              padding: "2px 6px",
+                                              borderRadius: "4px",
+                                              marginTop: "4px",
+                                              border: "1px solid #fca5a5",
+                                            }}
+                                          >
+                                            ⚠️ On Leave (
+                                            {
+                                              getEmployeeLeaveStatus(
+                                                card.slotEmployee,
+                                                date,
+                                              ).leaveType
+                                            }
+                                            )
+                                          </div>
+                                        )}
                                     </div>
                                   ))}
 
@@ -1342,6 +1427,33 @@ function RosterMain() {
                                             ? adhoc.employee
                                             : "Click to Assign"}
                                         </div>
+                                        {hasEmp &&
+                                          getEmployeeLeaveStatus(
+                                            adhoc.employee,
+                                            date,
+                                          ) && (
+                                            <div
+                                              style={{
+                                                fontSize: "11px",
+                                                fontWeight: "700",
+                                                color: "#dc2626",
+                                                background: "#fee2e2",
+                                                padding: "2px 6px",
+                                                borderRadius: "4px",
+                                                marginTop: "4px",
+                                                border: "1px solid #fca5a5",
+                                              }}
+                                            >
+                                              ⚠️ On Leave (
+                                              {
+                                                getEmployeeLeaveStatus(
+                                                  adhoc.employee,
+                                                  date,
+                                                ).leaveType
+                                              }
+                                              )
+                                            </div>
+                                          )}
                                       </div>
                                     );
                                   })}
@@ -1505,6 +1617,35 @@ function RosterMain() {
                     <option key={i} value={emp} />
                   ))}
                 </datalist>
+
+                {newEmployeeName.trim() &&
+                  getEmployeeLeaveStatus(
+                    newEmployeeName,
+                    assignModal.contractStartDate,
+                  ) && (
+                    <div
+                      style={{
+                        marginTop: "10px",
+                        padding: "10px 14px",
+                        borderRadius: "8px",
+                        background: "#fee2e2",
+                        border: "1.5px solid #fca5a5",
+                        color: "#991b1b",
+                        fontSize: "13px",
+                        fontWeight: "700",
+                      }}
+                    >
+                      ⚠️ Notice: {newEmployeeName} has an approved leave request on
+                      this date (
+                      {
+                        getEmployeeLeaveStatus(
+                          newEmployeeName,
+                          assignModal.contractStartDate,
+                        ).leaveType
+                      }
+                      )
+                    </div>
+                  )}
               </div>
             </div>
 

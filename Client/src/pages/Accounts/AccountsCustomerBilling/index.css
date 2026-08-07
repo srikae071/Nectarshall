@@ -39,9 +39,9 @@
 }
 
 .accountsSearchInput {
-  padding: 10px 14px;
+  padding: 8px 12px;
   width: 280px;
-  border: 1px solid #cbd5e1;
+  border: 1.5px solid #cbd5e1;
   border-radius: 8px;
   font-size: 13.5px;
   outline: none;
@@ -79,24 +79,45 @@
   border-color: #047857;
 }
 
+/* TABLE WRAPPER WITH COMPACT GAPS & DEDICATED SIDE SCROLLBAR */
 .accountsTableWrapper {
   background: #ffffff;
   border-radius: 12px;
   border: 1px solid #e2e8f0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
   overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #047857 #f1f5f9;
+}
+
+.accountsTableWrapper::-webkit-scrollbar {
+  height: 10px;
+}
+
+.accountsTableWrapper::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 8px;
+}
+
+.accountsTableWrapper::-webkit-scrollbar-thumb {
+  background: #047857;
+  border-radius: 8px;
+}
+
+.accountsTableWrapper::-webkit-scrollbar-thumb:hover {
+  background: #065f46;
 }
 
 .accountsTable {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
+  font-size: 13px;
   text-align: left;
 }
 
 .accountsTable th {
   background: #f8fafc;
-  padding: 14px 18px;
+  padding: 8px 10px;
   font-weight: 700;
   color: #1e293b;
   border-bottom: 1px solid #e2e8f0;
@@ -104,9 +125,10 @@
 }
 
 .accountsTable td {
-  padding: 14px 18px;
+  padding: 8px 10px;
   border-bottom: 1px solid #e2e8f0;
   color: #334155;
+  white-space: nowrap;
 }
 
 .accountsTable tr:hover {

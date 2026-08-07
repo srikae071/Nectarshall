@@ -9,11 +9,11 @@ function AccountsLayout({ children }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const menuItems = [
-    {
-      label: "Parent",
-      icon: "🏢",
-      path: "/accounts/parent",
-    },
+    // {
+    //   label: "Parent",
+    //   icon: "🏢",
+    //   path: "/accounts/parent",
+    // },
     {
       label: "PayRun",
       icon: "📋",

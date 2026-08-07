@@ -7,7 +7,7 @@ import { useAuth } from "../context/AuthContext";
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout } = useAuth();
+  const { user, logout, allProfiles } = useAuth();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const getModuleLabel = () => {
@@ -29,7 +29,14 @@ function Navbar() {
 
   const handleLogout = () => {
     logout();
+    setShowProfileMenu(false);
     navigate("/login");
+  };
+
+  const handleSwitchAccount = (profileUsername) => {
+    logout();
+    setShowProfileMenu(false);
+    navigate(`/login?username=${encodeURIComponent(profileUsername)}`);
   };
 
   return (
@@ -77,20 +84,33 @@ function Navbar() {
                 top: "40px",
                 background: "#ffffff",
                 border: "1px solid #cbd5e1",
-                borderRadius: "8px",
+                borderRadius: "10px",
                 boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
-                padding: "12px 14px",
-                width: "200px",
+                padding: "14px 16px",
+                width: "240px",
                 zIndex: 9999,
                 color: "#0f172a",
               }}
             >
-              <div style={{ fontWeight: "700", fontSize: "14px", borderBottom: "1px solid #e2e8f0", paddingBottom: "8px", marginBottom: "8px" }}>
-                {user?.displayName || user?.username}
+              {/* CURRENT LOGGED IN USER */}
+              <div
+                style={{
+                  fontWeight: "700",
+                  fontSize: "14.5px",
+                  color: "#047857",
+                  borderBottom: "1px solid #e2e8f0",
+                  paddingBottom: "6px",
+                  marginBottom: "6px",
+                }}
+              >
+                👤 {user?.displayName || user?.username}
               </div>
-              <div style={{ fontSize: "12px", color: "#64748b", marginBottom: "12px" }}>
-                Role: <strong>{user?.role}</strong>
+
+              <div style={{ fontSize: "12.5px", color: "#64748b", marginBottom: "12px" }}>
+                Role: <strong>{user?.role || "Employee"}</strong>
               </div>
+
+              {/* LOGOUT BUTTON */}
               <button
                 type="button"
                 onClick={handleLogout}
@@ -104,10 +124,73 @@ function Navbar() {
                   fontWeight: "700",
                   cursor: "pointer",
                   fontSize: "13px",
+                  marginBottom: "14px",
                 }}
               >
                 🚪 Logout
               </button>
+
+              {/* SWITCH ACCOUNT PROFILE */}
+              <div
+                style={{
+                  borderTop: "1px dashed #cbd5e1",
+                  paddingTop: "10px",
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: "12px",
+                    fontWeight: "700",
+                    color: "#475569",
+                    marginBottom: "8px",
+                  }}
+                >
+                  🔄 Switch User Account:
+                </div>
+
+                <div
+                  style={{
+                    maxHeight: "160px",
+                    overflowY: "auto",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "4px",
+                  }}
+                >
+                  {(allProfiles || []).map((p, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => handleSwitchAccount(p.username)}
+                      style={{
+                        textAlign: "left",
+                        padding: "6px 10px",
+                        borderRadius: "6px",
+                        border: "1px solid #e2e8f0",
+                        background:
+                          user?.username?.toLowerCase() === p.username?.toLowerCase()
+                            ? "#dcfce7"
+                            : "#f8fafc",
+                        color:
+                          user?.username?.toLowerCase() === p.username?.toLowerCase()
+                            ? "#166534"
+                            : "#334155",
+                        fontWeight: "600",
+                        fontSize: "12px",
+                        cursor: "pointer",
+                        display: "flex",
+                        justify: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <span>👤 {p.username}</span>
+                      <span style={{ fontSize: "10px", color: "#64748b" }}>
+                        ({p.role || "Employee"})
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
         </div>

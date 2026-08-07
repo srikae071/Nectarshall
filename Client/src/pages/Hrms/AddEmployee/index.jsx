@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Hrmsleftlayout from "../Hrmsleftlayout";
 import RegularForm from "../../../components/Layouts/FormLayouts/RegularForm";
 import { sendApiData } from "../../../utils/apiClient";
+import { useAuth } from "../../../context/AuthContext";
 import "./index.css";
 
 function AddEmployee() {
@@ -60,6 +61,8 @@ function AddEmployee() {
     }));
   };
 
+  const { reloadEmployees } = useAuth();
+
   const handleSave = async () => {
     if (!formData.displayName.trim()) {
       alert("Display Name is required!");
@@ -76,8 +79,12 @@ function AddEmployee() {
 
       await sendApiData("POST", "/api/employees/create", payload);
 
-      alert("Employee Created Successfully!");
-      navigate("/dashboard/employee");
+      if (reloadEmployees) {
+        await reloadEmployees();
+      }
+
+      alert(`Employee '${formData.displayName}' Created Successfully! Default login password is 'enhance123'.`);
+      navigate("/hrms/all-employees");
     } catch (error) {
       console.error("Error creating employee:", error);
       const msg = error.response?.data?.message || error.message || "Failed to create employee.";
