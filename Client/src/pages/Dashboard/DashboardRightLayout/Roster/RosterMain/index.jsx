@@ -218,7 +218,19 @@ function RosterMain() {
 
   // All candidate records available for Roster view
   const approvedCandidates = useMemo(() => {
-    return (candidates || []);
+    return (candidates || []).filter((item) => {
+      const s = String(item.status || item.approvalStatus || "").trim().toLowerCase();
+      const isBoarded =
+        s === "on boarded" ||
+        s === "onboarded" ||
+        s === "boarded" ||
+        item.isBoarded === true;
+      const isOpsApproved =
+        item.operationsClientApproved === true ||
+        item.oprationsClientApproved === true ||
+        item.approved === true;
+      return isBoarded && isOpsApproved;
+    });
   }, [candidates]);
 
   // 1. Customer Options (sourced from all BoardingCandidates)

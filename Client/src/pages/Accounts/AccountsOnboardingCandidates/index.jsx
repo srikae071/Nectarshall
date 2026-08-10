@@ -34,6 +34,7 @@ function AccountsOnboardingCandidates() {
     { key: "managingAgentEmail", label: "Managing Agent Email" },
     { key: "shortDescription", label: "Short Description" },
     { key: "description", label: "Description" },
+    { key: "poWorkOrderApplicable", label: "PO / Work Order Applicable" },
     { key: "actions", label: "Actions" },
   ];
 
@@ -50,11 +51,21 @@ function AccountsOnboardingCandidates() {
       setLoading(true);
       const response = await fetchApiData("/api/BoardingCandidates");
       const allCandidates = extractArrayData(response.data);
+      // Filter Rule: Show in Accounts Onboarding Candidates ONLY IF status is "On Boarded" / "Boarded"
+      const boardedCandidates = allCandidates.filter((item) => {
+        const s = String(item.status || item.approvalStatus || "").trim().toLowerCase();
+        return (
+          s === "on boarded" ||
+          s === "onboarded" ||
+          s === "boarded" ||
+          item.isBoarded === true
+        );
+      });
       console.log(
-        "BoardingCandidates loaded for Accounts Onboarding Candidates:",
-        allCandidates,
+        "Boarded BoardingCandidates loaded for Accounts Onboarding Candidates:",
+        boardedCandidates,
       );
-      setData(allCandidates);
+      setData(boardedCandidates);
     } catch (error) {
       console.error(
         "Error fetching BoardingCandidates in Accounts Client Onboarding:",
@@ -253,6 +264,32 @@ function AccountsOnboardingCandidates() {
                           }}
                         >
                           {statusVal}
+                        </span>
+                      </td>
+                    );
+                  }
+
+                  if (key === "poWorkOrderApplicable") {
+                    const poVal =
+                      row.contractDeliverables?.[0]?.financialContractDeliverables?.poWorkOrderApplicable ||
+                      row.financialDetails?.[0]?.poWorkOrderApplicable ||
+                      row.poWorkOrderApplicable ||
+                      "No";
+
+                    return (
+                      <td key={key}>
+                        <span
+                          style={{
+                            padding: "3px 8px",
+                            borderRadius: "4px",
+                            fontSize: "12px",
+                            fontWeight: "700",
+                            background: poVal === "Yes" ? "#dcfce7" : "#f1f5f9",
+                            color: poVal === "Yes" ? "#166534" : "#475569",
+                            border: `1px solid ${poVal === "Yes" ? "#bbf7d0" : "#cbd5e1"}`,
+                          }}
+                        >
+                          {poVal}
                         </span>
                       </td>
                     );

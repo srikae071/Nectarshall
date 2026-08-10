@@ -319,7 +319,10 @@ function OnBoardingSaves() {
   };
 
   const handleFinancialChange = (index, e) => {
-    const { name, value } = e.target;
+    let { name, value } = e.target;
+    if (name.startsWith("poWorkOrderApplicable")) {
+      name = "poWorkOrderApplicable";
+    }
     const updated = JSON.parse(JSON.stringify(financialDetails));
     updated[index][name] = value;
     setFinancialDetails(updated);
@@ -795,8 +798,16 @@ function OnBoardingSaves() {
       const entriesString = JSON.stringify(updatedEntries);
 
       const updatedContractDeliverables = (contractDeliverables || []).map(
-        (cd) => ({
+        (cd, idx) => ({
           ...cd,
+          financialContractDeliverables: {
+            ...(cd.financialContractDeliverables || {}),
+            ...(financialDetails[idx] || {}),
+            poWorkOrderApplicable:
+              financialDetails[idx]?.poWorkOrderApplicable ||
+              cd.financialContractDeliverables?.poWorkOrderApplicable ||
+              "No",
+          },
           entries: entriesString,
         }),
       );
@@ -1532,6 +1543,60 @@ function OnBoardingSaves() {
                             <option value="Weekly">Weekly</option>
                             <option value="Adaptive">Adaptive</option>
                           </select>
+                        </div>
+
+                        <div className="deliverable-field">
+                          <label>PO / Work Order Applicable</label>
+                          <div
+                            style={{
+                              display: "flex",
+                              gap: "20px",
+                              alignItems: "center",
+                              height: "38px",
+                              marginTop: "4px",
+                            }}
+                          >
+                            <label
+                              style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "6px",
+                                fontSize: "13.5px",
+                                fontWeight: "600",
+                                cursor: "pointer",
+                                color: "#0f172a",
+                              }}
+                            >
+                              <input
+                                type="radio"
+                                name={`poWorkOrderApplicable_${index}`}
+                                value="Yes"
+                                checked={(finItem.poWorkOrderApplicable || "No") === "Yes"}
+                                onChange={(e) => handleFinancialChange(index, e)}
+                              />
+                              Yes
+                            </label>
+                            <label
+                              style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "6px",
+                                fontSize: "13.5px",
+                                fontWeight: "600",
+                                cursor: "pointer",
+                                color: "#0f172a",
+                              }}
+                            >
+                              <input
+                                type="radio"
+                                name={`poWorkOrderApplicable_${index}`}
+                                value="No"
+                                checked={(finItem.poWorkOrderApplicable || "No") === "No"}
+                                onChange={(e) => handleFinancialChange(index, e)}
+                              />
+                              No
+                            </label>
+                          </div>
                         </div>
 
                         <div className="deliverable-field deliverable-full">

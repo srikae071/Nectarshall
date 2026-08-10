@@ -20,16 +20,35 @@ function RosterShiftsMain() {
   const [submitSuccessRowId, setSubmitSuccessRowId] = useState(null);
   const [submittedRowIds, setSubmittedRowIds] = useState([]);
 
-  // Task Dropdown Options (Monday: Toilet Cleaning, Tuesday: Dusting & Vacuuming, etc.)
-  const AVAILABLE_TASKS = [
-    { id: "toilet_cleaning", label: "🚽 Toilet Cleaning (Monday)", day: "Monday" },
-    { id: "dusting_vacuuming", label: "🧹 Dusting & Vacuuming (Tuesday)", day: "Tuesday" },
-    { id: "sanitization", label: "🧼 Sanitization & Washroom (Wednesday)", day: "Wednesday" },
-    { id: "waste_disposal", label: "🗑️ Waste Disposal & Bins (Thursday)", day: "Thursday" },
-    { id: "floor_mopping", label: "🧽 Floor Mopping & Buffing (Friday)", day: "Friday" },
-    { id: "window_cleaning", label: "🪟 Window & Glass Cleaning (Saturday)", day: "Saturday" },
-    { id: "inventory_restock", label: "📦 Inventory & Restock (Sunday)", day: "Sunday" },
+  // Weekday Options (Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday)
+  const WEEK_DAYS = [
+    { id: "Monday", label: "Monday" },
+    { id: "Tuesday", label: "Tuesday" },
+    { id: "Wednesday", label: "Wednesday" },
+    { id: "Thursday", label: "Thursday" },
+    { id: "Friday", label: "Friday" },
+    { id: "Saturday", label: "Saturday" },
+    { id: "Sunday", label: "Sunday" },
   ];
+
+  const getTasksForDay = (dayName) => {
+    if (dayName === "Monday") {
+      return [
+        { id: "mon_task1", label: "🚽 Toilet Cleaning" },
+        { id: "mon_task2", label: "📋 Task 2" },
+        { id: "mon_task3", label: "📋 Task 3" },
+        { id: "mon_task4", label: "📋 Task 4" },
+        { id: "mon_task5", label: "📋 Task 5" },
+      ];
+    }
+    return [
+      { id: `${dayName.toLowerCase()}_task1`, label: `📋 ${dayName} Task 1` },
+      { id: `${dayName.toLowerCase()}_task2`, label: `📋 ${dayName} Task 2` },
+      { id: `${dayName.toLowerCase()}_task3`, label: `📋 ${dayName} Task 3` },
+      { id: `${dayName.toLowerCase()}_task4`, label: `📋 ${dayName} Task 4` },
+      { id: `${dayName.toLowerCase()}_task5`, label: `📋 ${dayName} Task 5` },
+    ];
+  };
 
   const [selectedTasksMap, setSelectedTasksMap] = useState(() => {
     const saved = localStorage.getItem("rosterSelectedTasks");
@@ -113,6 +132,49 @@ function RosterShiftsMain() {
             const empName =
               slotEmpObj?.employee || (q === 0 ? svc.employee || "" : "");
 
+            // Extract DB working days and tasks for this service / contract
+            const rawWorkingDays =
+              svc.workingDays ||
+              contract.workingDays ||
+              cand.workingDays ||
+              [];
+
+            const dbWorkingDays = [];
+            if (Array.isArray(rawWorkingDays) && rawWorkingDays.length > 0) {
+              rawWorkingDays.forEach((wd) => {
+                if (typeof wd === "string" && wd.trim() !== "") {
+                  dbWorkingDays.push({
+                    day: wd.trim(),
+                    tasks:
+                      wd.trim() === "Monday"
+                        ? ["Toilet Cleaning", "Task 2"]
+                        : ["Task 1", "Task 2"],
+                  });
+                } else if (typeof wd === "object" && wd !== null && wd.day) {
+                  const tasksList =
+                    Array.isArray(wd.tasks) && wd.tasks.length > 0
+                      ? wd.tasks
+                      : wd.day === "Monday"
+                      ? ["Toilet Cleaning", "Task 2"]
+                      : ["Task 1", "Task 2"];
+                  dbWorkingDays.push({
+                    day: wd.day,
+                    tasks: tasksList,
+                  });
+                }
+              });
+            }
+
+            if (dbWorkingDays.length === 0) {
+              dbWorkingDays.push(
+                { day: "Monday", tasks: ["Toilet Cleaning", "Task 2", "Task 3"] },
+                { day: "Tuesday", tasks: ["Toilet Cleaning", "Task 3", "Task 4"] },
+                { day: "Wednesday", tasks: ["Task 2", "Task 3"] },
+                { day: "Thursday", tasks: ["Task 4"] },
+                { day: "Friday", tasks: ["Toilet Cleaning"] }
+              );
+            }
+
             if (empName && empName.trim() !== "") {
               rows.push({
                 rowId: `${cand._id}_${contract._id}_${sIdx}_${q}`,
@@ -138,6 +200,7 @@ function RosterShiftsMain() {
                   slotEmpObj?.actualEndTime || svc.shiftEndTime || "16:00",
                 approvalState: slotEmpObj?.approvalState || "Pending",
                 isSubmitted: slotEmpObj?.isSubmitted === true,
+                dbWorkingDays,
                 contractObj: contract,
                 candObj: cand,
               });
@@ -422,71 +485,133 @@ function RosterShiftsMain() {
 
         <td className="taskChecklistCol">
           <div className="taskChecklistWrap" style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-            <label style={{ fontSize: "11px", fontWeight: "700", color: "#475569" }}>
-              Task Assignment:
-            </label>
-            <select
-              style={{
-                padding: "4px 8px",
-                borderRadius: "6px",
-                border: "1.5px solid #cbd5e1",
-                fontSize: "12px",
-                fontWeight: "600",
-                color: "#0f172a",
-                outline: "none",
-                background: "#ffffff",
-              }}
-              value={selectedTasksMap[row.rowId] || "toilet_cleaning"}
-              onChange={(e) => handleSelectTask(row.rowId, e.target.value)}
-            >
-              {AVAILABLE_TASKS.map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.label}
-                </option>
-              ))}
-            </select>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <label style={{ fontSize: "11px", fontWeight: "700", color: "#475569" }}>
+                Working Day:
+              </label>
+              <select
+                style={{
+                  padding: "3px 6px",
+                  borderRadius: "4px",
+                  border: "1.5px solid #cbd5e1",
+                  fontSize: "11.5px",
+                  fontWeight: "600",
+                  color: "#0f172a",
+                  outline: "none",
+                  background: "#ffffff",
+                }}
+                value={selectedTasksMap[row.rowId] || (row.dbWorkingDays?.[0]?.day || "Monday")}
+                onChange={(e) => handleSelectTask(row.rowId, e.target.value)}
+              >
+                {(row.dbWorkingDays || []).map((wd) => (
+                  <option key={wd.day} value={wd.day}>
+                    {wd.day} ({wd.tasks.length} Task{wd.tasks.length > 1 ? "s" : ""})
+                  </option>
+                ))}
+              </select>
+            </div>
 
             {(() => {
-              const activeTaskId = selectedTasksMap[row.rowId] || "toilet_cleaning";
-              const activeTaskObj =
-                AVAILABLE_TASKS.find((t) => t.id === activeTaskId) ||
-                AVAILABLE_TASKS[0];
+              const activeDayName =
+                selectedTasksMap[row.rowId] || (row.dbWorkingDays?.[0]?.day || "Monday");
 
-              const isChecked = Boolean(
-                completedTasksMap[row.rowId]?.[activeTaskId] ||
-                  completedTasksMap[row.rowId] === true,
-              );
+              const activeDayObj =
+                (row.dbWorkingDays || []).find((d) => d.day === activeDayName) ||
+                (row.dbWorkingDays || [])[0] ||
+                { day: "Monday", tasks: ["Toilet Cleaning", "Task 2"] };
 
-              // Calculate total completed tasks for this shift row (each adds +3.69%)
-              const completedCount =
+              const dayTasks = activeDayObj.tasks || [];
+              const rowTaskState =
                 typeof completedTasksMap[row.rowId] === "object" &&
                 completedTasksMap[row.rowId] !== null
-                  ? Object.values(completedTasksMap[row.rowId]).filter(Boolean).length
-                  : isChecked
-                  ? 1
-                  : 0;
+                  ? completedTasksMap[row.rowId]
+                  : {};
 
-              const totalBonusPercent = completedCount * 3.69;
+              const completedCount = dayTasks.filter((tName) => {
+                const taskKey = `${activeDayName}_${tName}`;
+                return Boolean(
+                  rowTaskState[taskKey] ||
+                  rowTaskState[tName] ||
+                  (tName === "Task 1" && rowTaskState["Toilet Cleaning"])
+                );
+              }).length;
+
+              const bonusPercent = (completedCount * 3.69).toFixed(2);
 
               return (
                 <div style={{ display: "flex", flexDirection: "column", gap: "4px", marginTop: "2px" }}>
-                  <label style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "12px", fontWeight: "700", cursor: "pointer", color: "#0f172a" }}>
-                    <input
-                      type="checkbox"
-                      checked={isChecked}
-                      onChange={(e) =>
-                        handleToggleTaskCompletion(row.rowId, activeTaskId, e.target.checked)
-                      }
-                    />
-                    <span>{activeTaskObj.label}</span>
-                  </label>
+                  {dayTasks.map((tName, tIdx) => {
+                    const taskLabel =
+                      tName === "Task 1" || tName === "Toilet Cleaning"
+                        ? "Toilet Cleaning"
+                        : tName;
+
+                    const taskKey = `${activeDayName}_${tName}`;
+                    const isChecked = Boolean(
+                      rowTaskState[taskKey] ||
+                      rowTaskState[tName] ||
+                      rowTaskState[taskLabel]
+                    );
+
+                    return (
+                      <label
+                        key={tIdx}
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          fontSize: "11.5px",
+                          fontWeight: "600",
+                          cursor: "pointer",
+                          color: "#0f172a",
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={(e) =>
+                            handleToggleTaskCompletion(
+                              row.rowId,
+                              taskKey,
+                              e.target.checked
+                            )
+                          }
+                        />
+                        <span>
+                          {taskLabel === "Toilet Cleaning"
+                            ? "🚽 Toilet Cleaning"
+                            : `📋 ${taskLabel}`}
+                        </span>
+                      </label>
+                    );
+                  })}
+
                   {completedCount > 0 ? (
-                    <span style={{ fontSize: "11px", fontWeight: "700", color: "#166534", background: "#dcfce7", border: "1px solid #bbf7d0", padding: "2px 6px", borderRadius: "4px", display: "inline-block" }}>
-                      ✓ {completedCount} Task{completedCount > 1 ? "s" : ""} Completed (+{totalBonusPercent.toFixed(2)}% Bonus)
+                    <span
+                      style={{
+                        fontSize: "11px",
+                        fontWeight: "700",
+                        color: "#166534",
+                        background: "#dcfce7",
+                        border: "1px solid #bbf7d0",
+                        padding: "2px 6px",
+                        borderRadius: "4px",
+                        display: "inline-block",
+                        marginTop: "4px",
+                      }}
+                    >
+                      ✓ {completedCount} Task{completedCount > 1 ? "s" : ""} Checked (+{bonusPercent}% Bonus)
                     </span>
                   ) : (
-                    <span style={{ fontSize: "11px", fontWeight: "600", color: "#64748b" }}>
-                      Pending Checklist
+                    <span
+                      style={{
+                        fontSize: "11px",
+                        fontWeight: "600",
+                        color: "#64748b",
+                        marginTop: "4px",
+                      }}
+                    >
+                      Pending Checklist (0 Tasks Checked)
                     </span>
                   )}
                 </div>
