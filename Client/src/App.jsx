@@ -18,6 +18,7 @@ import AddEmployee from "./pages/Hrms/AddEmployee/index.jsx";
 import AllEmployees from "./pages/Hrms/AllEmployees/index.jsx";
 import MainEmployeesSaves from "./pages/Hrms/Employee/MainEmployeesSaves/index.jsx";
 import MyMails from "./pages/NavItems/MyMails/index.jsx";
+import TestPage from "./pages/TestPage/index.jsx";
 
 import All from "../src/pages/Hrms/Employee/ResourceRequirement/All/index.jsx";
 import EmployeeCreateNew from "../src/pages/Hrms/Employee/ResourceRequirement/EmployeeCreateNew/index.jsx";
@@ -118,6 +119,8 @@ import AccountsExpenditure from "./pages/Accounts/AccountsExpenditure";
 import AccountsReconciliation from "./pages/Accounts/AccountsReconciliation";
 import AccountsCustomerBilling from "./pages/Accounts/AccountsCustomerBilling";
 import AccountsOnboardingCandidates from "./pages/Accounts/AccountsOnboardingCandidates";
+import AccountsEmployeeRateCard from "./pages/Accounts/AccountsEmployeeRateCard";
+import AccountsCustomerRateCard from "./pages/Accounts/AccountsCustomerRateCard";
 
 function App() {
   useEffect(() => {
@@ -143,6 +146,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Home />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/test"
+          element={
+            <ProtectedRoute>
+              <TestPage />
             </ProtectedRoute>
           }
         />
@@ -413,6 +424,36 @@ function App() {
           <ProtectedRoute>
             <AccountsLayout>
               <AccountsParent />
+            </AccountsLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/accounts/employee-rate-card"
+        element={
+          <ProtectedRoute>
+            <AccountsLayout>
+              <AccountsEmployeeRateCard />
+            </AccountsLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/accounts/customer-rate-card"
+        element={
+          <ProtectedRoute>
+            <AccountsLayout>
+              <AccountsCustomerRateCard />
+            </AccountsLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/accounts/rate-card"
+        element={
+          <ProtectedRoute>
+            <AccountsLayout>
+              <AccountsEmployeeRateCard />
             </AccountsLayout>
           </ProtectedRoute>
         }

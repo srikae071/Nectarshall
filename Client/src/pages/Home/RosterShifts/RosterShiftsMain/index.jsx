@@ -20,6 +20,57 @@ function RosterShiftsMain() {
   const [submitSuccessRowId, setSubmitSuccessRowId] = useState(null);
   const [submittedRowIds, setSubmittedRowIds] = useState([]);
 
+  // Task Dropdown Options (Monday: Toilet Cleaning, Tuesday: Dusting & Vacuuming, etc.)
+  const AVAILABLE_TASKS = [
+    { id: "toilet_cleaning", label: "🚽 Toilet Cleaning (Monday)", day: "Monday" },
+    { id: "dusting_vacuuming", label: "🧹 Dusting & Vacuuming (Tuesday)", day: "Tuesday" },
+    { id: "sanitization", label: "🧼 Sanitization & Washroom (Wednesday)", day: "Wednesday" },
+    { id: "waste_disposal", label: "🗑️ Waste Disposal & Bins (Thursday)", day: "Thursday" },
+    { id: "floor_mopping", label: "🧽 Floor Mopping & Buffing (Friday)", day: "Friday" },
+    { id: "window_cleaning", label: "🪟 Window & Glass Cleaning (Saturday)", day: "Saturday" },
+    { id: "inventory_restock", label: "📦 Inventory & Restock (Sunday)", day: "Sunday" },
+  ];
+
+  const [selectedTasksMap, setSelectedTasksMap] = useState(() => {
+    const saved = localStorage.getItem("rosterSelectedTasks");
+    return saved ? JSON.parse(saved) : {};
+  });
+
+  // Task Completion checklist tracking for PayRun +3.69% bonus per task
+  const [completedTasksMap, setCompletedTasksMap] = useState(() => {
+    const saved = localStorage.getItem("rosterCompletedTasks");
+    return saved ? JSON.parse(saved) : {};
+  });
+
+  const handleSelectTask = (rowId, taskId) => {
+    setSelectedTasksMap((prev) => {
+      const updated = {
+        ...prev,
+        [rowId]: taskId,
+      };
+      localStorage.setItem("rosterSelectedTasks", JSON.stringify(updated));
+      window.dispatchEvent(new Event("rosterTasksUpdated"));
+      return updated;
+    });
+  };
+
+  const handleToggleTaskCompletion = (rowId, taskId, isChecked) => {
+    setCompletedTasksMap((prev) => {
+      const rowTasks =
+        typeof prev[rowId] === "object" && prev[rowId] !== null
+          ? { ...prev[rowId] }
+          : {};
+      rowTasks[taskId] = isChecked;
+      const updated = {
+        ...prev,
+        [rowId]: rowTasks,
+      };
+      localStorage.setItem("rosterCompletedTasks", JSON.stringify(updated));
+      window.dispatchEvent(new Event("rosterTasksUpdated"));
+      return updated;
+    });
+  };
+
   // Scope of Work Notepad Pop-up Modal State
   const [scopeModalData, setScopeModalData] = useState({
     isOpen: false,
@@ -369,6 +420,81 @@ function RosterShiftsMain() {
           </td>
         )}
 
+        <td className="taskChecklistCol">
+          <div className="taskChecklistWrap" style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+            <label style={{ fontSize: "11px", fontWeight: "700", color: "#475569" }}>
+              Task Assignment:
+            </label>
+            <select
+              style={{
+                padding: "4px 8px",
+                borderRadius: "6px",
+                border: "1.5px solid #cbd5e1",
+                fontSize: "12px",
+                fontWeight: "600",
+                color: "#0f172a",
+                outline: "none",
+                background: "#ffffff",
+              }}
+              value={selectedTasksMap[row.rowId] || "toilet_cleaning"}
+              onChange={(e) => handleSelectTask(row.rowId, e.target.value)}
+            >
+              {AVAILABLE_TASKS.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.label}
+                </option>
+              ))}
+            </select>
+
+            {(() => {
+              const activeTaskId = selectedTasksMap[row.rowId] || "toilet_cleaning";
+              const activeTaskObj =
+                AVAILABLE_TASKS.find((t) => t.id === activeTaskId) ||
+                AVAILABLE_TASKS[0];
+
+              const isChecked = Boolean(
+                completedTasksMap[row.rowId]?.[activeTaskId] ||
+                  completedTasksMap[row.rowId] === true,
+              );
+
+              // Calculate total completed tasks for this shift row (each adds +3.69%)
+              const completedCount =
+                typeof completedTasksMap[row.rowId] === "object" &&
+                completedTasksMap[row.rowId] !== null
+                  ? Object.values(completedTasksMap[row.rowId]).filter(Boolean).length
+                  : isChecked
+                  ? 1
+                  : 0;
+
+              const totalBonusPercent = completedCount * 3.69;
+
+              return (
+                <div style={{ display: "flex", flexDirection: "column", gap: "4px", marginTop: "2px" }}>
+                  <label style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "12px", fontWeight: "700", cursor: "pointer", color: "#0f172a" }}>
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={(e) =>
+                        handleToggleTaskCompletion(row.rowId, activeTaskId, e.target.checked)
+                      }
+                    />
+                    <span>{activeTaskObj.label}</span>
+                  </label>
+                  {completedCount > 0 ? (
+                    <span style={{ fontSize: "11px", fontWeight: "700", color: "#166534", background: "#dcfce7", border: "1px solid #bbf7d0", padding: "2px 6px", borderRadius: "4px", display: "inline-block" }}>
+                      ✓ {completedCount} Task{completedCount > 1 ? "s" : ""} Completed (+{totalBonusPercent.toFixed(2)}% Bonus)
+                    </span>
+                  ) : (
+                    <span style={{ fontSize: "11px", fontWeight: "600", color: "#64748b" }}>
+                      Pending Checklist
+                    </span>
+                  )}
+                </div>
+              );
+            })()}
+          </div>
+        </td>
+
         <td className="actionCol">
           {!row.hasEmployee ? (
             <span
@@ -565,6 +691,7 @@ function RosterShiftsMain() {
                           <th>Position</th>
                           <th>Shift Start Time</th>
                           <th>Shift End Time</th>
+                          <th>Task Checklist</th>
                           <th>Accept / Reject</th>
                         </tr>
                       </thead>
@@ -592,6 +719,7 @@ function RosterShiftsMain() {
                             <th>Shift Start Time</th>
                             <th>Shift End Time</th>
                             <th>Scope of Work</th>
+                            <th>Task Checklist</th>
                             <th>Accept / Reject</th>
                           </tr>
                         </thead>

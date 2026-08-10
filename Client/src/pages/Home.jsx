@@ -147,7 +147,7 @@ function Home() {
               <a
                 role="button"
                 tabIndex={0}
-                onClick={() => navigate("/regular-form")}
+                onClick={() => navigate("/test")}
               >
                 test
               </a>

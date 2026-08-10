@@ -19,20 +19,114 @@
   display: flex;
   flex-direction: column;
   padding: 10px 0;
+  gap: 4px;
 }
 
+.submenuItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  cursor: pointer;
+  color: #cbd5e1;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.submenuItem:hover {
+  background: #334155;
+  color: #ffffff;
+}
+
+.submenuItem.active {
+  background: #047857;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+/* EXPANDABLE CATEGORY GROUP STYLES */
+.categoryGroupWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.categoryGroupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  cursor: pointer;
+  color: #cbd5e1;
+  font-size: 14px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.categoryGroupHeader:hover {
+  background: #334155;
+  color: #ffffff;
+}
+
+.categoryGroupHeader.activeCategory {
+  color: #34d399;
+}
+
+.categoryHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.categoryArrowIcon {
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.categorySubmenuList {
+  display: flex;
+  flex-direction: column;
+  background: #0f172a;
+  padding: 4px 0;
+}
+
+.submenuItem.childItem {
+  padding-left: 36px;
+  font-size: 13.5px;
+}
+
+.submenuItem.childItem:hover {
+  background: #1e293b;
+  color: #38bdf8;
+}
+
+.submenuItem.childItem.active {
+  background: #047857;
+  color: #ffffff;
+}
+
+/* GREEN THEME ACCENTS */
 [data-theme="green"] .accountssidebar {
   background-color: #e2f2eb !important;
   background: #e2f2eb !important;
   color: #064e3b !important;
 }
 
-[data-theme="green"] .accountssidebar .submenuItem {
+[data-theme="green"] .accountssidebar .submenuItem,
+[data-theme="green"] .accountssidebar .categoryGroupHeader {
   color: #064e3b !important;
 }
 
+[data-theme="green"] .accountssidebar .categorySubmenuList {
+  background: #d1fae5 !important;
+}
+
 [data-theme="green"] .accountssidebar .submenuItem:hover,
-[data-theme="green"] .accountssidebar .submenuItem.active {
-  background-color: #c6e6d8 !important;
+[data-theme="green"] .accountssidebar .categoryGroupHeader:hover,
+[data-theme="green"] .accountssidebar .submenuItem.active,
+[data-theme="green"] .accountssidebar .submenuItem.childItem.active {
+  background-color: #a7f3d0 !important;
   color: #064e3b !important;
 }

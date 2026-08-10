@@ -1455,7 +1455,7 @@ function OnBoardingSaves() {
 
                                     <div className="vertical-task-list">
                                       {[
-                                        "Task 1",
+                                        "Toilet Cleaning",
                                         "Task 2",
                                         "Task 3",
                                         "Task 4",

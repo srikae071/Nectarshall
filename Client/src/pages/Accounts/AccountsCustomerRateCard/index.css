@@ -1,0 +1,193 @@
+.rateCardContainer {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  color: #0f172a;
+}
+
+.rateCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  background: #ffffff;
+  padding: 20px 24px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.rateCardHeader h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.rateCardSubtext {
+  margin: 4px 0 0 0;
+  font-size: 13.5px;
+  color: #64748b;
+  max-width: 750px;
+}
+
+.saveRateCardBtn {
+  background: linear-gradient(135deg, #047857 0%, #0d9488 100%);
+  color: #ffffff;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(4, 120, 87, 0.2);
+  transition: all 0.2s ease;
+}
+
+.saveRateCardBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(4, 120, 87, 0.3);
+}
+
+.resetBtn {
+  background: #ffffff;
+  color: #475569;
+  border: 1.5px solid #cbd5e1;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.resetBtn:hover {
+  background: #f1f5f9;
+}
+
+.rateCardAlertSuccess {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+  padding: 14px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.rateCardGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 1024px) {
+  .rateCardGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.levelCard {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+.levelCardHeader {
+  padding: 18px 20px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.level1Header { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); }
+.level2Header { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); }
+.level3Header { background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); }
+
+.levelBadge {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.levelCardHeader h3 {
+  margin: 8px 0 0 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.levelCardBody {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rateInputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rateInputGroup label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #475569;
+}
+
+.inputCurrencyWrap {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0 12px;
+  background: #ffffff;
+}
+
+.inputCurrencyWrap span {
+  font-weight: 700;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.inputCurrencyWrap input {
+  flex: 1;
+  padding: 10px 8px;
+  border: none;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f172a;
+  outline: none;
+  width: 100%;
+}
+
+.inputCurrencyWrap:focus-within {
+  border-color: #047857;
+  box-shadow: 0 0 0 3px rgba(4, 120, 87, 0.12);
+}
+
+.levelSummaryBox {
+  margin-top: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.greenText {
+  color: #047857;
+  font-weight: 800;
+}

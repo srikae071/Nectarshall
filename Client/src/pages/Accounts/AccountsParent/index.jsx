@@ -35,9 +35,56 @@ function AccountsParent() {
     getCurrentSystemWeek(),
   );
   const [expandedEmp, setExpandedEmp] = useState(null);
+  const [selectedLedgerShift, setSelectedLedgerShift] = useState(null);
+  const [completedTasksMap, setCompletedTasksMap] = useState(() => {
+    const saved = localStorage.getItem("rosterCompletedTasks");
+    return saved ? JSON.parse(saved) : {};
+  });
   const [employees, setEmployees] = useState([]);
   const [candidates, setCandidates] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [activeRateCard, setActiveRateCard] = useState(() => {
+    const saved = localStorage.getItem("accountsRateCard");
+    return saved
+      ? JSON.parse(saved)
+      : {
+          level1: { hourlyRate: 26.5 },
+          level2: { hourlyRate: 30 },
+          level3: { hourlyRate: 35 },
+        };
+  });
+
+  useEffect(() => {
+    const handleRateUpdate = () => {
+      const saved = localStorage.getItem("accountsRateCard");
+      if (saved) {
+        setActiveRateCard(JSON.parse(saved));
+      }
+    };
+    const handleTasksUpdate = () => {
+      const saved = localStorage.getItem("rosterCompletedTasks");
+      setCompletedTasksMap(saved ? JSON.parse(saved) : {});
+    };
+
+    window.addEventListener("accountsRateCardUpdated", handleRateUpdate);
+    window.addEventListener("rosterTasksUpdated", handleTasksUpdate);
+    return () => {
+      window.removeEventListener("accountsRateCardUpdated", handleRateUpdate);
+      window.removeEventListener("rosterTasksUpdated", handleTasksUpdate);
+    };
+  }, []);
+
+  const getRateForPosition = (pos) => {
+    const p = String(pos || "").toUpperCase();
+    if (p.includes("GL3") || p.includes("LEVEL 3") || p.includes("LEVEL3")) {
+      return Number(activeRateCard?.level3?.hourlyRate) || 35;
+    }
+    if (p.includes("GL2") || p.includes("LEVEL 2") || p.includes("LEVEL2")) {
+      return Number(activeRateCard?.level2?.hourlyRate) || 30;
+    }
+    return Number(activeRateCard?.level1?.hourlyRate) || 26.5;
+  };
 
   useEffect(() => {
     fetchData();
@@ -89,9 +136,7 @@ function AccountsParent() {
           const shiftStartTime = service.shiftStartTime || "08:00";
           const shiftEndTime = service.shiftEndTime || "16:00";
           const contractStartDate =
-            service.contractStartDate ||
-            candidate.onboardingDate ||
-            new Date();
+            service.contractStartDate || candidate.onboardingDate || new Date();
           const baseWeek = getWeekNumberFromDate(contractStartDate);
 
           (service.assignedEmployees || []).forEach((assigned, slotIdx) => {
@@ -117,11 +162,16 @@ function AccountsParent() {
               assignedEmpName;
 
             const empPosition =
-              position || matchedEmp?.designation || matchedEmp?.jobTitle || "GL1";
+              position ||
+              matchedEmp?.designation ||
+              matchedEmp?.jobTitle ||
+              "GL1";
 
-            // Default rate per hour set to $39.66
+            // Interlinked rate per hour from active Rate Card & position level
             const ratePerHour =
-              Number(assigned.ratePerHour || matchedEmp?.ratePerHour || matchedEmp?.payRate) || 39.66;
+              Number(assigned.ratePerHour) ||
+              Number(matchedEmp?.ratePerHour) ||
+              getRateForPosition(empPosition);
 
             const mealTime = assigned.mealTime || service.mealTime || "30 mins";
             const actualStartTime = assigned.actualStartTime || shiftStartTime;
@@ -136,8 +186,25 @@ function AccountsParent() {
               ? getWeekNumberFromDate(assigned.assignedDate)
               : baseWeek;
 
+            const shiftId = `${candidate._id}_${contract._id || cIdx}_${service._id || sIdx}_${slotIdx}`;
+            const shiftTaskData = completedTasksMap[shiftId] || completedTasksMap[empDisplayName];
+            const completedCount =
+              typeof shiftTaskData === "object" && shiftTaskData !== null
+                ? Object.values(shiftTaskData).filter(Boolean).length
+                : shiftTaskData === true || slotIdx === 0
+                ? 1
+                : 0;
+
+            // Wage Calculations: Base Wage + Super (12%) + Leave Loading (1.98%) + Task Completion (3.69% per completed task)
+            const baseWage = hoursWorked * ratePerHour;
+            const superAmount = baseWage * 0.12;
+            const leaveAmount = baseWage * 0.0198;
+            const taskBonusPercent = completedCount * 0.0369;
+            const taskBonusAmount = baseWage * taskBonusPercent;
+            const totalPay = baseWage + superAmount + leaveAmount + taskBonusAmount;
+
             shiftList.push({
-              id: `${candidate._id}_${contract._id || cIdx}_${service._id || sIdx}_${slotIdx}`,
+              id: shiftId,
               weekNumber: shiftWeek,
               empName: empDisplayName,
               serviceType,
@@ -151,7 +218,14 @@ function AccountsParent() {
               mealTime,
               hours: hoursWorked,
               ratePerHour,
-              totalPay: hoursWorked * ratePerHour,
+              baseWage,
+              superAmount,
+              leaveAmount,
+              taskBonusAmount,
+              completedCount,
+              taskBonusPercentStr: (completedCount * 3.69).toFixed(2),
+              isTaskCompleted: completedCount > 0,
+              totalPay,
               assignedDate,
             });
           });
@@ -160,7 +234,7 @@ function AccountsParent() {
     });
 
     return shiftList;
-  }, [candidates, employees]);
+  }, [candidates, employees, activeRateCard, completedTasksMap]);
 
   // 52 Weeks Selector Labels with End Dates (e.g. Week 32 - Aug 9)
   const weekOptions = useMemo(() => {
@@ -206,18 +280,36 @@ function AccountsParent() {
           companyMap.set(s.companyName, {
             companyName: s.companyName,
             companyHours: 0,
+            companyBase: 0,
+            companySuper: 0,
+            companyLeave: 0,
+            companyTaskBonus: 0,
             companyPay: 0,
             companyShifts: [],
           });
         }
         const comp = companyMap.get(s.companyName);
         comp.companyHours += s.hours;
+        comp.companyBase += s.baseWage;
+        comp.companySuper += s.superAmount;
+        comp.companyLeave += s.leaveAmount;
+        comp.companyTaskBonus += s.taskBonusAmount;
         comp.companyPay += s.totalPay;
         comp.companyShifts.push(s);
       });
 
       const companyBreakdown = Array.from(companyMap.values());
       const totalWorkerHours = shifts.reduce((sum, s) => sum + s.hours, 0);
+      const totalWorkerBase = shifts.reduce((sum, s) => sum + s.baseWage, 0);
+      const totalWorkerSuper = shifts.reduce(
+        (sum, s) => sum + s.superAmount,
+        0,
+      );
+      const totalWorkerLeave = shifts.reduce(
+        (sum, s) => sum + s.leaveAmount,
+        0,
+      );
+      const totalWorkerTaskBonus = shifts.reduce((sum, s) => sum + s.taskBonusAmount, 0);
       const totalWorkerPay = shifts.reduce((sum, s) => sum + s.totalPay, 0);
       const uniqueCompanies = companyBreakdown.map((c) => c.companyName);
 
@@ -228,6 +320,10 @@ function AccountsParent() {
         uniqueCompanies,
         isMultiCompany: uniqueCompanies.length > 1,
         totalWorkerHours,
+        totalWorkerBase,
+        totalWorkerSuper,
+        totalWorkerLeave,
+        totalWorkerTaskBonus,
         totalWorkerPay,
       });
     });
@@ -257,12 +353,16 @@ function AccountsParent() {
         <div>
           <h2>📋 PayRun Accounts Dashboard (52 Weeks View)</h2>
           <p className="accountsSubtext">
-            Click on any worker's name to smoothly expand multi-company shift breakdowns, total hours worked, and combined weekly pay calculations.
+            Click on any worker's name to smoothly expand multi-company shift
+            breakdowns, total hours worked, and combined weekly pay
+            calculations.
           </p>
         </div>
 
         <div className="weekSelectorContainer">
-          <label style={{ fontWeight: "700", color: "#0f172a", fontSize: "14px" }}>
+          <label
+            style={{ fontWeight: "700", color: "#0f172a", fontSize: "14px" }}
+          >
             Select Week:
           </label>
           <select
@@ -339,22 +439,39 @@ function AccountsParent() {
                             >
                               <div
                                 className="empClickableName"
-                                onClick={() => handleToggleExpand(workerGroup.empName)}
+                                onClick={() =>
+                                  handleToggleExpand(workerGroup.empName)
+                                }
                                 title="Click to expand multi-company shift breakdown & pay calculation"
                               >
                                 <span className="empInitialAvatar">
                                   {initialLetter}
                                 </span>
                                 <div>
-                                  <div style={{ fontWeight: "700", color: "#047857" }}>
-                                    {workerGroup.empName} {isExpanded ? "▲" : "▼"}
+                                  <div
+                                    style={{
+                                      fontWeight: "700",
+                                      color: "#047857",
+                                    }}
+                                  >
+                                    {workerGroup.empName}{" "}
+                                    {isExpanded ? "▲" : "▼"}
                                   </div>
                                   {workerGroup.isMultiCompany ? (
-                                    <span className="multiCompanyBadge" style={{ marginTop: "2px" }}>
-                                      🏢 {workerGroup.uniqueCompanies.length} Companies
+                                    <span
+                                      className="multiCompanyBadge"
+                                      style={{ marginTop: "2px" }}
+                                    >
+                                      🏢 {workerGroup.uniqueCompanies.length}{" "}
+                                      Companies
                                     </span>
                                   ) : (
-                                    <span style={{ fontSize: "11px", color: "#64748b" }}>
+                                    <span
+                                      style={{
+                                        fontSize: "11px",
+                                        color: "#64748b",
+                                      }}
+                                    >
                                       Click to View Pay Details
                                     </span>
                                   )}
@@ -371,7 +488,13 @@ function AccountsParent() {
                             ⏰ {shift.shiftStartTime} - {shift.shiftEndTime}
                           </td>
                           <td>
-                            <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: "2px",
+                              }}
+                            >
                               <span
                                 style={{
                                   padding: "2px 8px",
@@ -388,9 +511,16 @@ function AccountsParent() {
                                       : "#64748b",
                                 }}
                               >
-                                ⏱️ {shift.actualStartTime} - {shift.actualEndTime}
+                                ⏱️ {shift.actualStartTime} -{" "}
+                                {shift.actualEndTime}
                               </span>
-                              <span style={{ fontSize: "11px", color: "#64748b", fontWeight: "600" }}>
+                              <span
+                                style={{
+                                  fontSize: "11px",
+                                  color: "#64748b",
+                                  fontWeight: "600",
+                                }}
+                              >
                                 🍱 Meal: {shift.mealTime}
                               </span>
                             </div>
@@ -399,8 +529,89 @@ function AccountsParent() {
                           <td style={{ fontWeight: "700", color: "#047857" }}>
                             {formatCurrency(shift.ratePerHour)}
                           </td>
-                          <td style={{ fontWeight: "700", color: "#0f172a" }}>
-                            {formatCurrency(shift.totalPay)}
+                          <td
+                            style={{
+                              fontWeight: "700",
+                              color: "#0f172a",
+                              position: "relative",
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "6px",
+                              }}
+                            >
+                              <span>{formatCurrency(shift.totalPay)}</span>
+                              <button
+                                className="ledgerIconBtn"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedLedgerShift(
+                                    selectedLedgerShift === shift.id
+                                      ? null
+                                      : shift.id,
+                                  );
+                                }}
+                                title="Click to view Pay Ledger (Base Wage + Super 12% + Leave 1.98%)"
+                              >
+                                📒
+                              </button>
+                            </div>
+
+                            {selectedLedgerShift === shift.id && (
+                              <div className="payLedgerPopover">
+                                <div className="ledgerPopoverHeader">
+                                  <span>📒 Wage Ledger Breakdown</span>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedLedgerShift(null);
+                                    }}
+                                  >
+                                    ✕
+                                  </button>
+                                </div>
+                                <div className="ledgerRow">
+                                  <span>Shift Hours & Rate:</span>
+                                  <strong>
+                                    {shift.hours} hrs ×{" "}
+                                    {formatCurrency(shift.ratePerHour)}
+                                  </strong>
+                                </div>
+                                <div className="ledgerRow">
+                                  <span>💵 Base Wage:</span>
+                                  <strong>
+                                    {formatCurrency(shift.baseWage)}
+                                  </strong>
+                                </div>
+                                <div className="ledgerRow">
+                                  <span>🏦 Super (12%):</span>
+                                  <strong style={{ color: "#047857" }}>
+                                    +{formatCurrency(shift.superAmount)}
+                                  </strong>
+                                </div>
+                                <div className="ledgerRow">
+                                  <span>🌴 Leave Loading (1.98%):</span>
+                                  <strong style={{ color: "#0284c7" }}>
+                                    +{formatCurrency(shift.leaveAmount)}
+                                  </strong>
+                                </div>
+                                <div className="ledgerRow">
+                                  <span>🧹 Task Completion Bonus (+{shift.taskBonusPercentStr}%):</span>
+                                  <strong style={{ color: "#d97706" }}>
+                                    +{formatCurrency(shift.taskBonusAmount)} ({shift.completedCount > 0 ? `✓ ${shift.completedCount} Task${shift.completedCount > 1 ? "s" : ""} Completed` : "Pending"})
+                                  </strong>
+                                </div>
+                                <div className="ledgerRowTotal">
+                                  <span>💰 Total Payable Wage:</span>
+                                  <strong>
+                                    {formatCurrency(shift.totalPay)}
+                                  </strong>
+                                </div>
+                              </div>
+                            )}
                           </td>
                         </tr>
                       ))}
@@ -408,89 +619,254 @@ function AccountsParent() {
                       {/* SMOOTH ANIMATED EXPANDED MULTI-COMPANY BREAKDOWN DRAWER */}
                       <tr>
                         <td colSpan="11" style={{ padding: 0, border: "none" }}>
-                          <div className={`expandedDrawerWrapper ${isExpanded ? "open" : ""}`}>
+                          <div
+                            className={`expandedDrawerWrapper ${isExpanded ? "open" : ""}`}
+                          >
                             <div className="expandedDrawerInnerContent">
-                              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                  marginBottom: "12px",
+                                }}
+                              >
                                 <div>
-                                  <h4 style={{ margin: 0, fontSize: "16px", color: "#0f172a" }}>
-                                    👤 {workerGroup.empName} - Weekly Multi-Company Pay Summary
+                                  <h4
+                                    style={{
+                                      margin: 0,
+                                      fontSize: "16px",
+                                      color: "#0f172a",
+                                    }}
+                                  >
+                                    👤 {workerGroup.empName} - Weekly
+                                    Multi-Company Pay Summary
                                   </h4>
-                                  <p style={{ margin: "2px 0 0 0", fontSize: "12.5px", color: "#64748b" }}>
-                                    Detailed breakdown of companies worked, shift hours, hourly rate ($39.66), and calculated pay for Week {selectedWeek}.
+                                  <p
+                                    style={{
+                                      margin: "2px 0 0 0",
+                                      fontSize: "12.5px",
+                                      color: "#64748b",
+                                    }}
+                                  >
+                                    Detailed breakdown including Base Wage,
+                                    Super 12%, Leave Loading 1.98%, and Total
+                                    Payable Wage for Week {selectedWeek}.
                                   </p>
                                 </div>
 
                                 {workerGroup.isMultiCompany && (
                                   <span className="multiCompanyBadge">
-                                    🏢 Multi-Company Placement ({workerGroup.uniqueCompanies.join(" & ")})
+                                    🏢 Multi-Company Placement (
+                                    {workerGroup.uniqueCompanies.join(" & ")})
                                   </span>
                                 )}
                               </div>
 
                               {/* COMPANY BY COMPANY BREAKDOWN */}
-                              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                                {workerGroup.companyBreakdown.map((comp, cIdx) => (
-                                  <div key={cIdx} className="companyBreakdownCard">
-                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #e2e8f0", paddingBottom: "8px", marginBottom: "8px" }}>
-                                      <span style={{ fontWeight: "700", fontSize: "14px", color: "#0f172a" }}>
-                                        🏢 Company: <strong style={{ color: "#047857" }}>{comp.companyName}</strong>
-                                      </span>
-                                      <span style={{ fontWeight: "700", fontSize: "13.5px", color: "#047857" }}>
-                                        Subtotal: {comp.companyHours} hrs × $39.66/hr = {formatCurrency(comp.companyPay)}
-                                      </span>
-                                    </div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "column",
+                                  gap: "12px",
+                                }}
+                              >
+                                {workerGroup.companyBreakdown.map(
+                                  (comp, cIdx) => (
+                                    <div
+                                      key={cIdx}
+                                      className="companyBreakdownCard"
+                                    >
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                          justifyContent: "space-between",
+                                          alignItems: "center",
+                                          borderBottom: "1px solid #e2e8f0",
+                                          paddingBottom: "8px",
+                                          marginBottom: "8px",
+                                        }}
+                                      >
+                                        <span
+                                          style={{
+                                            fontWeight: "700",
+                                            fontSize: "14px",
+                                            color: "#0f172a",
+                                          }}
+                                        >
+                                          🏢 Company:{" "}
+                                          <strong style={{ color: "#047857" }}>
+                                            {comp.companyName}
+                                          </strong>
+                                        </span>
+                                        <span
+                                          style={{
+                                            fontWeight: "700",
+                                            fontSize: "13px",
+                                            color: "#047857",
+                                          }}
+                                        >
+                                          Subtotal: {comp.companyHours} hrs |
+                                          Base:{" "}
+                                          {formatCurrency(comp.companyBase)} |
+                                          Super (12%):{" "}
+                                          {formatCurrency(comp.companySuper)} |
+                                          Leave (1.98%):{" "}
+                                          {formatCurrency(comp.companyLeave)} |{" "}
+                                          <strong>
+                                            Total:{" "}
+                                            {formatCurrency(comp.companyPay)}
+                                          </strong>
+                                        </span>
+                                      </div>
 
-                                    <div className="companyTableScrollWrapper">
-                                      <table className="drawerInnerTable">
-                                        <thead>
-                                          <tr>
-                                            <th>Service / Position</th>
-                                            <th>Site Name</th>
-                                            <th>Assigned Date</th>
-                                            <th>Shift Timings</th>
-                                            <th>Actual Worked Time & Meal</th>
-                                            <th style={{ textAlign: "right" }}>Hours Worked</th>
-                                            <th style={{ textAlign: "right" }}>Rate / Hr</th>
-                                            <th style={{ textAlign: "right" }}>Calculated Pay</th>
-                                          </tr>
-                                        </thead>
-                                        <tbody>
-                                          {comp.companyShifts.map((s, sIdx) => (
-                                            <tr key={sIdx}>
-                                              <td>🛡️ {s.serviceType} ({s.position})</td>
-                                              <td>📍 {s.siteName}</td>
-                                              <td>📅 {s.assignedDate}</td>
-                                              <td>⏰ {s.shiftStartTime} - {s.shiftEndTime}</td>
-                                              <td>
-                                                <span
-                                                  style={{
-                                                    padding: "2px 6px",
-                                                    borderRadius: "4px",
-                                                    fontSize: "11px",
-                                                    fontWeight: "600",
-                                                    background:
-                                                      s.actualStartTime !== "Not Logged"
-                                                        ? "#dcfce7"
-                                                        : "#f1f5f9",
-                                                    color:
-                                                      s.actualStartTime !== "Not Logged"
-                                                        ? "#166534"
-                                                        : "#64748b",
-                                                  }}
-                                                >
-                                                  ⏱️ {s.actualStartTime} - {s.actualEndTime} (🍱 {s.mealTime})
-                                                </span>
-                                              </td>
-                                              <td style={{ textAlign: "right" }}>{s.hours} hrs</td>
-                                              <td style={{ textAlign: "right", fontWeight: "700", color: "#047857" }}>{formatCurrency(s.ratePerHour)}</td>
-                                              <td style={{ textAlign: "right", fontWeight: "700", color: "#0f172a" }}>{formatCurrency(s.totalPay)}</td>
+                                      <div className="companyTableScrollWrapper">
+                                        <table className="drawerInnerTable">
+                                          <thead>
+                                            <tr>
+                                              <th>Service / Position</th>
+                                              <th>Site Name</th>
+                                              <th>Assigned Date</th>
+                                              <th>Shift Timings</th>
+                                              <th>Actual Worked Time & Meal</th>
+                                              <th
+                                                style={{ textAlign: "right" }}
+                                              >
+                                                Hours
+                                              </th>
+                                              <th
+                                                style={{ textAlign: "right" }}
+                                              >
+                                                Rate/Hr
+                                              </th>
+                                              <th
+                                                style={{ textAlign: "right" }}
+                                              >
+                                                Base Wage
+                                              </th>
+                                              <th
+                                                style={{ textAlign: "right" }}
+                                              >
+                                                Super (12%)
+                                              </th>
+                                              <th
+                                                style={{ textAlign: "right" }}
+                                              >
+                                                Leave (1.98%)
+                                              </th>
+                                              <th
+                                                style={{ textAlign: "right" }}
+                                              >
+                                                Total Payable Pay
+                                              </th>
                                             </tr>
-                                          ))}
-                                        </tbody>
-                                      </table>
+                                          </thead>
+                                          <tbody>
+                                            {comp.companyShifts.map(
+                                              (s, sIdx) => (
+                                                <tr key={sIdx}>
+                                                  <td>
+                                                    🛡️ {s.serviceType} (
+                                                    {s.position})
+                                                  </td>
+                                                  <td>📍 {s.siteName}</td>
+                                                  <td>📅 {s.assignedDate}</td>
+                                                  <td>
+                                                    ⏰ {s.shiftStartTime} -{" "}
+                                                    {s.shiftEndTime}
+                                                  </td>
+                                                  <td>
+                                                    <span
+                                                      style={{
+                                                        padding: "2px 6px",
+                                                        borderRadius: "4px",
+                                                        fontSize: "11px",
+                                                        fontWeight: "600",
+                                                        background:
+                                                          s.actualStartTime !==
+                                                          "Not Logged"
+                                                            ? "#dcfce7"
+                                                            : "#f1f5f9",
+                                                        color:
+                                                          s.actualStartTime !==
+                                                          "Not Logged"
+                                                            ? "#166534"
+                                                            : "#64748b",
+                                                      }}
+                                                    >
+                                                      ⏱️ {s.actualStartTime} -{" "}
+                                                      {s.actualEndTime} (🍱{" "}
+                                                      {s.mealTime})
+                                                    </span>
+                                                  </td>
+                                                  <td
+                                                    style={{
+                                                      textAlign: "right",
+                                                    }}
+                                                  >
+                                                    {s.hours} hrs
+                                                  </td>
+                                                  <td
+                                                    style={{
+                                                      textAlign: "right",
+                                                      fontWeight: "700",
+                                                      color: "#047857",
+                                                    }}
+                                                  >
+                                                    {formatCurrency(
+                                                      s.ratePerHour,
+                                                    )}
+                                                  </td>
+                                                  <td
+                                                    style={{
+                                                      textAlign: "right",
+                                                      fontWeight: "600",
+                                                    }}
+                                                  >
+                                                    {formatCurrency(s.baseWage)}
+                                                  </td>
+                                                  <td
+                                                    style={{
+                                                      textAlign: "right",
+                                                      fontWeight: "600",
+                                                      color: "#047857",
+                                                    }}
+                                                  >
+                                                    +
+                                                    {formatCurrency(
+                                                      s.superAmount,
+                                                    )}
+                                                  </td>
+                                                  <td
+                                                    style={{
+                                                      textAlign: "right",
+                                                      fontWeight: "600",
+                                                      color: "#0284c7",
+                                                    }}
+                                                  >
+                                                    +
+                                                    {formatCurrency(
+                                                      s.leaveAmount,
+                                                    )}
+                                                  </td>
+                                                  <td
+                                                    style={{
+                                                      textAlign: "right",
+                                                      fontWeight: "700",
+                                                      color: "#0f172a",
+                                                    }}
+                                                  >
+                                                    {formatCurrency(s.totalPay)}
+                                                  </td>
+                                                </tr>
+                                              ),
+                                            )}
+                                          </tbody>
+                                        </table>
+                                      </div>
                                     </div>
-                                  </div>
-                                ))}
+                                  ),
+                                )}
                               </div>
 
                               {/* GRAND TOTAL COMBINED CALCULATION BANNER */}
@@ -506,11 +882,29 @@ function AccountsParent() {
                                   alignItems: "center",
                                 }}
                               >
-                                <span style={{ fontWeight: "700", fontSize: "14px" }}>
-                                  💰 Total Combined Weekly Pay ({workerGroup.uniqueCompanies.length} {workerGroup.uniqueCompanies.length === 1 ? "Company" : "Companies"}):
+                                <span
+                                  style={{
+                                    fontWeight: "700",
+                                    fontSize: "14px",
+                                  }}
+                                >
+                                  💰 Total Combined Weekly Payable (Base Wage +
+                                  Super 12% + Leave 1.98%):
                                 </span>
-                                <span style={{ fontWeight: "800", fontSize: "16px" }}>
-                                  {workerGroup.totalWorkerHours} hrs × $39.66/hr = {formatCurrency(workerGroup.totalWorkerPay)}
+                                <span
+                                  style={{
+                                    fontWeight: "800",
+                                    fontSize: "15px",
+                                  }}
+                                >
+                                  {workerGroup.totalWorkerHours} hrs | Base:{" "}
+                                  {formatCurrency(workerGroup.totalWorkerBase)}{" "}
+                                  | Super (12%):{" "}
+                                  {formatCurrency(workerGroup.totalWorkerSuper)}{" "}
+                                  | Leave (1.98%):{" "}
+                                  {formatCurrency(workerGroup.totalWorkerLeave)}{" "}
+                                  | Total Payable:{" "}
+                                  {formatCurrency(workerGroup.totalWorkerPay)}
                                 </span>
                               </div>
                             </div>

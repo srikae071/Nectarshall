@@ -1,0 +1,623 @@
+/* DRAMATIC CYBERPUNK HACKING COMMAND TERMINAL STYLES */
+@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Orbitron:wght@500;700;900&display=swap");
+
+.cyberContainer {
+  position: relative;
+  min-height: 100vh;
+  background-color: #030712;
+  color: #f1f5f9;
+  font-family: "Fira Code", monospace;
+  box-sizing: border-box;
+  padding: 24px;
+  overflow-x: hidden;
+}
+
+/* BACKGROUND MATRIX CANVAS */
+.matrixCanvasWrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.25;
+}
+
+/* SCANLINES OVERLAY */
+.scanlinesOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%,
+    rgba(0, 0, 0, 0.25) 50%
+  );
+  background-size: 100% 4px;
+}
+
+/* CYBER HEADER */
+.cyberHeader {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  background: rgba(11, 19, 41, 0.85);
+  backdrop-filter: blur(12px);
+  padding: 20px 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  box-shadow: 0 0 25px rgba(0, 240, 255, 0.15);
+  margin-bottom: 20px;
+}
+
+.cyberGlowBadge {
+  display: inline-block;
+  background: rgba(0, 240, 255, 0.15);
+  color: #00f0ff;
+  border: 1px solid #00f0ff;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  text-shadow: 0 0 8px #00f0ff;
+}
+
+.cyberLogoSection h2 {
+  margin: 0;
+  font-family: "Orbitron", sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 1.5px;
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+}
+
+.cyberSubtext {
+  font-size: 12px;
+  color: #00ff66;
+  text-shadow: 0 0 6px rgba(0, 255, 102, 0.4);
+}
+
+.cyberHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.cyberStatusIndicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 255, 102, 0.1);
+  border: 1px solid rgba(0, 255, 102, 0.4);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.statusDotPulse {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #00ff66;
+  box-shadow: 0 0 10px #00ff66;
+  animation: pulseGlow 1.5s infinite alternate;
+}
+
+@keyframes pulseGlow {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  100% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 16px #00ff66; }
+}
+
+.cyberClockDisplay {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid #334155;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  color: #38bdf8;
+}
+
+.cyberExitBtn {
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+  color: #ffffff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-family: "Fira Code", monospace;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(220, 38, 38, 0.4);
+  transition: all 0.2s ease;
+}
+
+.cyberExitBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 25px rgba(220, 38, 38, 0.7);
+}
+
+/* NAV TABS */
+.cyberNavTabs {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.cyberTabBtn {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  color: #94a3b8;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-family: "Orbitron", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.25s ease;
+}
+
+.cyberTabBtn:hover {
+  background: rgba(0, 240, 255, 0.15);
+  color: #00f0ff;
+  border-color: #00f0ff;
+}
+
+.cyberTabBtn.active {
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.25) 0%, rgba(0, 255, 102, 0.25) 100%);
+  color: #ffffff;
+  border-color: #00f0ff;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+  text-shadow: 0 0 8px #00f0ff;
+}
+
+/* MAIN CONTENT GRID & CARDS */
+.cyberMainContent {
+  position: relative;
+  z-index: 2;
+}
+
+.cyberGrid2Col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+@media (max-width: 1024px) {
+  .cyberGrid2Col {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cyberFlexCol {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cyberCard {
+  background: rgba(11, 19, 41, 0.85);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  padding: 20px 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.cyberCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+  padding-bottom: 12px;
+}
+
+.cyberCardHeader h3 {
+  margin: 0;
+  font-family: "Orbitron", sans-serif;
+  font-size: 15px;
+  color: #00f0ff;
+  letter-spacing: 1px;
+}
+
+.cyberBadgeCyan {
+  background: rgba(0, 240, 255, 0.15);
+  color: #00f0ff;
+  border: 1px solid #00f0ff;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.cyberBadgeGreen {
+  background: rgba(0, 255, 102, 0.15);
+  color: #00ff66;
+  border: 1px solid #00ff66;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.cyberBadgeOrange {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  border: 1px solid #f59e0b;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* TERMINAL BOX & LOGS */
+.terminalBox {
+  background: #020617;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  padding: 14px;
+  height: 280px;
+  overflow-y: auto;
+  font-family: "Fira Code", monospace;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: #00ff66;
+  margin-bottom: 14px;
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8);
+}
+
+.terminalLogLine {
+  margin-bottom: 4px;
+  text-shadow: 0 0 4px rgba(0, 255, 102, 0.4);
+}
+
+.terminalForm {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #020617;
+  border: 1px solid #00f0ff;
+  border-radius: 8px;
+  padding: 8px 14px;
+}
+
+.terminalPrompt {
+  color: #00f0ff;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.terminalInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-family: "Fira Code", monospace;
+  font-size: 13px;
+  outline: none;
+}
+
+.terminalSendBtn {
+  background: #00f0ff;
+  color: #030712;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-family: "Orbitron", sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.terminalSendBtn:hover {
+  background: #00ff66;
+  box-shadow: 0 0 10px #00ff66;
+}
+
+/* METRICS GRID */
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.metricBox {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.metricLabel {
+  font-size: 11px;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.metricValueVal {
+  font-family: "Orbitron", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.metricValueVal.green { color: #00ff66; text-shadow: 0 0 8px rgba(0, 255, 102, 0.4); }
+.metricValueVal.cyan { color: #00f0ff; text-shadow: 0 0 8px rgba(0, 240, 255, 0.4); }
+.metricValueVal.purple { color: #c084fc; text-shadow: 0 0 8px rgba(192, 132, 252, 0.4); }
+.metricValueVal.orange { color: #fb923c; text-shadow: 0 0 8px rgba(251, 146, 60, 0.4); }
+
+.metricSub {
+  font-size: 11px;
+  color: #64748b;
+}
+
+/* ALERTS LIST */
+.alertList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.alertRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 12.5px;
+}
+
+.alertBadge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.alertRow.critical .alertBadge { background: rgba(220, 38, 38, 0.2); color: #f87171; border: 1px solid #f87171; }
+.alertRow.info .alertBadge { background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid #38bdf8; }
+.alertRow.success .alertBadge { background: rgba(0, 255, 102, 0.2); color: #00ff66; border: 1px solid #00ff66; }
+
+.alertMsg { flex: 1; color: #e2e8f0; }
+.alertTime { font-size: 11px; color: #64748b; }
+
+/* CYBER TABLE */
+.cyberTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.cyberTable th {
+  background: rgba(15, 23, 42, 0.8);
+  color: #00f0ff;
+  font-family: "Orbitron", sans-serif;
+  font-size: 11.5px;
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1.5px solid rgba(0, 240, 255, 0.3);
+}
+
+.cyberTable td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: #e2e8f0;
+}
+
+.cyanText { color: #00f0ff; }
+.greenText { color: #00ff66; }
+.fontBold { font-weight: 700; }
+
+.priorityTag {
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.priorityTag.critical { background: rgba(220, 38, 38, 0.25); color: #f87171; border: 1px solid #ef4444; }
+.priorityTag.high { background: rgba(245, 158, 11, 0.25); color: #fbbf24; border: 1px solid #f59e0b; }
+.priorityTag.routine { background: rgba(56, 189, 248, 0.25); color: #38bdf8; border: 1px solid #38bdf8; }
+
+.cyberTableBtn {
+  background: transparent;
+  border: 1px solid #00f0ff;
+  color: #00f0ff;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-family: "Fira Code", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cyberTableBtn:hover {
+  background: #00f0ff;
+  color: #030712;
+}
+
+/* MAILS LIST */
+.mailList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mailRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(0, 240, 255, 0.15);
+  padding: 14px 18px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.mailRow:hover {
+  background: rgba(0, 240, 255, 0.08);
+  border-color: #00f0ff;
+}
+
+.mailLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.mailIcon { font-size: 18px; }
+.mailSender { font-weight: 700; color: #00f0ff; font-size: 13.5px; }
+.mailSubject { font-size: 12.5px; color: #94a3b8; margin-top: 2px; }
+
+.mailRight {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.cipherTag {
+  background: rgba(0, 255, 102, 0.15);
+  color: #00ff66;
+  border: 1px solid #00ff66;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.mailTime { font-size: 12px; color: #64748b; }
+
+/* PAYROLL STATS */
+.payrollBigStat {
+  background: rgba(0, 255, 102, 0.08);
+  border: 1px solid rgba(0, 255, 102, 0.3);
+  padding: 18px;
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+
+.payrollStatLabel { display: block; font-size: 11.5px; color: #94a3b8; letter-spacing: 1px; }
+.payrollStatVal { font-family: "Orbitron", sans-serif; font-size: 26px; font-weight: 900; color: #00ff66; text-shadow: 0 0 10px #00ff66; }
+
+.payrollRowInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 12.5px;
+}
+
+/* BUTTONS & SELECTS */
+.cyberSelect {
+  background: #0f172a;
+  border: 1px solid #00f0ff;
+  color: #ffffff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-family: "Fira Code", monospace;
+  font-size: 12px;
+  outline: none;
+  cursor: pointer;
+}
+
+.cyberSelectFull {
+  width: 100%;
+  background: #0f172a;
+  border: 1px solid #00f0ff;
+  color: #ffffff;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-family: "Fira Code", monospace;
+  font-size: 13px;
+  outline: none;
+  margin-top: 6px;
+}
+
+.cyberActionBtn {
+  background: linear-gradient(135deg, #00f0ff 0%, #00ff66 100%);
+  color: #030712;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-family: "Orbitron", sans-serif;
+  font-weight: 700;
+  font-size: 11.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cyberActionBtn:hover {
+  box-shadow: 0 0 15px #00f0ff;
+}
+
+.cyberActionBtnSmall {
+  background: rgba(0, 240, 255, 0.15);
+  color: #00f0ff;
+  border: 1px solid #00f0ff;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-family: "Fira Code", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cyberActionBtnFull {
+  width: 100%;
+  background: linear-gradient(135deg, #00f0ff 0%, #00ff66 100%);
+  color: #030712;
+  border: none;
+  padding: 14px;
+  border-radius: 8px;
+  font-family: "Orbitron", sans-serif;
+  font-weight: 900;
+  font-size: 13px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+  transition: all 0.2s ease;
+}
+
+.cyberActionBtnFull:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(0, 255, 102, 0.6);
+}
+
+.cyberToggleLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #00ff66;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cyberLabel {
+  font-size: 11.5px;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+}

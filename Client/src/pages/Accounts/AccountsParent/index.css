@@ -212,7 +212,7 @@
 
 .expandedDrawerWrapper::-webkit-scrollbar-thumb {
   background: #047857;
-  border-radius: 6px;
+  border-radius: 8px;
 }
 
 .expandedDrawerWrapper::-webkit-scrollbar-thumb:hover {
@@ -293,4 +293,74 @@
   border-bottom: 1px solid #f1f5f9;
   white-space: nowrap;
   color: #334155;
+}
+
+/* PAY LEDGER POPOVER CARD */
+.ledgerIconBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: transform 0.2s ease;
+}
+
+.ledgerIconBtn:hover {
+  transform: scale(1.25);
+  background: #f1f5f9;
+}
+
+.payLedgerPopover {
+  position: absolute;
+  top: -10px;
+  right: 100%;
+  margin-right: 10px;
+  background: #ffffff;
+  border: 1.5px solid #047857;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
+  padding: 14px 16px;
+  z-index: 9999;
+  width: 260px;
+  font-size: 12.5px;
+  color: #0f172a;
+  white-space: normal;
+}
+
+.ledgerPopoverHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 800;
+  color: #047857;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
+
+.ledgerPopoverHeader button {
+  background: transparent;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  color: #64748b;
+}
+
+.ledgerRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 12px;
+}
+
+.ledgerRowTotal {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 8px;
+  margin-top: 6px;
+  border-top: 1.5px solid #cbd5e1;
+  font-weight: 800;
+  font-size: 13px;
+  color: #0f172a;
 }
