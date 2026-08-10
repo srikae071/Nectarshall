@@ -121,6 +121,14 @@ const BoardingCandidatesSchema = new mongoose.Schema(
           type: String,
           default: "",
         },
+        poWorkOrderApplicable: {
+          type: String,
+          default: "No",
+        },
+        financialContractDeliverables: {
+          type: mongoose.Schema.Types.Mixed,
+          default: {},
+        },
 
         numberOfServices: {
           type: Number,
@@ -331,11 +339,20 @@ const BoardingCandidatesSchema = new mongoose.Schema(
           type: String,
           default: "",
         },
+        poWorkOrderApplicable: {
+          type: String,
+          default: "No",
+        },
       },
     ],
+    poWorkOrderApplicable: {
+      type: String,
+      default: "No",
+    },
   },
   {
     timestamps: true,
+    strict: false,
   },
 );
 

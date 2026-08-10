@@ -73,17 +73,29 @@ function RosterShiftsMain() {
     });
   };
 
-  const handleToggleTaskCompletion = (rowId, taskId, isChecked) => {
+  const handleToggleTaskCompletion = (rowId, taskId, isChecked, empName = "") => {
     setCompletedTasksMap((prev) => {
       const rowTasks =
         typeof prev[rowId] === "object" && prev[rowId] !== null
           ? { ...prev[rowId] }
           : {};
       rowTasks[taskId] = isChecked;
+
       const updated = {
         ...prev,
         [rowId]: rowTasks,
       };
+
+      if (empName && empName.trim() !== "") {
+        const empKey = empName.trim();
+        const empTasks =
+          typeof prev[empKey] === "object" && prev[empKey] !== null
+            ? { ...prev[empKey] }
+            : {};
+        empTasks[taskId] = isChecked;
+        updated[empKey] = empTasks;
+      }
+
       localStorage.setItem("rosterCompletedTasks", JSON.stringify(updated));
       window.dispatchEvent(new Event("rosterTasksUpdated"));
       return updated;
@@ -573,7 +585,8 @@ function RosterShiftsMain() {
                             handleToggleTaskCompletion(
                               row.rowId,
                               taskKey,
-                              e.target.checked
+                              e.target.checked,
+                              row.employeeName
                             )
                           }
                         />

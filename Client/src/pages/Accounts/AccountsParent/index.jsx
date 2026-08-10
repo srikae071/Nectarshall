@@ -187,24 +187,54 @@ function AccountsParent() {
               : baseWeek;
 
             const shiftId = `${candidate._id}_${contract._id || cIdx}_${service._id || sIdx}_${slotIdx}`;
-            const approvalState = assigned.approvalState || service.approvalState || "Pending";
+            const approvalState =
+              assigned.approvalState || service.approvalState || "Pending";
 
-            const shiftTaskData = completedTasksMap[shiftId] || completedTasksMap[empDisplayName];
-            const completedCount =
-              typeof shiftTaskData === "object" && shiftTaskData !== null
-                ? Object.values(shiftTaskData).filter(Boolean).length
-                : shiftTaskData === true
-                ? 1
-                : 0;
+            // Multi-fallback lookup for task completion state
+            const shiftTaskData =
+              completedTasksMap[shiftId] ||
+              completedTasksMap[empDisplayName] ||
+              completedTasksMap[
+                `${candidate._id}_${contract._id}_${sIdx}_${slotIdx}`
+              ];
 
-            // Wage Calculations: Base Wage + Super (12%) + Leave Loading (1.98%)
-            // Task Completion (+3.69% per checked task) ONLY added if completedCount > 0!
+            let completedCount = 0;
+            if (typeof shiftTaskData === "object" && shiftTaskData !== null) {
+              completedCount =
+                Object.values(shiftTaskData).filter(Boolean).length;
+            } else if (shiftTaskData === true) {
+              completedCount = 1;
+            }
+
+            if (completedCount === 0) {
+              Object.keys(completedTasksMap).forEach((key) => {
+                if (
+                  key === shiftId ||
+                  key === empDisplayName ||
+                  (empDisplayName && key.includes(empDisplayName))
+                ) {
+                  const valObj = completedTasksMap[key];
+                  if (typeof valObj === "object" && valObj !== null) {
+                    completedCount = Math.max(
+                      completedCount,
+                      Object.values(valObj).filter(Boolean).length,
+                    );
+                  } else if (valObj === true) {
+                    completedCount = Math.max(completedCount, 1);
+                  }
+                }
+              });
+            }
+
+            // Wage Calculations: Base Wage + Super (12%) + Leave Loading (1.98%) + Task Bonus (+3.69% per checked task)
             const baseWage = hoursWorked * ratePerHour;
             const superAmount = baseWage * 0.12;
             const leaveAmount = baseWage * 0.0198;
             const taskBonusPercent = completedCount * 0.0369;
-            const taskBonusAmount = completedCount > 0 ? baseWage * taskBonusPercent : 0;
-            const totalPay = baseWage + superAmount + leaveAmount + taskBonusAmount;
+            const taskBonusAmount =
+              completedCount > 0 ? baseWage * taskBonusPercent : 0;
+            const totalPay =
+              baseWage + superAmount + leaveAmount + taskBonusAmount;
 
             shiftList.push({
               id: shiftId,
@@ -313,7 +343,10 @@ function AccountsParent() {
         (sum, s) => sum + s.leaveAmount,
         0,
       );
-      const totalWorkerTaskBonus = shifts.reduce((sum, s) => sum + s.taskBonusAmount, 0);
+      const totalWorkerTaskBonus = shifts.reduce(
+        (sum, s) => sum + s.taskBonusAmount,
+        0,
+      );
       const totalWorkerPay = shifts.reduce((sum, s) => sum + s.totalPay, 0);
       const uniqueCompanies = companyBreakdown.map((c) => c.companyName);
 
@@ -604,14 +637,20 @@ function AccountsParent() {
                                 </div>
                                 {shift.completedCount > 0 && (
                                   <div className="ledgerRow">
-                                    <span>🧹 Task Completion Bonus (+{shift.taskBonusPercentStr}%):</span>
+                                    <span>
+                                      🧹 Task Completion Bonus (+
+                                      {shift.taskBonusPercentStr}%):
+                                    </span>
                                     <strong style={{ color: "#d97706" }}>
-                                      +{formatCurrency(shift.taskBonusAmount)} (✓ {shift.completedCount} Task{shift.completedCount > 1 ? "s" : ""} Completed)
+                                      +{formatCurrency(shift.taskBonusAmount)}{" "}
+                                      (✓ {shift.completedCount} Task
+                                      {shift.completedCount > 1 ? "s" : ""}{" "}
+                                      Completed)
                                     </strong>
                                   </div>
                                 )}
                                 <div className="ledgerRowTotal">
-                                  <span>💰 Total Payable Wage:</span>
+                                  <span>💰 Total Payable Vuge:</span>
                                   <strong>
                                     {formatCurrency(shift.totalPay)}
                                   </strong>
