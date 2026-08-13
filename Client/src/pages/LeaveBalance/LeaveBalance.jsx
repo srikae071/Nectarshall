@@ -1,13 +1,13 @@
 import Hrmsleftlayout from "../../pages/Hrms/Hrmsleftlayout";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "./LeaveBalance.css";
 import { fetchApiData } from "../../utils/apiClient";
 
 function LeaveBalance() {
-  const [leaveType, setLeaveType] = useState("Paid Leave");
-  const [totalAllocated, setTotalAllocated] = useState(0);
-  const [leaveConsumed, setLeaveConsumed] = useState(0);
-  const [leaveBalance, setLeaveBalance] = useState(0);
+  const [leaveType, setLeaveType] = useState("");
+  const [totalAllocated, setTotalAllocated] = useState("");
+  const [leaveConsumed, setLeaveConsumed] = useState("");
+  const [leaveBalance, setLeaveBalance] = useState("");
 
   const leaveAllocation = {
     "Casual Leave": 5,
@@ -17,15 +17,14 @@ function LeaveBalance() {
     "Paternity Leave": 12,
   };
 
-  useEffect(() => {
-    loadBalance("Paid Leave");
-  }, []);
+  const handleLeaveTypeChange = async (e) => {
+    const selectedType = e.target.value;
+    setLeaveType(selectedType);
 
-  const loadBalance = async (selectedType) => {
     if (!selectedType) {
-      setTotalAllocated(0);
-      setLeaveConsumed(0);
-      setLeaveBalance(0);
+      setTotalAllocated("");
+      setLeaveConsumed("");
+      setLeaveBalance("");
       return;
     }
 
@@ -49,11 +48,6 @@ function LeaveBalance() {
     }
   };
 
-  const handleLeaveTypeChange = (e) => {
-    const selectedType = e.target.value;
-    setLeaveType(selectedType);
-    loadBalance(selectedType);
-  };
   return (
     <Hrmsleftlayout>
       <div className="LeaveBalanceContainer">
@@ -62,35 +56,36 @@ function LeaveBalance() {
         <div className="LeaveBalanceRow">
           <div className="LeaveBalanceField">
             <label>Leave Type</label>
-
             <select
-              className="LeaveBalanceInput"
+              className="LeaveBalanceInput LeaveSelectInput"
               value={leaveType}
               onChange={handleLeaveTypeChange}
             >
               <option value="">Select Leave Type</option>
-              <option value="Casual Leave">Casual Leave</option>
-              <option value="Sick Leave">Sick Leave</option>
-              <option value="Paid Leave">Paid Leave</option>
-              <option value="Maternity Leave">Maternity Leave</option>
-              <option value="Paternity Leave">Paternity Leave</option>
+              <option value="Casual Leave">Casual Leave (5 Days)</option>
+              <option value="Sick Leave">Sick Leave (10 Days)</option>
+              <option value="Paid Leave">Paid Leave (15 Days)</option>
+              <option value="Maternity Leave">Maternity Leave (20 Days)</option>
+              <option value="Paternity Leave">Paternity Leave (12 Days)</option>
             </select>
           </div>
 
           <div className="LeaveBalanceField">
             <label>Total Allocated</label>
             <input
-              className="LeaveBalanceInput"
-              value={totalAllocated}
+              className="LeaveBalanceInput ReadOnlyInput"
+              value={totalAllocated !== "" ? totalAllocated : ""}
               readOnly
             />
           </div>
+        </div>
 
+        <div className="LeaveBalanceRow" style={{ marginTop: "16px" }}>
           <div className="LeaveBalanceField">
             <label>Leave Consumed</label>
             <input
-              className="LeaveBalanceInput"
-              value={leaveConsumed}
+              className="LeaveBalanceInput ReadOnlyInput"
+              value={leaveConsumed !== "" ? leaveConsumed : ""}
               readOnly
             />
           </div>
@@ -98,16 +93,11 @@ function LeaveBalance() {
           <div className="LeaveBalanceField">
             <label>Leave Balance</label>
             <input
-              className="LeaveBalanceInput"
-              value={leaveBalance}
+              className="LeaveBalanceInput ReadOnlyInput"
+              value={leaveBalance !== "" ? leaveBalance : ""}
               readOnly
             />
           </div>
-        </div>
-
-        <div className="LeaveBalanceActions">
-          <button className="LeaveBalanceSave">Save</button>
-          <button className="LeaveBalanceCancel">Cancel</button>
         </div>
       </div>
     </Hrmsleftlayout>

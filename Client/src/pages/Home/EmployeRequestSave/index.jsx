@@ -1412,66 +1412,7 @@ function EmployeRequestSave() {
               </div>
             </div>
 
-            {/* BANK & FINANCIAL DETAILS SECTION */}
-            <div className="SectionCard">
-              <h3>4. Bank & Tax Details - {currentCand.candidateId || "CND-001"} ({currentCand.name || "Candidate"})</h3>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginTop: "12px" }}>
-                <div>
-                  <label style={{ fontWeight: "700", fontSize: "13px", color: "#475569" }}>Bank Name</label>
-                  <input
-                    type="text"
-                    value={currentCand.bankName || formData.bankName || ""}
-                    onChange={(e) => handleCandDecision("bankName", e.target.value)}
-                    style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", marginTop: "4px" }}
-                  />
-                </div>
-                <div>
-                  <label style={{ fontWeight: "700", fontSize: "13px", color: "#475569" }}>Account Number</label>
-                  <input
-                    type="text"
-                    value={currentCand.bankAccount || formData.bankAccount || ""}
-                    onChange={(e) => handleCandDecision("bankAccount", e.target.value)}
-                    style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", marginTop: "4px" }}
-                  />
-                </div>
-                <div>
-                  <label style={{ fontWeight: "700", fontSize: "13px", color: "#475569" }}>BSB</label>
-                  <input
-                    type="text"
-                    value={currentCand.bsb || formData.bsb || ""}
-                    onChange={(e) => handleCandDecision("bsb", e.target.value)}
-                    style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", marginTop: "4px" }}
-                  />
-                </div>
-                <div>
-                  <label style={{ fontWeight: "700", fontSize: "13px", color: "#475569" }}>Tax File Number (TFN)</label>
-                  <input
-                    type="text"
-                    value={currentCand.taxFileNumber || formData.taxFileNumber || ""}
-                    onChange={(e) => handleCandDecision("taxFileNumber", e.target.value)}
-                    style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", marginTop: "4px" }}
-                  />
-                </div>
-                <div>
-                  <label style={{ fontWeight: "700", fontSize: "13px", color: "#475569" }}>Super Fund Name</label>
-                  <input
-                    type="text"
-                    value={currentCand.superFundName || formData.superFundName || ""}
-                    onChange={(e) => handleCandDecision("superFundName", e.target.value)}
-                    style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", marginTop: "4px" }}
-                  />
-                </div>
-                <div>
-                  <label style={{ fontWeight: "700", fontSize: "13px", color: "#475569" }}>Super Member Number</label>
-                  <input
-                    type="text"
-                    value={currentCand.superMemberNumber || formData.superMemberNumber || ""}
-                    onChange={(e) => handleCandDecision("superMemberNumber", e.target.value)}
-                    style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", marginTop: "4px" }}
-                  />
-                </div>
-              </div>
-            </div>            
+
             {showReferenceSection && (
               <div className="SectionCard">
                 <h3>4. References</h3>

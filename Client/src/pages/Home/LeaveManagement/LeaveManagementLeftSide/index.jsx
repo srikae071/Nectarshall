@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./index.css";
 // import HrmsNavbar from "../HrmsNavbar";
@@ -91,14 +91,39 @@ function LeaveManagementLeftSide({ children }) {
   //   setOpenIndex(openIndex === index ? null : index);
   // };
 
-  const [openMenus, setOpenMenus] = useState({});
+  const location = useLocation();
+
+  const [openMenus, setOpenMenus] = useState(() => {
+    const saved = localStorage.getItem("leave-mgmt-open-menus");
+    return saved ? JSON.parse(saved) : { 0: true };
+  });
   const [expandedMenus, setExpandedMenus] = useState({});
 
+  useEffect(() => {
+    const currentPath = location.pathname.toLowerCase();
+    menuData.forEach((menu, index) => {
+      const hasMatchingItem = menu.items.some(
+        (item) => item.path && item.path.toLowerCase() === currentPath
+      );
+      if (hasMatchingItem && !openMenus[index]) {
+        setOpenMenus((prev) => {
+          const updated = { ...prev, [index]: true };
+          localStorage.setItem("leave-mgmt-open-menus", JSON.stringify(updated));
+          return updated;
+        });
+      }
+    });
+  }, [location.pathname]);
+
   const toggle = (index) => {
-    setOpenMenus((prev) => ({
-      ...prev,
-      [index]: !prev[index],
-    }));
+    setOpenMenus((prev) => {
+      const updated = {
+        ...prev,
+        [index]: !prev[index],
+      };
+      localStorage.setItem("leave-mgmt-open-menus", JSON.stringify(updated));
+      return updated;
+    });
   };
   const [sidebarWidth, setSidebarWidth] = useState(250);
   const isResizing = useRef(false);

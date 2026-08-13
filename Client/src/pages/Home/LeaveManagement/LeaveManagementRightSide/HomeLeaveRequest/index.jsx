@@ -11,6 +11,7 @@ import LeaveManagementLeftSide from "./../../LeaveManagementLeftSide";
 import { useNavigate } from "react-router-dom";
 import "./index.css";
 import { useState, useEffect } from "react";
+import { calculateNetLeaveDays } from "../../../../../utils/holidays";
 
 import { useAuth } from "../../../../../context/AuthContext";
 
@@ -24,12 +25,8 @@ function HomeLeaveRequest() {
   const [requester, setRequester] = useState(() => user?.displayName || user?.username || "");
   const [requesterFor, setRequesterFor] = useState("");
 
-  useEffect(() => {
-    if (user && !requester) {
-      setRequester(user.displayName || user.username);
-    }
-  }, [user]);
   const navigate = useNavigate();
+
   const leaveAllocationMap = {
     "Casual Leave": 5,
     "Sick Leave": 10,
@@ -38,23 +35,75 @@ function HomeLeaveRequest() {
     "Paternity Leave": 12,
   };
 
+  // Load saved draft if present
+  useEffect(() => {
+    try {
+      const savedDraft = localStorage.getItem("leave_request_draft");
+      if (savedDraft) {
+        const draft = JSON.parse(savedDraft);
+        if (draft.requester !== undefined) setRequester(draft.requester);
+        if (draft.requesterFor !== undefined) setRequesterFor(draft.requesterFor);
+        if (draft.leaveType !== undefined) setLeaveType(draft.leaveType);
+        if (draft.startDate !== undefined) setStartDate(draft.startDate);
+        if (draft.endDate !== undefined) setEndDate(draft.endDate);
+        if (draft.halfDay !== undefined) setHalfDay(draft.halfDay);
+        if (draft.description !== undefined) setDescription(draft.description);
+      }
+    } catch (e) {
+      console.error("Error loading leave request draft", e);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user && !requester) {
+      setRequester(user.displayName || user.username);
+    }
+  }, [user]);
+
   const calculateLeaves = () => {
     if (startDate && endDate) {
-      const start = new Date(startDate);
-      const end = new Date(endDate);
-      const diffTime = end.getTime() - start.getTime();
-      const totalDays = Math.max(
-        1,
-        Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1,
-      );
-      return halfDay ? totalDays / 2 : totalDays;
+      return calculateNetLeaveDays(startDate, endDate, halfDay);
     }
     if (leaveType && leaveAllocationMap[leaveType]) {
       return leaveAllocationMap[leaveType];
     }
     return 1;
   };
-  const handleSave = async () => {
+
+  // Cancel Button: Clears all form fields & removes draft
+  const handleCancel = () => {
+    setStartDate("");
+    setEndDate("");
+    setHalfDay(false);
+    setDescription("");
+    setLeaveType("");
+    setRequester(user?.displayName || user?.username || "");
+    setRequesterFor("");
+    localStorage.removeItem("leave_request_draft");
+  };
+
+  // Save Button: Preserves form fields in localStorage so returning users see their data
+  const handleDraftSave = () => {
+    try {
+      const draft = {
+        requester,
+        requesterFor,
+        leaveType,
+        startDate,
+        endDate,
+        halfDay,
+        description,
+      };
+      localStorage.setItem("leave_request_draft", JSON.stringify(draft));
+      alert("Form details saved successfully! Your entries will remain available when you return.");
+    } catch (e) {
+      console.error("Error saving draft", e);
+      alert("Error saving form details.");
+    }
+  };
+
+  // Submit Request Button: Executes calculations, API backend creation, notifications & navigation
+  const handleSubmitRequest = async () => {
     try {
       const leaveAllocation = {
         "Casual Leave": 5,
@@ -111,7 +160,7 @@ function HomeLeaveRequest() {
         userBody = "Thank you, your leave has been applied.";
       }
 
-      const adminBody = `Plese Aprve ${rawUser}'s leave.`;
+      const adminBody = `Please approve ${rawUser}'s leave.`;
 
       // 1. Send User Email Notification (From: srikar071@gmail.com)
       sendMailNotification({
@@ -133,6 +182,7 @@ function HomeLeaveRequest() {
         body: adminBody,
       });
 
+      localStorage.removeItem("leave_request_draft");
       alert("Leave Request Saved Successfully & Notification Mails Sent!");
 
       navigate("/");
@@ -141,127 +191,136 @@ function HomeLeaveRequest() {
       alert("Error Saving Leave Request");
     }
   };
+
   return (
     <LeaveManagementLeftSide>
-      <div className="LeaveRequestPage">
-        <div className="LeaveRequestContainer">
-          <h2 className="LeaveRequestTitle">Leave Request</h2>
+      <div className="lr-page LeaveRequestPage">
+        <div className="lr-card LeaveRequestContainer">
+          <h2 className="lr-title LeaveRequestTitle">Leave Request</h2>
 
-          {/* Row 1 */}
-          <div className="LeaveRequestRow">
-            <div className="LeaveRequestField">
-              <label>Requester</label>
-              <input
-                type="text"
-                className="LeaveRequestInput"
-                placeholder="Enter Requester"
-                value={requester}
-                onChange={(e) => setRequester(e.target.value)}
-              />
+          {/* EMPLOYEE DETAILS SECTION */}
+          <div className="lr-section" style={{ marginBottom: "22px" }}>
+            <div className="lr-section-header" style={{ marginBottom: "12px" }}>
+              <span className="lr-icon">👤</span>
+              <span className="lr-section-title">EMPLOYEE DETAILS</span>
             </div>
+            <div className="lr-grid-2">
+              <div className="lr-field">
+                <label className="lr-label">Requester</label>
+                <input
+                  type="text"
+                  className="lr-input LeaveRequestInput"
+                  placeholder="Enter requester"
+                  value={requester}
+                  onChange={(e) => setRequester(e.target.value)}
+                />
+              </div>
 
-            <div className="LeaveRequestField">
-              <label>Requester For</label>
-              <input
-                type="text"
-                className="LeaveRequestInput"
-                placeholder="Enter Requester For"
-                value={requesterFor}
-                onChange={(e) => setRequesterFor(e.target.value)}
-              />
-            </div>
-          </div>
-
-          {/* Row 2 */}
-          <div className="LeaveRequestRow">
-            <div className="LeaveRequestField">
-              <label>Leave Type</label>
-              <select
-                className="LeaveRequestInput LeaveSelectInput"
-                value={leaveType}
-                onChange={(e) => setLeaveType(e.target.value)}
-              >
-                <option value="">Select Leave Type</option>
-                <option value="Casual Leave">Casual Leave (5 Days)</option>
-                <option value="Sick Leave">Sick Leave (10 Days)</option>
-                <option value="Paid Leave">Paid Leave (15 Days)</option>
-                <option value="Maternity Leave">
-                  Maternity Leave (20 Days)
-                </option>
-                <option value="Paternity Leave">
-                  Paternity Leave (12 Days)
-                </option>
-              </select>
-            </div>
-
-            <div className="LeaveRequestField">
-              <label>Total Leaves</label>
-              <input
-                className="LeaveRequestInput ReadOnlyInput"
-                value={calculateLeaves()}
-                readOnly
-              />
+              <div className="lr-field">
+                <label className="lr-label">Requester For</label>
+                <input
+                  type="text"
+                  className="lr-input LeaveRequestInput"
+                  placeholder="Search employee"
+                  value={requesterFor}
+                  onChange={(e) => setRequesterFor(e.target.value)}
+                />
+              </div>
             </div>
           </div>
 
-          {/* Row 3 */}
-          <div className="LeaveRequestRow">
-            <div className="LeaveRequestField">
-              <label>Start Date</label>
-              <input
-                type="date"
-                className="LeaveRequestInput"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
+          {/* LEAVE DETAILS SECTION */}
+          <div className="lr-section" style={{ marginBottom: "22px" }}>
+            <div className="lr-section-header" style={{ marginBottom: "12px" }}>
+              <span className="lr-icon">📅</span>
+              <span className="lr-section-title">LEAVE DETAILS</span>
+            </div>
+            
+            <div className="lr-grid-2" style={{ gap: "14px 24px" }}>
+              <div className="lr-field">
+                <label className="lr-label">Leave Type</label>
+                <select
+                  className="lr-input LeaveSelectInput"
+                  value={leaveType}
+                  onChange={(e) => setLeaveType(e.target.value)}
+                >
+                  <option value="">Select leave type</option>
+                  <option value="Casual Leave">Casual Leave (5 Days)</option>
+                  <option value="Sick Leave">Sick Leave (10 Days)</option>
+                  <option value="Paid Leave">Paid Leave (15 Days)</option>
+                  <option value="Maternity Leave">Maternity Leave (20 Days)</option>
+                  <option value="Paternity Leave">Paternity Leave (12 Days)</option>
+                </select>
+              </div>
+
+              <div className="lr-field">
+                <label className="lr-label">Total Leaves</label>
+                <input
+                  type="text"
+                  className="lr-input ReadOnlyInput"
+                  value={calculateLeaves()}
+                  readOnly
+                />
+              </div>
+
+              <div className="lr-field">
+                <label className="lr-label">Start Date</label>
+                <input
+                  type="date"
+                  className="lr-input LeaveRequestInput"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                />
+              </div>
+
+              <div className="lr-field">
+                <label className="lr-label">End Date</label>
+                <input
+                  type="date"
+                  className="lr-input LeaveRequestInput"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                />
+              </div>
             </div>
 
-            <div className="LeaveRequestField">
-              <label>End Date</label>
-              <input
-                type="date"
-                className="LeaveRequestInput"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-              />
+            <div className="lr-row-checkbox" style={{ marginTop: "10px" }}>
+              <label className="lr-checkbox-label-wrap">
+                <input
+                  type="checkbox"
+                  className="lr-checkbox LeaveRequestCheckbox"
+                  checked={halfDay}
+                  onChange={(e) => setHalfDay(e.target.checked)}
+                />
+                <span className="lr-checkbox-text">Half-day leave</span>
+              </label>
             </div>
           </div>
 
-          {/* Row 4 */}
-          <div className="LeaveRequestRow">
-            <div className="LeaveRequestField">
-              <label>Half Day</label>
-              <input
-                type="checkbox"
-                className="LeaveRequestCheckbox"
-                checked={halfDay}
-                onChange={(e) => setHalfDay(e.target.checked)}
-              />
+          {/* DESCRIPTION SECTION */}
+          <div className="lr-section" style={{ marginTop: "14px", marginBottom: "10px" }}>
+            <div className="lr-section-header" style={{ marginBottom: "2px" }}>
+              <span className="lr-icon">📄</span>
+              <span className="lr-section-title">DESCRIPTION</span>
             </div>
-            <div className="LeaveRequestField"></div>
+            
+            <div className="lr-textarea-wrap" style={{ marginTop: "4px" }}>
+              <textarea
+                className="lr-textarea LeaveRequestTextarea"
+                placeholder="Briefly explain the reason for your leave request."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                maxLength={500}
+              ></textarea>
+              <div className="lr-char-counter">{description.length} / 500</div>
+            </div>
           </div>
 
-          {/* Description */}
-          <div className="LeaveRequestFull">
-            <label className="leqreason">Description</label>
-            <textarea
-              className="LeaveRequestTextarea"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            ></textarea>
-          </div>
-
-          {/* Buttons */}
-          <div className="LeaveRequestActions">
-            <button className="LeaveRequestSave" onClick={handleSave}>
-              Save
-            </button>
-            <button
-              className="LeaveRequestCancel"
-              onClick={() => navigate("/")}
-            >
-              Cancel
-            </button>
+          {/* ACTIONS */}
+          <div className="lr-actions LeaveRequestActions">
+            <button className="lr-btn-cancel LeaveRequestCancel" onClick={handleCancel}>Cancel</button>
+            <button className="lr-btn-draft LeaveRequestDraft" onClick={handleDraftSave}>Save</button>
+            <button className="lr-btn-submit LeaveRequestSave" onClick={handleSubmitRequest}>Submit Request</button>
           </div>
         </div>
 

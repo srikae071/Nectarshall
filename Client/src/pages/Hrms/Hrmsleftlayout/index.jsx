@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./index.css";
 import HrmsNavbar from "../HrmsNavbar";
@@ -7,7 +7,6 @@ const menuData = [
   {
     title: "Case Management",
     items: [
-      // { label: "All", path: "/hrms" },
       { label: "All", path: "/hrms/hrsavescases" },
       { label: "Create New", path: "/hrms/createnew" },
       { label: "Open", path: "/hrms/open" },
@@ -100,8 +99,8 @@ const menuData = [
   {
     title: "Training and Development",
     items: [
-      { label: "All", path: "/hrms" },
-      { label: "Create New", path: "/hrms/createnew" },
+      { label: "All", path: "/hrms/training/all" },
+      { label: "Create New", path: "/hrms/training/createnew" },
     ],
   },
 ];
@@ -113,7 +112,7 @@ const MenuItem = ({ item, level = 0, expandedMenus, setExpandedMenus }) => {
   const hasChildren = item.children && item.children.length > 0;
 
   const checkActive = (menuItem) => {
-    if (menuItem.path === location.pathname) return true;
+    if (menuItem.path && menuItem.path === location.pathname) return true;
 
     if (menuItem.children) {
       return menuItem.children.some((child) => checkActive(child));
@@ -145,7 +144,6 @@ const MenuItem = ({ item, level = 0, expandedMenus, setExpandedMenus }) => {
       <div
         className={`hrmssubmenuItem ${isActive ? "active" : ""}`}
         style={{ paddingLeft: `${20 + level * 15}px` }}
-        // onClick={handleClick}
         onClick={(e) => handleClick(e)}
       >
         <div style={{ display: "flex", alignItems: "center" }}>
@@ -175,34 +173,19 @@ const MenuItem = ({ item, level = 0, expandedMenus, setExpandedMenus }) => {
 };
 /* ================= MAIN LAYOUT ================= */
 function HrmsLeftLayout({ children }) {
-  const [openMenus, setOpenMenus] = useState(() => {
-    const saved = localStorage.getItem("hrms-open-menus");
+  // Start with all menus closed by default when navigating fresh
+  const [openMenus, setOpenMenus] = useState({});
 
-    return saved ? JSON.parse(saved) : { 0: true };
-  });
-
-  const [expandedMenus, setExpandedMenus] = useState(() => {
-    const saved = localStorage.getItem("hrms-expanded-menus");
-
-    return saved ? JSON.parse(saved) : {};
-  });
+  const [expandedMenus, setExpandedMenus] = useState({});
 
   const toggle = (index) => {
-    setOpenMenus((prev) => {
-      const updated = {
-        ...prev,
-        [index]: !prev[index],
-      };
-
-      localStorage.setItem("hrms-open-menus", JSON.stringify(updated));
-
-      return updated;
-    });
+    setOpenMenus((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
   };
 
-  const [sidebarWidth, setSidebarWidth] = useState(() => {
-    return Number(localStorage.getItem("hrms-sidebar-width")) || 250;
-  });
+  const [sidebarWidth, setSidebarWidth] = useState(250);
 
   const isResizing = useRef(false);
 
@@ -220,8 +203,6 @@ function HrmsLeftLayout({ children }) {
 
       if (newWidth > 180 && newWidth < 400) {
         setSidebarWidth(newWidth);
-
-        localStorage.setItem("hrms-sidebar-width", newWidth);
       }
     }
   };
@@ -251,21 +232,7 @@ function HrmsLeftLayout({ children }) {
                       key={i}
                       item={item}
                       expandedMenus={expandedMenus}
-                      setExpandedMenus={(updater) => {
-                        setExpandedMenus((prev) => {
-                          const updated =
-                            typeof updater === "function"
-                              ? updater(prev)
-                              : updater;
-
-                          localStorage.setItem(
-                            "hrms-expanded-menus",
-                            JSON.stringify(updated),
-                          );
-
-                          return updated;
-                        });
-                      }}
+                      setExpandedMenus={setExpandedMenus}
                     />
                   ))}
                 </div>

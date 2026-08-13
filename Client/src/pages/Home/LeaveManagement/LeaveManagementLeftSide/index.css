@@ -2,35 +2,29 @@
   width: 250px;
   background: #2e2e2e;
   border-right: 1px solid #ddd;
-  padding-top: 10px;
+  padding-top: 0px;
   padding: 0px;
 }
 
 .menuBlock {
-  border-bottom: 1px solid #2e2e2e;
-  padding: 3px;
+  border-bottom: 1px solid #383838;
+  padding: 0px;
   color: #fff3f3;
 }
 
 .hrmsmenuHeader {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 14px 16px;
   cursor: pointer;
-  font-weight: 500;
+  font-weight: 700;
+  font-size: 14px;
   color: #f1f1f1;
 }
 
-/* .sidebar div {
-  padding: 5px;
-  cursor: pointer;
-} */
-
 .hrmssidebar .hrmsmenuHeader:hover {
   background-color: #e44d26;
-}
-.icon {
-  font-size: 18px;
 }
 
 .submenu {
@@ -40,15 +34,30 @@
 
 .hrmssubmenuItem {
   font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
   display: flex;
-  /* background-color: brown; */
   justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-right: 16px;
   background-color: #2e2e2e;
+  border-left: 3px solid transparent;
+  transition: all 0.2s ease;
+  color: #ffffff;
 }
+
 .hrmssubmenuItem:hover {
   background-color: #ed5934;
-  color: #e7f0f4;
+  color: #ffffff;
+}
+
+.hrmssubmenuItem.active {
+  background: #ea4104;
+  color: #ffffff;
+  border-left: 3px solid #ffffff;
+  font-weight: 700;
 }
 
 .layoutContainer {
@@ -68,15 +77,9 @@
   display: flex;
   flex-direction: column;
   overflow: auto;
-  background-color: #e9e5e5;
-
-  /* min-height: 100vh; */
+  background-color: #ffffff;
 }
 
-.hrmssubmenuItem.active {
-  background: #ea4104;
-  color: #f5d2cc;
-}
 .resizer {
   width: 3px;
   cursor: col-resize;
@@ -108,6 +111,7 @@ body.theme-white .hrmsmenuHeader {
   color: #0f172a !important;
   font-weight: 700 !important;
   font-size: 14px !important;
+  padding: 14px 16px !important;
   border-bottom: 1px solid #f1f5f9 !important;
 }
 
@@ -131,6 +135,7 @@ body.theme-white .hrmssubmenuItem {
   transition: all 0.2s ease !important;
   padding-top: 10px !important;
   padding-bottom: 10px !important;
+  padding-right: 16px !important;
 }
 
 [data-theme="white"] .hrmssubmenuItem:hover,
@@ -149,10 +154,81 @@ body.theme-white .hrmssubmenuItem.active {
 
 [data-theme="white"] .rightContent,
 body.theme-white .rightContent {
-  background-color: #f8fafc !important;
+  background-color: #ffffff !important;
 }
 
 [data-theme="white"] .resizer,
 body.theme-white .resizer {
   background-color: #e2e8f0 !important;
+}
+
+/* =========================================================
+   GREEN THEME EXECUTIVE OVERRIDES FOR LEAVE MANAGEMENT LAYOUT & SIDEBAR
+   ========================================================= */
+[data-theme="green"] .hrmssidebar,
+body.theme-green .hrmssidebar {
+  background: #e2f2eb !important;
+  border-right: 1px solid #a7f3d0 !important;
+}
+
+[data-theme="green"] .menuBlock,
+body.theme-green .menuBlock {
+  border-bottom: 1px solid #c6e6d8 !important;
+  color: #064e3b !important;
+}
+
+[data-theme="green"] .hrmsmenuHeader,
+body.theme-green .hrmsmenuHeader {
+  color: #064e3b !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  padding: 14px 16px !important;
+  border-bottom: 1px solid #c6e6d8 !important;
+}
+
+[data-theme="green"] .hrmssidebar .hrmsmenuHeader:hover,
+body.theme-green .hrmssidebar .hrmsmenuHeader:hover {
+  background-color: #c6e6d8 !important;
+  color: #064e3b !important;
+}
+
+[data-theme="green"] .submenu,
+body.theme-green .submenu {
+  background: #e2f2eb !important;
+}
+
+[data-theme="green"] .hrmssubmenuItem,
+body.theme-green .hrmssubmenuItem {
+  background-color: #e2f2eb !important;
+  color: #064e3b !important;
+  font-weight: 600 !important;
+  border-left: 3px solid transparent !important;
+  transition: all 0.2s ease !important;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+  padding-right: 16px !important;
+}
+
+[data-theme="green"] .hrmssubmenuItem:hover,
+body.theme-green .hrmssubmenuItem:hover {
+  background-color: #c6e6d8 !important;
+  color: #064e3b !important;
+}
+
+[data-theme="green"] .hrmssubmenuItem.active,
+body.theme-green .hrmssubmenuItem.active {
+  background-color: #059669 !important;
+  color: #ffffff !important;
+  border-left: 3px solid #047857 !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="green"] .rightContent,
+body.theme-green .rightContent {
+  background-color: #ffffff !important;
+}
+
+[data-theme="green"] .resizer,
+body.theme-green .resizer {
+  background-color: #a7f3d0 !important;
 }

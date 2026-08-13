@@ -1,215 +1,364 @@
-/* PAGE WRAPPER (for footer control) */
-.LeaveRequestPage {
+/* PAGE WRAPPER */
+.LeaveRequestPage,
+.lr-page {
+  width: 100%;
+  padding: 12px 20px;
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  background: #f8fafc;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  box-sizing: border-box;
 }
 
-/* MAIN CONTAINER */
-.LeaveRequestContainer {
-  flex: 1;
-  padding: 24px 32px;
-  background: #ffffff;
+/* MAIN CONTAINER CARD */
+.LeaveRequestContainer,
+.lr-card {
+  width: 100%;
+  max-width: 100%;
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  border-radius: 10px;
+  box-shadow: none !important;
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.04);
-  margin: 24px;
+  padding: 16px 24px;
+  margin: 0;
+  color: #0f172a;
+  box-sizing: border-box;
 }
 
 /* TITLE */
-.LeaveRequestTitle {
-  font-size: 20px;
+.LeaveRequestTitle,
+.lr-title {
+  font-size: 18px;
   font-weight: 700;
   color: #0f172a;
-  margin-bottom: 24px;
-  padding-bottom: 12px;
-  border-bottom: 2px solid #f1f5f9;
-  letter-spacing: -0.01em;
+  margin-top: 0;
+  margin-bottom: 12px;
+  letter-spacing: -0.3px;
 }
 
-/* ROW (2 PERFECTLY LEVEL SYNCED FIELDS) */
-.LeaveRequestRow {
+/* SECTION */
+.lr-section {
+  margin-bottom: 12px;
+}
+
+/* SECTION HEADER */
+.lr-section-header {
   display: flex;
-  gap: 36px;
-  margin-bottom: 16px;
   align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.lr-icon {
+  font-size: 14px;
+  color: #475569;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lr-section-title {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #475569;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* GRID 2 COLUMNS */
+.lr-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 24px;
+  margin-bottom: 6px;
 }
 
 /* FIELD */
-.LeaveRequestField {
+.lr-field {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  flex: 1;
-  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
 }
 
-/* LABEL - FIXED WIDTH SO INPUTS ALIGN PERFECTLY */
+.lr-full {
+  width: 100%;
+}
+
+/* LABEL ABOVE INPUT */
+.lr-label,
 .LeaveRequestField label {
-  width: 120px;
-  font-size: 13.5px;
+  font-size: 12.5px;
   font-weight: 600;
-  color: #334155;
-  flex-shrink: 0;
-  margin: 0;
-  text-align: left;
+  color: #1e293b;
+  margin-bottom: 1px;
+  display: block;
 }
 
-/* INPUT */
+/* INPUT FIELD STYLING */
+.lr-input,
 .LeaveRequestInput {
-  flex: 1;
+  width: 100%;
   height: 38px;
-  box-sizing: border-box;
   padding: 0 12px;
   border: 1px solid #cbd5e1;
   border-radius: 6px;
   font-size: 13.5px;
-  font-weight: 500;
   color: #0f172a;
-  background-color: #ffffff;
+  font-family: inherit;
+  box-sizing: border-box;
   outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: all 0.2s ease;
+  background-color: #fafafa;
 }
 
+.lr-input:focus,
+.LeaveRequestInput:focus,
+.lr-textarea:focus,
+.LeaveRequestTextarea:focus {
+  border-color: #3b82f6;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.lr-input::placeholder,
+.LeaveRequestInput::placeholder {
+  color: #94a3b8;
+}
+
+/* READONLY INPUT (TOTAL LEAVES) */
+.lr-input[readonly],
 .LeaveRequestInput.ReadOnlyInput {
-  background-color: #f8fafc;
-  color: #475569;
-  font-weight: 700;
-  border-color: #e2e8f0;
+  background-color: #f1f5f9;
+  color: #334155;
+  font-weight: 600;
+  border-color: #cbd5e1;
+  cursor: not-allowed;
 }
 
-/* CUSTOM SELECT - UNCLIPPED & LEVEL */
+/* CUSTOM SELECT */
+select.lr-input,
 select.LeaveSelectInput {
   appearance: none;
   -webkit-appearance: none;
-  -moz-appearance: none;
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right 12px center;
-  background-size: 15px;
-  padding-right: 36px !important;
+  background-size: 14px;
+  padding-right: 36px;
   cursor: pointer;
-  line-height: normal;
-}
-
-.LeaveRequestInput:focus,
-select.LeaveSelectInput:focus,
-.LeaveRequestTextarea:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 /* CHECKBOX */
-.LeaveRequestCheckbox {
-  width: 18px;
-  height: 18px;
-  accent-color: #2563eb;
+.lr-row-checkbox {
+  margin-top: 4px;
+}
+
+.lr-checkbox-label-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   cursor: pointer;
+  user-select: none;
+}
+
+.lr-checkbox,
+.LeaveRequestCheckbox {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #2563eb;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
   margin: 0;
+}
+
+.lr-checkbox-text {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #334155;
 }
 
 /* TEXTAREA */
-.LeaveRequestFull {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 14px;
+.lr-textarea-wrap {
+  position: relative;
+  margin-top: 4px;
 }
 
-.leqreason {
-  font-size: 13.5px;
-  font-weight: 600;
-  color: #334155;
-  margin: 0;
-  display: block;
-}
-
+.lr-textarea,
 .LeaveRequestTextarea {
   width: 100%;
-  min-height: 85px;
-  box-sizing: border-box;
-  padding: 10px 12px;
+  min-height: 105px;
+  height: 105px;
+  padding: 10px 14px;
   border: 1px solid #cbd5e1;
   border-radius: 6px;
   font-size: 13.5px;
-  font-family: inherit;
   color: #0f172a;
-  background-color: #ffffff;
-  resize: vertical;
+  box-sizing: border-box;
   outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  resize: vertical;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  background-color: #fafafa;
 }
 
-/* ACTIONS */
+.lr-textarea::placeholder {
+  color: #94a3b8;
+}
+
+.lr-char-counter {
+  position: absolute;
+  bottom: 6px;
+  right: 12px;
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* =========================================================
+   ACTIONS BUTTONS & THEME SPECIFIC STYLING
+   ========================================================= */
+.lr-actions,
 .LeaveRequestActions {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  margin-top: 20px;
-  padding-top: 16px;
+  margin-top: 12px;
+  padding-top: 10px;
   border-top: 1px solid #f1f5f9;
 }
 
-.LeaveRequestSave {
-  padding: 9px 24px;
-  border: none;
+/* 1. CANCEL BUTTON - RED COLOR MATCHING LOGO FOR ALL THEMES */
+.lr-btn-cancel,
+.LeaveRequestCancel {
+  padding: 0 20px;
+  height: 36px;
+  background-color: #e52b2f !important;
+  border: 1px solid #e52b2f !important;
   border-radius: 6px;
-  background: #2563eb;
+  color: #ffffff !important;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lr-btn-cancel:hover,
+.LeaveRequestCancel:hover {
+  background-color: #c82327 !important;
+  border-color: #c82327 !important;
+  color: #ffffff !important;
+}
+
+/* 2. SAVE BUTTON - NORMAL SUCCESS GREEN COLOR FOR ALL THEMES */
+.lr-btn-draft,
+.LeaveRequestDraft {
+  padding: 0 22px;
+  height: 36px;
+  background-color: rgb(1, 164, 1) !important;
+  border: 1px solid #0bca4b !important;
+  border-radius: 6px;
+  color: #ffffff !important;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lr-btn-draft:hover,
+.LeaveRequestDraft:hover {
+  background-color: #059669 !important;
+  border-color: #059669 !important;
+  color: #ffffff !important;
+}
+
+/* 3. SUBMIT REQUEST BUTTON - THEME SPECIFIC */
+/* Default / Regular Theme: Matches Navbar & HRMS Left Layout accent color (#ea4104) */
+.lr-btn-submit,
+.LeaveRequestSave {
+  padding: 0 24px;
+  height: 36px;
+  background-color: #ea4104;
+  border: 1px solid #ea4104;
+  border-radius: 6px;
   color: #ffffff;
   font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: all 0.2s ease;
 }
 
+.lr-btn-submit:hover,
 .LeaveRequestSave:hover {
-  background: #1d4ed8;
+  background-color: #c83703;
+  border-color: #c83703;
 }
 
-.LeaveRequestCancel {
-  padding: 9px 24px;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  background: #f1f5f9;
-  color: #334155;
-  font-size: 13.5px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
+/* White Theme: Default Blue color (#2563eb) */
+[data-theme="white"] .lr-btn-submit,
+body.theme-white .lr-btn-submit,
+[data-theme="white"] .LeaveRequestSave,
+body.theme-white .LeaveRequestSave {
+  background-color: #2563eb !important;
+  border-color: #2563eb !important;
+  color: #ffffff !important;
 }
 
-.LeaveRequestCancel:hover {
-  background: #e2e8f0;
-  color: #0f172a;
+[data-theme="white"] .lr-btn-submit:hover,
+body.theme-white .lr-btn-submit:hover,
+[data-theme="white"] .LeaveRequestSave:hover,
+body.theme-white .LeaveRequestSave:hover {
+  background-color: #1d4ed8 !important;
+  border-color: #1d4ed8 !important;
+}
+
+/* Green Theme: Matches Green Layout Theme color (#059669) */
+[data-theme="green"] .lr-btn-submit,
+body.theme-green .lr-btn-submit,
+[data-theme="green"] .LeaveRequestSave,
+body.theme-green .LeaveRequestSave {
+  background-color: #059669 !important;
+  border-color: #059669 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="green"] .lr-btn-submit:hover,
+body.theme-green .lr-btn-submit:hover,
+[data-theme="green"] .LeaveRequestSave:hover,
+body.theme-green .LeaveRequestSave:hover {
+  background-color: #047857 !important;
+  border-color: #047857 !important;
 }
 
 /* FOOTER */
 .LeaveRequestFooter {
   text-align: center;
-  padding: 14px;
+  padding: 8px;
   font-size: 12px;
   color: #64748b;
-  border-top: 1px solid #e2e8f0;
-  background: #ffffff;
-  margin-top: auto;
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  margin-top: 8px;
 }
 
-/* RESPONSIVE */
-@media (max-width: 900px) {
-  .LeaveRequestRow {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 14px;
+/* RESPONSIVE ADJUSTMENTS */
+@media (max-width: 768px) {
+  .lr-grid-2 {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
-  .LeaveRequestField {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-  }
-  .LeaveRequestField label {
-    width: 100%;
+  .lr-card {
+    padding: 14px;
   }
 }
 
@@ -217,8 +366,11 @@ select.LeaveSelectInput:focus,
    WHITE THEME DYNAMIC OVERRIDES
    ========================================================= */
 [data-theme="white"] .LeaveRequestPage,
-body.theme-white .LeaveRequestPage {
-  background-color: #f8fafc !important;
+body.theme-white .LeaveRequestPage,
+[data-theme="white"] .rightContent,
+body.theme-white .rightContent {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
   color: #0f172a !important;
 }
 
@@ -226,6 +378,6 @@ body.theme-white .LeaveRequestPage {
 body.theme-white .LeaveRequestContainer {
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
-  border-radius: 12px !important;
-  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.04) !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
 }

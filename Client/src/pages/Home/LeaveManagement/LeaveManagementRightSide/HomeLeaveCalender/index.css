@@ -1,27 +1,28 @@
 /* MAIN CONTAINER */
 .calendar-container {
   width: 100%;
-  min-height: 100vh;
-
+  min-height: 100%;
   background: #ffffff;
-  border: 1px solid #dcdcdc;
-  border-radius: 6px;
-
-  font-family: Arial, sans-serif;
-
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 20px;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   box-sizing: border-box;
 }
 
 /* TITLE */
 .calendar-title {
-  background-color: #e9e5e5;
-  padding: 12px 20px;
-  border-bottom: 1px solid #dcdcdc;
+  background-color: #ffffff;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 16px;
 }
 
 .calendar-title h3 {
   margin: 0;
   font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
   text-transform: capitalize;
 }
 
@@ -30,82 +31,126 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #e5e5e5;
-  padding: 15px 20px;
+  background-color: #f8fafc;
+  padding: 14px 20px;
+  border: 1px solid #cbd5e1;
+  border-bottom: none;
+  border-radius: 8px 8px 0 0;
 }
 
-/* MONTH */
+/* MONTH TITLE */
 .calendar-header h2 {
   margin: 0;
-  font-size: 22px;
-  color: #222;
-  background-color: #e5e5e5;
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  background-color: transparent;
 }
 
-/* BUTTONS */
+/* BUTTON CONTROLS */
 .controls {
   display: flex;
   gap: 8px;
 }
 
 .controls button {
-  padding: 7px 14px;
-  background: #4c4c58;
-  color: white;
-  border: none;
-  border-radius: 5px;
+  padding: 8px 16px;
+  background: #ea4104;
+  color: #ffffff;
+  border: 1px solid #ea4104;
+  border-radius: 6px;
+  font-size: 13.5px;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .controls button:hover {
-  background: #333;
+  background: #c83703;
+  border-color: #c83703;
 }
 
-/* GRID */
+/* GRID CONTAINER WITH STRUCTURED BORDER */
+.calendar-grid-wrapper {
+  border: 1px solid #cbd5e1;
+  border-radius: 0 0 8px 8px;
+  overflow: hidden;
+}
+
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
 }
 
-/* WEEK HEADER */
+/* WEEKDAY HEADER */
 .calendar-grid.header div {
-  background: #555;
-  color: white;
-
+  background: #f1f5f9;
+  color: #1e293b;
   text-align: center;
   padding: 12px;
-
-  font-weight: bold;
-  border-right: 1px solid #666;
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  border-right: 1px solid #cbd5e1;
+  border-bottom: 1px solid #cbd5e1;
 }
 
-/* DAYS */
+.calendar-grid.header div:last-child {
+  border-right: none;
+}
+
+/* DAY & EMPTY CELLS WITH CLEAN BORDER */
 .day,
 .empty {
-  min-height: 110px;
-
-  border: 1px solid #4d0303;
-  padding: 8px;
-  background-color: #e5e5e5;
+  min-height: 100px;
+  border-right: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 10px;
+  background-color: #ffffff;
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 500;
   box-sizing: border-box;
+  transition: background 0.15s ease;
 }
 
-/* DAY HOVER */
+.day:nth-child(7n),
+.empty:nth-child(7n) {
+  border-right: none;
+}
+
 .day:hover {
-  background: #f5f5f5;
+  background: #f8fafc;
   cursor: pointer;
 }
 
-/* ---------------- */
-/* RESPONSIVE */
-/* ---------------- */
+/* HOLIDAY BADGES & DAY CELLS */
+.day.holiday-day {
+  background-color: #fff1f2 !important;
+}
 
+.holiday-badge {
+  margin-top: 4px;
+  padding: 3px 6px;
+  background-color: #e52b2f;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 4px;
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* RESPONSIVE */
 @media (max-width: 768px) {
   .calendar-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
-    background-color: #e5e5e5;
   }
 
   .calendar-header h2 {
@@ -121,39 +166,118 @@
   .empty {
     min-height: 70px;
     font-size: 12px;
-    padding: 5px;
+    padding: 6px;
   }
 }
 
 /* =========================================================
-   WHITE THEME EXECUTIVE OVERRIDES FOR LEAVE CALENDAR
+   GREEN THEME OVERRIDES FOR LEAVE CALENDAR
+   ========================================================= */
+[data-theme="green"] .calendar-container,
+body.theme-green .calendar-container {
+  background: #ffffff !important;
+  border: 1px solid #059669 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 2px 10px rgba(5, 150, 105, 0.05) !important;
+}
+
+[data-theme="green"] .calendar-title,
+body.theme-green .calendar-title {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #d1fae5 !important;
+}
+
+[data-theme="green"] .calendar-title h3,
+body.theme-green .calendar-title h3 {
+  color: #064e3b !important;
+}
+
+[data-theme="green"] .calendar-header,
+body.theme-green .calendar-header {
+  background-color: #ecfdf5 !important;
+  border: 1px solid #a7f3d0 !important;
+}
+
+[data-theme="green"] .calendar-header h2,
+body.theme-green .calendar-header h2 {
+  color: #064e3b !important;
+}
+
+[data-theme="green"] .controls button,
+body.theme-green .controls button {
+  background: #059669 !important;
+  border: 1px solid #059669 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="green"] .controls button:hover,
+body.theme-green .controls button:hover {
+  background: #047857 !important;
+  border-color: #047857 !important;
+}
+
+[data-theme="green"] .calendar-grid.header div,
+body.theme-green .calendar-grid.header div {
+  background: #059669 !important;
+  color: #ffffff !important;
+  border-right: 1px solid #047857 !important;
+  border-bottom: 1px solid #047857 !important;
+}
+
+[data-theme="green"] .day,
+body.theme-green .day,
+[data-theme="green"] .empty,
+body.theme-green .empty {
+  border-right: 1px solid #d1fae5 !important;
+  border-bottom: 1px solid #d1fae5 !important;
+  background-color: #ffffff !important;
+  color: #064e3b !important;
+}
+
+[data-theme="green"] .day:hover,
+body.theme-green .day:hover {
+  background: #ecfdf5 !important;
+}
+
+[data-theme="green"] .day.holiday-day,
+body.theme-green .day.holiday-day {
+  background-color: #ecfdf5 !important;
+}
+
+[data-theme="green"] .holiday-badge,
+body.theme-green .holiday-badge {
+  background-color: #059669 !important;
+  color: #ffffff !important;
+}
+
+/* =========================================================
+   WHITE THEME OVERRIDES FOR LEAVE CALENDAR
    ========================================================= */
 [data-theme="white"] .calendar-container,
 body.theme-white .calendar-container {
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
-  border-radius: 12px !important;
+  border-radius: 10px !important;
   box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05) !important;
 }
 
 [data-theme="white"] .calendar-title,
 body.theme-white .calendar-title {
   background-color: #ffffff !important;
-  border-bottom: 2px solid #f1f5f9 !important;
-  padding: 16px 24px !important;
+  border-bottom: 1px solid #e2e8f0 !important;
 }
 
 [data-theme="white"] .calendar-title h3,
 body.theme-white .calendar-title h3 {
   color: #0f172a !important;
-  font-size: 20px !important;
+  font-size: 18px !important;
   font-weight: 700 !important;
 }
 
 [data-theme="white"] .calendar-header,
 body.theme-white .calendar-header {
   background-color: #f8fafc !important;
-  border-bottom: 1px solid #e2e8f0 !important;
+  border: 1px solid #e2e8f0 !important;
 }
 
 [data-theme="white"] .calendar-header h2,
@@ -165,15 +289,15 @@ body.theme-white .calendar-header h2 {
 
 [data-theme="white"] .controls button,
 body.theme-white .controls button {
-  background: #f1f5f9 !important;
-  color: #0f172a !important;
-  border: 1px solid #cbd5e1 !important;
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border: 1px solid #2563eb !important;
   font-weight: 600 !important;
 }
 
 [data-theme="white"] .controls button:hover,
 body.theme-white .controls button:hover {
-  background: #e2e8f0 !important;
+  background: #1d4ed8 !important;
 }
 
 [data-theme="white"] .calendar-grid.header div,
@@ -181,14 +305,15 @@ body.theme-white .calendar-grid.header div {
   background: #f8fafc !important;
   color: #0f172a !important;
   border-right: 1px solid #e2e8f0 !important;
-  border-bottom: 2px solid #e2e8f0 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
 }
 
 [data-theme="white"] .day,
 body.theme-white .day,
 [data-theme="white"] .empty,
 body.theme-white .empty {
-  border: 1px solid #f1f5f9 !important;
+  border-right: 1px solid #f1f5f9 !important;
+  border-bottom: 1px solid #f1f5f9 !important;
   background-color: #ffffff !important;
   color: #334155 !important;
 }
@@ -196,4 +321,15 @@ body.theme-white .empty {
 [data-theme="white"] .day:hover,
 body.theme-white .day:hover {
   background: #eff6ff !important;
+}
+
+[data-theme="white"] .day.holiday-day,
+body.theme-white .day.holiday-day {
+  background-color: #eff6ff !important;
+}
+
+[data-theme="white"] .holiday-badge,
+body.theme-white .holiday-badge {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
 }

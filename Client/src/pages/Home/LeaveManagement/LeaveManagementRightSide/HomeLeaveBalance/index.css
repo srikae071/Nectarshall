@@ -106,3 +106,41 @@ select.LeaveSelectInput {
     width: 100%;
   }
 }
+
+/* =========================================================
+   GREEN THEME OVERRIDES FOR LEAVE BALANCE (SUBTLE 1.5PX BORDER)
+   ========================================================= */
+[data-theme="green"] .LeaveBalanceContainer,
+body.theme-green .LeaveBalanceContainer {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  border: 1.5px solid #059669 !important;
+  border-radius: 10px !important;
+  color: #064e3b !important;
+  box-shadow: 0 2px 10px rgba(5, 150, 105, 0.05) !important;
+}
+
+[data-theme="green"] .LeaveBalanceTitle,
+body.theme-green .LeaveBalanceTitle {
+  color: #064e3b !important;
+  border-bottom: 1.5px solid #d1fae5 !important;
+}
+
+[data-theme="green"] .LeaveBalanceField label,
+body.theme-green .LeaveBalanceField label {
+  color: #064e3b !important;
+}
+
+[data-theme="green"] .LeaveBalanceInput,
+body.theme-green .LeaveBalanceInput {
+  border: 1.5px solid #a7f3d0 !important;
+  background-color: #ffffff !important;
+  color: #064e3b !important;
+}
+
+[data-theme="green"] .LeaveBalanceInput.ReadOnlyInput,
+body.theme-green .LeaveBalanceInput.ReadOnlyInput {
+  background-color: #ecfdf5 !important;
+  color: #065f46 !important;
+  border-color: #a7f3d0 !important;
+}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import LeaveManagementLeftSide from "./../../LeaveManagementLeftSide";
-// import Hrmsleftlayout from "../../pages/Hrms/Hrmsleftlayout";
+import { getHolidayForDate } from "../../../../../utils/holidays";
 import "./index.css";
 
 function HomeLeaveCalendar() {
@@ -27,13 +27,22 @@ function HomeLeaveCalendar() {
   const days = [];
 
   for (let i = 0; i < firstDay; i++) {
-    days.push(<div className="empty"></div>);
+    days.push(<div key={`empty-${i}`} className="empty"></div>);
   }
 
+  const currentMonthNum = date.getMonth() + 1; // 1-indexed
+
   for (let d = 1; d <= daysInMonth; d++) {
+    const holiday = getHolidayForDate(year, currentMonthNum, d);
+
     days.push(
-      <div key={d} className="day">
-        {d}
+      <div key={d} className={`day ${holiday ? "holiday-day" : ""}`}>
+        <div className="day-number">{d}</div>
+        {holiday && (
+          <div className="holiday-badge" title={holiday.name}>
+            {holiday.icon} {holiday.name}
+          </div>
+        )}
       </div>,
     );
   }
@@ -44,28 +53,31 @@ function HomeLeaveCalendar() {
         <div className="calendar-title">
           <h3>leave calendar</h3>
         </div>
-        <div className="calendar-header">
-          <h2>
-            {month} {year}
-          </h2>
-          <div className="controls">
-            <button onClick={goToday}>today</button>
-            <button onClick={prevMonth}>{"<"}</button>
-            <button onClick={nextMonth}>{">"}</button>
+
+        <div className="calendar-grid-wrapper">
+          <div className="calendar-header">
+            <h2>
+              {month} {year}
+            </h2>
+            <div className="controls">
+              <button onClick={goToday}>today</button>
+              <button onClick={prevMonth}>{"<"}</button>
+              <button onClick={nextMonth}>{">"}</button>
+            </div>
           </div>
-        </div>
 
-        <div className="calendar-grid header">
-          <div>Sun</div>
-          <div>Mon</div>
-          <div>Tue</div>
-          <div>Wed</div>
-          <div>Thu</div>
-          <div>Fri</div>
-          <div>Sat</div>
-        </div>
+          <div className="calendar-grid header">
+            <div>Sun</div>
+            <div>Mon</div>
+            <div>Tue</div>
+            <div>Wed</div>
+            <div>Thu</div>
+            <div>Fri</div>
+            <div>Sat</div>
+          </div>
 
-        <div className="calendar-grid">{days}</div>
+          <div className="calendar-grid">{days}</div>
+        </div>
       </div>
     </LeaveManagementLeftSide>
   );
