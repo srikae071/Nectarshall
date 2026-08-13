@@ -99,6 +99,8 @@ function Home() {
       route: "/ask-for-hr",
       module: "HRMS",
     },
+    // ss
+
     {
       title: "Employe Request",
       desc: "A simple way to communicate HR issues",
@@ -144,11 +146,7 @@ function Home() {
         <div className="nav-links">
           {hasModuleAccess("ALL") && (
             <>
-              <a
-                role="button"
-                tabIndex={0}
-                onClick={() => navigate("/test")}
-              >
+              <a role="button" tabIndex={0} onClick={() => navigate("/test")}>
                 test
               </a>
               <a
@@ -170,11 +168,7 @@ function Home() {
             </a>
           )}
           {(hasModuleAccess("ALL") || hasModuleAccess("IT")) && (
-            <a
-              role="button"
-              tabIndex={0}
-              onClick={() => navigate("/it/open")}
-            >
+            <a role="button" tabIndex={0} onClick={() => navigate("/it/open")}>
               IT
             </a>
           )}
@@ -228,7 +222,10 @@ function Home() {
           <ThemeSelector />
 
           {/* PROFILE USER MENU WITH LOGOUT */}
-          <div className="userProfileMenuContainer" style={{ position: "relative" }}>
+          <div
+            className="userProfileMenuContainer"
+            style={{ position: "relative" }}
+          >
             <div
               className="profile"
               onClick={() => setShowProfileMenu(!showProfileMenu)}
@@ -255,10 +252,24 @@ function Home() {
                   color: "#0f172a",
                 }}
               >
-                <div style={{ fontWeight: "700", fontSize: "14px", borderBottom: "1px solid #e2e8f0", paddingBottom: "8px", marginBottom: "8px" }}>
+                <div
+                  style={{
+                    fontWeight: "700",
+                    fontSize: "14px",
+                    borderBottom: "1px solid #e2e8f0",
+                    paddingBottom: "8px",
+                    marginBottom: "8px",
+                  }}
+                >
                   {user?.displayName || user?.username}
                 </div>
-                <div style={{ fontSize: "12px", color: "#64748b", marginBottom: "12px" }}>
+                <div
+                  style={{
+                    fontSize: "12px",
+                    color: "#64748b",
+                    marginBottom: "12px",
+                  }}
+                >
                   Role: <strong>{user?.role}</strong>
                 </div>
 
@@ -271,7 +282,8 @@ function Home() {
                   style={{
                     width: "100%",
                     padding: "8px",
-                    background: "linear-gradient(135deg, #0284c7 0%, #0369a1 100%)",
+                    background:
+                      "linear-gradient(135deg, #0284c7 0%, #0369a1 100%)",
                     color: "#ffffff",
                     border: "none",
                     borderRadius: "6px",
