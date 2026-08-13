@@ -96,6 +96,7 @@ exports.updateJobRequest = async (req, res) => {
 
     // Update all fields sent from frontend
     Object.assign(request, req.body);
+    request.markModified("candidates");
 
     // Generate Onboarding Task ID only when status becomes Resolved
     if (request.status === "Resolved" && !request.onboardingTaskId) {
@@ -241,51 +242,89 @@ exports.submitCandidateFormById = async (req, res) => {
     }
 
     const targetCandId = candId || "CND-001";
-    const idx = request.candidates.findIndex(
+    let idx = request.candidates.findIndex(
       (c) => c.candidateId === targetCandId || (targetCandId === "CND-001" && !c.candidateId)
     );
 
+    const existingCand = idx !== -1 ? (request.candidates[idx].toObject ? request.candidates[idx].toObject() : request.candidates[idx]) : {};
+
     const candData = {
+      ...existingCand,
       candidateId: targetCandId,
-      name: formData.name || formData.firstName || "Candidate",
-      email: formData.email || "",
+      name: formData.name || formData.firstName || existingCand.name || request.firstName || "Candidate",
+      email: formData.email || existingCand.email || request.email || "",
       submitted: true,
       submittedAt: new Date(),
 
-      modernSlaveryCandidateForm: formData.modernSlaveryCandidateForm,
-      legalBarrierCandidateForm: formData.legalBarrierCandidateForm,
-      medicalLimitationsCandidateForm: formData.medicalLimitationsCandidateForm,
-      workRightsCandidateForm: formData.workRightsCandidateForm,
+      modernSlaveryCandidateForm: formData.modernSlaveryCandidateForm || existingCand.modernSlaveryCandidateForm,
+      legalBarrierCandidateForm: formData.legalBarrierCandidateForm || existingCand.legalBarrierCandidateForm,
+      medicalLimitationsCandidateForm: formData.medicalLimitationsCandidateForm || existingCand.medicalLimitationsCandidateForm,
+      workRightsCandidateForm: formData.workRightsCandidateForm || existingCand.workRightsCandidateForm,
 
-      securityLicenceCandidateForm: formData.securityLicenceCandidateForm,
-      drivingLicenceCandidateForm: formData.drivingLicenceCandidateForm,
-      firstAidCandidateForm: formData.firstAidCandidateForm,
-      cprCandidateForm: formData.cprCandidateForm,
-      workingWithChildrenCandidateForm: formData.workingWithChildrenCandidateForm,
-      trafficManagementCandidateForm: formData.trafficManagementCandidateForm,
-      whiteCardCandidateForm: formData.whiteCardCandidateForm,
-      yellowCardCandidateForm: formData.yellowCardCandidateForm,
+      securityLicence: formData.securityLicence || formData.securityLicenceCandidateForm || existingCand.securityLicence,
+      securityLicenceExpiry: formData.securityLicenceExpiry || existingCand.securityLicenceExpiry,
+      securityLicenceCandidateForm: formData.securityLicenceCandidateForm || formData.securityLicence || existingCand.securityLicenceCandidateForm,
 
-      bankName: formData.bankName,
-      bankAccount: formData.bankAccount,
-      bsb: formData.bsb,
-      taxFileNumber: formData.taxFileNumber,
-      superFundName: formData.superFundName,
-      superMemberNumber: formData.superMemberNumber,
-      longServiceLeaveId: formData.longServiceLeaveId,
+      drivingLicence: formData.drivingLicence || formData.drivingLicenceCandidateForm || existingCand.drivingLicence,
+      drivingLicenceExpiry: formData.drivingLicenceExpiry || existingCand.drivingLicenceExpiry,
+      drivingLicenceCandidateForm: formData.drivingLicenceCandidateForm || formData.drivingLicence || existingCand.drivingLicenceCandidateForm,
+
+      firstAid: formData.firstAid || formData.firstAidCandidateForm || existingCand.firstAid,
+      firstAidExpiry: formData.firstAidExpiry || existingCand.firstAidExpiry,
+      firstAidCandidateForm: formData.firstAidCandidateForm || formData.firstAid || existingCand.firstAidCandidateForm,
+
+      cpr: formData.cpr || formData.cprCandidateForm || existingCand.cpr,
+      cprExpiry: formData.cprExpiry || existingCand.cprExpiry,
+      cprCandidateForm: formData.cprCandidateForm || formData.cpr || existingCand.cprCandidateForm,
+
+      workingWithChildren: formData.workingWithChildren || formData.workingWithChildrenCandidateForm || existingCand.workingWithChildren,
+      workingWithChildrenExpiry: formData.workingWithChildrenExpiry || existingCand.workingWithChildrenExpiry,
+      workingWithChildrenCandidateForm: formData.workingWithChildrenCandidateForm || formData.workingWithChildren || existingCand.workingWithChildrenCandidateForm,
+
+      trafficManagement: formData.trafficManagement || formData.trafficManagementCandidateForm || existingCand.trafficManagement,
+      trafficManagementExpiry: formData.trafficManagementExpiry || existingCand.trafficManagementExpiry,
+      trafficManagementCandidateForm: formData.trafficManagementCandidateForm || formData.trafficManagement || existingCand.trafficManagementCandidateForm,
+
+      whiteCard: formData.whiteCard || formData.whiteCardCandidateForm || existingCand.whiteCard,
+      whiteCardExpiry: formData.whiteCardExpiry || existingCand.whiteCardExpiry,
+      whiteCardCandidateForm: formData.whiteCardCandidateForm || formData.whiteCard || existingCand.whiteCardCandidateForm,
+
+      yellowCard: formData.yellowCard || formData.yellowCardCandidateForm || existingCand.yellowCard,
+      yellowCardExpiry: formData.yellowCardExpiry || existingCand.yellowCardExpiry,
+      yellowCardCandidateForm: formData.yellowCardCandidateForm || formData.yellowCard || existingCand.yellowCardCandidateForm,
+
+      bankName: formData.bankName || existingCand.bankName,
+      bankAccount: formData.bankAccount || existingCand.bankAccount,
+      bsb: formData.bsb || existingCand.bsb,
+      taxFileNumber: formData.taxFileNumber || existingCand.taxFileNumber,
+      superFundName: formData.superFundName || existingCand.superFundName,
+      superMemberNumber: formData.superMemberNumber || existingCand.superMemberNumber,
+      longServiceLeaveId: formData.longServiceLeaveId || existingCand.longServiceLeaveId,
     };
 
     if (idx !== -1) {
-      request.candidates[idx] = {
-        ...request.candidates[idx].toObject(),
-        ...candData,
-      };
+      request.candidates[idx] = candData;
     } else {
       request.candidates.push(candData);
     }
 
     request.candidateCompleted = true;
     request.status = "Open";
+
+    if (idx === 0 || targetCandId === "CND-001") {
+      request.modernSlaveryCandidateForm = candData.modernSlaveryCandidateForm;
+      request.legalBarrierCandidateForm = candData.legalBarrierCandidateForm;
+      request.medicalLimitationsCandidateForm = candData.medicalLimitationsCandidateForm;
+      request.workRightsCandidateForm = candData.workRightsCandidateForm;
+      request.bankName = candData.bankName;
+      request.bankAccount = candData.bankAccount;
+      request.bsb = candData.bsb;
+      request.taxFileNumber = candData.taxFileNumber;
+      request.superFundName = candData.superFundName;
+      request.superMemberNumber = candData.superMemberNumber;
+    }
+
+    request.markModified("candidates");
     await request.save();
 
     res.json({ message: "Candidate Form Submitted Successfully", request });

@@ -32,6 +32,66 @@ const JobRequestSchema = new mongoose.Schema(
         candidateId: { type: String },
         name: { type: String },
         email: { type: String },
+        submitted: { type: Boolean, default: false },
+        submittedAt: { type: Date },
+
+        modernSlaveryCandidateForm: String,
+        legalBarrierCandidateForm: String,
+        medicalLimitationsCandidateForm: String,
+        workRightsCandidateForm: String,
+
+        modernSlaveryResult: String,
+        legalBarrierResult: String,
+        medicalLimitationsResult: String,
+        workRightsResult: String,
+
+        securityLicence: String,
+        securityLicenceExpiry: Date,
+        securityLicenceCandidateForm: String,
+        securityLicenceResult: String,
+
+        drivingLicence: String,
+        drivingLicenceExpiry: Date,
+        drivingLicenceCandidateForm: String,
+        drivingLicenceResult: String,
+
+        firstAid: String,
+        firstAidExpiry: Date,
+        firstAidCandidateForm: String,
+        firstAidResult: String,
+
+        cpr: String,
+        cprExpiry: Date,
+        cprCandidateForm: String,
+        cprResult: String,
+
+        workingWithChildren: String,
+        workingWithChildrenExpiry: Date,
+        workingWithChildrenCandidateForm: String,
+        workingWithChildrenResult: String,
+
+        trafficManagement: String,
+        trafficManagementExpiry: Date,
+        trafficManagementCandidateForm: String,
+        trafficManagementResult: String,
+
+        whiteCard: String,
+        whiteCardExpiry: Date,
+        whiteCardCandidateForm: String,
+        whiteCardResult: String,
+
+        yellowCard: String,
+        yellowCardExpiry: Date,
+        yellowCardCandidateForm: String,
+        yellowCardResult: String,
+
+        bankName: String,
+        bankAccount: String,
+        bsb: String,
+        taxFileNumber: String,
+        superFundName: String,
+        superMemberNumber: String,
+        longServiceLeaveId: String,
       },
     ],
 

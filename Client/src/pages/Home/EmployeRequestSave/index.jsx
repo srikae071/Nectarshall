@@ -203,6 +203,26 @@ function EmployeRequestSave() {
     });
   };
 
+  const handleCandDecision = (field, val) => {
+    setFormData((prev) => {
+      const list =
+        Array.isArray(prev.candidates) && prev.candidates.length > 0
+          ? [...prev.candidates]
+          : [{ candidateId: "CND-001" }];
+
+      list[activeCandTabIdx] = {
+        ...list[activeCandTabIdx],
+        [field]: val,
+      };
+
+      return {
+        ...prev,
+        candidates: list,
+        [field]: val,
+      };
+    });
+  };
+
   const fetchData = async () => {
     try {
       const response = await fetchApiData(`/api/jobrequests/${id}`);
@@ -393,11 +413,21 @@ function EmployeRequestSave() {
           },
         ];
 
+  const checkIsSubmitted = (cand) => {
+    if (!cand) return false;
+    if (cand.submitted === true) return true;
+    if (cand.modernSlaveryCandidateForm || cand.legalBarrierCandidateForm || cand.bankName || cand.taxFileNumber) return true;
+    if ((cand.candidateId === "CND-001" || !cand.candidateId) && (formData.candidateCompleted || formData.modernSlaveryCandidateForm || formData.bankName)) return true;
+    return false;
+  };
+
   const currentCand = candidateList[activeCandTabIdx] || candidateList[0];
+  const isCurrentCandSubmitted = checkIsSubmitted(currentCand);
 
   return (
     <HrmsLeftLayout>
       <div className="CreateContainer">
+        {/* ... */}
         <div className="SectionCard">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
             <h3 style={{ margin: 0 }}>1. Preliminary Information</h3>
@@ -645,7 +675,7 @@ function EmployeRequestSave() {
                 <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
                   {candidateList.map((cand, idx) => {
                     const isSelected = activeCandTabIdx === idx;
-                    const isSubmitted = cand.submitted;
+                    const isSubmitted = checkIsSubmitted(cand);
                     return (
                       <button
                         key={idx}
@@ -687,7 +717,7 @@ function EmployeRequestSave() {
               </div>
             )}
 
-            {!currentCand.submitted ? (
+            {!isCurrentCandSubmitted ? (
               <div
                 style={{
                   background: "#fffbe6",
@@ -718,7 +748,7 @@ function EmployeRequestSave() {
             ) : (
               <>
             <div className="SectionCard">
-              <h3>2. Barriers To Employment (Self Declaration) - {currentCand.candidateId || "CND-001"}</h3>
+              <h3>2. Barriers To Employment (Self Declaration) - {currentCand.candidateId || "CND-001"} ({currentCand.name || "Candidate"})</h3>
 
               {/* Modern Slavery */}
               <div className="BarrierRow">
@@ -727,12 +757,13 @@ function EmployeRequestSave() {
                 {/* Candidate Answer */}
                 <span
                   className={
+                    (currentCand.modernSlaveryCandidateForm || formData.modernSlaveryCandidateForm) === "YES" ||
                     (currentCand.modernSlaveryCandidateForm || formData.modernSlaveryCandidateForm) === "Yes"
                       ? "CandidateAnswerYes"
                       : "CandidateAnswerNo"
                   }
                 >
-                  {currentCand.modernSlaveryCandidateForm || formData.modernSlaveryCandidateForm}
+                  {currentCand.modernSlaveryCandidateForm || formData.modernSlaveryCandidateForm || "N/A"}
                 </span>
 
                 {/* HR Decision */}
@@ -740,16 +771,11 @@ function EmployeRequestSave() {
                   <button
                     type="button"
                     className={
-                      formData.modernSlaveryResult === "PASS"
+                      (currentCand.modernSlaveryResult || formData.modernSlaveryResult) === "PASS"
                         ? "ToggleActive"
                         : "ToggleBtn"
                     }
-                    onClick={() =>
-                      setFormData({
-                        ...formData,
-                        modernSlaveryResult: "PASS",
-                      })
-                    }
+                    onClick={() => handleCandDecision("modernSlaveryResult", "PASS")}
                   >
                     Accept
                   </button>
@@ -757,22 +783,17 @@ function EmployeRequestSave() {
                   <button
                     type="button"
                     className={
-                      formData.modernSlaveryResult === "FAIL"
+                      (currentCand.modernSlaveryResult || formData.modernSlaveryResult) === "FAIL"
                         ? "ToggleFail"
                         : "ToggleBtn"
                     }
-                    onClick={() =>
-                      setFormData({
-                        ...formData,
-                        modernSlaveryResult: "FAIL",
-                      })
-                    }
+                    onClick={() => handleCandDecision("modernSlaveryResult", "FAIL")}
                   >
                     Reject
                   </button>
                 </div>
               </div>
-              {/* Legal Barrier */}
+
               {/* Legal Barrier */}
               <div className="BarrierRow">
                 <label>Legal Barrier *</label>
@@ -780,12 +801,13 @@ function EmployeRequestSave() {
                 {/* Candidate Answer */}
                 <span
                   className={
-                    formData.legalBarrierCandidateForm === "Yes"
+                    (currentCand.legalBarrierCandidateForm || formData.legalBarrierCandidateForm) === "YES" ||
+                    (currentCand.legalBarrierCandidateForm || formData.legalBarrierCandidateForm) === "Yes"
                       ? "CandidateAnswerYes"
                       : "CandidateAnswerNo"
                   }
                 >
-                  {formData.legalBarrierCandidateForm}
+                  {currentCand.legalBarrierCandidateForm || formData.legalBarrierCandidateForm || "N/A"}
                 </span>
 
                 {/* HR Decision */}
@@ -793,16 +815,11 @@ function EmployeRequestSave() {
                   <button
                     type="button"
                     className={
-                      formData.legalBarrierResult === "PASS"
+                      (currentCand.legalBarrierResult || formData.legalBarrierResult) === "PASS"
                         ? "ToggleActive"
                         : "ToggleBtn"
                     }
-                    onClick={() =>
-                      setFormData({
-                        ...formData,
-                        legalBarrierResult: "PASS",
-                      })
-                    }
+                    onClick={() => handleCandDecision("legalBarrierResult", "PASS")}
                   >
                     Accept
                   </button>
@@ -810,23 +827,17 @@ function EmployeRequestSave() {
                   <button
                     type="button"
                     className={
-                      formData.legalBarrierResult === "FAIL"
+                      (currentCand.legalBarrierResult || formData.legalBarrierResult) === "FAIL"
                         ? "ToggleFail"
                         : "ToggleBtn"
                     }
-                    onClick={() =>
-                      setFormData({
-                        ...formData,
-                        legalBarrierResult: "FAIL",
-                      })
-                    }
+                    onClick={() => handleCandDecision("legalBarrierResult", "FAIL")}
                   >
                     Reject
                   </button>
                 </div>
               </div>
 
-              {/* Medical Limitations */}
               {/* Medical Limitations */}
               <div className="BarrierRow">
                 <label>Medical Limitations *</label>
@@ -834,12 +845,13 @@ function EmployeRequestSave() {
                 {/* Candidate Answer */}
                 <span
                   className={
-                    formData.medicalLimitationsCandidateForm === "Yes"
+                    (currentCand.medicalLimitationsCandidateForm || formData.medicalLimitationsCandidateForm) === "YES" ||
+                    (currentCand.medicalLimitationsCandidateForm || formData.medicalLimitationsCandidateForm) === "Yes"
                       ? "CandidateAnswerYes"
                       : "CandidateAnswerNo"
                   }
                 >
-                  {formData.medicalLimitationsCandidateForm}
+                  {currentCand.medicalLimitationsCandidateForm || formData.medicalLimitationsCandidateForm || "N/A"}
                 </span>
 
                 {/* HR Decision */}
@@ -847,16 +859,11 @@ function EmployeRequestSave() {
                   <button
                     type="button"
                     className={
-                      formData.medicalLimitationsResult === "PASS"
+                      (currentCand.medicalLimitationsResult || formData.medicalLimitationsResult) === "PASS"
                         ? "ToggleActive"
                         : "ToggleBtn"
                     }
-                    onClick={() =>
-                      setFormData({
-                        ...formData,
-                        medicalLimitationsResult: "PASS",
-                      })
-                    }
+                    onClick={() => handleCandDecision("medicalLimitationsResult", "PASS")}
                   >
                     Accept
                   </button>
@@ -864,23 +871,17 @@ function EmployeRequestSave() {
                   <button
                     type="button"
                     className={
-                      formData.medicalLimitationsResult === "FAIL"
+                      (currentCand.medicalLimitationsResult || formData.medicalLimitationsResult) === "FAIL"
                         ? "ToggleFail"
                         : "ToggleBtn"
                     }
-                    onClick={() =>
-                      setFormData({
-                        ...formData,
-                        medicalLimitationsResult: "FAIL",
-                      })
-                    }
+                    onClick={() => handleCandDecision("medicalLimitationsResult", "FAIL")}
                   >
                     Reject
                   </button>
                 </div>
               </div>
 
-              {/* Work Rights */}
               {/* Work Rights */}
               <div className="BarrierRow">
                 <label>Work Rights *</label>
@@ -888,12 +889,13 @@ function EmployeRequestSave() {
                 {/* Candidate Answer */}
                 <span
                   className={
-                    formData.workRightsCandidateForm === "Yes"
+                    (currentCand.workRightsCandidateForm || formData.workRightsCandidateForm) === "YES" ||
+                    (currentCand.workRightsCandidateForm || formData.workRightsCandidateForm) === "Yes"
                       ? "CandidateAnswerYes"
                       : "CandidateAnswerNo"
                   }
                 >
-                  {formData.workRightsCandidateForm}
+                  {currentCand.workRightsCandidateForm || formData.workRightsCandidateForm || "N/A"}
                 </span>
 
                 {/* HR Decision */}
@@ -901,16 +903,11 @@ function EmployeRequestSave() {
                   <button
                     type="button"
                     className={
-                      formData.workRightsResult === "PASS"
+                      (currentCand.workRightsResult || formData.workRightsResult) === "PASS"
                         ? "ToggleActive"
                         : "ToggleBtn"
                     }
-                    onClick={() =>
-                      setFormData({
-                        ...formData,
-                        workRightsResult: "PASS",
-                      })
-                    }
+                    onClick={() => handleCandDecision("workRightsResult", "PASS")}
                   >
                     Accept
                   </button>
@@ -918,30 +915,19 @@ function EmployeRequestSave() {
                   <button
                     type="button"
                     className={
-                      formData.workRightsResult === "FAIL"
+                      (currentCand.workRightsResult || formData.workRightsResult) === "FAIL"
                         ? "ToggleFail"
                         : "ToggleBtn"
                     }
-                    onClick={() =>
-                      setFormData({
-                        ...formData,
-                        workRightsResult: "FAIL",
-                      })
-                    }
+                    onClick={() => handleCandDecision("workRightsResult", "FAIL")}
                   >
                     Reject
                   </button>
                 </div>
               </div>
-
-              <div className="SectionActions">
-                {/* <button className="CreateBtn" onClick={handleBarrierSave}>
-                  Save & Continue
-                </button> */}
-              </div>
-            </div>
+            </div>            
             <div className="SectionCard">
-              <h3>3. Qualifications</h3>
+              <h3>3. Qualifications & Licences - {currentCand.candidateId || "CND-001"}</h3>
 
               {/* Security Licence */}
               <div className="QualificationCard">
@@ -952,13 +938,13 @@ function EmployeRequestSave() {
                     type="text"
                     placeholder="Licence Number"
                     name="securityLicence"
-                    value={formData.securityLicence}
-                    onChange={handleChange}
+                    value={currentCand.securityLicenceCandidateForm || currentCand.securityLicence || formData.securityLicence || ""}
+                    onChange={(e) => handleCandDecision("securityLicence", e.target.value)}
                   />
 
-                  {formData.securityLicenceDocument ? (
+                  {currentCand.securityLicenceDocument || formData.securityLicenceDocument ? (
                     <a
-                      href={formData.securityLicenceDocument}
+                      href={currentCand.securityLicenceDocument || formData.securityLicenceDocument}
                       target="_blank"
                       rel="noreferrer"
                       className="UploadedDocument"
@@ -972,24 +958,19 @@ function EmployeRequestSave() {
                   <input
                     type="date"
                     name="securityLicenceExpiry"
-                    value={formData.securityLicenceExpiry}
-                    onChange={handleChange}
+                    value={currentCand.securityLicenceExpiry ? currentCand.securityLicenceExpiry.split("T")[0] : (formData.securityLicenceExpiry ? formData.securityLicenceExpiry.split("T")[0] : "")}
+                    onChange={(e) => handleCandDecision("securityLicenceExpiry", e.target.value)}
                   />
                 </div>
                 <div className="ToggleGroup">
                   <button
                     type="button"
                     className={
-                      formData.securityLicenceResult === "PASS"
+                      (currentCand.securityLicenceResult || formData.securityLicenceResult) === "PASS"
                         ? "ToggleActive"
                         : "ToggleBtn"
                     }
-                    onClick={() =>
-                      setFormData({
-                        ...formData,
-                        securityLicenceResult: "PASS",
-                      })
-                    }
+                    onClick={() => handleCandDecision("securityLicenceResult", "PASS")}
                   >
                     Accept
                   </button>
@@ -997,16 +978,11 @@ function EmployeRequestSave() {
                   <button
                     type="button"
                     className={
-                      formData.securityLicenceResult === "FAIL"
+                      (currentCand.securityLicenceResult || formData.securityLicenceResult) === "FAIL"
                         ? "ToggleFail"
                         : "ToggleBtn"
                     }
-                    onClick={() =>
-                      setFormData({
-                        ...formData,
-                        securityLicenceResult: "FAIL",
-                      })
-                    }
+                    onClick={() => handleCandDecision("securityLicenceResult", "FAIL")}
                   >
                     Reject
                   </button>
@@ -1022,13 +998,13 @@ function EmployeRequestSave() {
                     type="text"
                     placeholder="Licence Number"
                     name="drivingLicence"
-                    value={formData.drivingLicence}
-                    onChange={handleChange}
+                    value={currentCand.drivingLicenceCandidateForm || currentCand.drivingLicence || formData.drivingLicence || ""}
+                    onChange={(e) => handleCandDecision("drivingLicence", e.target.value)}
                   />
 
-                  {formData.drivingLicenceDocument ? (
+                  {currentCand.drivingLicenceDocument || formData.drivingLicenceDocument ? (
                     <a
-                      href={formData.drivingLicenceDocument}
+                      href={currentCand.drivingLicenceDocument || formData.drivingLicenceDocument}
                       target="_blank"
                       rel="noreferrer"
                       className="UploadedDocument"
@@ -1042,23 +1018,18 @@ function EmployeRequestSave() {
                   <input
                     type="date"
                     name="drivingLicenceExpiry"
-                    value={formData.drivingLicenceExpiry}
-                    onChange={handleChange}
+                    value={currentCand.drivingLicenceExpiry ? currentCand.drivingLicenceExpiry.split("T")[0] : (formData.drivingLicenceExpiry ? formData.drivingLicenceExpiry.split("T")[0] : "")}
+                    onChange={(e) => handleCandDecision("drivingLicenceExpiry", e.target.value)}
                   />
                   <div className="ToggleGroup">
                     <button
                       type="button"
                       className={
-                        formData.drivingLicenceResult === "PASS"
+                        (currentCand.drivingLicenceResult || formData.drivingLicenceResult) === "PASS"
                           ? "ToggleActive"
                           : "ToggleBtn"
                       }
-                      onClick={() =>
-                        setFormData({
-                          ...formData,
-                          drivingLicenceResult: "PASS",
-                        })
-                      }
+                      onClick={() => handleCandDecision("drivingLicenceResult", "PASS")}
                     >
                       Accept
                     </button>
@@ -1066,16 +1037,11 @@ function EmployeRequestSave() {
                     <button
                       type="button"
                       className={
-                        formData.drivingLicenceResult === "FAIL"
+                        (currentCand.drivingLicenceResult || formData.drivingLicenceResult) === "FAIL"
                           ? "ToggleFail"
                           : "ToggleBtn"
                       }
-                      onClick={() =>
-                        setFormData({
-                          ...formData,
-                          drivingLicenceResult: "FAIL",
-                        })
-                      }
+                      onClick={() => handleCandDecision("drivingLicenceResult", "FAIL")}
                     >
                       Reject
                     </button>
@@ -1092,12 +1058,12 @@ function EmployeRequestSave() {
                     type="text"
                     placeholder="Certificate Number"
                     name="firstAid"
-                    value={formData.firstAid}
-                    onChange={handleChange}
+                    value={currentCand.firstAidCandidateForm || currentCand.firstAid || formData.firstAid || ""}
+                    onChange={(e) => handleCandDecision("firstAid", e.target.value)}
                   />
-                  {formData.firstAidDocument ? (
+                  {currentCand.firstAidDocument || formData.firstAidDocument ? (
                     <a
-                      href={formData.firstAidDocument}
+                      href={currentCand.firstAidDocument || formData.firstAidDocument}
                       target="_blank"
                       rel="noreferrer"
                       className="UploadedDocument"
@@ -1111,23 +1077,18 @@ function EmployeRequestSave() {
                   <input
                     type="date"
                     name="firstAidExpiry"
-                    value={formData.firstAidExpiry}
-                    onChange={handleChange}
+                    value={currentCand.firstAidExpiry ? currentCand.firstAidExpiry.split("T")[0] : (formData.firstAidExpiry ? formData.firstAidExpiry.split("T")[0] : "")}
+                    onChange={(e) => handleCandDecision("firstAidExpiry", e.target.value)}
                   />
                   <div className="ToggleGroup">
                     <button
                       type="button"
                       className={
-                        formData.firstAidResult === "PASS"
+                        (currentCand.firstAidResult || formData.firstAidResult) === "PASS"
                           ? "ToggleActive"
                           : "ToggleBtn"
                       }
-                      onClick={() =>
-                        setFormData({
-                          ...formData,
-                          firstAidResult: "PASS",
-                        })
-                      }
+                      onClick={() => handleCandDecision("firstAidResult", "PASS")}
                     >
                       Accept
                     </button>
@@ -1135,16 +1096,11 @@ function EmployeRequestSave() {
                     <button
                       type="button"
                       className={
-                        formData.firstAidResult === "FAIL"
+                        (currentCand.firstAidResult || formData.firstAidResult) === "FAIL"
                           ? "ToggleFail"
                           : "ToggleBtn"
                       }
-                      onClick={() =>
-                        setFormData({
-                          ...formData,
-                          firstAidResult: "FAIL",
-                        })
-                      }
+                      onClick={() => handleCandDecision("firstAidResult", "FAIL")}
                     >
                       Reject
                     </button>
@@ -1161,12 +1117,12 @@ function EmployeRequestSave() {
                     type="text"
                     placeholder="Certificate Number"
                     name="cpr"
-                    value={formData.cpr}
-                    onChange={handleChange}
+                    value={currentCand.cprCandidateForm || currentCand.cpr || formData.cpr || ""}
+                    onChange={(e) => handleCandDecision("cpr", e.target.value)}
                   />
-                  {formData.cprDocument ? (
+                  {currentCand.cprDocument || formData.cprDocument ? (
                     <a
-                      href={formData.cprDocument}
+                      href={currentCand.cprDocument || formData.cprDocument}
                       target="_blank"
                       rel="noreferrer"
                       className="UploadedDocument"
@@ -1180,23 +1136,18 @@ function EmployeRequestSave() {
                   <input
                     type="date"
                     name="cprExpiry"
-                    value={formData.cprExpiry}
-                    onChange={handleChange}
+                    value={currentCand.cprExpiry ? currentCand.cprExpiry.split("T")[0] : (formData.cprExpiry ? formData.cprExpiry.split("T")[0] : "")}
+                    onChange={(e) => handleCandDecision("cprExpiry", e.target.value)}
                   />
                   <div className="ToggleGroup">
                     <button
                       type="button"
                       className={
-                        formData.cprResult === "PASS"
+                        (currentCand.cprResult || formData.cprResult) === "PASS"
                           ? "ToggleActive"
                           : "ToggleBtn"
                       }
-                      onClick={() =>
-                        setFormData({
-                          ...formData,
-                          cprResult: "PASS",
-                        })
-                      }
+                      onClick={() => handleCandDecision("cprResult", "PASS")}
                     >
                       Accept
                     </button>
@@ -1204,16 +1155,11 @@ function EmployeRequestSave() {
                     <button
                       type="button"
                       className={
-                        formData.cprResult === "FAIL"
+                        (currentCand.cprResult || formData.cprResult) === "FAIL"
                           ? "ToggleFail"
                           : "ToggleBtn"
                       }
-                      onClick={() =>
-                        setFormData({
-                          ...formData,
-                          cprResult: "FAIL",
-                        })
-                      }
+                      onClick={() => handleCandDecision("cprResult", "FAIL")}
                     >
                       Reject
                     </button>
@@ -1221,22 +1167,21 @@ function EmployeRequestSave() {
                 </div>
               </div>
 
-              {/* Working With Children Check */}
+              {/* Working With Children */}
               <div className="QualificationCard">
-                <h4>Working With Children Check</h4>
+                <h4>Working With Children</h4>
 
                 <div className="QualificationRow">
                   <input
                     type="text"
                     placeholder="Check Number"
                     name="workingWithChildren"
-                    value={formData.workingWithChildren}
-                    onChange={handleChange}
+                    value={currentCand.workingWithChildrenCandidateForm || currentCand.workingWithChildren || formData.workingWithChildren || ""}
+                    onChange={(e) => handleCandDecision("workingWithChildren", e.target.value)}
                   />
-
-                  {formData.workingWithChildrenDocument ? (
+                  {currentCand.workingWithChildrenDocument || formData.workingWithChildrenDocument ? (
                     <a
-                      href={formData.workingWithChildrenDocument}
+                      href={currentCand.workingWithChildrenDocument || formData.workingWithChildrenDocument}
                       target="_blank"
                       rel="noreferrer"
                       className="UploadedDocument"
@@ -1246,26 +1191,22 @@ function EmployeRequestSave() {
                   ) : (
                     <span className="NoDocument"></span>
                   )}
+
                   <input
                     type="date"
                     name="workingWithChildrenExpiry"
-                    value={formData.workingWithChildrenExpiry}
-                    onChange={handleChange}
+                    value={currentCand.workingWithChildrenExpiry ? currentCand.workingWithChildrenExpiry.split("T")[0] : (formData.workingWithChildrenExpiry ? formData.workingWithChildrenExpiry.split("T")[0] : "")}
+                    onChange={(e) => handleCandDecision("workingWithChildrenExpiry", e.target.value)}
                   />
                   <div className="ToggleGroup">
                     <button
                       type="button"
                       className={
-                        formData.workingWithChildrenResult === "PASS"
+                        (currentCand.workingWithChildrenResult || formData.workingWithChildrenResult) === "PASS"
                           ? "ToggleActive"
                           : "ToggleBtn"
                       }
-                      onClick={() =>
-                        setFormData({
-                          ...formData,
-                          workingWithChildrenResult: "PASS",
-                        })
-                      }
+                      onClick={() => handleCandDecision("workingWithChildrenResult", "PASS")}
                     >
                       Accept
                     </button>
@@ -1273,16 +1214,11 @@ function EmployeRequestSave() {
                     <button
                       type="button"
                       className={
-                        formData.workingWithChildrenResult === "FAIL"
+                        (currentCand.workingWithChildrenResult || formData.workingWithChildrenResult) === "FAIL"
                           ? "ToggleFail"
                           : "ToggleBtn"
                       }
-                      onClick={() =>
-                        setFormData({
-                          ...formData,
-                          workingWithChildrenResult: "FAIL",
-                        })
-                      }
+                      onClick={() => handleCandDecision("workingWithChildrenResult", "FAIL")}
                     >
                       Reject
                     </button>
@@ -1297,15 +1233,14 @@ function EmployeRequestSave() {
                 <div className="QualificationRow">
                   <input
                     type="text"
-                    placeholder="Certificate Number"
+                    placeholder="Ticket Number"
                     name="trafficManagement"
-                    value={formData.trafficManagement}
-                    onChange={handleChange}
+                    value={currentCand.trafficManagementCandidateForm || currentCand.trafficManagement || formData.trafficManagement || ""}
+                    onChange={(e) => handleCandDecision("trafficManagement", e.target.value)}
                   />
-
-                  {formData.trafficManagementDocument ? (
+                  {currentCand.trafficManagementDocument || formData.trafficManagementDocument ? (
                     <a
-                      href={formData.trafficManagementDocument}
+                      href={currentCand.trafficManagementDocument || formData.trafficManagementDocument}
                       target="_blank"
                       rel="noreferrer"
                       className="UploadedDocument"
@@ -1319,23 +1254,18 @@ function EmployeRequestSave() {
                   <input
                     type="date"
                     name="trafficManagementExpiry"
-                    value={formData.trafficManagementExpiry}
-                    onChange={handleChange}
+                    value={currentCand.trafficManagementExpiry ? currentCand.trafficManagementExpiry.split("T")[0] : (formData.trafficManagementExpiry ? formData.trafficManagementExpiry.split("T")[0] : "")}
+                    onChange={(e) => handleCandDecision("trafficManagementExpiry", e.target.value)}
                   />
                   <div className="ToggleGroup">
                     <button
                       type="button"
                       className={
-                        formData.trafficManagementResult === "PASS"
+                        (currentCand.trafficManagementResult || formData.trafficManagementResult) === "PASS"
                           ? "ToggleActive"
                           : "ToggleBtn"
                       }
-                      onClick={() =>
-                        setFormData({
-                          ...formData,
-                          trafficManagementResult: "PASS",
-                        })
-                      }
+                      onClick={() => handleCandDecision("trafficManagementResult", "PASS")}
                     >
                       Accept
                     </button>
@@ -1343,16 +1273,11 @@ function EmployeRequestSave() {
                     <button
                       type="button"
                       className={
-                        formData.trafficManagementResult === "FAIL"
+                        (currentCand.trafficManagementResult || formData.trafficManagementResult) === "FAIL"
                           ? "ToggleFail"
                           : "ToggleBtn"
                       }
-                      onClick={() =>
-                        setFormData({
-                          ...formData,
-                          trafficManagementResult: "FAIL",
-                        })
-                      }
+                      onClick={() => handleCandDecision("trafficManagementResult", "FAIL")}
                     >
                       Reject
                     </button>
@@ -1369,13 +1294,13 @@ function EmployeRequestSave() {
                     type="text"
                     placeholder="White Card Number"
                     name="whiteCard"
-                    value={formData.whiteCard}
-                    onChange={handleChange}
+                    value={currentCand.whiteCardCandidateForm || currentCand.whiteCard || formData.whiteCard || ""}
+                    onChange={(e) => handleCandDecision("whiteCard", e.target.value)}
                   />
 
-                  {formData.whiteCardDocument ? (
+                  {currentCand.whiteCardDocument || formData.whiteCardDocument ? (
                     <a
-                      href={formData.whiteCardDocument}
+                      href={currentCand.whiteCardDocument || formData.whiteCardDocument}
                       target="_blank"
                       rel="noreferrer"
                       className="UploadedDocument"
@@ -1389,23 +1314,18 @@ function EmployeRequestSave() {
                   <input
                     type="date"
                     name="whiteCardExpiry"
-                    value={formData.whiteCardExpiry}
-                    onChange={handleChange}
+                    value={currentCand.whiteCardExpiry ? currentCand.whiteCardExpiry.split("T")[0] : (formData.whiteCardExpiry ? formData.whiteCardExpiry.split("T")[0] : "")}
+                    onChange={(e) => handleCandDecision("whiteCardExpiry", e.target.value)}
                   />
                   <div className="ToggleGroup">
                     <button
                       type="button"
                       className={
-                        formData.whiteCardResult === "PASS"
+                        (currentCand.whiteCardResult || formData.whiteCardResult) === "PASS"
                           ? "ToggleActive"
                           : "ToggleBtn"
                       }
-                      onClick={() =>
-                        setFormData({
-                          ...formData,
-                          whiteCardResult: "PASS",
-                        })
-                      }
+                      onClick={() => handleCandDecision("whiteCardResult", "PASS")}
                     >
                       Accept
                     </button>
@@ -1413,16 +1333,11 @@ function EmployeRequestSave() {
                     <button
                       type="button"
                       className={
-                        formData.whiteCardResult === "FAIL"
+                        (currentCand.whiteCardResult || formData.whiteCardResult) === "FAIL"
                           ? "ToggleFail"
                           : "ToggleBtn"
                       }
-                      onClick={() =>
-                        setFormData({
-                          ...formData,
-                          whiteCardResult: "FAIL",
-                        })
-                      }
+                      onClick={() => handleCandDecision("whiteCardResult", "FAIL")}
                     >
                       Reject
                     </button>
@@ -1439,13 +1354,13 @@ function EmployeRequestSave() {
                     type="text"
                     placeholder="Yellow Card Number"
                     name="yellowCard"
-                    value={formData.yellowCard}
-                    onChange={handleChange}
+                    value={currentCand.yellowCardCandidateForm || currentCand.yellowCard || formData.yellowCard || ""}
+                    onChange={(e) => handleCandDecision("yellowCard", e.target.value)}
                   />
 
-                  {formData.yellowCardDocument ? (
+                  {currentCand.yellowCardDocument || formData.yellowCardDocument ? (
                     <a
-                      href={formData.yellowCardDocument}
+                      href={currentCand.yellowCardDocument || formData.yellowCardDocument}
                       target="_blank"
                       rel="noreferrer"
                       className="UploadedDocument"
@@ -1459,23 +1374,18 @@ function EmployeRequestSave() {
                   <input
                     type="date"
                     name="yellowCardExpiry"
-                    value={formData.yellowCardExpiry}
-                    onChange={handleChange}
+                    value={currentCand.yellowCardExpiry ? currentCand.yellowCardExpiry.split("T")[0] : (formData.yellowCardExpiry ? formData.yellowCardExpiry.split("T")[0] : "")}
+                    onChange={(e) => handleCandDecision("yellowCardExpiry", e.target.value)}
                   />
                   <div className="ToggleGroup">
                     <button
                       type="button"
                       className={
-                        formData.yellowCardResult === "PASS"
+                        (currentCand.yellowCardResult || formData.yellowCardResult) === "PASS"
                           ? "ToggleActive"
                           : "ToggleBtn"
                       }
-                      onClick={() =>
-                        setFormData({
-                          ...formData,
-                          yellowCardResult: "PASS",
-                        })
-                      }
+                      onClick={() => handleCandDecision("yellowCardResult", "PASS")}
                     >
                       Accept
                     </button>
@@ -1483,16 +1393,11 @@ function EmployeRequestSave() {
                     <button
                       type="button"
                       className={
-                        formData.yellowCardResult === "FAIL"
+                        (currentCand.yellowCardResult || formData.yellowCardResult) === "FAIL"
                           ? "ToggleFail"
                           : "ToggleBtn"
                       }
-                      onClick={() =>
-                        setFormData({
-                          ...formData,
-                          yellowCardResult: "FAIL",
-                        })
-                      }
+                      onClick={() => handleCandDecision("yellowCardResult", "FAIL")}
                     >
                       Reject
                     </button>
@@ -1506,6 +1411,67 @@ function EmployeRequestSave() {
                 </button>
               </div>
             </div>
+
+            {/* BANK & FINANCIAL DETAILS SECTION */}
+            <div className="SectionCard">
+              <h3>4. Bank & Tax Details - {currentCand.candidateId || "CND-001"} ({currentCand.name || "Candidate"})</h3>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginTop: "12px" }}>
+                <div>
+                  <label style={{ fontWeight: "700", fontSize: "13px", color: "#475569" }}>Bank Name</label>
+                  <input
+                    type="text"
+                    value={currentCand.bankName || formData.bankName || ""}
+                    onChange={(e) => handleCandDecision("bankName", e.target.value)}
+                    style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", marginTop: "4px" }}
+                  />
+                </div>
+                <div>
+                  <label style={{ fontWeight: "700", fontSize: "13px", color: "#475569" }}>Account Number</label>
+                  <input
+                    type="text"
+                    value={currentCand.bankAccount || formData.bankAccount || ""}
+                    onChange={(e) => handleCandDecision("bankAccount", e.target.value)}
+                    style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", marginTop: "4px" }}
+                  />
+                </div>
+                <div>
+                  <label style={{ fontWeight: "700", fontSize: "13px", color: "#475569" }}>BSB</label>
+                  <input
+                    type="text"
+                    value={currentCand.bsb || formData.bsb || ""}
+                    onChange={(e) => handleCandDecision("bsb", e.target.value)}
+                    style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", marginTop: "4px" }}
+                  />
+                </div>
+                <div>
+                  <label style={{ fontWeight: "700", fontSize: "13px", color: "#475569" }}>Tax File Number (TFN)</label>
+                  <input
+                    type="text"
+                    value={currentCand.taxFileNumber || formData.taxFileNumber || ""}
+                    onChange={(e) => handleCandDecision("taxFileNumber", e.target.value)}
+                    style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", marginTop: "4px" }}
+                  />
+                </div>
+                <div>
+                  <label style={{ fontWeight: "700", fontSize: "13px", color: "#475569" }}>Super Fund Name</label>
+                  <input
+                    type="text"
+                    value={currentCand.superFundName || formData.superFundName || ""}
+                    onChange={(e) => handleCandDecision("superFundName", e.target.value)}
+                    style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", marginTop: "4px" }}
+                  />
+                </div>
+                <div>
+                  <label style={{ fontWeight: "700", fontSize: "13px", color: "#475569" }}>Super Member Number</label>
+                  <input
+                    type="text"
+                    value={currentCand.superMemberNumber || formData.superMemberNumber || ""}
+                    onChange={(e) => handleCandDecision("superMemberNumber", e.target.value)}
+                    style={{ width: "100%", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1", marginTop: "4px" }}
+                  />
+                </div>
+              </div>
+            </div>            
             {showReferenceSection && (
               <div className="SectionCard">
                 <h3>4. References</h3>
