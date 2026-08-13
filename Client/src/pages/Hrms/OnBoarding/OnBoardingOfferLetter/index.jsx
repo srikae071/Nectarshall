@@ -1,4 +1,4 @@
-import CncLeftLayout from "../../../Cnc/CncLeftLayout";
+import Hrmsleftlayout from "../../Hrmsleftlayout";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -37,7 +37,7 @@ function OnBoardingOfferLetter() {
     navigate(`/offerlettersaves/${item._id}`);
   };
   return (
-    <CncLeftLayout>
+    <Hrmsleftlayout>
       <div className="Openhome">
         <div>
           <h3 className="openheading">Offer Letter</h3>
@@ -83,7 +83,7 @@ function OnBoardingOfferLetter() {
           © Copyright 2023 Enhance Services - All Rights Reserved.
         </div> */}
       </div>
-    </CncLeftLayout>
+    </Hrmsleftlayout>
   );
 }
 

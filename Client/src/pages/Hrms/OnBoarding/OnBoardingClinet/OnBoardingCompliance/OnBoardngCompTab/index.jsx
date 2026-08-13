@@ -75,51 +75,19 @@ function OnBoardingSupplierTab() {
               }
             >
               {visibleColumns.includes("clientId") && <td>{item.clientId}</td>}
-
-              {visibleColumns.includes("companyName") && (
-                <td>{item.companyName}</td>
-              )}
-
-              {visibleColumns.includes("emailAddress") && (
-                <td>{item.managingAgentName}</td>
-              )}
-
-              {visibleColumns.includes("onboardingDate") && (
-                <td>{item.onboardingDate?.slice(0, 10)}</td>
-              )}
-
+              {visibleColumns.includes("companyName") && <td>{item.companyName}</td>}
+              {visibleColumns.includes("emailAddress") && <td>{item.emailAddress}</td>}
+              {visibleColumns.includes("onboardingDate") && <td>{item.onboardingDate?.slice(0, 10)}</td>}
               {visibleColumns.includes("status") && <td>{item.status}</td>}
               {visibleColumns.includes("abn") && <td>{item.abn}</td>}
-
               {visibleColumns.includes("acn") && <td>{item.acn}</td>}
-
-              {visibleColumns.includes("companyAddress") && (
-                <td>{item.companyAddress}</td>
-              )}
-
-              {visibleColumns.includes("companyPhone") && (
-                <td>{item.companyPhone}</td>
-              )}
-
-              {visibleColumns.includes("managingAgentName") && (
-                <td>{item.managingAgentName}</td>
-              )}
-
-              {visibleColumns.includes("managingAgentEmail") && (
-                <td>{item.managingAgentEmail}</td>
-              )}
-
-              {visibleColumns.includes("managingAgentNumber") && (
-                <td>{item.managingAgentNumber}</td>
-              )}
-
-              {visibleColumns.includes("shortDescription") && (
-                <td>{item.shortDescription}</td>
-              )}
-
-              {visibleColumns.includes("description") && (
-                <td>{item.description}</td>
-              )}
+              {visibleColumns.includes("companyAddress") && <td>{item.companyAddress}</td>}
+              {visibleColumns.includes("companyPhone") && <td>{item.companyPhone}</td>}
+              {visibleColumns.includes("managingAgentName") && <td>{item.managingAgentName}</td>}
+              {visibleColumns.includes("managingAgentEmail") && <td>{item.managingAgentEmail}</td>}
+              {visibleColumns.includes("managingAgentNumber") && <td>{item.managingAgentNumber}</td>}
+              {visibleColumns.includes("shortDescription") && <td>{item.shortDescription}</td>}
+              {visibleColumns.includes("description") && <td>{item.description}</td>}
             </tr>
           ))
         }

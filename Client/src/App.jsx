@@ -112,6 +112,9 @@ import AddAdhoc from "./pages/Dashboard/DashboardRightLayout/AddAdhoc";
 import RosterShiftsMain from "./pages/Home/RosterShifts/RosterShiftsMain";
 import { AuthProvider } from "./context/AuthContext";
 import LoginPage from "./pages/Auth/LoginPage";
+import MainWindowPage from "./pages/Auth/MainWindowPage";
+import VendorLoginPage from "./pages/Auth/VendorLoginPage";
+import VendorDashboardPage from "./pages/Vendor/VendorDashboardPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AccountsLayout from "./pages/Accounts/AccountsLayout";
 import AccountsParent from "./pages/Accounts/AccountsParent";
@@ -128,17 +131,25 @@ function App() {
     if (savedTheme === "green") {
       document.documentElement.setAttribute("data-theme", "green");
       document.body.classList.add("theme-green");
+      document.body.classList.remove("theme-white");
+    } else if (savedTheme === "white") {
+      document.documentElement.setAttribute("data-theme", "white");
+      document.body.classList.add("theme-white");
+      document.body.classList.remove("theme-green");
     } else {
       document.documentElement.removeAttribute("data-theme");
-      document.body.classList.remove("theme-green");
+      document.body.classList.remove("theme-green", "theme-white");
     }
   }, []);
 
   return (
     <AuthProvider>
       <Routes>
-        {/* PUBLIC AUTH ROUTE */}
+        {/* PUBLIC AUTH & PORTAL ROUTES */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/main-window" element={<MainWindowPage />} />
+        <Route path="/vendor-login" element={<VendorLoginPage />} />
+        <Route path="/vendor-dashboard" element={<VendorDashboardPage />} />
 
         {/* PROTECTED ROUTES */}
         <Route

@@ -55,35 +55,36 @@ function HomeLeaveBalance() {
         <div className="LeaveBalanceRow">
           <div className="LeaveBalanceField">
             <label>Leave Type</label>
-
             <select
-              className="LeaveBalanceInput"
+              className="LeaveBalanceInput LeaveSelectInput"
               value={leaveType}
               onChange={handleLeaveTypeChange}
             >
               <option value="">Select Leave Type</option>
-              <option value="Casual Leave">Casual Leave</option>
-              <option value="Sick Leave">Sick Leave</option>
-              <option value="Paid Leave">Paid Leave</option>
-              <option value="Maternity Leave">Maternity Leave</option>
-              <option value="Paternity Leave">Paternity Leave</option>
+              <option value="Casual Leave">Casual Leave (5 Days)</option>
+              <option value="Sick Leave">Sick Leave (10 Days)</option>
+              <option value="Paid Leave">Paid Leave (15 Days)</option>
+              <option value="Maternity Leave">Maternity Leave (20 Days)</option>
+              <option value="Paternity Leave">Paternity Leave (12 Days)</option>
             </select>
           </div>
 
           <div className="LeaveBalanceField">
             <label>Total Allocated</label>
             <input
-              className="LeaveBalanceInput"
-              value={totalAllocated}
+              className="LeaveBalanceInput ReadOnlyInput"
+              value={totalAllocated !== "" ? totalAllocated : ""}
               readOnly
             />
           </div>
+        </div>
 
+        <div className="LeaveBalanceRow" style={{ marginTop: "16px" }}>
           <div className="LeaveBalanceField">
             <label>Leave Consumed</label>
             <input
-              className="LeaveBalanceInput"
-              value={leaveConsumed}
+              className="LeaveBalanceInput ReadOnlyInput"
+              value={leaveConsumed !== "" ? leaveConsumed : ""}
               readOnly
             />
           </div>
@@ -91,16 +92,11 @@ function HomeLeaveBalance() {
           <div className="LeaveBalanceField">
             <label>Leave Balance</label>
             <input
-              className="LeaveBalanceInput"
-              value={leaveBalance}
+              className="LeaveBalanceInput ReadOnlyInput"
+              value={leaveBalance !== "" ? leaveBalance : ""}
               readOnly
             />
           </div>
-        </div>
-
-        <div className="LeaveBalanceActions">
-          <button className="LeaveBalanceSave">Save</button>
-          <button className="LeaveBalanceCancel">Cancel</button>
         </div>
       </div>
     </LeaveManagementLeftSide>

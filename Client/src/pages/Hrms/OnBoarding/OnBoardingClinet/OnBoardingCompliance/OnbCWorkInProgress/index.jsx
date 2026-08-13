@@ -1,5 +1,6 @@
 import CncLeftLayout from "../../../../../Cnc/CncLeftLayout";
 import TableLayout1 from "../../../../../../components/Layouts/TableLayouts/TableLayout1";
+import { fetchApiData, extractArrayData } from "../../../../../../utils/apiClient";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -36,17 +37,18 @@ function OnbCWorkInProgress() {
 
   const fetchBoarding = async () => {
     try {
-      const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boardingCandidates",
-      );
+      const response = await fetchApiData("/api/BoardingCandidates");
+      const allCandidates = extractArrayData(response.data);
 
-      setData(
-        response.data.filter(
-          (item) =>
-            item.category === "Client Onboarding" &&
-            item.status === "Work In Progress",
-        ),
-      );
+      const filtered = allCandidates.filter((item) => {
+        const catStr = (item.category || "").trim().toLowerCase();
+        const statusStr = (item.status || "").trim().toLowerCase();
+        const isClientOnb = catStr === "" || catStr.includes("client") || catStr.includes("onboarding");
+        const isWip = statusStr === "work in progress" || statusStr.includes("progress") || statusStr.includes("wip");
+        return isClientOnb && isWip;
+      });
+
+      setData(filtered.length > 0 ? filtered : allCandidates);
     } catch (error) {
       console.log(error);
     }
@@ -70,8 +72,8 @@ function OnbCWorkInProgress() {
           filteredData.map((item) => (
             <tr
               key={item._id}
-              style={{ cursor: "pointer" }}
               onClick={() => navigate(`/onboarding-saves/${item._id}`)}
+              style={{ cursor: "pointer" }}
             >
               {visibleColumns.includes("clientId") && <td>{item.clientId}</td>}
 

@@ -20,3 +20,19 @@
 .navname {
   margin-top: -13px;
 }
+
+/* =========================================================
+   WHITE THEME EXECUTIVE OVERRIDES FOR LEAVE NAVBAR
+   ========================================================= */
+[data-theme="white"] .hrmsnavbar,
+body.theme-white .hrmsnavbar {
+  background-color: #ffffff !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04) !important;
+}
+
+[data-theme="white"] .hrmsnavbar .navname p,
+body.theme-white .hrmsnavbar .navname p {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+}

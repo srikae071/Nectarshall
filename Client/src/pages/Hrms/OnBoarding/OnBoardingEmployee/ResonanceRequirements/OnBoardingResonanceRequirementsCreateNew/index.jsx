@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 
-import CncLeftLayout from "../../../../../Cnc/CncLeftLayout";
+import Hrmsleftlayout from "../../../../Hrmsleftlayout";
 
 import "./index.css";
 
@@ -23,6 +23,14 @@ function OnBoardingResonanceRequirementsCreateNew() {
     preferredName: "",
     email: "",
     contactNumber: "",
+
+    candidates: [
+      {
+        candidateId: "CND-001",
+        name: "",
+        email: "",
+      },
+    ],
 
     modernSlavery: "",
     legalBarrier: "",
@@ -55,6 +63,57 @@ function OnBoardingResonanceRequirementsCreateNew() {
 
     interview: "",
   });
+
+  const handleAddCandidate = () => {
+    setFormData((prev) => {
+      const list =
+        Array.isArray(prev.candidates) && prev.candidates.length > 0
+          ? [...prev.candidates]
+          : [];
+      const nextNum = list.length + 1;
+      const nextId = `CND-${String(nextNum).padStart(3, "0")}`;
+      list.push({
+        candidateId: nextId,
+        name: "",
+        email: "",
+      });
+      return {
+        ...prev,
+        candidates: list,
+      };
+    });
+  };
+
+  const handleCandidateChange = (index, field, value) => {
+    setFormData((prev) => {
+      const list = Array.isArray(prev.candidates) ? [...prev.candidates] : [];
+      list[index] = {
+        ...list[index],
+        [field]: value,
+      };
+      const firstCand = list[0];
+      return {
+        ...prev,
+        candidates: list,
+        email: firstCand?.email || prev.email,
+        firstName: firstCand?.name || prev.firstName,
+      };
+    });
+  };
+
+  const handleRemoveCandidate = (index) => {
+    setFormData((prev) => {
+      const list = (prev.candidates || []).filter((_, i) => i !== index);
+      const reindexed = list.map((c, i) => ({
+        ...c,
+        candidateId: `CND-${String(i + 1).padStart(3, "0")}`,
+      }));
+      return {
+        ...prev,
+        candidates: reindexed,
+      };
+    });
+  };
 
   const subStatusOptions = {
     Pending: ["Request Information Pending", "Vendor Action Pending"],
@@ -169,7 +228,7 @@ function OnBoardingResonanceRequirementsCreateNew() {
     }
   };
   return (
-    <CncLeftLayout>
+    <Hrmsleftlayout>
       <div className="CreateContainer">
         <h2 className="CreateTitle">Create New Case</h2>
 
@@ -319,7 +378,25 @@ function OnBoardingResonanceRequirementsCreateNew() {
         </div>
         {showPreliminary && (
           <div className="SectionCard">
-            <h3>1. Preliminary Information</h3>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+              <h3 style={{ margin: 0 }}>1. Preliminary Information</h3>
+              <button
+                type="button"
+                onClick={handleAddCandidate}
+                style={{
+                  background: "#047857",
+                  color: "#ffffff",
+                  border: "none",
+                  borderRadius: "6px",
+                  padding: "6px 14px",
+                  fontWeight: "700",
+                  cursor: "pointer",
+                  fontSize: "13px",
+                }}
+              >
+                + Add Employee
+              </button>
+            </div>
 
             <div className="CreateRow">
               <div className="CreateField">
@@ -352,7 +429,7 @@ function OnBoardingResonanceRequirementsCreateNew() {
 
             <div className="CreateRow">
               <div className="CreateField">
-                <label>Email *</label>
+                <label>Primary Email *</label>
                 <input
                   name="email"
                   value={formData.email}
@@ -368,6 +445,99 @@ function OnBoardingResonanceRequirementsCreateNew() {
                   onChange={handleChange}
                 />
               </div>
+            </div>
+
+            {/* DYNAMIC CANDIDATE / EMPLOYEE ENTRIES */}
+            <div style={{ marginTop: "18px", marginBottom: "18px", borderTop: "1px dashed #cbd5e1", paddingTop: "14px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+                <h4 style={{ margin: 0, fontSize: "14px", fontWeight: "700", color: "#0f172a" }}>
+                  👥 Candidate / Employee List
+                </h4>
+                <button
+                  type="button"
+                  onClick={handleAddCandidate}
+                  style={{
+                    background: "#047857",
+                    color: "#ffffff",
+                    border: "none",
+                    borderRadius: "6px",
+                    padding: "5px 12px",
+                    fontWeight: "700",
+                    cursor: "pointer",
+                    fontSize: "12px",
+                  }}
+                >
+                  + Add Employee
+                </button>
+              </div>
+
+              {(formData.candidates && formData.candidates.length > 0
+                ? formData.candidates
+                : [{ candidateId: "CND-001", name: formData.firstName || "", email: formData.email || "" }]
+              ).map((cand, candIdx) => (
+                <div
+                  key={candIdx}
+                  className="CreateRow"
+                  style={{
+                    background: "#f8fafc",
+                    padding: "12px",
+                    borderRadius: "8px",
+                    border: "1px solid #cbd5e1",
+                    marginBottom: "10px",
+                    alignItems: "center",
+                    display: "flex",
+                    gap: "12px",
+                  }}
+                >
+                  <div className="CreateField" style={{ flex: "0 0 160px" }}>
+                    <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155" }}>Employee / Candidate ID</label>
+                    <input
+                      value={cand.candidateId || `CND-${String(candIdx + 1).padStart(3, "0")}`}
+                      readOnly
+                      style={{ background: "#e2e8f0", fontWeight: "700", color: "#0f172a" }}
+                    />
+                  </div>
+
+                  <div className="CreateField" style={{ flex: 1 }}>
+                    <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155" }}>Employee Name *</label>
+                    <input
+                      value={cand.name || ""}
+                      onChange={(e) => handleCandidateChange(candIdx, "name", e.target.value)}
+                      placeholder="Enter employee name..."
+                    />
+                  </div>
+
+                  <div className="CreateField" style={{ flex: 1 }}>
+                    <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155" }}>Employee Email ID *</label>
+                    <input
+                      type="email"
+                      value={cand.email || ""}
+                      onChange={(e) => handleCandidateChange(candIdx, "email", e.target.value)}
+                      placeholder="Enter email ID..."
+                    />
+                  </div>
+
+                  {formData.candidates && formData.candidates.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveCandidate(candIdx)}
+                      title="Remove Candidate"
+                      style={{
+                        background: "#fee2e2",
+                        color: "#dc2626",
+                        border: "1px solid #fecaca",
+                        borderRadius: "6px",
+                        padding: "8px 12px",
+                        fontWeight: "700",
+                        cursor: "pointer",
+                        marginTop: "16px",
+                      }}
+                    >
+                      🗑️
+                    </button>
+                  )}
+                </div>
+              ))}
             </div>
 
             <button className="CreateBtn" onClick={handlePreliminarySave}>
@@ -814,7 +984,7 @@ function OnBoardingResonanceRequirementsCreateNew() {
           <button className="CreateBtn">Cancel</button>
         </div>
       </div>
-    </CncLeftLayout>
+    </Hrmsleftlayout>
   );
 }
 

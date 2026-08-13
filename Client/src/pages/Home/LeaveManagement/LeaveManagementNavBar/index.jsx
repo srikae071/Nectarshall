@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import logo from "../../../../images/logo.png";
+import ThemeSelector from "../../../../components/ThemeSelector";
 import "./index.css";
 
 function LeaveManagementNavBar() {
@@ -14,7 +15,10 @@ function LeaveManagementNavBar() {
         </div>
       </div>
 
-      <div className="profile">👤</div>
+      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        <ThemeSelector />
+        <div className="profile">👤</div>
+      </div>
     </div>
   );
 }

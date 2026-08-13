@@ -31,3 +31,67 @@
   color: #1f2937;
   margin-left: 4px;
 }
+
+/* =========================================================
+   WHITE THEME EXECUTIVE OVERRIDES FOR LEAVE STATUS
+   ========================================================= */
+[data-theme="white"] .Openhome,
+body.theme-white .Openhome {
+  background: #f8fafc !important;
+  padding: 24px !important;
+}
+
+[data-theme="white"] .openheading,
+body.theme-white .openheading {
+  color: #0f172a !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em !important;
+}
+
+[data-theme="white"] .OpentableCard,
+body.theme-white .OpentableCard {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05) !important;
+  color: #0f172a !important;
+}
+
+[data-theme="white"] .opentable,
+body.theme-white .opentable {
+  background: #ffffff !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+[data-theme="white"] .opentable thead th,
+body.theme-white .opentable thead th {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+  padding: 12px 16px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+}
+
+[data-theme="white"] .opentable tbody tr,
+body.theme-white .opentable tbody tr {
+  border-bottom: 1px solid #f1f5f9 !important;
+  transition: background 0.15s ease !important;
+}
+
+[data-theme="white"] .opentable tbody tr:hover,
+body.theme-white .opentable tbody tr:hover {
+  background: #f8fafc !important;
+}
+
+[data-theme="white"] .opentable tbody td,
+body.theme-white .opentable tbody td {
+  color: #334155 !important;
+  font-size: 13.5px !important;
+  padding: 12px 16px !important;
+}

@@ -198,15 +198,21 @@ function AccountsParent() {
                 `${candidate._id}_${contract._id}_${sIdx}_${slotIdx}`
               ];
 
-            let completedCount = 0;
+            let checkedTasks = [];
+            const isToiletTaskKey = (tKey) => {
+              const str = String(tKey || "").toLowerCase();
+              return str.includes("toilet") || str.includes("cleaning");
+            };
+
             if (typeof shiftTaskData === "object" && shiftTaskData !== null) {
-              completedCount =
-                Object.values(shiftTaskData).filter(Boolean).length;
+              Object.entries(shiftTaskData).forEach(([tKey, val]) => {
+                if (val) checkedTasks.push(tKey);
+              });
             } else if (shiftTaskData === true) {
-              completedCount = 1;
+              checkedTasks.push("Toilet Cleaning");
             }
 
-            if (completedCount === 0) {
+            if (checkedTasks.length === 0) {
               Object.keys(completedTasksMap).forEach((key) => {
                 if (
                   key === shiftId ||
@@ -215,26 +221,33 @@ function AccountsParent() {
                 ) {
                   const valObj = completedTasksMap[key];
                   if (typeof valObj === "object" && valObj !== null) {
-                    completedCount = Math.max(
-                      completedCount,
-                      Object.values(valObj).filter(Boolean).length,
-                    );
+                    Object.entries(valObj).forEach(([tKey, val]) => {
+                      if (val && !checkedTasks.includes(tKey)) {
+                        checkedTasks.push(tKey);
+                      }
+                    });
                   } else if (valObj === true) {
-                    completedCount = Math.max(completedCount, 1);
+                    if (!checkedTasks.includes("Toilet Cleaning")) {
+                      checkedTasks.push("Toilet Cleaning");
+                    }
                   }
                 }
               });
             }
 
-            // Wage Calculations: Base Wage + Super (12%) + Leave Loading (1.98%) + Task Bonus (+3.69% per checked task)
+            const completedCount = checkedTasks.length;
+            // Rule: Add 3.69% bonus if Toilet Cleaning task is checked!
+            // Formula: (Base Wage + Super 12% + Long Leave Allowance 1.98%) * 3.69%
+            const hasToiletCleaningChecked =
+              checkedTasks.some((tKey) => isToiletTaskKey(tKey));
+
             const baseWage = hoursWorked * ratePerHour;
             const superAmount = baseWage * 0.12;
-            const leaveAmount = baseWage * 0.0198;
-            const taskBonusPercent = completedCount * 0.0369;
-            const taskBonusAmount =
-              completedCount > 0 ? baseWage * taskBonusPercent : 0;
-            const totalPay =
-              baseWage + superAmount + leaveAmount + taskBonusAmount;
+            const leaveAmount = baseWage * 0.0198; // Long Leave Allowance (1.98%)
+            const subtotalWage = baseWage + superAmount + leaveAmount;
+            const taskBonusPercent = hasToiletCleaningChecked ? 0.0369 : 0;
+            const taskBonusAmount = subtotalWage * taskBonusPercent;
+            const totalPay = subtotalWage + taskBonusAmount;
 
             shiftList.push({
               id: shiftId,
@@ -255,8 +268,9 @@ function AccountsParent() {
               superAmount,
               leaveAmount,
               taskBonusAmount,
+              hasToiletCleaningChecked,
               completedCount,
-              taskBonusPercentStr: (completedCount * 3.69).toFixed(2),
+              taskBonusPercentStr: hasToiletCleaningChecked ? "3.69" : "0.00",
               isTaskCompleted: completedCount > 0,
               approvalState,
               totalPay,
@@ -591,7 +605,7 @@ function AccountsParent() {
                                       : shift.id,
                                   );
                                 }}
-                                title="Click to view Pay Ledger (Base Wage + Super 12% + Leave 1.98%)"
+                                title="Click to view Pay Ledger (Base Wage + Super 12% + Long Leave Allowance 1.98% + Toilet Cleaning 3.69%)"
                               >
                                 📒
                               </button>
@@ -600,7 +614,7 @@ function AccountsParent() {
                             {selectedLedgerShift === shift.id && (
                               <div className="payLedgerPopover">
                                 <div className="ledgerPopoverHeader">
-                                  <span>📒 Wage Ledger Breakdown</span>
+                                  <span>📒 Wage Ledger Brkdown</span>
                                   <button
                                     onClick={(e) => {
                                       e.stopPropagation();
@@ -630,25 +644,25 @@ function AccountsParent() {
                                   </strong>
                                 </div>
                                 <div className="ledgerRow">
-                                  <span>🌴 Leave Loading (1.98%):</span>
+                                  <span>🌴 Long Leave Allowance (1.98%):</span>
                                   <strong style={{ color: "#0284c7" }}>
                                     +{formatCurrency(shift.leaveAmount)}
                                   </strong>
                                 </div>
-                                {shift.completedCount > 0 && (
-                                  <div className="ledgerRow">
-                                    <span>
-                                      🧹 Task Completion Bonus (+
-                                      {shift.taskBonusPercentStr}%):
-                                    </span>
-                                    <strong style={{ color: "#d97706" }}>
-                                      +{formatCurrency(shift.taskBonusAmount)}{" "}
-                                      (✓ {shift.completedCount} Task
-                                      {shift.completedCount > 1 ? "s" : ""}{" "}
-                                      Completed)
-                                    </strong>
-                                  </div>
-                                )}
+                                <div className="ledgerRow">
+                                  <span>🚽 Toilet Cleaning (3.69% Bonus):</span>
+                                  <strong
+                                    style={{
+                                      color: shift.hasToiletCleaningChecked
+                                        ? "#d97706"
+                                        : "#64748b",
+                                    }}
+                                  >
+                                    {shift.hasToiletCleaningChecked
+                                      ? `+${formatCurrency(shift.taskBonusAmount)} (3.69%)`
+                                      : "$0.00"}
+                                  </strong>
+                                </div>
                                 <div className="ledgerRowTotal">
                                   <span>💰 Total Payable Vuge:</span>
                                   <strong>
@@ -695,8 +709,9 @@ function AccountsParent() {
                                     }}
                                   >
                                     Detailed breakdown including Base Wage,
-                                    Super 12%, Leave Loading 1.98%, and Total
-                                    Payable Wage for Week {selectedWeek}.
+                                    Super 12%, Long Leave Allowance 1.98%,
+                                    Toilet Cleaning 3.69%, and Total Payable
+                                    Wage for Week {selectedWeek}.
                                   </p>
                                 </div>
 
@@ -756,8 +771,10 @@ function AccountsParent() {
                                           {formatCurrency(comp.companyBase)} |
                                           Super (12%):{" "}
                                           {formatCurrency(comp.companySuper)} |
-                                          Leave (1.98%):{" "}
-                                          {formatCurrency(comp.companyLeave)} |{" "}
+                                          Long Leave Allowance (1.98%):{" "}
+                                          {formatCurrency(comp.companyLeave)} |
+                                          Toilet Cleaning (3.69%):{" "}
+                                          {formatCurrency(comp.companyTaskBonus)} |{" "}
                                           <strong>
                                             Total:{" "}
                                             {formatCurrency(comp.companyPay)}
@@ -797,7 +814,12 @@ function AccountsParent() {
                                               <th
                                                 style={{ textAlign: "right" }}
                                               >
-                                                Leave (1.98%)
+                                                Long Leave Allowance (1.98%)
+                                              </th>
+                                              <th
+                                                style={{ textAlign: "right" }}
+                                              >
+                                                Toilet Cleaning (3.69%)
                                               </th>
                                               <th
                                                 style={{ textAlign: "right" }}
@@ -897,6 +919,19 @@ function AccountsParent() {
                                                   <td
                                                     style={{
                                                       textAlign: "right",
+                                                      fontWeight: "600",
+                                                      color: s.hasToiletCleaningChecked
+                                                        ? "#d97706"
+                                                        : "#64748b",
+                                                    }}
+                                                  >
+                                                    {s.hasToiletCleaningChecked
+                                                      ? `+${formatCurrency(s.taskBonusAmount)}`
+                                                      : "$0.00"}
+                                                  </td>
+                                                  <td
+                                                    style={{
+                                                      textAlign: "right",
                                                       fontWeight: "700",
                                                       color: "#0f172a",
                                                     }}
@@ -934,7 +969,7 @@ function AccountsParent() {
                                   }}
                                 >
                                   💰 Total Combined Weekly Payable (Base Wage +
-                                  Super 12% + Leave 1.98%):
+                                  Super 12% + Long Leave Allowance 1.98% + Toilet Cleaning 3.69%):
                                 </span>
                                 <span
                                   style={{
@@ -946,8 +981,10 @@ function AccountsParent() {
                                   {formatCurrency(workerGroup.totalWorkerBase)}{" "}
                                   | Super (12%):{" "}
                                   {formatCurrency(workerGroup.totalWorkerSuper)}{" "}
-                                  | Leave (1.98%):{" "}
+                                  | Long Leave (1.98%):{" "}
                                   {formatCurrency(workerGroup.totalWorkerLeave)}{" "}
+                                  | Toilet Cleaning (3.69%):{" "}
+                                  {formatCurrency(workerGroup.totalWorkerTaskBonus)}{" "}
                                   | Total Payable:{" "}
                                   {formatCurrency(workerGroup.totalWorkerPay)}
                                 </span>

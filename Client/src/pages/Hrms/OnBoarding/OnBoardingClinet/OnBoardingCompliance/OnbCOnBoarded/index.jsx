@@ -72,8 +72,8 @@ function OnbCOnBoarded() {
           filteredData.map((item) => (
             <tr
               key={item._id}
-              style={{ cursor: "pointer" }}
               onClick={() => navigate(`/onboarding-saves/${item._id}`)}
+              style={{ cursor: "pointer" }}
             >
               {visibleColumns.includes("clientId") && <td>{item.clientId}</td>}
 

@@ -17,23 +17,27 @@ function OnBoardingCompliance() {
     }));
   };
   const [formData, setFormData] = useState({
-    SupplierId: "",
-
+    clientId: "",
+    SupplierType: "",
     companyName: "",
     abn: "",
     acn: "",
-    address: "",
     companyAddress: "",
     companyPhone: "",
     managingAgentName: "",
     managingAgentEmail: "",
-    email: "",
-    contactNumber: "",
-    onboardingDate: "",
-    status: "",
-    type: "Adhoc",
+    managingAgentNumber: "",
     shortDescription: "",
     description: "",
+    poWorkOrderApplicable: "No",
+
+    contractDeliverables: [
+      {
+        service: "",
+        workingDays: [],
+        tasks: [],
+      },
+    ],
   });
   const [contractDeliverables, setContractDeliverables] = useState([
     {

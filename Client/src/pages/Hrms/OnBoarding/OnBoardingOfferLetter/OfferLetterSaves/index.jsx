@@ -1,5 +1,5 @@
 import { useState } from "react";
-import CncLeftLayout from "../../../../Cnc/CncLeftLayout";
+import Hrmsleftlayout from "../../../Hrmsleftlayout";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
@@ -89,7 +89,7 @@ function OfferLetterSaves() {
     }
   };
   return (
-    <CncLeftLayout>
+    <Hrmsleftlayout>
       <div className="OfferContainer">
         <h2 className="OfferTitle">Offer Letter</h2>
 
@@ -183,7 +183,7 @@ function OfferLetterSaves() {
           <button className="CreateBtn">Cancel</button>
         </div>
       </div>
-    </CncLeftLayout>
+    </Hrmsleftlayout>
   );
 }
 

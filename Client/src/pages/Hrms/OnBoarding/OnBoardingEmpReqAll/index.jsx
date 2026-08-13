@@ -1,4 +1,4 @@
-import CncLeftLayout from "../../../Cnc/CncLeftLayout";
+import Hrmsleftlayout from "../../Hrmsleftlayout";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -34,7 +34,7 @@ function OnBoardingEmpAll() {
   };
 
   return (
-    <CncLeftLayout>
+    <Hrmsleftlayout>
       <div className="Openhome">
         <div>
           <h3 className="openheading">Employee Requests</h3>
@@ -45,40 +45,30 @@ function OnBoardingEmpAll() {
                 <th>Case ID</th>
                 <th>Requester Name</th>
                 <th>Department</th>
-                <th>Skill Set</th>
-                <th>Experience</th>
+                <th>Category</th>
                 <th>Status</th>
               </tr>
             </thead>
 
             <tbody>
-              {data.length === 0 ? (
-                <tr>
-                  <td colSpan="6" style={{ textAlign: "center" }}>
-                    No Records Found
-                  </td>
+              {data.map((item) => (
+                <tr
+                  key={item._id}
+                  onClick={() => handleRowClick(item)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <td>{item.caseId}</td>
+                  <td>{item.requesterName}</td>
+                  <td>{item.department}</td>
+                  <td>{item.category}</td>
+                  <td>{item.status}</td>
                 </tr>
-              ) : (
-                data.map((item) => (
-                  <tr
-                    key={item._id}
-                    onClick={() => handleRowClick(item)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <td>{item.caseId}</td>
-                    <td>{item.requesterName}</td>
-                    <td>{item.department}</td>
-                    <td>{item.skillSet}</td>
-                    <td>{item.experience}</td>
-                    <td>{item.status}</td>
-                  </tr>
-                ))
-              )}
+              ))}
             </tbody>
           </table>
         </div>
       </div>
-    </CncLeftLayout>
+    </Hrmsleftlayout>
   );
 }
 

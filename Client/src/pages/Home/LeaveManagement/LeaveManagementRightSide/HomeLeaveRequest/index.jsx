@@ -176,9 +176,8 @@ function HomeLeaveRequest() {
           <div className="LeaveRequestRow">
             <div className="LeaveRequestField">
               <label>Leave Type</label>
-
               <select
-                className="LeaveRequestInput"
+                className="LeaveRequestInput LeaveSelectInput"
                 value={leaveType}
                 onChange={(e) => setLeaveType(e.target.value)}
               >
@@ -197,9 +196,8 @@ function HomeLeaveRequest() {
 
             <div className="LeaveRequestField">
               <label>Total Leaves</label>
-
               <input
-                className="LeaveRequestInput"
+                className="LeaveRequestInput ReadOnlyInput"
                 value={calculateLeaves()}
                 readOnly
               />
@@ -210,7 +208,6 @@ function HomeLeaveRequest() {
           <div className="LeaveRequestRow">
             <div className="LeaveRequestField">
               <label>Start Date</label>
-
               <input
                 type="date"
                 className="LeaveRequestInput"
@@ -221,7 +218,6 @@ function HomeLeaveRequest() {
 
             <div className="LeaveRequestField">
               <label>End Date</label>
-
               <input
                 type="date"
                 className="LeaveRequestInput"
@@ -235,7 +231,6 @@ function HomeLeaveRequest() {
           <div className="LeaveRequestRow">
             <div className="LeaveRequestField">
               <label>Half Day</label>
-
               <input
                 type="checkbox"
                 className="LeaveRequestCheckbox"
@@ -243,14 +238,12 @@ function HomeLeaveRequest() {
                 onChange={(e) => setHalfDay(e.target.checked)}
               />
             </div>
-
             <div className="LeaveRequestField"></div>
           </div>
 
           {/* Description */}
           <div className="LeaveRequestFull">
             <label className="leqreason">Description</label>
-
             <textarea
               className="LeaveRequestTextarea"
               value={description}
@@ -263,13 +256,17 @@ function HomeLeaveRequest() {
             <button className="LeaveRequestSave" onClick={handleSave}>
               Save
             </button>
-
-            <button className="LeaveRequestCancel">Cancel</button>
+            <button
+              className="LeaveRequestCancel"
+              onClick={() => navigate("/")}
+            >
+              Cancel
+            </button>
           </div>
         </div>
 
         <div className="LeaveRequestFooter">
-          © Copyright 2023 Enhance Services - All Rights Reserved.
+          © Copyright 2026 Enhance Services - All Rights Reserved.
         </div>
       </div>
     </LeaveManagementLeftSide>

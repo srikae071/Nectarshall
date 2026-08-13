@@ -63,6 +63,28 @@ function Navbar() {
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        <button
+          type="button"
+          onClick={() => navigate("/main-window")}
+          title="Go to Main Window Portal Selection"
+          style={{
+            padding: "6px 12px",
+            borderRadius: "6px",
+            background: "linear-gradient(135deg, #0284c7 0%, #0369a1 100%)",
+            color: "#ffffff",
+            border: "none",
+            fontWeight: "700",
+            fontSize: "12.5px",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: "5px",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.15)",
+          }}
+        >
+          🪟 Main Window
+        </button>
+
         <ThemeSelector />
 
         <div className="userProfileMenuContainer" style={{ position: "relative" }}>
@@ -109,6 +131,33 @@ function Navbar() {
               <div style={{ fontSize: "12.5px", color: "#64748b", marginBottom: "12px" }}>
                 Role: <strong>{user?.role || "Employee"}</strong>
               </div>
+
+              {/* MAIN WINDOW PORTAL BUTTON */}
+              <button
+                type="button"
+                onClick={() => {
+                  setShowProfileMenu(false);
+                  navigate("/main-window");
+                }}
+                style={{
+                  width: "100%",
+                  padding: "8px",
+                  background: "linear-gradient(135deg, #0284c7 0%, #0369a1 100%)",
+                  color: "#ffffff",
+                  border: "none",
+                  borderRadius: "6px",
+                  fontWeight: "700",
+                  cursor: "pointer",
+                  fontSize: "13px",
+                  marginBottom: "8px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "6px",
+                }}
+              >
+                🪟 Main Window
+              </button>
 
               {/* LOGOUT BUTTON */}
               <button

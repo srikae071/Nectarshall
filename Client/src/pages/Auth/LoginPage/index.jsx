@@ -128,6 +128,23 @@ function LoginPage() {
             ))}
           </div>
         </div>
+
+        <div style={{ marginTop: "16px", borderTop: "1px solid #e2e8f0", paddingTop: "12px", textAlign: "center" }}>
+          <button
+            type="button"
+            onClick={() => navigate("/main-window")}
+            style={{
+              background: "transparent",
+              border: "none",
+              color: "#0284c7",
+              fontWeight: "700",
+              fontSize: "12.5px",
+              cursor: "pointer",
+            }}
+          >
+            🪟 Switch Portal (Main Window)
+          </button>
+        </div>
       </div>
     </div>
   );

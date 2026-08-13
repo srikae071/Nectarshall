@@ -86,3 +86,73 @@
 .resizer:hover {
   background: #adb9d3;
 }
+
+/* =========================================================
+   WHITE THEME EXECUTIVE OVERRIDES FOR LEAVE MANAGEMENT LAYOUT & SIDEBAR
+   ========================================================= */
+[data-theme="white"] .hrmssidebar,
+body.theme-white .hrmssidebar {
+  background: #ffffff !important;
+  border-right: 1px solid #e2e8f0 !important;
+  box-shadow: 2px 0 12px rgba(15, 23, 42, 0.03) !important;
+}
+
+[data-theme="white"] .menuBlock,
+body.theme-white .menuBlock {
+  border-bottom: 1px solid #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+[data-theme="white"] .hrmsmenuHeader,
+body.theme-white .hrmsmenuHeader {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+}
+
+[data-theme="white"] .hrmssidebar .hrmsmenuHeader:hover,
+body.theme-white .hrmssidebar .hrmsmenuHeader:hover {
+  background-color: #f8fafc !important;
+  color: #2563eb !important;
+}
+
+[data-theme="white"] .submenu,
+body.theme-white .submenu {
+  background: #ffffff !important;
+}
+
+[data-theme="white"] .hrmssubmenuItem,
+body.theme-white .hrmssubmenuItem {
+  background-color: #ffffff !important;
+  color: #475569 !important;
+  font-weight: 600 !important;
+  border-left: 3px solid transparent !important;
+  transition: all 0.2s ease !important;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+
+[data-theme="white"] .hrmssubmenuItem:hover,
+body.theme-white .hrmssubmenuItem:hover {
+  background-color: #f1f5f9 !important;
+  color: #2563eb !important;
+}
+
+[data-theme="white"] .hrmssubmenuItem.active,
+body.theme-white .hrmssubmenuItem.active {
+  background-color: #eff6ff !important;
+  color: #1d4ed8 !important;
+  border-left: 3px solid #2563eb !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="white"] .rightContent,
+body.theme-white .rightContent {
+  background-color: #f8fafc !important;
+}
+
+[data-theme="white"] .resizer,
+body.theme-white .resizer {
+  background-color: #e2e8f0 !important;
+}

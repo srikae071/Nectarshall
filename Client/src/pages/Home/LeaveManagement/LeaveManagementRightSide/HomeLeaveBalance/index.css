@@ -1,201 +1,108 @@
-/* =========================
-   PAGE
-========================= */
-
+/* MAIN CONTAINER */
 .LeaveBalanceContainer {
-  padding: 24px;
-  min-height: 100vh;
-
-  background: #e9e5e5;
-
-  font-family: "Inter", "Segoe UI", sans-serif;
-
-  box-sizing: border-box;
-  overflow-x: hidden;
+  padding: 24px 32px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(15, 23, 42, 0.04);
+  margin: 24px;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-/* =========================
-   TITLE
-========================= */
-/* border: 1px solid #000; */
+/* TITLE */
 .LeaveBalanceTitle {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
-
-  color: #111827;
-
-  margin-bottom: 28px;
+  color: #0f172a;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f1f5f9;
+  letter-spacing: -0.01em;
 }
 
-/* =========================
-   ROW
-========================= */
-
+/* ROW (2 PERFECTLY LEVEL SYNCED FIELDS) */
 .LeaveBalanceRow {
-  display: grid;
-
-  grid-template-columns: repeat(2, 1fr);
-
-  gap: 18px 24px;
-
-  width: 100%;
+  display: flex;
+  gap: 36px;
+  margin-bottom: 16px;
+  align-items: center;
 }
 
-/* =========================
-   FIELD
-========================= */
-
+/* FIELD */
 .LeaveBalanceField {
   display: flex;
   align-items: center;
-
-  gap: 10px;
-
+  gap: 12px;
+  flex: 1;
   min-width: 0;
 }
 
-/* =========================
-   LABEL
-========================= */
-
+/* LABEL - FIXED WIDTH SO INPUTS ALIGN PERFECTLY ON LEFT */
 .LeaveBalanceField label {
-  width: 130px;
-
-  flex-shrink: 0;
-
-  font-size: 13px;
+  width: 120px;
+  font-size: 13.5px;
   font-weight: 600;
-
-  color: #374151;
+  color: #334155;
+  flex-shrink: 0;
+  margin: 0;
+  text-align: left;
 }
 
-/* =========================
-   INPUTS
-========================= */
-
+/* INPUT */
 .LeaveBalanceInput {
   flex: 1;
-  padding: 12px;
-  border: 1px solid #000;
-
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+  height: 38px;
+  box-sizing: border-box;
+  padding: 0 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #0f172a;
+  background-color: #ffffff;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-/* =========================
-   FOCUS
-========================= */
+.LeaveBalanceInput.ReadOnlyInput {
+  background-color: #f8fafc;
+  color: #475569;
+  font-weight: 700;
+  border-color: #e2e8f0;
+}
+
+/* CUSTOM SELECT - UNCLIPPED & LEVEL */
+select.LeaveSelectInput {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 15px;
+  padding-right: 36px !important;
+  cursor: pointer;
+  line-height: normal;
+}
 
 .LeaveBalanceInput:focus {
-  outline: none;
-
-  border-color: #991b1b;
-
-  box-shadow: 0 0 0 3px rgba(153, 27, 27, 0.12);
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
-/* =========================
-   SELECT
-========================= */
-
-select.LeaveBalanceInput {
-  appearance: none;
-
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3e%3cpath d='M5 7l5 5 5-5' stroke='%236b7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
-
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 15px;
-
-  padding-right: 34px;
-}
-
-/* =========================
-   BUTTONS
-========================= */
-
-.LeaveBalanceActions {
-  display: flex;
-  justify-content: flex-end;
-
-  gap: 12px;
-
-  margin-top: 28px;
-}
-
-.LeaveBalanceSave,
-.LeaveBalanceCancel {
-  min-width: 110px;
-
-  height: 40px;
-
-  border: none;
-  border-radius: 10px;
-
-  font-size: 13px;
-  font-weight: 600;
-
-  cursor: pointer;
-
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.2s ease;
-}
-
-/* SAVE BUTTON */
-
-.LeaveBalanceSave {
-  background: linear-gradient(180deg, #e9e4e4, #f5f2f2);
-
-  color: rgb(10, 10, 10);
-}
-
-.LeaveBalanceSave:hover {
-  transform: translateY(-1px);
-
-  box-shadow: 0 6px 14px rgba(127, 29, 29, 0.22);
-}
-
-/* CANCEL BUTTON */
-
-.LeaveBalanceCancel {
-  background: #e5e7eb;
-  color: #111827;
-}
-
-.LeaveBalanceCancel:hover {
-  background: #d1d5db;
-}
-
-/* =========================
-   RESPONSIVE
-========================= */
-
+/* RESPONSIVE */
 @media (max-width: 900px) {
-  .LeaveBalanceContainer {
-    padding: 16px;
-  }
-
   .LeaveBalanceRow {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
   }
-
   .LeaveBalanceField {
     flex-direction: column;
     align-items: flex-start;
+    gap: 6px;
   }
-
   .LeaveBalanceField label {
-    width: 100%;
-  }
-
-  .LeaveBalanceActions {
-    flex-direction: column;
-  }
-
-  .LeaveBalanceSave,
-  .LeaveBalanceCancel {
     width: 100%;
   }
 }

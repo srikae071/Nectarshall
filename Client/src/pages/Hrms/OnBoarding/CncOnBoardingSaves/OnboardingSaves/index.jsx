@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import CncLeftLayout from "../../../../Cnc/CncLeftLayout";
+import Hrmsleftlayout from "../../../Hrmsleftlayout";
 import DashboardLayout from "../../../../Dashboard/DashboardLayout";
 import AccountsLayout from "../../../../Accounts/AccountsLayout";
 import RegularForm from "../../../../../components/Layouts/FormLayouts/RegularForm";
@@ -18,6 +19,7 @@ function OnBoardingSaves() {
     source === "operations" || searchParams.get("source") === "operations";
   const isAccounts =
     source === "accounts" || searchParams.get("source") === "accounts";
+  const isCnc = source === "cnc" || searchParams.get("source") === "cnc";
   const { id } = useParams();
   const [expanded, setExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState("Client Contract Deliverables");
@@ -37,7 +39,9 @@ function OnBoardingSaves() {
     ? AccountsLayout
     : isOperations
     ? DashboardLayout
-    : CncLeftLayout;
+    : isCnc
+    ? CncLeftLayout
+    : Hrmsleftlayout;
 
   const [formData, setFormData] = useState({
     clientId: "",

@@ -1,0 +1,240 @@
+.vendorLoginContainer {
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0369a1 100%);
+  padding: 20px;
+  box-sizing: border-box;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.vendorLoginCard {
+  width: 100%;
+  max-width: 450px;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 32px 28px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.vendorLoginHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.vendorLoginLogo {
+  height: 48px;
+  object-fit: contain;
+  margin-bottom: 8px;
+}
+
+.vendorBadgeHeader {
+  background: #e0f2fe;
+  color: #0284c7;
+  border: 1px solid #bae6fd;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+.vendorLoginTitle {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.vendorLoginSubtitle {
+  margin: 6px 0 0 0;
+  font-size: 13.5px;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.vendorErrorAlert {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.vendorSuccessAlert {
+  background: #dcfce7;
+  border: 1px solid #bbf7d0;
+  color: #15803d;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.vendorLoginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.vendorFormGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.vendorFormGroup label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.vendorPasswordWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.vendorInput {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+  color: #0f172a;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+}
+
+.vendorInput:focus {
+  border-color: #0284c7;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+.vendorTogglePasswordBtn {
+  position: absolute;
+  right: 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+  opacity: 0.7;
+}
+
+.vendorSubmitBtn {
+  width: 100%;
+  padding: 12px;
+  background: #0284c7;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+  margin-top: 4px;
+}
+
+.vendorSubmitBtn:hover {
+  background: #0369a1;
+}
+
+.vendorSubmitBtn:active {
+  transform: scale(0.99);
+}
+
+.vendorHintBox {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.vendorHintTitle {
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  font-size: 12.5px;
+  color: #334155;
+}
+
+.vendorProfileChips {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.vendorChip {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.vendorChip:hover {
+  border-color: #0284c7;
+  color: #0284c7;
+}
+
+.vendorChip.active {
+  border-color: #0284c7;
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.vendorFooterNav {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.vendorNavBtn {
+  width: 100%;
+  padding: 9px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #0f172a;
+  font-weight: 600;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vendorNavBtn:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.vendorNavBtn.secondary {
+  border-color: transparent;
+  background: transparent;
+  color: #64748b;
+}
+
+.vendorNavBtn.secondary:hover {
+  color: #0f172a;
+  text-decoration: underline;
+}

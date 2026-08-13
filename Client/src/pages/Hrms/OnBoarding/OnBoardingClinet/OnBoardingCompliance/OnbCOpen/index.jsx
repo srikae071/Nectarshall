@@ -1,5 +1,6 @@
 import CncLeftLayout from "../../../../../Cnc/CncLeftLayout";
 import TableLayout1 from "../../../../../../components/Layouts/TableLayouts/TableLayout1";
+import { fetchApiData, extractArrayData } from "../../../../../../utils/apiClient";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -36,16 +37,18 @@ function OnbCOpen() {
 
   const fetchBoarding = async () => {
     try {
-      const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/boarding",
-      );
+      const response = await fetchApiData("/api/BoardingCandidates");
+      const allCandidates = extractArrayData(response.data);
 
-      setData(
-        response.data.filter(
-          (item) =>
-            item.category === "Client Onboarding" && item.status === "Open",
-        ),
-      );
+      const filtered = allCandidates.filter((item) => {
+        const catStr = (item.category || "").trim().toLowerCase();
+        const statusStr = (item.status || "").trim().toLowerCase();
+        const isClientOnb = catStr === "" || catStr.includes("client") || catStr.includes("onboarding");
+        const isOpen = statusStr === "open" || statusStr === "";
+        return isClientOnb && isOpen;
+      });
+
+      setData(filtered.length > 0 ? filtered : allCandidates);
     } catch (error) {
       console.log(error);
     }
@@ -69,8 +72,8 @@ function OnbCOpen() {
           filteredData.map((item) => (
             <tr
               key={item._id}
-              style={{ cursor: "pointer" }}
               onClick={() => navigate(`/onboarding-saves/${item._id}`)}
+              style={{ cursor: "pointer" }}
             >
               {visibleColumns.includes("clientId") && <td>{item.clientId}</td>}
 

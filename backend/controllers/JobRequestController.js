@@ -156,9 +156,6 @@ exports.sendCandidateEmail = async (req, res) => {
         message: "Record not found",
       });
     }
-    console.log("EMAIL:", request.email);
-    console.log("CASE ID:", request.caseId);
-    console.log("FIRST NAME:", request.firstName);
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -167,19 +164,44 @@ exports.sendCandidateEmail = async (req, res) => {
         pass: process.env.EMAIL_PASS,
       },
     });
-    console.log("ENV USER:", process.env.EMAIL_USER);
-    console.log("ENV PASS:", process.env.EMAIL_PASS);
 
     const candidateLink = `https://purple-sand-0241d5e00.7.azurestaticapps.net/candidate-form/${request.caseId}`;
 
-    console.log("EMAIL:", request.email);
-    console.log("REQUEST:", request);
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: request.email,
-      subject: "Complete Candidate Form",
-      html: `
-          <h3>Hello ${request.firstName}</h3>
+    const recipientsMap = new Map();
+
+    if (request.email && request.email.trim()) {
+      recipientsMap.set(request.email.trim().toLowerCase(), {
+        email: request.email.trim(),
+        name: request.firstName || "Candidate",
+      });
+    }
+
+    if (Array.isArray(request.candidates) && request.candidates.length > 0) {
+      request.candidates.forEach((c) => {
+        if (c.email && c.email.trim()) {
+          recipientsMap.set(c.email.trim().toLowerCase(), {
+            email: c.email.trim(),
+            name: c.name || request.firstName || "Candidate",
+          });
+        }
+      });
+    }
+
+    const recipientList = Array.from(recipientsMap.values());
+
+    if (recipientList.length === 0) {
+      return res.status(400).json({
+        message: "No recipient email addresses found for this request.",
+      });
+    }
+
+    for (const recipient of recipientList) {
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: recipient.email,
+        subject: "Complete Candidate Form",
+        html: `
+          <h3>Hello ${recipient.name}</h3>
 
           <p>Please complete your onboarding form.</p>
 
@@ -187,10 +209,11 @@ exports.sendCandidateEmail = async (req, res) => {
             Open Candidate Form
           </a>
         `,
-    });
+      });
+    }
 
     res.json({
-      message: "Email Sent",
+      message: `Emails Sent Successfully to ${recipientList.length} candidate(s)`,
     });
   } catch (error) {
     console.log("EMAIL ERROR:", error);

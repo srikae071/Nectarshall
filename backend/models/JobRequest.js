@@ -27,6 +27,14 @@ const JobRequestSchema = new mongoose.Schema(
     email: String,
     contactNumber: String,
 
+    candidates: [
+      {
+        candidateId: { type: String },
+        name: { type: String },
+        email: { type: String },
+      },
+    ],
+
     modernSlavery: String,
     legalBarrier: String,
     medicalLimitations: String,

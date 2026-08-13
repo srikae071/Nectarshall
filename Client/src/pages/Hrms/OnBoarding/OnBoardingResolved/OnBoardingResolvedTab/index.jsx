@@ -1,4 +1,4 @@
-import CncLeftLayout from "../../../../Cnc/CncLeftLayout";
+import Hrmsleftlayout from "../../../Hrmsleftlayout";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -35,7 +35,7 @@ function OnBoardingResolvedTab() {
     navigate(`/OnBoardingResolvedSaves/${item._id}`);
   };
   return (
-    <CncLeftLayout>
+    <Hrmsleftlayout>
       <div className="Openhome">
         <div>
           <h3 className="openheading">Resolved </h3>
@@ -82,7 +82,7 @@ function OnBoardingResolvedTab() {
           © Copyright 2023 Enhance Services - All Rights Reserved.
         </div> */}
       </div>
-    </CncLeftLayout>
+    </Hrmsleftlayout>
   );
 }
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import CncLeftLayout from "../../../../Cnc/CncLeftLayout";
+import Hrmsleftlayout from "../../../Hrmsleftlayout";
 import axios from "axios";
 import "./index.css";
 
@@ -318,7 +318,7 @@ function OnBoardingResolvesSaves() {
     }
   };
   return (
-    <CncLeftLayout>
+    <Hrmsleftlayout>
       <div className="CreateContainer">
         <div className="SectionCard">
           <h3>1. Preliminary Information</h3>
@@ -1248,7 +1248,7 @@ function OnBoardingResolvesSaves() {
           </>
         )}
       </div>
-    </CncLeftLayout>
+    </Hrmsleftlayout>
   );
 }
 export default OnBoardingResolvesSaves;

@@ -250,7 +250,7 @@ function Home() {
                   borderRadius: "8px",
                   boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
                   padding: "12px 14px",
-                  width: "200px",
+                  width: "210px",
                   zIndex: 9999,
                   color: "#0f172a",
                 }}
@@ -261,6 +261,33 @@ function Home() {
                 <div style={{ fontSize: "12px", color: "#64748b", marginBottom: "12px" }}>
                   Role: <strong>{user?.role}</strong>
                 </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowProfileMenu(false);
+                    navigate("/main-window");
+                  }}
+                  style={{
+                    width: "100%",
+                    padding: "8px",
+                    background: "linear-gradient(135deg, #0284c7 0%, #0369a1 100%)",
+                    color: "#ffffff",
+                    border: "none",
+                    borderRadius: "6px",
+                    fontWeight: "700",
+                    cursor: "pointer",
+                    fontSize: "13px",
+                    marginBottom: "8px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "6px",
+                  }}
+                >
+                  🪟 Main Window
+                </button>
+
                 <button
                   type="button"
                   onClick={handleLogout}

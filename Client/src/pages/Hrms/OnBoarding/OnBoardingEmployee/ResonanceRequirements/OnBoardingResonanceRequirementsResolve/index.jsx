@@ -1,4 +1,4 @@
-import CncLeftLayout from "../../../../../Cnc/CncLeftLayout";
+import Hrmsleftlayout from "../../../../Hrmsleftlayout";
 import "./index.css";
 
 const data = [
@@ -28,7 +28,7 @@ const data = [
 
 function OnBoardingResonanceRequirementsResolve() {
   return (
-    <CncLeftLayout>
+    <Hrmsleftlayout>
       <div className="Openhome">
         <div>
           <h3 className="openheading">Resolved Resonance Requirements cases</h3>
@@ -62,7 +62,7 @@ function OnBoardingResonanceRequirementsResolve() {
           © Copyright 2023 Enhance Services - All Rights Reserved.
         </div> */}
       </div>
-    </CncLeftLayout>
+    </Hrmsleftlayout>
   );
 }
 

@@ -124,3 +124,76 @@
     padding: 5px;
   }
 }
+
+/* =========================================================
+   WHITE THEME EXECUTIVE OVERRIDES FOR LEAVE CALENDAR
+   ========================================================= */
+[data-theme="white"] .calendar-container,
+body.theme-white .calendar-container {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05) !important;
+}
+
+[data-theme="white"] .calendar-title,
+body.theme-white .calendar-title {
+  background-color: #ffffff !important;
+  border-bottom: 2px solid #f1f5f9 !important;
+  padding: 16px 24px !important;
+}
+
+[data-theme="white"] .calendar-title h3,
+body.theme-white .calendar-title h3 {
+  color: #0f172a !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="white"] .calendar-header,
+body.theme-white .calendar-header {
+  background-color: #f8fafc !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+[data-theme="white"] .calendar-header h2,
+body.theme-white .calendar-header h2 {
+  color: #0f172a !important;
+  background-color: transparent !important;
+  font-weight: 700 !important;
+}
+
+[data-theme="white"] .controls button,
+body.theme-white .controls button {
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="white"] .controls button:hover,
+body.theme-white .controls button:hover {
+  background: #e2e8f0 !important;
+}
+
+[data-theme="white"] .calendar-grid.header div,
+body.theme-white .calendar-grid.header div {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  border-right: 1px solid #e2e8f0 !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+}
+
+[data-theme="white"] .day,
+body.theme-white .day,
+[data-theme="white"] .empty,
+body.theme-white .empty {
+  border: 1px solid #f1f5f9 !important;
+  background-color: #ffffff !important;
+  color: #334155 !important;
+}
+
+[data-theme="white"] .day:hover,
+body.theme-white .day:hover {
+  background: #eff6ff !important;
+}
