@@ -7,6 +7,8 @@ import "./index.css";
 
 function EmployeRequestSave() {
   const [showFullForm, setShowFullForm] = useState(false);
+  const [showCandidatesList, setShowCandidatesList] = useState(false);
+  const [activeCandTabIdx, setActiveCandTabIdx] = useState(0);
   const [formData, setFormData] = useState({
     caseId: "",
     requesterName: "",
@@ -147,6 +149,7 @@ function EmployeRequestSave() {
   }, []);
 
   const handleAddCandidate = () => {
+    setShowCandidatesList(true);
     setFormData((prev) => {
       const list =
         Array.isArray(prev.candidates) && prev.candidates.length > 0
@@ -186,6 +189,9 @@ function EmployeRequestSave() {
   const handleRemoveCandidate = (index) => {
     setFormData((prev) => {
       const list = (prev.candidates || []).filter((_, i) => i !== index);
+      if (list.length === 0) {
+        setShowCandidatesList(false);
+      }
       const reindexed = list.map((c, i) => ({
         ...c,
         candidateId: `CND-${String(i + 1).padStart(3, "0")}`,
@@ -202,14 +208,11 @@ function EmployeRequestSave() {
       const response = await fetchApiData(`/api/jobrequests/${id}`);
       const data = response.data;
 
-      if (!Array.isArray(data.candidates) || data.candidates.length === 0) {
-        data.candidates = [
-          {
-            candidateId: "CND-001",
-            name: `${data.firstName || ""} ${data.lastName || ""}`.trim() || data.requesterName || "",
-            email: data.email || "",
-          },
-        ];
+      if (Array.isArray(data.candidates) && data.candidates.length > 0) {
+        setShowCandidatesList(true);
+      } else {
+        data.candidates = [];
+        setShowCandidatesList(false);
       }
 
       setFormData(data);
@@ -359,6 +362,39 @@ function EmployeRequestSave() {
       console.log(error);
     }
   };
+
+  const candidateList =
+    Array.isArray(formData.candidates) && formData.candidates.length > 0
+      ? formData.candidates
+      : [
+          {
+            candidateId: "CND-001",
+            name: `${formData.firstName || ""} ${formData.lastName || ""}`.trim() || formData.requesterName || "Candidate",
+            email: formData.email || "",
+            submitted: formData.candidateCompleted || false,
+            modernSlaveryCandidateForm: formData.modernSlaveryCandidateForm,
+            legalBarrierCandidateForm: formData.legalBarrierCandidateForm,
+            medicalLimitationsCandidateForm: formData.medicalLimitationsCandidateForm,
+            workRightsCandidateForm: formData.workRightsCandidateForm,
+            securityLicenceCandidateForm: formData.securityLicenceCandidateForm,
+            drivingLicenceCandidateForm: formData.drivingLicenceCandidateForm,
+            firstAidCandidateForm: formData.firstAidCandidateForm,
+            cprCandidateForm: formData.cprCandidateForm,
+            workingWithChildrenCandidateForm: formData.workingWithChildrenCandidateForm,
+            trafficManagementCandidateForm: formData.trafficManagementCandidateForm,
+            whiteCardCandidateForm: formData.whiteCardCandidateForm,
+            yellowCardCandidateForm: formData.yellowCardCandidateForm,
+            bankName: formData.bankName,
+            bankAccount: formData.bankAccount,
+            bsb: formData.bsb,
+            taxFileNumber: formData.taxFileNumber,
+            superFundName: formData.superFundName,
+            superMemberNumber: formData.superMemberNumber,
+          },
+        ];
+
+  const currentCand = candidateList[activeCandTabIdx] || candidateList[0];
+
   return (
     <HrmsLeftLayout>
       <div className="CreateContainer">
@@ -490,77 +526,56 @@ function EmployeRequestSave() {
             </div>
           </div>
 
-          {/* DYNAMIC CANDIDATE / EMPLOYEE ENTRIES */}
-          <div style={{ marginTop: "18px", marginBottom: "18px", borderTop: "1px dashed #cbd5e1", paddingTop: "14px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-              <h4 style={{ margin: 0, fontSize: "14px", fontWeight: "700", color: "#0f172a" }}>
+          {/* DYNAMIC CANDIDATE / EMPLOYEE ENTRIES - VISIBLE ONLY WHEN + Add Employee IS CLICKED */}
+          {showCandidatesList && formData.candidates && formData.candidates.length > 0 && (
+            <div style={{ marginTop: "18px", marginBottom: "18px", borderTop: "1px dashed #cbd5e1", paddingTop: "14px" }}>
+              <h4 style={{ margin: "0 0 12px 0", fontSize: "14px", fontWeight: "700", color: "#0f172a" }}>
                 👥 Candidate / Employee List
               </h4>
-              <button
-                type="button"
-                onClick={handleAddCandidate}
-                style={{
-                  background: "#047857",
-                  color: "#ffffff",
-                  border: "none",
-                  borderRadius: "6px",
-                  padding: "5px 12px",
-                  fontWeight: "700",
-                  cursor: "pointer",
-                  fontSize: "12px",
-                }}
-              >
-                + Add Employee
-              </button>
-            </div>
 
-            {(formData.candidates && formData.candidates.length > 0
-              ? formData.candidates
-              : [{ candidateId: "CND-001", name: formData.firstName || "", email: formData.email || "" }]
-            ).map((cand, candIdx) => (
-              <div
-                key={candIdx}
-                className="CreateRow"
-                style={{
-                  background: "#f8fafc",
-                  padding: "12px",
-                  borderRadius: "8px",
-                  border: "1px solid #cbd5e1",
-                  marginBottom: "10px",
-                  alignItems: "center",
-                  display: "flex",
-                  gap: "12px",
-                }}
-              >
-                <div className="CreateField" style={{ flex: "0 0 160px" }}>
-                  <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155" }}>Employee / Candidate ID</label>
-                  <input
-                    value={cand.candidateId || `CND-${String(candIdx + 1).padStart(3, "0")}`}
-                    readOnly
-                    style={{ background: "#e2e8f0", fontWeight: "700", color: "#0f172a" }}
-                  />
-                </div>
+              {formData.candidates.map((cand, candIdx) => (
+                <div
+                  key={candIdx}
+                  className="CreateRow"
+                  style={{
+                    background: "#f8fafc",
+                    padding: "12px",
+                    borderRadius: "8px",
+                    border: "1px solid #cbd5e1",
+                    marginBottom: "10px",
+                    alignItems: "center",
+                    display: "flex",
+                    gap: "12px",
+                  }}
+                >
+                  <div className="CreateField" style={{ flex: "0 0 160px" }}>
+                    <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155" }}>Employee / Candidate ID</label>
+                    <input
+                      value={cand.candidateId || `CND-${String(candIdx + 1).padStart(3, "0")}`}
+                      readOnly
+                      style={{ background: "#e2e8f0", fontWeight: "700", color: "#0f172a" }}
+                    />
+                  </div>
 
-                <div className="CreateField" style={{ flex: 1 }}>
-                  <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155" }}>Employee Name *</label>
-                  <input
-                    value={cand.name || ""}
-                    onChange={(e) => handleCandidateChange(candIdx, "name", e.target.value)}
-                    placeholder="Enter employee name..."
-                  />
-                </div>
+                  <div className="CreateField" style={{ flex: 1 }}>
+                    <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155" }}>Employee Name *</label>
+                    <input
+                      value={cand.name || ""}
+                      onChange={(e) => handleCandidateChange(candIdx, "name", e.target.value)}
+                      placeholder="Enter employee name..."
+                    />
+                  </div>
 
-                <div className="CreateField" style={{ flex: 1 }}>
-                  <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155" }}>Employee Email ID *</label>
-                  <input
-                    type="email"
-                    value={cand.email || ""}
-                    onChange={(e) => handleCandidateChange(candIdx, "email", e.target.value)}
-                    placeholder="Enter email ID..."
-                  />
-                </div>
+                  <div className="CreateField" style={{ flex: 1 }}>
+                    <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155" }}>Employee Email ID *</label>
+                    <input
+                      type="email"
+                      value={cand.email || ""}
+                      onChange={(e) => handleCandidateChange(candIdx, "email", e.target.value)}
+                      placeholder="Enter email ID..."
+                    />
+                  </div>
 
-                {formData.candidates && formData.candidates.length > 1 && (
                   <button
                     type="button"
                     onClick={() => handleRemoveCandidate(candIdx)}
@@ -578,10 +593,10 @@ function EmployeRequestSave() {
                   >
                     🗑️
                   </button>
-                )}
-              </div>
-            ))}
-          </div>
+                </div>
+              ))}
+            </div>
+          )}
           <div className="EmployeeSaveNotesContainer">
             <label>Short Description</label>
 
@@ -621,10 +636,90 @@ function EmployeRequestSave() {
 
         {showFullForm && (
           <>
-            <div className="SectionCard">
-              <h3>2. Barriers To Employment (Self Declaration)</h3>
+            {/* CANDIDATE SELECTOR TABS BAR */}
+            {candidateList.length > 0 && (
+              <div style={{ background: "#ffffff", padding: "16px 20px", borderRadius: "10px", border: "1px solid #e2e8f0", marginBottom: "20px", boxShadow: "0 2px 6px rgba(0,0,0,0.03)" }}>
+                <div style={{ fontSize: "13px", fontWeight: "700", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "10px" }}>
+                  📂 Candidate Onboarding Forms ({candidateList.length}):
+                </div>
+                <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                  {candidateList.map((cand, idx) => {
+                    const isSelected = activeCandTabIdx === idx;
+                    const isSubmitted = cand.submitted;
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setActiveCandTabIdx(idx)}
+                        style={{
+                          padding: "8px 18px",
+                          borderRadius: "20px",
+                          border: isSelected ? "2px solid #0284c7" : "1px solid #cbd5e1",
+                          background: isSelected ? "#e0f2fe" : "#ffffff",
+                          color: isSelected ? "#0369a1" : "#475569",
+                          fontWeight: "700",
+                          fontSize: "13px",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          transition: "all 0.2s ease",
+                        }}
+                      >
+                        <span>👤 {cand.candidateId || `CND-${String(idx + 1).padStart(3, "0")}`}</span>
+                        <span>({cand.name || "Candidate"})</span>
+                        <span
+                          style={{
+                            fontSize: "11px",
+                            padding: "2px 7px",
+                            borderRadius: "10px",
+                            background: isSubmitted ? "#dcfce7" : "#fef3c7",
+                            color: isSubmitted ? "#15803d" : "#b45309",
+                            fontWeight: "700",
+                          }}
+                        >
+                          {isSubmitted ? "Submitted" : "Pending"}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
-              {/* Modern Slavery */}
+            {!currentCand.submitted ? (
+              <div
+                style={{
+                  background: "#fffbe6",
+                  border: "1px solid #ffe58f",
+                  borderRadius: "10px",
+                  padding: "24px 28px",
+                  color: "#d48806",
+                  fontWeight: "700",
+                  fontSize: "15px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "14px",
+                  marginTop: "16px",
+                  marginBottom: "24px",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                }}
+              >
+                <span style={{ fontSize: "28px" }}>⚠️</span>
+                <div>
+                  <div style={{ fontSize: "16px", fontWeight: "800", marginBottom: "4px" }}>
+                    Candidate still did not submit the data.
+                  </div>
+                  <div style={{ fontSize: "13.5px", color: "#8c6b00", fontWeight: "500" }}>
+                    Candidate <strong>{currentCand.candidateId || `CND-${String(activeCandTabIdx + 1).padStart(3, "0")}`} ({currentCand.name || "Candidate"})</strong> has not submitted their onboarding form response yet.
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+            <div className="SectionCard">
+              <h3>2. Barriers To Employment (Self Declaration) - {currentCand.candidateId || "CND-001"}</h3>
+
               {/* Modern Slavery */}
               <div className="BarrierRow">
                 <label>Modern Slavery *</label>
@@ -632,12 +727,12 @@ function EmployeRequestSave() {
                 {/* Candidate Answer */}
                 <span
                   className={
-                    formData.modernSlaveryCandidateForm === "Yes"
+                    (currentCand.modernSlaveryCandidateForm || formData.modernSlaveryCandidateForm) === "Yes"
                       ? "CandidateAnswerYes"
                       : "CandidateAnswerNo"
                   }
                 >
-                  {formData.modernSlaveryCandidateForm}
+                  {currentCand.modernSlaveryCandidateForm || formData.modernSlaveryCandidateForm}
                 </span>
 
                 {/* HR Decision */}
@@ -1461,6 +1556,8 @@ function EmployeRequestSave() {
                 </button> */}
                 </div>
               </div>
+            )}
+            </>
             )}
             <div className="CreateFooter">
               <button className="CreateBtn" onClick={handleFinalSave}>

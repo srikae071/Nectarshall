@@ -9,6 +9,7 @@ const {
   getJobRequestByCaseId,
   updateJobRequest,
   updateJobRequestByCaseId,
+  submitCandidateFormById,
   sendCandidateEmail,
   sendCandidateForm2Email,
   getInterviewStats,
@@ -21,6 +22,7 @@ router.post("/", createJobRequest);
 router.get("/", getAllJobRequests);
 router.get("/case/:caseId", getJobRequestByCaseId);
 router.get("/:id", getJobRequestById);
+router.put("/case/:caseId/candidate/:candId", submitCandidateFormById);
 router.put("/case/:caseId", updateJobRequestByCaseId);
 router.put("/:id", updateJobRequest);
 router.post("/send-email/:caseId", sendCandidateEmail);

@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-
-import axios from "axios";
+import { useParams, useSearchParams } from "react-router-dom";
+import { fetchApiData, sendApiData } from "../../../../../utils/apiClient";
 import CandiateFormNav from "./CandiateFormNav";
 import "./index.css";
 
 function CandidateForm() {
   const [submitted, setSubmitted] = useState(false);
+  const [searchParams] = useSearchParams();
+  const candId = searchParams.get("candId") || "CND-001";
+  const { id } = useParams();
+
   const [formData, setFormData] = useState({
     caseId: "",
     requesterName: "",
@@ -73,9 +76,16 @@ function CandidateForm() {
     trafficManagementCandidateForm: "",
     whiteCardCandidateForm: "",
     yellowCardCandidateForm: "",
+
+    bankName: "",
+    bankAccount: "",
+    bsb: "",
+    taxFileNumber: "",
+    superFundName: "",
+    superMemberNumber: "",
+    longServiceLeaveId: "",
   });
 
-  const { id } = useParams();
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -83,71 +93,52 @@ function CandidateForm() {
     });
   };
 
-  // const handleCaseSave = () => {
-  //   if (!formData.requesterName) {
-  //     alert("Requester Name is mandatory");
-  //     return;
-  //   }
-
-  //   if (!formData.department) {
-  //     alert("Department is mandatory");
-  //     return;
-  //   }
-  // };
-
-  // const handleQualificationSave = () => {};
-  // const handleBarrierSave = () => {
-  //   if (!formData.modernSlavery) {
-  //     alert("Modern Slavery is mandatory");
-  //     return;
-  //   }
-
-  //   if (!formData.legalBarrier) {
-  //     alert("Legal Barrier is mandatory");
-  //     return;
-  //   }
-
-  //   if (!formData.medicalLimitations) {
-  //     alert("Medical Limitations is mandatory");
-  //     return;
-  //   }
-
-  //   if (!formData.workRights) {
-  //     alert("Work Rights is mandatory");
-  //     return;
-  //   }
-  // };
-
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [id, candId]);
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/case/${id}`,
-      );
-      console.log(response.data);
-      setFormData(response.data);
+      const response = await fetchApiData(`/api/jobrequests/case/${id}`);
+      const data = response.data;
+      setFormData(data);
+
+      if (Array.isArray(data.candidates)) {
+        const targetCand = data.candidates.find(
+          (c) => c.candidateId === candId || (candId === "CND-001" && !c.candidateId)
+        );
+        if (targetCand) {
+          if (targetCand.submitted) {
+            setSubmitted(true);
+          }
+          setFormData((prev) => ({
+            ...prev,
+            firstName: targetCand.name || prev.firstName,
+            email: targetCand.email || prev.email,
+            ...targetCand,
+          }));
+        }
+      }
     } catch (error) {
       console.log(error);
     }
   };
+
   const handleFinalSave = async () => {
     try {
-      await axios.put(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/case/${id}`,
+      await sendApiData(
+        `/api/jobrequests/case/${id}/candidate/${candId}`,
         {
           ...formData,
-          candidateCompleted: true,
-          status: "Open",
+          candidateId: candId,
         },
+        "put"
       );
       setSubmitted(true);
-
-      alert("Candidate Form Submitted Successfully");
+      alert(`Candidate Form (${candId}) Submitted Successfully`);
     } catch (error) {
       console.log(error);
+      alert("Error submitting candidate form. Please try again.");
     }
   };
   if (submitted) {

@@ -10,6 +10,7 @@ function OnBoardingResonanceRequirementsCreateNew() {
   const [showBarriers, setShowBarriers] = useState(false);
   const [showQualifications, setShowQualifications] = useState(false);
   const [showReferences, setShowReferences] = useState(false);
+  const [showCandidatesList, setShowCandidatesList] = useState(false);
   const [formData, setFormData] = useState({
     caseId: "",
     requesterName: "",
@@ -24,13 +25,7 @@ function OnBoardingResonanceRequirementsCreateNew() {
     email: "",
     contactNumber: "",
 
-    candidates: [
-      {
-        candidateId: "CND-001",
-        name: "",
-        email: "",
-      },
-    ],
+    candidates: [],
 
     modernSlavery: "",
     legalBarrier: "",
@@ -65,6 +60,7 @@ function OnBoardingResonanceRequirementsCreateNew() {
   });
 
   const handleAddCandidate = () => {
+    setShowCandidatesList(true);
     setFormData((prev) => {
       const list =
         Array.isArray(prev.candidates) && prev.candidates.length > 0
@@ -104,6 +100,9 @@ function OnBoardingResonanceRequirementsCreateNew() {
   const handleRemoveCandidate = (index) => {
     setFormData((prev) => {
       const list = (prev.candidates || []).filter((_, i) => i !== index);
+      if (list.length === 0) {
+        setShowCandidatesList(false);
+      }
       const reindexed = list.map((c, i) => ({
         ...c,
         candidateId: `CND-${String(i + 1).padStart(3, "0")}`,
@@ -447,77 +446,56 @@ function OnBoardingResonanceRequirementsCreateNew() {
               </div>
             </div>
 
-            {/* DYNAMIC CANDIDATE / EMPLOYEE ENTRIES */}
-            <div style={{ marginTop: "18px", marginBottom: "18px", borderTop: "1px dashed #cbd5e1", paddingTop: "14px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
-                <h4 style={{ margin: 0, fontSize: "14px", fontWeight: "700", color: "#0f172a" }}>
+            {/* DYNAMIC CANDIDATE / EMPLOYEE ENTRIES - VISIBLE ONLY WHEN + Add Employee IS CLICKED */}
+            {showCandidatesList && formData.candidates && formData.candidates.length > 0 && (
+              <div style={{ marginTop: "18px", marginBottom: "18px", borderTop: "1px dashed #cbd5e1", paddingTop: "14px" }}>
+                <h4 style={{ margin: "0 0 12px 0", fontSize: "14px", fontWeight: "700", color: "#0f172a" }}>
                   👥 Candidate / Employee List
                 </h4>
-                <button
-                  type="button"
-                  onClick={handleAddCandidate}
-                  style={{
-                    background: "#047857",
-                    color: "#ffffff",
-                    border: "none",
-                    borderRadius: "6px",
-                    padding: "5px 12px",
-                    fontWeight: "700",
-                    cursor: "pointer",
-                    fontSize: "12px",
-                  }}
-                >
-                  + Add Employee
-                </button>
-              </div>
 
-              {(formData.candidates && formData.candidates.length > 0
-                ? formData.candidates
-                : [{ candidateId: "CND-001", name: formData.firstName || "", email: formData.email || "" }]
-              ).map((cand, candIdx) => (
-                <div
-                  key={candIdx}
-                  className="CreateRow"
-                  style={{
-                    background: "#f8fafc",
-                    padding: "12px",
-                    borderRadius: "8px",
-                    border: "1px solid #cbd5e1",
-                    marginBottom: "10px",
-                    alignItems: "center",
-                    display: "flex",
-                    gap: "12px",
-                  }}
-                >
-                  <div className="CreateField" style={{ flex: "0 0 160px" }}>
-                    <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155" }}>Employee / Candidate ID</label>
-                    <input
-                      value={cand.candidateId || `CND-${String(candIdx + 1).padStart(3, "0")}`}
-                      readOnly
-                      style={{ background: "#e2e8f0", fontWeight: "700", color: "#0f172a" }}
-                    />
-                  </div>
+                {formData.candidates.map((cand, candIdx) => (
+                  <div
+                    key={candIdx}
+                    className="CreateRow"
+                    style={{
+                      background: "#f8fafc",
+                      padding: "12px",
+                      borderRadius: "8px",
+                      border: "1px solid #cbd5e1",
+                      marginBottom: "10px",
+                      alignItems: "center",
+                      display: "flex",
+                      gap: "12px",
+                    }}
+                  >
+                    <div className="CreateField" style={{ flex: "0 0 160px" }}>
+                      <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155" }}>Employee / Candidate ID</label>
+                      <input
+                        value={cand.candidateId || `CND-${String(candIdx + 1).padStart(3, "0")}`}
+                        readOnly
+                        style={{ background: "#e2e8f0", fontWeight: "700", color: "#0f172a" }}
+                      />
+                    </div>
 
-                  <div className="CreateField" style={{ flex: 1 }}>
-                    <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155" }}>Employee Name *</label>
-                    <input
-                      value={cand.name || ""}
-                      onChange={(e) => handleCandidateChange(candIdx, "name", e.target.value)}
-                      placeholder="Enter employee name..."
-                    />
-                  </div>
+                    <div className="CreateField" style={{ flex: 1 }}>
+                      <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155" }}>Employee Name *</label>
+                      <input
+                        value={cand.name || ""}
+                        onChange={(e) => handleCandidateChange(candIdx, "name", e.target.value)}
+                        placeholder="Enter employee name..."
+                      />
+                    </div>
 
-                  <div className="CreateField" style={{ flex: 1 }}>
-                    <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155" }}>Employee Email ID *</label>
-                    <input
-                      type="email"
-                      value={cand.email || ""}
-                      onChange={(e) => handleCandidateChange(candIdx, "email", e.target.value)}
-                      placeholder="Enter email ID..."
-                    />
-                  </div>
+                    <div className="CreateField" style={{ flex: 1 }}>
+                      <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155" }}>Employee Email ID *</label>
+                      <input
+                        type="email"
+                        value={cand.email || ""}
+                        onChange={(e) => handleCandidateChange(candIdx, "email", e.target.value)}
+                        placeholder="Enter email ID..."
+                      />
+                    </div>
 
-                  {formData.candidates && formData.candidates.length > 1 && (
                     <button
                       type="button"
                       onClick={() => handleRemoveCandidate(candIdx)}
@@ -535,10 +513,10 @@ function OnBoardingResonanceRequirementsCreateNew() {
                     >
                       🗑️
                     </button>
-                  )}
-                </div>
-              ))}
-            </div>
+                  </div>
+                ))}
+              </div>
+            )}
 
             <button className="CreateBtn" onClick={handlePreliminarySave}>
               Save & Continue

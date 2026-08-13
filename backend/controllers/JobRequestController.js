@@ -165,16 +165,7 @@ exports.sendCandidateEmail = async (req, res) => {
       },
     });
 
-    const candidateLink = `https://purple-sand-0241d5e00.7.azurestaticapps.net/candidate-form/${request.caseId}`;
-
     const recipientsMap = new Map();
-
-    if (request.email && request.email.trim()) {
-      recipientsMap.set(request.email.trim().toLowerCase(), {
-        email: request.email.trim(),
-        name: request.firstName || "Candidate",
-      });
-    }
 
     if (Array.isArray(request.candidates) && request.candidates.length > 0) {
       request.candidates.forEach((c) => {
@@ -182,8 +173,17 @@ exports.sendCandidateEmail = async (req, res) => {
           recipientsMap.set(c.email.trim().toLowerCase(), {
             email: c.email.trim(),
             name: c.name || request.firstName || "Candidate",
+            candidateId: c.candidateId || "CND-001",
           });
         }
+      });
+    }
+
+    if (recipientsMap.size === 0 && request.email && request.email.trim()) {
+      recipientsMap.set(request.email.trim().toLowerCase(), {
+        email: request.email.trim(),
+        name: request.firstName || "Candidate",
+        candidateId: "CND-001",
       });
     }
 
@@ -196,17 +196,19 @@ exports.sendCandidateEmail = async (req, res) => {
     }
 
     for (const recipient of recipientList) {
+      const candidateLink = `https://purple-sand-0241d5e00.7.azurestaticapps.net/candidate-form/${request.caseId}?candId=${recipient.candidateId}`;
+
       await transporter.sendMail({
         from: process.env.EMAIL_USER,
         to: recipient.email,
-        subject: "Complete Candidate Form",
+        subject: `Complete Candidate Form (${recipient.candidateId})`,
         html: `
           <h3>Hello ${recipient.name}</h3>
 
-          <p>Please complete your onboarding form.</p>
+          <p>Please complete your onboarding form for Candidate ID: <strong>${recipient.candidateId}</strong>.</p>
 
           <a href="${candidateLink}">
-            Open Candidate Form
+            Open Candidate Form (${recipient.candidateId})
           </a>
         `,
       });
@@ -221,6 +223,75 @@ exports.sendCandidateEmail = async (req, res) => {
     res.status(500).json({
       message: error.message,
     });
+  }
+};
+
+exports.submitCandidateFormById = async (req, res) => {
+  try {
+    const { caseId, candId } = req.params;
+    const formData = req.body;
+
+    const request = await JobRequest.findOne({ caseId });
+    if (!request) {
+      return res.status(404).json({ message: "Record not found" });
+    }
+
+    if (!Array.isArray(request.candidates)) {
+      request.candidates = [];
+    }
+
+    const targetCandId = candId || "CND-001";
+    const idx = request.candidates.findIndex(
+      (c) => c.candidateId === targetCandId || (targetCandId === "CND-001" && !c.candidateId)
+    );
+
+    const candData = {
+      candidateId: targetCandId,
+      name: formData.name || formData.firstName || "Candidate",
+      email: formData.email || "",
+      submitted: true,
+      submittedAt: new Date(),
+
+      modernSlaveryCandidateForm: formData.modernSlaveryCandidateForm,
+      legalBarrierCandidateForm: formData.legalBarrierCandidateForm,
+      medicalLimitationsCandidateForm: formData.medicalLimitationsCandidateForm,
+      workRightsCandidateForm: formData.workRightsCandidateForm,
+
+      securityLicenceCandidateForm: formData.securityLicenceCandidateForm,
+      drivingLicenceCandidateForm: formData.drivingLicenceCandidateForm,
+      firstAidCandidateForm: formData.firstAidCandidateForm,
+      cprCandidateForm: formData.cprCandidateForm,
+      workingWithChildrenCandidateForm: formData.workingWithChildrenCandidateForm,
+      trafficManagementCandidateForm: formData.trafficManagementCandidateForm,
+      whiteCardCandidateForm: formData.whiteCardCandidateForm,
+      yellowCardCandidateForm: formData.yellowCardCandidateForm,
+
+      bankName: formData.bankName,
+      bankAccount: formData.bankAccount,
+      bsb: formData.bsb,
+      taxFileNumber: formData.taxFileNumber,
+      superFundName: formData.superFundName,
+      superMemberNumber: formData.superMemberNumber,
+      longServiceLeaveId: formData.longServiceLeaveId,
+    };
+
+    if (idx !== -1) {
+      request.candidates[idx] = {
+        ...request.candidates[idx].toObject(),
+        ...candData,
+      };
+    } else {
+      request.candidates.push(candData);
+    }
+
+    request.candidateCompleted = true;
+    request.status = "Open";
+    await request.save();
+
+    res.json({ message: "Candidate Form Submitted Successfully", request });
+  } catch (error) {
+    console.log("SUBMIT CANDIDATE FORM ERROR:", error);
+    res.status(500).json({ message: error.message });
   }
 };
 exports.sendCandidateForm2Email = async (req, res) => {
