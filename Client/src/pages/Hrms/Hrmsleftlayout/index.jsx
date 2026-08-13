@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./index.css";
 import HrmsNavbar from "../HrmsNavbar";
@@ -173,10 +173,37 @@ const MenuItem = ({ item, level = 0, expandedMenus, setExpandedMenus }) => {
 };
 /* ================= MAIN LAYOUT ================= */
 function HrmsLeftLayout({ children }) {
-  // Start with all menus closed by default when navigating fresh
+  const location = useLocation();
   const [openMenus, setOpenMenus] = useState({});
-
   const [expandedMenus, setExpandedMenus] = useState({});
+
+  // Automatically expand parent section and child submenus for current active route
+  useEffect(() => {
+    const currentPath = location.pathname;
+    if (!currentPath || currentPath === "/") return;
+
+    const itemMatchesPath = (item) => {
+      if (item.path && item.path === currentPath) return true;
+      if (item.children) {
+        return item.children.some((child) => itemMatchesPath(child));
+      }
+      return false;
+    };
+
+    menuData.forEach((menu, index) => {
+      const hasMatch = menu.items.some((item) => itemMatchesPath(item));
+      if (hasMatch) {
+        setOpenMenus((prev) => ({ ...prev, [index]: true }));
+
+        menu.items.forEach((item) => {
+          if (item.children && itemMatchesPath(item)) {
+            const itemKey = item.label + 0;
+            setExpandedMenus((prev) => ({ ...prev, [itemKey]: true }));
+          }
+        });
+      }
+    });
+  }, [location.pathname]);
 
   const toggle = (index) => {
     setOpenMenus((prev) => ({
