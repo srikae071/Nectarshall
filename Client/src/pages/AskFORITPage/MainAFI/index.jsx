@@ -208,11 +208,30 @@ function MainAFI() {
 
         {/* BUTTONS */}
         <div className="CreateFooter">
-          <button className="CreateBtn" onClick={handleSave}>
+          <button
+            type="button"
+            className="CreateBtn btn-cancel"
+            onClick={() =>
+              setFormData({
+                requesterName: "",
+                category: "",
+                subCategory: "",
+                urgency: "",
+                shortDescription: "",
+                description: "",
+              })
+            }
+          >
+            Cancel
+          </button>
+
+          <button type="button" className="CreateBtn btn-save" onClick={handleSave}>
             Save
           </button>
 
-          <button className="CreateBtn">Cancel</button>
+          <button type="button" className="CreateBtn btn-submit" onClick={handleSave}>
+            Submit
+          </button>
         </div>
       </div>
     </>

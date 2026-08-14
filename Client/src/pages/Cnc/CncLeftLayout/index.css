@@ -21,14 +21,10 @@
   color: #f1f1f1;
 }
 
-/* .sidebar div {
-  padding: 5px;
-  cursor: pointer;
-} */
-
 .hrmssidebar .hrmsmenuHeader:hover {
   background-color: #e44d26;
 }
+
 .icon {
   font-size: 18px;
 }
@@ -42,10 +38,10 @@
   font-size: 14px;
   cursor: pointer;
   display: flex;
-  /* background-color: brown; */
   justify-content: space-between;
   background-color: #1e293b;
 }
+
 .hrmssubmenuItem:hover {
   background-color: #ed5934;
   color: #e7f0f4;
@@ -68,15 +64,14 @@
   display: flex;
   flex-direction: column;
   overflow: auto;
-  background-color: #e9e5e5;
-
-  /* min-height: 100vh; */
+  background-color: #ffffff;
 }
 
 .hrmssubmenuItem.active {
   background: #ea4104;
   color: #f5d2cc;
 }
+
 .resizer {
   width: 3px;
   cursor: col-resize;
@@ -85,4 +80,10 @@
 
 .resizer:hover {
   background: #adb9d3;
+}
+
+/* THEME OVERRIDES */
+[data-theme="green"] .rightContent,
+body.theme-green .rightContent {
+  background-color: #ffffff !important;
 }

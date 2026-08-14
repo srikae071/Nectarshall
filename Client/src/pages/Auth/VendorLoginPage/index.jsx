@@ -112,13 +112,6 @@ function VendorLoginPage() {
         <div className="vendorFooterNav">
           <button
             type="button"
-            className="vendorNavBtn"
-            onClick={() => navigate("/main-window")}
-          >
-            🪟 Back to Portal Selection (Main Window)
-          </button>
-          <button
-            type="button"
             className="vendorNavBtn secondary"
             onClick={() => navigate("/login")}
           >

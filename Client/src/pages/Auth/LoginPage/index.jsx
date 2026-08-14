@@ -100,6 +100,35 @@ function LoginPage() {
           <button type="submit" className="loginSubmitBtn">
             Sign In
           </button>
+
+          {/* ARE YOU A VENDOR PROMPT */}
+          <div
+            style={{
+              marginTop: "16px",
+              textAlign: "center",
+              fontSize: "13.5px",
+              color: "#475569",
+              fontWeight: "500",
+            }}
+          >
+            <span>Are you a vendor? </span>
+            <button
+              type="button"
+              onClick={() => navigate("/vendor-login")}
+              style={{
+                background: "none",
+                border: "none",
+                color: "#0284c7",
+                fontWeight: "700",
+                fontSize: "13.5px",
+                cursor: "pointer",
+                textDecoration: "underline",
+                padding: "0 4px",
+              }}
+            >
+              Yes
+            </button>
+          </div>
         </form>
 
         <div className="loginHintBox" style={{ marginTop: "20px", textAlign: "left" }}>
@@ -127,23 +156,6 @@ function LoginPage() {
               </button>
             ))}
           </div>
-        </div>
-
-        <div style={{ marginTop: "16px", borderTop: "1px solid #e2e8f0", paddingTop: "12px", textAlign: "center" }}>
-          <button
-            type="button"
-            onClick={() => navigate("/main-window")}
-            style={{
-              background: "transparent",
-              border: "none",
-              color: "#0284c7",
-              fontWeight: "700",
-              fontSize: "12.5px",
-              cursor: "pointer",
-            }}
-          >
-            🪟 Switch Portal (Main Window)
-          </button>
         </div>
       </div>
     </div>

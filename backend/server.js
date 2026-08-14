@@ -12,6 +12,7 @@ const complianceRoutes = require("./routes/complianceRoutes");
 const employeeRoutes = require("./routes/EmployeeRoutes");
 const boardingCandidatesRoutes = require("./routes/BoardingCandidatesRoutes");
 const mailRoutes = require("./routes/MailRoutes");
+const assignmentGroupRoutes = require("./routes/assignmentGroupRoutes");
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use("/api/compliance", complianceRoutes);
 app.use("/api/BoardingCandidates", boardingCandidatesRoutes);
 app.use("/api/employees", employeeRoutes);
 app.use("/api/mail", mailRoutes);
+app.use("/api/assignment-group", assignmentGroupRoutes);
 // Middleware
 
 // MongoDB Connection

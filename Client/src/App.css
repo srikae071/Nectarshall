@@ -607,3 +607,125 @@ body.theme-green .MyTaskNotificationWrapper a {
   color: #ffffff !important;
   border-color: #008075 !important;
 }
+
+/* =========================================================
+   UNIFIED FORM ACTION BUTTONS (MINIMAL & PROFESSIONAL)
+   ========================================================= */
+.btn-cancel,
+.CreateBtn.btn-cancel,
+.lr-btn-cancel,
+.LeaveRequestCancel {
+  padding: 0 20px !important;
+  height: 36px !important;
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  color: #475569 !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.btn-cancel:hover,
+.CreateBtn.btn-cancel:hover,
+.lr-btn-cancel:hover,
+.LeaveRequestCancel:hover {
+  background-color: #f8fafc !important;
+  border-color: #94a3b8 !important;
+  color: #0f172a !important;
+}
+
+.btn-save,
+.CreateBtn.btn-save,
+.lr-btn-draft,
+.LeaveRequestDraft {
+  padding: 0 22px !important;
+  height: 36px !important;
+  background-color: #ecfdf5 !important;
+  border: 1px solid #a7f3d0 !important;
+  border-radius: 6px !important;
+  color: #047857 !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.btn-save:hover,
+.CreateBtn.btn-save:hover,
+.lr-btn-draft:hover,
+.LeaveRequestDraft:hover {
+  background-color: #dcfce7 !important;
+  border-color: #059669 !important;
+  color: #064e3b !important;
+}
+
+.btn-submit,
+.CreateBtn.btn-submit,
+.lr-btn-submit,
+.LeaveRequestSave {
+  padding: 0 24px !important;
+  height: 36px !important;
+  background-color: #0f172a !important;
+  border: 1px solid #0f172a !important;
+  border-radius: 6px !important;
+  color: #ffffff !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.btn-submit:hover,
+.CreateBtn.btn-submit:hover,
+.lr-btn-submit:hover,
+.LeaveRequestSave:hover {
+  background-color: #1e293b !important;
+  border-color: #1e293b !important;
+}
+
+/* White Theme: Minimal Blue (#0284c7) */
+[data-theme="white"] .btn-submit,
+body.theme-white .btn-submit,
+[data-theme="white"] .CreateBtn.btn-submit,
+body.theme-white .CreateBtn.btn-submit {
+  background-color: #0284c7 !important;
+  border-color: #0284c7 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="white"] .btn-submit:hover,
+body.theme-white .btn-submit:hover,
+[data-theme="white"] .CreateBtn.btn-submit:hover,
+body.theme-white .CreateBtn.btn-submit:hover {
+  background-color: #0369a1 !important;
+  border-color: #0369a1 !important;
+}
+
+/* Green Theme: Minimal Emerald (#059669) */
+[data-theme="green"] .btn-submit,
+body.theme-green .btn-submit,
+[data-theme="green"] .CreateBtn.btn-submit,
+body.theme-green .CreateBtn.btn-submit {
+  background-color: #059669 !important;
+  border-color: #059669 !important;
+  color: #ffffff !important;
+}
+
+[data-theme="green"] .btn-submit:hover,
+body.theme-green .btn-submit:hover,
+[data-theme="green"] .CreateBtn.btn-submit:hover,
+body.theme-green .CreateBtn.btn-submit:hover {
+  background-color: #047857 !important;
+  border-color: #047857 !important;
+}

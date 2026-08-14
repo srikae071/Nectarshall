@@ -1,140 +1,75 @@
-/* =========================
-   PAGE
-========================= */
+/* =========================================================
+   ASK FOR HR - SYMMETRIC WITH BUSINESS ENGAGEMENT LAYOUT
+   ========================================================= */
 
 .CreateContainer {
-  padding: 18px 24px;
-  background: #f3f4f6;
-  min-height: 100vh;
-
-  font-family: "Inter", "Segoe UI", sans-serif;
+  padding: 10px 20px;
+  background: #ffffff;
+  min-height: auto;
+  height: auto;
+  box-sizing: border-box;
+  font-family: inherit;
 }
-
-/* =========================
-   TITLE
-========================= */
 
 .CreateTitle {
-  margin-bottom: 20px;
-
-  font-size: 20px;
+  margin-bottom: 15px;
+  font-size: 16px;
   font-weight: 700;
-
-  color: #111827;
+  color: #0f172a;
 }
-
-/* =========================
-   ROW
-========================= */
 
 .CreateRow {
   display: flex;
-  gap: 18px;
-
-  margin-bottom: 16px;
+  gap: 30px;
+  margin-bottom: 12px;
 }
-
-/* =========================
-   FIELD
-========================= */
 
 .CreateField {
   display: flex;
   align-items: center;
-
-  flex: 1;
-
   gap: 8px;
+  flex: 0 0 30%;
 }
-
-/* =========================
-   LABEL
-========================= */
 
 .CreateField label {
-  width: 95px; /* reduced from 110px */
-
+  min-width: 120px;
   font-size: 13px;
-  font-weight: 600;
-
+  font-weight: 500;
   color: #374151;
-
   flex-shrink: 0;
 }
-
-/* =========================
-   INPUTS / SELECTS
-========================= */
 
 .CreateField input,
 .CreateField select {
   flex: 1;
-
   height: 38px;
-
   padding: 0 12px;
-
   border-radius: 8px;
-  border: 1px solid #d1d5db;
-
-  background: #ffffff;
-
+  border: 1px solid #000000;
+  background-color: #ffffff;
   font-size: 13px;
-  color: #111827;
-
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    background 0.2s ease;
-
+  color: #0f172a;
   box-sizing: border-box;
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3e%3cpath d='M5 7l5 5 5-5' stroke='%236b7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 15px;
+  padding-right: 34px;
 }
-
-/* =========================
-   FOCUS EFFECT
-========================= */
 
 .CreateField input:focus,
 .CreateField select:focus,
 .CreateTextarea:focus {
   outline: none;
-
-  border-color: #991b1b;
-
-  box-shadow: 0 0 0 3px rgba(153, 27, 27, 0.12);
-
-  background: #fff;
+  border-color: #2563eb;
 }
-/* SHORT DESCRIPTION */
-
-/* =========================
-   PLACEHOLDER
-========================= */
 
 .CreateField input::placeholder,
 .CreateTextarea::placeholder {
   color: #9ca3af;
 }
-
-/* =========================
-   SELECT DROPDOWN
-========================= */
-
-.CreateField select {
-  appearance: none;
-
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3e%3cpath d='M5 7l5 5 5-5' stroke='%236b7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
-
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 15px;
-
-  padding-right: 34px;
-}
-
-/* =========================
-   TEXTAREA
-========================= */
 
 .CreateTextareaGroup {
   margin-top: 14px;
@@ -142,122 +77,73 @@
 
 .CreateTextareaGroup label {
   display: block;
-
   margin-bottom: 6px;
-
   font-size: 13px;
-  font-weight: 600;
-
+  font-weight: 500;
   color: #374151;
 }
 
 .CreateTextarea {
   width: 100%;
-
-  min-height: 100px;
-
-  border-radius: 10px;
-  border: 1px solid #d1d5db;
-
-  padding: 12px;
-
-  background: white;
-
-  font-size: 13px;
-  line-height: 1.5;
-
+  border: 1px solid #000000;
+  border-radius: 8px;
+  padding: 10px 12px;
   resize: vertical;
-
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
-
+  font-size: 13px;
+  outline: none;
+  background: #ffffff;
   box-sizing: border-box;
+  min-height: 65px;
+  height: 65px;
+  line-height: 1.4;
 }
 
 .CreateTextarea.shortTextarea {
   min-height: 65px;
   height: 65px;
 }
-/* =========================
-   FOOTER
-========================= */
 
 .CreateFooter {
   display: flex;
   justify-content: flex-end;
-
-  gap: 12px;
-
-  margin-top: 22px;
+  gap: 10px;
+  margin-top: 15px;
 }
-
-/* =========================
-   BUTTONS
-========================= */
 
 .CreateBtn {
-  min-width: 110px;
-
-  height: 40px;
-
-  border: none;
-  border-radius: 10px;
-
-  background: linear-gradient(180deg, #991b1b, #7f1d1d);
-
-  color: white;
-
+  padding: 6px 14px;
+  border: 1px solid #000000;
+  background: #ffffff;
+  color: #0f172a;
   font-size: 13px;
   font-weight: 600;
-
+  border-radius: 6px;
   cursor: pointer;
-
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.2s ease,
-    opacity 0.2s ease;
+  min-width: 110px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
-
-/* HOVER */
 
 .CreateBtn:hover {
-  transform: translateY(-1px);
-
-  box-shadow: 0 6px 14px rgba(127, 29, 29, 0.22);
+  background: #f1f5f9;
 }
 
-/* ACTIVE */
-
-.CreateBtn:active {
-  transform: scale(0.98);
+/* THEME OVERRIDES */
+[data-theme="green"] .CreateContainer,
+body.theme-green .CreateContainer {
+  background: #ffffff !important;
 }
-
-/* SECOND BUTTON */
-
-.CreateBtn:last-child {
-  background: #e5e7eb;
-  color: #111827;
-}
-
-.CreateBtn:last-child:hover {
-  background: #d1d5db;
-
-  box-shadow: none;
-}
-
-/* =========================
-   RESPONSIVE
-========================= */
 
 @media (max-width: 900px) {
   .CreateContainer {
-    padding: 14px;
+    padding: 10px;
   }
 
   .CreateRow {
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
   }
 
   .CreateField {
@@ -265,7 +151,7 @@
   }
 
   .CreateField label {
-    width: 100px;
+    min-width: 100px;
   }
 
   .CreateFooter {

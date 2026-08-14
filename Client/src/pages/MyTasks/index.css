@@ -1,50 +1,54 @@
 body {
-  background: #e9e5e5;
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
+  background: #ffffff;
 }
 
 .approval-container {
-  background: #e9e5e5;
+  background: #ffffff;
   padding: 20px;
   min-height: 100vh;
 }
 
 .approval-title {
   margin-bottom: 20px;
-  color: #000;
+  color: #0f172a;
   font-size: 22px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .table-wrapper {
   overflow-x: auto;
+  width: 100%;
 }
 
 .MyTaskTable {
   width: 100%;
   border-collapse: collapse;
-  background: #e9e5e5;
+  background: #ffffff;
+  min-width: 1100px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
 }
 
 .MyTaskTableHeader {
-  background: #e9e5e5;
-  color: #000;
+  background: #f8fafc;
+  color: #0f172a;
   font-size: 13px;
-  font-weight: 600;
-  padding: 10px;
+  font-weight: 700;
+  padding: 12px 10px;
   text-align: center;
-  border: 1px solid #cfcaca;
+  border: 1px solid #cbd5e1;
 }
 
 .MyTaskTableCell {
-  background: #e9e5e5;
-  color: #000;
+  background: #ffffff;
+  color: #334155;
   font-size: 13px;
-  padding: 10px;
+  padding: 12px 10px;
   text-align: left;
-  border: 2px solid #cfcaca;
+  border: 1px solid #e2e8f0;
   vertical-align: middle;
 }
 
@@ -52,14 +56,14 @@ body {
   text-align: center;
   padding: 40px 20px;
   font-size: 15px;
-  color: #666;
-  border-top: 1px solid #cfcaca;
-  border-bottom: 1px solid #cfcaca;
-  background: #e9e5e5;
+  color: #64748b;
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+  background: #ffffff;
 }
 
 .MyTaskTableRow:hover {
-  background: #e9e5e5;
+  background: #f8fafc;
 }
 
 /* Center only required columns */
@@ -80,8 +84,9 @@ body {
   background: #16a34a;
   color: white;
   border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -93,16 +98,18 @@ body {
   background: #16a34a;
   color: white;
   border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-weight: 600;
 }
 
 .delete-btn {
   background: #dc2626;
   color: white;
   border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -113,16 +120,17 @@ body {
 .comment-input {
   width: 100%;
   box-sizing: border-box;
-  padding: 6px;
-  border: 1px solid #bdbdbd;
-  border-radius: 4px;
-  background: #fff;
+  padding: 6px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #ffffff;
+  outline: none;
 }
 
 .comment-input:focus {
-  outline: none;
-  border-color: #888;
+  border-color: #2563eb;
 }
+
 .approval-section {
   margin-top: 45px;
 }
@@ -130,19 +138,11 @@ body {
 .confirm-date {
   width: 150px;
   padding: 6px 8px;
-  border: 1px solid #cfcaca;
-  border-radius: 4px;
-  background: white;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #ffffff;
 }
 
-.table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-}
-
-.MyTaskTable {
-  min-width: 1100px;
-}
 .MyTaskCenter {
   text-align: center;
 }
@@ -150,6 +150,60 @@ body {
 .MyTaskCenter .comment-input {
   margin: 0 auto;
   display: block;
+}
+
+/* ================= THEME OVERRIDES FOR MY TASKS ================= */
+
+/* GREEN THEME OVERRIDES */
+[data-theme="green"] .approval-container,
+body.theme-green .approval-container {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  color: #064e3b !important;
+}
+
+[data-theme="green"] .approval-title,
+body.theme-green .approval-title {
+  color: #064e3b !important;
+}
+
+[data-theme="green"] .MyTaskTable,
+body.theme-green .MyTaskTable {
+  background: #ffffff !important;
+  border: 1.5px solid #059669 !important;
+}
+
+[data-theme="green"] .MyTaskTableHeader,
+body.theme-green .MyTaskTableHeader {
+  background: #ecfdf5 !important;
+  color: #064e3b !important;
+  border: 1px solid #a7f3d0 !important;
+}
+
+[data-theme="green"] .MyTaskTableCell,
+body.theme-green .MyTaskTableCell {
+  background: #ffffff !important;
+  color: #064e3b !important;
+  border: 1px solid #d1fae5 !important;
+}
+
+[data-theme="green"] .MyTaskTableRow:hover,
+body.theme-green .MyTaskTableRow:hover {
+  background: #f0fdf4 !important;
+}
+
+/* WHITE THEME OVERRIDES */
+[data-theme="white"] .approval-container,
+body.theme-white .approval-container {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+[data-theme="white"] .MyTaskTable,
+body.theme-white .MyTaskTable {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
 }
 
 @media (max-width: 768px) {

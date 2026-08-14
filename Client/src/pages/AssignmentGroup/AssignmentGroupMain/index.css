@@ -1,0 +1,301 @@
+/* =========================================================
+   ASSIGNMENT GROUP MANAGEMENT CSS
+   ========================================================= */
+
+.asgWrapper {
+  min-height: 100vh;
+  background-color: #ffffff;
+  box-sizing: border-box;
+}
+
+.asgContainer {
+  padding: 16px 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* HEADER */
+.asgHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.asgTitle {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.asgSubtitle {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* CONTROLS */
+.asgControls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.asgSearchInput {
+  height: 38px;
+  width: 240px;
+  padding: 0 14px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 13px;
+  background: #ffffff;
+  color: #0f172a;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.asgSearchInput:focus {
+  border-color: #2563eb;
+}
+
+.asgSettingsBtn {
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.asgSettingsBtn:hover {
+  background: #f8fafc;
+}
+
+.asgSettingsDropdown {
+  position: absolute;
+  right: 0;
+  top: 44px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  padding: 14px 16px;
+  width: 220px;
+  z-index: 100;
+}
+
+.asgSettingsTitle {
+  font-weight: 700;
+  font-size: 13px;
+  color: #0f172a;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 6px;
+}
+
+.asgCheckboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #334155;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.asgCheckboxLabel input {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* SUB TABS */
+.asgTabContainer {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 4px;
+}
+
+.asgTabBtn {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 8px 8px 0 0;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.asgTabBtn:hover {
+  background: #e2e8f0;
+}
+
+.asgTabBtn.active {
+  background: #0f172a;
+  color: #ffffff;
+}
+
+.asgTabBtn.it-tab.active {
+  background: #0284c7;
+}
+
+.asgTabBtn.hr-tab.active {
+  background: #059669;
+}
+
+.asgTabBtn.acc-tab.active {
+  background: #7c3aed;
+}
+
+/* TABLE CARD */
+.asgTableCard {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  overflow-x: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.asgTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+
+.asgTable th {
+  background: #f8fafc;
+  color: #334155;
+  font-weight: 700;
+  padding: 12px 14px;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.asgTable td {
+  padding: 12px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #0f172a;
+  vertical-align: middle;
+}
+
+.asgTable tr:hover td {
+  background: #f8fafc;
+}
+
+.asgIdCell {
+  font-weight: 700;
+  color: #0284c7;
+}
+
+/* GROUP PILLS */
+.asgGroupPill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.asgGroupPill.it {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
+
+.asgGroupPill.hr {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.asgGroupPill.accounts {
+  background: #f3e8ff;
+  color: #7e22ce;
+  border: 1px solid #e9d5ff;
+}
+
+/* PRIORITY BADGES */
+.asgPriorityBadge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.asgPriorityBadge.high {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.asgPriorityBadge.medium {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.asgPriorityBadge.low {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+/* STATUS SELECT */
+.asgStatusSelect {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.asgStatusSelect.open {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.asgStatusSelect.inprogress {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.asgStatusSelect.resolved,
+.asgStatusSelect.closed {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+/* ACTION BUTTONS */
+.asgActionBtn {
+  padding: 4px 10px !important;
+  height: 28px !important;
+  font-size: 12px !important;
+}
+
+.asgEmptyCell {
+  padding: 30px !important;
+  text-align: center !important;
+  color: #64748b !important;
+}
+
+/* THEME OVERRIDES */
+[data-theme="green"] .asgWrapper,
+body.theme-green .asgWrapper {
+  background-color: #f0f7f4 !important;
+}
+
+[data-theme="green"] .asgTableCard,
+body.theme-green .asgTableCard {
+  border-color: #d8eee4 !important;
+}

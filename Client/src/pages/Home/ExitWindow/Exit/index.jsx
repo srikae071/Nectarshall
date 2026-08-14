@@ -176,12 +176,9 @@ function Exit() {
           />
         </div>
         <div className="CreateFooter">
-          <button className="CreateBtn" onClick={handleSave}>
-            Save
-          </button>
-
           <button
-            className="CreateBtn"
+            type="button"
+            className="CreateBtn btn-cancel"
             onClick={() =>
               setFormData({
                 requesterName: "",
@@ -195,6 +192,14 @@ function Exit() {
             }
           >
             Cancel
+          </button>
+
+          <button type="button" className="CreateBtn btn-save" onClick={handleSave}>
+            Save
+          </button>
+
+          <button type="button" className="CreateBtn btn-submit" onClick={handleSave}>
+            Submit
           </button>
         </div>
       </div>

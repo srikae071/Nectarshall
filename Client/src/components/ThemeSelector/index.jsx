@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../../context/AuthContext";
 
 function ThemeSelector() {
+  const { user } = useAuth();
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem("app_theme") || "regular";
   });

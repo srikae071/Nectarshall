@@ -70,11 +70,11 @@ const menuData = [
         children: [
           {
             label: "All",
-            path: "/onboarding/resonancerequirement/all",
+            path: "/offboarding-employes-all",
           },
           {
             label: "Create New",
-            path: "/onboarding/resonancerequirement/createnew",
+            path: "/offboarding/createnew",
           },
           {
             label: "Closed",
@@ -183,7 +183,18 @@ function HrmsLeftLayout({ children }) {
     if (!currentPath || currentPath === "/") return;
 
     const itemMatchesPath = (item) => {
-      if (item.path && item.path === currentPath) return true;
+      const pathLower = (item.path || "").toLowerCase();
+      const currentLower = currentPath.toLowerCase();
+
+      if (pathLower && currentLower === pathLower) return true;
+
+      if (currentLower.includes("interview") && pathLower.includes("interview")) return true;
+      if (currentLower.includes("prejoining") && pathLower.includes("prejoining")) return true;
+      if (currentLower.includes("offerletter") && pathLower.includes("offerletter")) return true;
+      if (currentLower.includes("employerequest") && pathLower.includes("employerequest")) return true;
+      if (currentLower.includes("employee-request-save") && pathLower.includes("employerequest")) return true;
+      if (currentLower.includes("onboarding-saves") && pathLower.includes("resonancerequirement")) return true;
+
       if (item.children) {
         return item.children.some((child) => itemMatchesPath(child));
       }
@@ -195,9 +206,9 @@ function HrmsLeftLayout({ children }) {
       if (hasMatch) {
         setOpenMenus((prev) => ({ ...prev, [index]: true }));
 
-        menu.items.forEach((item) => {
+        menu.items.forEach((item, level = 0) => {
           if (item.children && itemMatchesPath(item)) {
-            const itemKey = item.label + 0;
+            const itemKey = item.label + level;
             setExpandedMenus((prev) => ({ ...prev, [itemKey]: true }));
           }
         });

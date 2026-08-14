@@ -238,15 +238,15 @@ select.LeaveSelectInput {
   border-top: 1px solid #f1f5f9;
 }
 
-/* 1. CANCEL BUTTON - RED COLOR MATCHING LOGO FOR ALL THEMES */
+/* 1. CANCEL BUTTON - MINIMAL WHITE & SUBTLE BORDER FOR ALL THEMES */
 .lr-btn-cancel,
 .LeaveRequestCancel {
   padding: 0 20px;
   height: 36px;
-  background-color: #e52b2f !important;
-  border: 1px solid #e52b2f !important;
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
   border-radius: 6px;
-  color: #ffffff !important;
+  color: #475569 !important;
   font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
@@ -255,20 +255,20 @@ select.LeaveSelectInput {
 
 .lr-btn-cancel:hover,
 .LeaveRequestCancel:hover {
-  background-color: #c82327 !important;
-  border-color: #c82327 !important;
-  color: #ffffff !important;
+  background-color: #f8fafc !important;
+  border-color: #94a3b8 !important;
+  color: #0f172a !important;
 }
 
-/* 2. SAVE BUTTON - NORMAL SUCCESS GREEN COLOR FOR ALL THEMES */
+/* 2. SAVE BUTTON - MINIMAL SOFT GREEN FOR ALL THEMES */
 .lr-btn-draft,
 .LeaveRequestDraft {
   padding: 0 22px;
   height: 36px;
-  background-color: rgb(1, 164, 1) !important;
-  border: 1px solid #0bca4b !important;
+  background-color: #ecfdf5 !important;
+  border: 1px solid #a7f3d0 !important;
   border-radius: 6px;
-  color: #ffffff !important;
+  color: #047857 !important;
   font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
@@ -277,19 +277,19 @@ select.LeaveSelectInput {
 
 .lr-btn-draft:hover,
 .LeaveRequestDraft:hover {
-  background-color: #059669 !important;
+  background-color: #dcfce7 !important;
   border-color: #059669 !important;
-  color: #ffffff !important;
+  color: #064e3b !important;
 }
 
-/* 3. SUBMIT REQUEST BUTTON - THEME SPECIFIC */
-/* Default / Regular Theme: Matches Navbar & HRMS Left Layout accent color (#ea4104) */
+/* 3. SUBMIT REQUEST BUTTON - MINIMAL THEME SPECIFIC */
+/* Default / Regular Theme: Professional Slate Navy (#0f172a) */
 .lr-btn-submit,
 .LeaveRequestSave {
   padding: 0 24px;
   height: 36px;
-  background-color: #ea4104;
-  border: 1px solid #ea4104;
+  background-color: #0f172a;
+  border: 1px solid #0f172a;
   border-radius: 6px;
   color: #ffffff;
   font-size: 13.5px;
@@ -300,17 +300,17 @@ select.LeaveSelectInput {
 
 .lr-btn-submit:hover,
 .LeaveRequestSave:hover {
-  background-color: #c83703;
-  border-color: #c83703;
+  background-color: #1e293b;
+  border-color: #1e293b;
 }
 
-/* White Theme: Default Blue color (#2563eb) */
+/* White Theme: Minimal Blue (#0284c7) */
 [data-theme="white"] .lr-btn-submit,
 body.theme-white .lr-btn-submit,
 [data-theme="white"] .LeaveRequestSave,
 body.theme-white .LeaveRequestSave {
-  background-color: #2563eb !important;
-  border-color: #2563eb !important;
+  background-color: #0284c7 !important;
+  border-color: #0284c7 !important;
   color: #ffffff !important;
 }
 
@@ -318,11 +318,11 @@ body.theme-white .LeaveRequestSave {
 body.theme-white .lr-btn-submit:hover,
 [data-theme="white"] .LeaveRequestSave:hover,
 body.theme-white .LeaveRequestSave:hover {
-  background-color: #1d4ed8 !important;
-  border-color: #1d4ed8 !important;
+  background-color: #0369a1 !important;
+  border-color: #0369a1 !important;
 }
 
-/* Green Theme: Matches Green Layout Theme color (#059669) */
+/* Green Theme: Minimal Emerald (#059669) */
 [data-theme="green"] .lr-btn-submit,
 body.theme-green .lr-btn-submit,
 [data-theme="green"] .LeaveRequestSave,

@@ -1,8 +1,7 @@
-// import CncLeftLayout from "../../../../../Cnc/CncLeftLayout";
 import HrmsLeftLayout from "../../../../Hrmsleftlayout";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { fetchApiData } from "../../../../../../utils/apiClient";
 import "./index.css";
 
 function OnBoardingResonanceRequirementsAll() {
@@ -14,16 +13,8 @@ function OnBoardingResonanceRequirementsAll() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests",
-      );
-
-      setData(
-        response.data.filter(
-          (item) =>
-            item.category === "Resonance Requirement" && item.status === "Open",
-        ),
-      );
+      const response = await fetchApiData("/api/jobrequests");
+      setData(response.data || []);
     } catch (error) {
       console.error(error);
     }
@@ -32,13 +23,14 @@ function OnBoardingResonanceRequirementsAll() {
   const navigate = useNavigate();
 
   const handleRowClick = (item) => {
-    navigate(`/onboarding-saves/${item._id}`);
+    navigate(`/employee-request-save/${item._id}`);
   };
+
   return (
     <HrmsLeftLayout>
       <div className="Openhome">
         <div>
-          <h3 className="openheading">All Resonance Requirements cases</h3>
+          <h3 className="openheading">All Onboarding Cases (Every Status)</h3>
 
           <table className="opentable">
             <thead className="opentablerow">
@@ -68,18 +60,18 @@ function OnBoardingResonanceRequirementsAll() {
                     <td className="opentablerow">{item.caseId}</td>
                     <td className="opentablerow">{item.requesterName}</td>
                     <td className="opentablerow">{item.department}</td>
-                    <td className="opentablerow">{item.category}</td>
-                    <td className="opentablerow">{item.status}</td>
+                    <td className="opentablerow">{item.category || "Resonance Requirement"}</td>
+                    <td className="opentablerow">
+                      <span className={`badge ${(item.status || "Open").toLowerCase()}`}>
+                        {item.status || "Open"}
+                      </span>
+                    </td>
                   </tr>
                 ))
               )}
             </tbody>
           </table>
         </div>
-
-        {/* <div className="footer">
-          © Copyright 2023 Enhance Services - All Rights Reserved.
-        </div> */}
       </div>
     </HrmsLeftLayout>
   );

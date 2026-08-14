@@ -1456,22 +1456,167 @@ function EmployeRequestSave() {
                     </button>
                   </div>
                 </div>
-
-                <div className="SectionActions">
-                  {/* <button className="CreateBtn" onClick={}>
-                  Save
-                </button> */}
-                </div>
               </div>
             )}
+
+            {/* 5. OFFER LETTER SECTION */}
+            <div className="SectionCard">
+              <h3>5. Offer Letter <span style={{ fontSize: "11px", background: "#ef4444", color: "#ffffff", padding: "2px 8px", borderRadius: "10px", marginLeft: "8px" }}>MUST HAVE</span></h3>
+
+              <div className="BarrierRow" style={{ marginBottom: "14px" }}>
+                <label style={{ fontWeight: "700" }}>Letter of Offer *</label>
+                <div className="ToggleGroup">
+                  <button
+                    type="button"
+                    className={
+                      (currentCand.offerLetterResult || formData.offerLetterResult) === "ACCEPT" ||
+                      (currentCand.offerLetterResult || formData.offerLetterResult) === "PASS"
+                        ? "ToggleActive"
+                        : "ToggleBtn"
+                    }
+                    onClick={() => handleCandDecision("offerLetterResult", "ACCEPT")}
+                  >
+                    ACCEPT
+                  </button>
+                  <button
+                    type="button"
+                    className={
+                      (currentCand.offerLetterResult || formData.offerLetterResult) === "REJECT" ||
+                      (currentCand.offerLetterResult || formData.offerLetterResult) === "FAIL"
+                        ? "ToggleFail"
+                        : "ToggleBtn"
+                    }
+                    onClick={() => handleCandDecision("offerLetterResult", "REJECT")}
+                  >
+                    REJECT
+                  </button>
+                </div>
+              </div>
+
+              <div className="OfferRow">
+                <div className="OfferField">
+                  <label style={{ fontWeight: "700" }}>Role Type *</label>
+                  <select
+                    value={currentCand.roleType || formData.roleType || "FT"}
+                    onChange={(e) => handleCandDecision("roleType", e.target.value)}
+                    style={{ padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px" }}
+                  >
+                    <option value="FT">Full Time (FT)</option>
+                    <option value="PT">Part Time (PT)</option>
+                    <option value="CS">Casual (CS)</option>
+                    <option value="Oth">Other (Oth)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* 6. FINANCIAL & TAX INFORMATION */}
+            <div className="SectionCard">
+              <h3>6. Financial & Tax Information <span style={{ fontSize: "11px", background: "#ef4444", color: "#ffffff", padding: "2px 8px", borderRadius: "10px", marginLeft: "8px" }}>MUST HAVE</span></h3>
+
+              <div className="OfferRow">
+                <div className="OfferField">
+                  <label style={{ fontWeight: "700" }}>Bank Name *</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Commonwealth Bank / ANZ"
+                    value={currentCand.bankName || formData.bankName || ""}
+                    onChange={(e) => handleCandDecision("bankName", e.target.value)}
+                  />
+                </div>
+                <div className="OfferField">
+                  <label style={{ fontWeight: "700" }}>Bank Account Name *</label>
+                  <input
+                    type="text"
+                    placeholder="Account Holder Name"
+                    value={currentCand.bankAccountName || formData.bankAccountName || ""}
+                    onChange={(e) => handleCandDecision("bankAccountName", e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="OfferRow">
+                <div className="OfferField">
+                  <label style={{ fontWeight: "700" }}>BSB *</label>
+                  <input
+                    type="text"
+                    placeholder="6-digit BSB (e.g. 063-000)"
+                    value={currentCand.bsb || formData.bsb || ""}
+                    onChange={(e) => handleCandDecision("bsb", e.target.value)}
+                  />
+                </div>
+                <div className="OfferField">
+                  <label style={{ fontWeight: "700" }}>Account Number *</label>
+                  <input
+                    type="text"
+                    placeholder="Account Number"
+                    value={currentCand.accountNumber || formData.accountNumber || ""}
+                    onChange={(e) => handleCandDecision("accountNumber", e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="OfferRow">
+                <div className="OfferField">
+                  <label style={{ fontWeight: "700" }}>Tax File Number (TFN) *</label>
+                  <input
+                    type="text"
+                    placeholder="9-digit TFN"
+                    value={currentCand.tfn || formData.tfn || ""}
+                    onChange={(e) => handleCandDecision("tfn", e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="OfferRow">
+                <div className="OfferField">
+                  <label style={{ fontWeight: "700" }}>Superannuation Fund Name *</label>
+                  <input
+                    type="text"
+                    placeholder="Super Fund Name"
+                    value={currentCand.superFund || formData.superFund || ""}
+                    onChange={(e) => handleCandDecision("superFund", e.target.value)}
+                  />
+                </div>
+                <div className="OfferField">
+                  <label style={{ fontWeight: "700" }}>Super Member Number *</label>
+                  <input
+                    type="text"
+                    placeholder="Member Number"
+                    value={currentCand.superMemberNum || formData.superMemberNum || ""}
+                    onChange={(e) => handleCandDecision("superMemberNum", e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="OfferRow">
+                <div className="OfferField">
+                  <label style={{ fontWeight: "600" }}>Long Service Leave ID (Optional)</label>
+                  <input
+                    type="text"
+                    placeholder="LSL ID Number (Select/Optional)"
+                    value={currentCand.longServiceLeaveId || formData.longServiceLeaveId || ""}
+                    onChange={(e) => handleCandDecision("longServiceLeaveId", e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
             </>
             )}
             <div className="CreateFooter">
-              <button className="CreateBtn" onClick={handleFinalSave}>
+              <button
+                type="button"
+                className="CreateBtn btn-cancel"
+                onClick={() => setFormData({})}
+              >
+                Cancel
+              </button>
+              <button type="button" className="CreateBtn btn-save" onClick={handleFinalSave}>
+                Save
+              </button>
+              <button type="button" className="CreateBtn btn-submit" onClick={handleFinalSave}>
                 Submit
               </button>
-              {/* <button className="CreateBtn">Submit</button> */}
-              <button className="CreateBtn">Cancel</button>
             </div>
           </>
         )}

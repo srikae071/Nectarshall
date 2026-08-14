@@ -122,6 +122,13 @@ function Home() {
       route: "/business-engagement",
       module: "CNC",
     },
+    /* {
+      title: "Assignment Group",
+      desc: "Centralized ticket routing for IT, HR, and Accounts tables",
+      img: orgImg,
+      route: "/assignment-group",
+      module: "COMMON",
+    }, */
   ];
 
   const visibleServices = allServices.filter((item) => {
@@ -214,6 +221,10 @@ function Home() {
           <a role="button" tabIndex={0} onClick={() => navigate("/my-tickets")}>
             MY TICKETS
           </a>
+
+          {/* <a role="button" tabIndex={0} onClick={() => navigate("/assignment-group")}>
+            ASSIGNMENT GROUP
+          </a> */}
 
           <a role="button" tabIndex={0} onClick={() => navigate("/my-mails")}>
             MY MAILS
