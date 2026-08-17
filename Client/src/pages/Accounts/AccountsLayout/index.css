@@ -41,7 +41,7 @@
 }
 
 .submenuItem.active {
-  background: #047857;
+  background: #ea4104;
   color: #ffffff;
   font-weight: 700;
 }
@@ -71,7 +71,7 @@
 }
 
 .categoryGroupHeader.activeCategory {
-  color: #34d399;
+  color: #ea4104;
 }
 
 .categoryHeaderLeft {
@@ -99,11 +99,11 @@
 
 .submenuItem.childItem:hover {
   background: #1e293b;
-  color: #38bdf8;
+  color: #ea4104;
 }
 
 .submenuItem.childItem.active {
-  background: #047857;
+  background: #ea4104;
   color: #ffffff;
 }
 

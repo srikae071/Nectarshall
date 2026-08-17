@@ -52,7 +52,7 @@
 }
 
 .accountsSearchInput:focus {
-  border-color: #047857;
+  border-color: #ea4104;
 }
 
 .accountsTabButtons {
@@ -72,9 +72,9 @@
 }
 
 .accountsTabBtn.active {
-  background: #047857;
+  background: #ea4104;
   color: #ffffff;
-  border-color: #047857;
+  border-color: #ea4104;
 }
 
 /* TABLE WRAPPER WITH COMPACT COLUMN GAPS & DEDICATED SIDE SCROLLBAR */

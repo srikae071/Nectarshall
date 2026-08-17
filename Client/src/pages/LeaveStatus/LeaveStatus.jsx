@@ -34,7 +34,8 @@ function LeaveStatus() {
       const allLeaves = response.data || [];
 
       const isAdmin =
-        user?.role === "ADMIN" || (user?.username || "").toLowerCase().includes("sumit");
+        user?.role === "ADMIN" ||
+        (user?.username || "").toLowerCase().includes("sumit");
 
       if (isAdmin) {
         setData(allLeaves);
@@ -43,7 +44,9 @@ function LeaveStatus() {
         const currentDisplay = (user?.displayName || "").trim().toLowerCase();
 
         const userLeaves = allLeaves.filter((item) => {
-          const rName = (item.requester || item.employeeName || "").trim().toLowerCase();
+          const rName = (item.requester || item.employeeName || "")
+            .trim()
+            .toLowerCase();
           return (
             !rName ||
             rName === currentName ||
@@ -92,7 +95,7 @@ function LeaveStatus() {
             }}
           >
             <h3 className="openheading" style={{ margin: 0 }}>
-              📋 HRMS Leave Status
+              HRMS Leave Status
             </h3>
 
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -191,9 +194,16 @@ function LeaveStatus() {
                           type="checkbox"
                           checked={columns[key]}
                           onChange={() =>
-                            setColumns((prev) => ({ ...prev, [key]: !prev[key] }))
+                            setColumns((prev) => ({
+                              ...prev,
+                              [key]: !prev[key],
+                            }))
                           }
-                          style={{ width: "16px", height: "16px", cursor: "pointer" }}
+                          style={{
+                            width: "16px",
+                            height: "16px",
+                            cursor: "pointer",
+                          }}
                         />
                         {label}
                       </label>
@@ -205,18 +215,30 @@ function LeaveStatus() {
           </div>
 
           {loading ? (
-            <div style={{ padding: "20px", textAlign: "center", color: "#64748b" }}>
+            <div
+              style={{ padding: "20px", textAlign: "center", color: "#64748b" }}
+            >
               Loading Leave Status...
             </div>
           ) : (
             <table className="opentable">
               <thead className="opentablerow">
                 <tr className="opentablerow">
-                  {columns.leaveNumber && <th className="opentablerow">Leave ID</th>}
-                  {columns.requester && <th className="opentablerow">Requester</th>}
-                  {columns.leaveType && <th className="opentablerow">Leave type</th>}
-                  {columns.startDate && <th className="opentablerow">Start date</th>}
-                  {columns.endDate && <th className="opentablerow">End date</th>}
+                  {columns.leaveNumber && (
+                    <th className="opentablerow">Leave ID</th>
+                  )}
+                  {columns.requester && (
+                    <th className="opentablerow">Requester</th>
+                  )}
+                  {columns.leaveType && (
+                    <th className="opentablerow">Leave type</th>
+                  )}
+                  {columns.startDate && (
+                    <th className="opentablerow">Start date</th>
+                  )}
+                  {columns.endDate && (
+                    <th className="opentablerow">End date</th>
+                  )}
                   {columns.totalLeaves && (
                     <th className="opentablerow">Total leave count</th>
                   )}
@@ -228,10 +250,18 @@ function LeaveStatus() {
                 {filteredData.length > 0 ? (
                   filteredData.map((item) => (
                     <tr className="opentablerow" key={item._id || item.id}>
-                      {columns.leaveNumber && <td>{item.leaveNumber || item.id}</td>}
-                      {columns.requester && <td>👤 {item.requester || "Self"}</td>}
-                      {columns.leaveType && <td>{item.leaveType || item.type}</td>}
-                      {columns.startDate && <td>{item.startDate || item.start}</td>}
+                      {columns.leaveNumber && (
+                        <td>{item.leaveNumber || item.id}</td>
+                      )}
+                      {columns.requester && (
+                        <td> {item.requester || "Self"}</td>
+                      )}
+                      {columns.leaveType && (
+                        <td>{item.leaveType || item.type}</td>
+                      )}
+                      {columns.startDate && (
+                        <td>{item.startDate || item.start}</td>
+                      )}
                       {columns.endDate && <td>{item.endDate || item.end}</td>}
                       {columns.totalLeaves && (
                         <td>{item.totalLeaves || item.total} day(s)</td>
@@ -253,7 +283,11 @@ function LeaveStatus() {
                   <tr>
                     <td
                       colSpan={visibleColumnCount}
-                      style={{ textAlign: "center", padding: "20px", color: "#64748b" }}
+                      style={{
+                        textAlign: "center",
+                        padding: "20px",
+                        color: "#64748b",
+                      }}
                     >
                       {searchTerm
                         ? `No leave records matching "${searchTerm}".`

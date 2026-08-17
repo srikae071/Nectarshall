@@ -49,10 +49,10 @@ function Navbar() {
         <img src={logo} alt="logo" className="logoimage" />
         {moduleLabel && (
           <span
+            className="navbarModuleLabel"
             style={{
               fontSize: "15px",
               fontWeight: "800",
-              color: "#047857",
               letterSpacing: "1px",
               textTransform: "uppercase",
             }}

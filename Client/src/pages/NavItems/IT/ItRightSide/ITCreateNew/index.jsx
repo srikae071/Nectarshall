@@ -197,11 +197,19 @@ function ITCreateCase() {
         <div className="CreateRow">
           <div className="CreateField">
             <label>Assignment Group</label>
-            <input
+            <select
               name="assignmentGroup"
               value={formData.assignmentGroup}
               onChange={handleChange}
-            />
+            >
+              <option value="">Select</option>
+              <option value="HR">HR</option>
+              <option value="IT">IT</option>
+              <option value="CNC">CNC</option>
+              <option value="Accounts">Accounts</option>
+              <option value="Operations">Operations</option>
+              <option value="PetroLink">PetroLink</option>
+            </select>
           </div>
 
           <div className="CreateField">

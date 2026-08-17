@@ -608,6 +608,21 @@ body.theme-green .MyTaskNotificationWrapper a {
   border-color: #008075 !important;
 }
 
+/* NAVBAR MODULE TITLE BADGE */
+.navbarModuleLabel {
+  color: #ea4104 !important;
+}
+
+[data-theme="green"] .navbarModuleLabel,
+body.theme-green .navbarModuleLabel {
+  color: #047857 !important;
+}
+
+[data-theme="white"] .navbarModuleLabel,
+body.theme-white .navbarModuleLabel {
+  color: #0284c7 !important;
+}
+
 /* =========================================================
    UNIFIED FORM ACTION BUTTONS (MINIMAL & PROFESSIONAL)
    ========================================================= */
