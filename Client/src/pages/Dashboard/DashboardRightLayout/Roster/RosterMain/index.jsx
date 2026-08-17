@@ -257,16 +257,13 @@ function RosterMain() {
     return full || "";
   };
 
-  // 2. Employee Options (sourced ONLY from /api/employees table for Operations department)
+  // 2. Employee Options (sourced from backend Employee table /api/employees irrespective of department)
   const rawEmployeeOptions = useMemo(() => {
     const employees = new Set();
     dbEmployees.forEach((emp) => {
-      const dept = (emp.department || "").toLowerCase().trim();
-      if (dept === "operations" || dept === "operation") {
-        const name = getEmpName(emp);
-        if (name) {
-          employees.add(name);
-        }
+      const name = getEmpName(emp);
+      if (name) {
+        employees.add(name);
       }
     });
     return [...employees].sort();
@@ -1624,7 +1621,7 @@ function RosterMain() {
                   style={{ fontSize: "14px", padding: "10px 12px", width: "100%", borderRadius: "8px", border: "1px solid #cbd5e1" }}
                   autoFocus
                 >
-                  <option value="">-- Select Employee (Operations Dept) --</option>
+                  <option value="">-- Select Employee --</option>
                   {rawEmployeeOptions.map((emp, i) => (
                     <option key={i} value={emp}>
                       👤 {emp}
@@ -1729,7 +1726,7 @@ function RosterMain() {
                   style={{ fontSize: "14px", padding: "10px 12px", width: "100%", borderRadius: "8px", border: "1px solid #cbd5e1" }}
                   autoFocus
                 >
-                  <option value="">-- Select Employee (Operations Dept) --</option>
+                  <option value="">-- Select Employee --</option>
                   {rawEmployeeOptions.map((emp, i) => (
                     <option key={i} value={emp}>
                       👤 {emp}

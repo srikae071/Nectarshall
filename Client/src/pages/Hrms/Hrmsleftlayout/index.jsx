@@ -5,7 +5,7 @@ import HrmsNavbar from "../HrmsNavbar";
 
 const menuData = [
   {
-    title: "Vendor Portal",
+    title: "Dashboard",
     directPath: "/regular-form",
   },
   {

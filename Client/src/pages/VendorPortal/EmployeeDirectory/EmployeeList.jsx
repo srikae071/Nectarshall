@@ -1,12 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FiArrowLeft, FiSearch, FiX, FiUsers, FiMoreHorizontal, FiList, FiGrid, FiChevronDown } from 'react-icons/fi';
-import { employees, EmpDrawer } from './index';
+import { FiArrowLeft, FiSearch, FiX, FiUsers, FiMoreHorizontal, FiList, FiGrid, FiChevronDown, FiMapPin, FiMail } from 'react-icons/fi';
+import { fetchApiData } from '../../../utils/apiClient';
+
+export const EmpDrawer = ({ emp, onClose }) => (
+  <>
+    <div className="po-overlay" onClick={onClose} />
+    <div className="po-drawer">
+      <div className="po-drawer-header">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <div style={{ width: 48, height: 48, borderRadius: '50%', background: emp.color || '#10b981', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 16, flexShrink: 0 }}>{emp.initials}</div>
+          <div>
+            <div className="po-drawer-id" style={{ marginBottom: 2 }}>{emp.name}</div>
+            <div style={{ fontSize: 13, color: '#64748b' }}>{emp.title}</div>
+          </div>
+        </div>
+        <button className="po-icon-btn" onClick={onClose}><FiX size={18} /></button>
+      </div>
+      <div className="po-drawer-body">
+        <div className="po-info-grid">
+          <div className="po-info-item"><span>Employee ID</span><strong>{emp.id}</strong></div>
+          <div className="po-info-item"><span>Department</span><strong>{emp.dept}</strong></div>
+          <div className="po-info-item"><span>Location</span><strong><FiMapPin size={11} style={{ marginRight: 4 }} />{emp.location}</strong></div>
+          <div className="po-info-item"><span>Joining Date</span><strong>{emp.joiningDate}</strong></div>
+          <div className="po-info-item"><span>Status</span><strong><span className="po-status-badge" style={{ background: '#f0fdf4', color: '#16a34a', borderColor: '#bbf7d0' }}>{emp.status}</span></strong></div>
+          <div className="po-info-item" style={{ gridColumn: '1/-1' }}><span>Email</span><strong>{emp.email}</strong></div>
+        </div>
+      </div>
+      <div className="po-drawer-footer">
+        <button className="po-btn po-btn-ghost" onClick={onClose}>Close</button>
+        <button className="po-btn po-btn-primary" onClick={() => { window.location.href = `mailto:${emp.email}`; }}>
+          <FiMail /> Send Email
+        </button>
+      </div>
+    </div>
+  </>
+);
 
 const EmployeeList = () => {
   const { filterType } = useParams();
   const navigate = useNavigate();
   
+  const [employees, setEmployees] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState(null);
   const [deptFilter, setDeptFilter] = useState('All');
@@ -14,7 +50,39 @@ const EmployeeList = () => {
   const [locationFilter, setLocationFilter] = useState('All');
 
   useEffect(() => {
-    // Set initial filters based on the clicked card
+    fetchEmployees();
+  }, []);
+
+  const fetchEmployees = async () => {
+    try {
+      setLoading(true);
+      const res = await fetchApiData("/api/employees");
+      const emps = (res.data || []).map((emp, index) => {
+        const name = emp.displayName || emp.employeeName || `${emp.firstName || ""} ${emp.lastName || ""}`.trim() || "Unnamed Employee";
+        const initials = name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || "EP";
+        const colors = ['#10b981', '#3b82f6', '#8b5cf6', '#ea4104', '#059669', '#0284c7'];
+        return {
+          id: emp.employeeId || `EMP-${index + 101}`,
+          name: name,
+          title: emp.jobTitle || "Employee",
+          dept: emp.department || "General",
+          email: emp.email || "N/A",
+          location: emp.officeLocation || emp.place || "Head Office",
+          status: emp.accountEnabled !== false ? "Active" : "Inactive",
+          joiningDate: emp.createdAt ? new Date(emp.createdAt).toLocaleDateString() : "N/A",
+          initials: initials,
+          color: colors[index % colors.length]
+        };
+      });
+      setEmployees(emps);
+    } catch (err) {
+      console.error("Error loading employees in EmployeeList:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     if (filterType === 'active') {
       setStatusFilter('Active');
     } else {
@@ -124,47 +192,22 @@ const EmployeeList = () => {
               <FiChevronDown style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#64748b' }} size={16} />
             </div>
 
-            <div style={{ position: 'relative' }}>
-              <select 
-                value={locationFilter} 
-                onChange={e => setLocationFilter(e.target.value)}
-                style={{ appearance: 'none', padding: '10px 36px 10px 16px', borderRadius: 8, border: '1px solid #e2e8f0', background: '#fff', fontSize: 13, fontWeight: 500, color: '#0f172a', outline: 'none', cursor: 'pointer' }}
-              >
-                <option value="All">All Locations</option>
-                <option value="Head Office">Head Office</option>
-                <option value="Remote">Remote</option>
-              </select>
-              <FiChevronDown style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#64748b' }} size={16} />
-            </div>
-
             {(search || deptFilter !== 'All' || statusFilter !== 'All' || locationFilter !== 'All') && (
               <button onClick={clearFilters} style={{ padding: '10px 16px', background: 'none', border: 'none', fontSize: 13, fontWeight: 500, color: '#64748b', cursor: 'pointer', transition: 'color 0.2s' }} onMouseEnter={e => e.currentTarget.style.color = '#ef4444'} onMouseLeave={e => e.currentTarget.style.color = '#64748b'}>
                 Clear Filters
               </button>
             )}
           </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <div style={{ position: 'relative' }}>
-              <select style={{ appearance: 'none', padding: '10px 36px 10px 16px', borderRadius: 8, border: '1px solid #e2e8f0', background: '#fff', fontSize: 13, fontWeight: 500, color: '#0f172a', outline: 'none', cursor: 'pointer' }}>
-                <option>Sort by: Name (A-Z)</option>
-                <option>Sort by: Name (Z-A)</option>
-              </select>
-              <FiChevronDown style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#64748b' }} size={16} />
-            </div>
-            <div style={{ display: 'flex', background: '#f8fafc', padding: 4, borderRadius: 8, border: '1px solid #e2e8f0' }}>
-              <button style={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0f172a', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' }}><FiList size={16} /></button>
-              <button style={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', color: '#64748b', border: 'none', borderRadius: 6, cursor: 'pointer' }}><FiGrid size={16} /></button>
-            </div>
-          </div>
         </div>
 
         {/* Table Area */}
-        {filtered.length === 0 ? (
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>Loading employees from database...</div>
+        ) : filtered.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px 20px' }}>
             <FiUsers size={48} color="#cbd5e1" style={{ marginBottom: 16 }} />
             <h3 style={{ fontSize: 18, color: '#0f172a', margin: '0 0 8px 0' }}>No employees found</h3>
-            <p style={{ color: '#64748b', margin: 0 }}>Try adjusting your filters or search term.</p>
+            <p style={{ color: '#64748b', margin: 0 }}>Try adjusting your search term.</p>
           </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
