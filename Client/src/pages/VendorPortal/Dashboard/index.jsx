@@ -175,7 +175,7 @@ const VendorPortalDashboard = () => {
 
       {/* KPIs */}
       <div className="vendor-grid-kpi" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
-        <div className="vendor-kpi-card" onClick={() => navigate('/vendor-portal/employees')} style={{ cursor: 'pointer' }}>
+        <div className="vendor-kpi-card" onClick={() => navigate('/vendor-portal/employees/list/total')} style={{ cursor: 'pointer' }}>
           <div className="vendor-kpi-bg-circle"></div>
           <div className="vendor-kpi-icon-container" style={{ color: '#ef4444', background: '#fee2e2' }}>
             <FiUsers />

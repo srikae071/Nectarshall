@@ -105,6 +105,7 @@ import VendorLeaveManagement from "./pages/VendorPortal/LeaveManagement/index.js
 import VendorEmployeeDirectory from "./pages/VendorPortal/EmployeeDirectory/index.jsx";
 import EmployeeList from "./pages/VendorPortal/EmployeeDirectory/EmployeeList.jsx";
 import VendorTraining from "./pages/VendorPortal/Training/index.jsx";
+import TrainingList from "./pages/VendorPortal/Training/TrainingList.jsx";
 import OffboardingSupplierForm from "./pages/Hrms/Offbording/Supplier/OffBoaedingSuplierForm/index.jsx";
 import OnBoardingSupplierTab from "./pages/Hrms/OnBoarding/OnBoardingSupplier/OnbSupplierTab/index.jsx";
 import BusinessEngagement from "./pages/Cnc/CncRightSide/BusinessEngagement/index.jsx";
@@ -425,6 +426,7 @@ function App() {
       <Route path="/vendor-portal/employees" element={<VendorPortalLayout><VendorEmployeeDirectory /></VendorPortalLayout>} />
       <Route path="/vendor-portal/employees/list/:filterType" element={<VendorPortalLayout><EmployeeList /></VendorPortalLayout>} />
       <Route path="/vendor-portal/training" element={<VendorPortalLayout><VendorTraining /></VendorPortalLayout>} />
+      <Route path="/vendor-portal/training/list/:filterType" element={<VendorPortalLayout><TrainingList /></VendorPortalLayout>} />
       <Route
         path="/offboarding-supplier-form"
         element={<OffboardingSupplierForm />}
