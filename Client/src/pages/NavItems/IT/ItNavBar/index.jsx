@@ -8,14 +8,14 @@ function ItNavbar() {
 
   return (
     <div className="hrmsnavbar">
-      <div className="hrmslogo" onClick={() => navigate("/")}>
+      <div className="hrmslogo" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
         <img src={logo} alt="logo" className="hrmslogoimage" />
-        <div className="navname">
-          <p>IT</p>
-        </div>
+        <span className="navbarModuleLabel">
+          | IT
+        </span>
       </div>
 
-      <div style={{ display: "flex", alignItems: "center" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
         <ThemeSelector />
         <div className="profile">👤</div>
       </div>

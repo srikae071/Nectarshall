@@ -2,37 +2,40 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 40px;
+  padding: 10px 24px;
   background-color: #2e2e2e;
+  height: 60px;
+  box-sizing: border-box;
 }
 
 .hrmslogo {
   font-size: 22px;
   font-weight: bold;
-  color: #d32f2f;
   display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  color: #ffffff;
 }
+
 .hrmslogoimage {
   width: 92px;
-  height: 44px;
-  margin-bottom: -16px;
-}
-.navname {
-  margin-top: -13px;
+  height: 36px;
+  object-fit: contain;
 }
 
-/* =========================================================
-   WHITE THEME EXECUTIVE OVERRIDES FOR LEAVE NAVBAR
-   ========================================================= */
-[data-theme="white"] .hrmsnavbar,
-body.theme-white .hrmsnavbar {
-  background-color: #ffffff !important;
-  border-bottom: 1px solid #e2e8f0 !important;
-  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04) !important;
+.navname,
+.navname p {
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+  display: flex;
+  align-items: center;
 }
 
-[data-theme="white"] .hrmsnavbar .navname p,
-body.theme-white .hrmsnavbar .navname p {
-  color: #0f172a !important;
-  font-weight: 700 !important;
+/* THEME OVERRIDES */
+[data-theme="green"] .hrmsnavbar,
+body.theme-green .hrmsnavbar {
+  background-color: #e2f2eb !important;
+  border-bottom: 1px solid #d8eee4 !important;
 }
