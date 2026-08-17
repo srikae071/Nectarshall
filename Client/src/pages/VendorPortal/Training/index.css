@@ -1,0 +1,260 @@
+/* ============================================================
+   Vendor Portal — Training & Compliance  (trn-* prefix)
+   ============================================================ */
+
+/* ─── Page Header ─────────────────────────────────────────── */
+.trn-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.trn-page-header h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+.trn-page-header p {
+  font-size: 13px;
+  color: #64748b;
+  margin: 5px 0 0;
+}
+
+/* ─── Progress Banner ─────────────────────────────────────── */
+.trn-progress-banner {
+  background: white;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 18px 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.trn-progress-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.trn-progress-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e293b;
+}
+.trn-progress-count {
+  font-size: 13px;
+  color: #64748b;
+}
+.trn-progress-track {
+  height: 8px;
+  background: #f1f5f9;
+  border-radius: 99px;
+  overflow: hidden;
+}
+.trn-progress-fill {
+  height: 100%;
+  background: #16a34a;
+  border-radius: 99px;
+  transition: width 0.6s ease;
+}
+
+/* ─── Mandatory Pill ──────────────────────────────────────── */
+.trn-mandatory-required {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+.trn-mandatory-optional {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+}
+
+/* ─── Status Badges ───────────────────────────────────────── */
+.trn-status-pending     { background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; }
+.trn-status-in-progress { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+.trn-status-completed   { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+
+.trn-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+/* ─── Mark Complete Button ────────────────────────────────── */
+.trn-mark-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+.trn-mark-btn:hover { opacity: 0.85; }
+
+/* ─── Completed text ──────────────────────────────────────── */
+.trn-completed-on {
+  font-size: 12px;
+  color: #16a34a;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* ─── Clickable row ───────────────────────────────────────── */
+.trn-row-clickable {
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.trn-row-clickable:hover td {
+  background: #f8fafc;
+}
+
+/* ─── Confirm Dialog ──────────────────────────────────────── */
+.trn-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+}
+.trn-dialog {
+  background: white;
+  border-radius: 12px;
+  width: 420px;
+  max-width: 95vw;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  animation: trn-fade-in 0.18s ease;
+}
+@keyframes trn-fade-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.trn-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.trn-dialog-header h3 { margin: 0; font-size: 16px; color: #0f172a; }
+.trn-dialog-body { padding: 16px 20px; }
+.trn-dialog-msg  { font-size: 14px; color: #475569; line-height: 1.6; margin: 0; }
+.trn-dialog-footer {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  padding: 14px 20px 18px;
+  border-top: 1px solid #f1f5f9;
+}
+
+/* ─── Drawer ──────────────────────────────────────────────── */
+.trn-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  z-index: 900;
+  backdrop-filter: blur(2px);
+}
+.trn-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 440px;
+  max-width: 95vw;
+  height: 100vh;
+  background: white;
+  z-index: 950;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -4px 0 32px rgba(0,0,0,0.12);
+  animation: trn-slide-in 0.22s ease;
+}
+@keyframes trn-slide-in {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+.trn-drawer-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  flex-shrink: 0;
+  gap: 12px;
+}
+.trn-drawer-title { font-size: 17px; font-weight: 700; color: #0f172a; }
+.trn-drawer-id    { font-size: 12px; color: #94a3b8; margin-top: 3px; }
+.trn-drawer-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #f1f5f9;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  font-size: 16px;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.trn-drawer-close:hover { background: #e2e8f0; }
+.trn-drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+}
+
+.trn-detail-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f8fafc;
+}
+.trn-detail-group:last-child { border-bottom: none; }
+.trn-detail-key   { font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.04em; }
+.trn-detail-val   { font-size: 13px; color: #0f172a; font-weight: 600; margin-top: 3px; }
+
+.trn-desc-box {
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 13px;
+  color: #475569;
+  line-height: 1.6;
+  margin-top: 8px;
+}

@@ -1,0 +1,152 @@
+/* ============================================================
+   Vendor Portal — Leave Management / Contact Availability
+   Scoped under .lm-* prefix.
+   ============================================================ */
+
+/* ─── Page Header ─────────────────────────────────────────── */
+.lm-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.lm-page-header h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+.lm-page-header p {
+  font-size: 13px;
+  color: #64748b;
+  margin: 5px 0 0;
+}
+
+/* ─── Toolbar ─────────────────────────────────────────────── */
+.lm-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+/* ─── Card Grid ───────────────────────────────────────────── */
+.lm-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+@media (max-width: 1100px) {
+  .lm-card-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 720px) {
+  .lm-card-grid { grid-template-columns: 1fr; }
+}
+
+.lm-contact-card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+.lm-contact-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border-color: #e2e8f0;
+}
+
+.lm-card-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.lm-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+
+.lm-card-identity {
+  flex: 1;
+  min-width: 0;
+}
+.lm-card-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.lm-card-role {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0;
+}
+.lm-card-dept {
+  font-size: 11px;
+  color: #94a3b8;
+  margin: 1px 0 0;
+}
+
+/* ─── Status Badges ───────────────────────────────────────── */
+.lm-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+.lm-status-available { background: #f0fdf4; color: #16a34a; border-color: #bbf7d0; }
+.lm-status-on-leave  { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
+.lm-status-planned   { background: #fff7ed; color: #ea580c; border-color: #fed7aa; }
+
+/* ─── Leave Info inside card ─────────────────────────────── */
+.lm-card-leave-info {
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: #475569;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.lm-card-leave-info strong {
+  color: #1e293b;
+  font-weight: 600;
+}
+.lm-card-cover {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+/* ─── Section label ───────────────────────────────────────── */
+.lm-section-label {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 16px;
+}

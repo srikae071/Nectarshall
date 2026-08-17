@@ -1,13 +1,13 @@
 import Hrmsleftlayout from "../../pages/Hrms/Hrmsleftlayout";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./LeaveBalance.css";
 import { fetchApiData } from "../../utils/apiClient";
 
 function LeaveBalance() {
-  const [leaveType, setLeaveType] = useState("");
-  const [totalAllocated, setTotalAllocated] = useState("");
-  const [leaveConsumed, setLeaveConsumed] = useState("");
-  const [leaveBalance, setLeaveBalance] = useState("");
+  const [leaveType, setLeaveType] = useState("Paid Leave");
+  const [totalAllocated, setTotalAllocated] = useState(0);
+  const [leaveConsumed, setLeaveConsumed] = useState(0);
+  const [leaveBalance, setLeaveBalance] = useState(0);
 
   const leaveAllocation = {
     "Casual Leave": 5,
@@ -17,14 +17,15 @@ function LeaveBalance() {
     "Paternity Leave": 12,
   };
 
-  const handleLeaveTypeChange = async (e) => {
-    const selectedType = e.target.value;
-    setLeaveType(selectedType);
+  useEffect(() => {
+    loadBalance("Paid Leave");
+  }, []);
 
+  const loadBalance = async (selectedType) => {
     if (!selectedType) {
-      setTotalAllocated("");
-      setLeaveConsumed("");
-      setLeaveBalance("");
+      setTotalAllocated(0);
+      setLeaveConsumed(0);
+      setLeaveBalance(0);
       return;
     }
 
@@ -48,55 +49,72 @@ function LeaveBalance() {
     }
   };
 
+  const handleLeaveTypeChange = (e) => {
+    const selectedType = e.target.value;
+    setLeaveType(selectedType);
+    loadBalance(selectedType);
+  };
   return (
     <Hrmsleftlayout>
-      <div className="LeaveBalanceContainer">
-        <h2 className="LeaveBalanceTitle">Leave Balance</h2>
+      <div className="lr-page">
+        <div className="lr-card">
+          <h2 className="lr-title">Leave Balance</h2>
+          
+          <div className="lr-section">
+            <div className="lr-section-header">
+              <span className="lr-icon">📊</span>
+              <span className="lr-section-title">BALANCE DETAILS</span>
+            </div>
+            
+            <div className="lr-grid-2">
+              <div className="lr-field">
+                <label className="lr-label">Leave Type</label>
+                <select
+                  className="lr-input"
+                  value={leaveType}
+                  onChange={handleLeaveTypeChange}
+                >
+                  <option value="">Select Leave Type</option>
+                  <option value="Casual Leave">Casual Leave</option>
+                  <option value="Sick Leave">Sick Leave</option>
+                  <option value="Paid Leave">Paid Leave</option>
+                  <option value="Maternity Leave">Maternity Leave</option>
+                  <option value="Paternity Leave">Paternity Leave</option>
+                </select>
+              </div>
 
-        <div className="LeaveBalanceRow">
-          <div className="LeaveBalanceField">
-            <label>Leave Type</label>
-            <select
-              className="LeaveBalanceInput LeaveSelectInput"
-              value={leaveType}
-              onChange={handleLeaveTypeChange}
-            >
-              <option value="">Select Leave Type</option>
-              <option value="Casual Leave">Casual Leave (5 Days)</option>
-              <option value="Sick Leave">Sick Leave (10 Days)</option>
-              <option value="Paid Leave">Paid Leave (15 Days)</option>
-              <option value="Maternity Leave">Maternity Leave (20 Days)</option>
-              <option value="Paternity Leave">Paternity Leave (12 Days)</option>
-            </select>
+              <div className="lr-field">
+                <label className="lr-label">Total Allocated</label>
+                <input
+                  className="lr-input"
+                  value={totalAllocated}
+                  readOnly
+                />
+              </div>
+
+              <div className="lr-field">
+                <label className="lr-label">Leave Consumed</label>
+                <input
+                  className="lr-input"
+                  value={leaveConsumed}
+                  readOnly
+                />
+              </div>
+
+              <div className="lr-field">
+                <label className="lr-label">Leave Balance</label>
+                <input
+                  className="lr-input"
+                  value={leaveBalance}
+                  readOnly
+                />
+              </div>
+            </div>
           </div>
 
-          <div className="LeaveBalanceField">
-            <label>Total Allocated</label>
-            <input
-              className="LeaveBalanceInput ReadOnlyInput"
-              value={totalAllocated !== "" ? totalAllocated : ""}
-              readOnly
-            />
-          </div>
-        </div>
-
-        <div className="LeaveBalanceRow" style={{ marginTop: "16px" }}>
-          <div className="LeaveBalanceField">
-            <label>Leave Consumed</label>
-            <input
-              className="LeaveBalanceInput ReadOnlyInput"
-              value={leaveConsumed !== "" ? leaveConsumed : ""}
-              readOnly
-            />
-          </div>
-
-          <div className="LeaveBalanceField">
-            <label>Leave Balance</label>
-            <input
-              className="LeaveBalanceInput ReadOnlyInput"
-              value={leaveBalance !== "" ? leaveBalance : ""}
-              readOnly
-            />
+          <div className="lr-actions">
+            <button className="lr-btn-cancel">Cancel</button>
+            <button className="lr-btn-submit">Save</button>
           </div>
         </div>
       </div>

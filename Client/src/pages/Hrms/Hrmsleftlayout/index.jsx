@@ -5,6 +5,10 @@ import HrmsNavbar from "../HrmsNavbar";
 
 const menuData = [
   {
+    title: "Vendor Portal",
+    directPath: "/regular-form",
+  },
+  {
     title: "Case Management",
     items: [
       { label: "All", path: "/hrms/hrsavescases" },
@@ -172,6 +176,7 @@ const MenuItem = ({ item, level = 0, expandedMenus, setExpandedMenus }) => {
 
 /* ================= MAIN LAYOUT ================= */
 function HrmsLeftLayout({ children }) {
+  const navigate = useNavigate();
   const location = useLocation();
   const [openMenus, setOpenMenus] = useState({});
   const [expandedMenus, setExpandedMenus] = useState({});
@@ -201,6 +206,9 @@ function HrmsLeftLayout({ children }) {
     };
 
     menuData.forEach((menu, index) => {
+      // Skip direct-link entries (like Vendor Portal) that have no items array
+      if (!menu.items) return;
+
       const hasMatch = menu.items.some((item) => itemMatchesPath(item));
       if (hasMatch) {
         setOpenMenus((prev) => ({ ...prev, [index]: true }));
@@ -261,23 +269,35 @@ function HrmsLeftLayout({ children }) {
         <div className="hrmssidebar" style={{ width: sidebarWidth }}>
           {menuData.map((menu, index) => (
             <div key={index} className="menuBlock">
-              <div className="hrmsmenuHeader" onClick={() => toggle(index)}>
-                <span>{menu.title}</span>
-
-                <span>{openMenus[index] ? "-" : "+"}</span>
-              </div>
-
-              {openMenus[index] && (
-                <div className="submenu">
-                  {menu.items.map((item, i) => (
-                    <MenuItem
-                      key={i}
-                      item={item}
-                      expandedMenus={expandedMenus}
-                      setExpandedMenus={setExpandedMenus}
-                    />
-                  ))}
+              {menu.directPath ? (
+                // Direct navigation link — no dropdown
+                <div
+                  className="hrmsmenuHeader"
+                  onClick={() => navigate(menu.directPath)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <span>{menu.title}</span>
                 </div>
+              ) : (
+                // Normal expandable dropdown
+                <>
+                  <div className="hrmsmenuHeader" onClick={() => toggle(index)}>
+                    <span>{menu.title}</span>
+                    <span>{openMenus[index] ? "-" : "+"}</span>
+                  </div>
+                  {openMenus[index] && (
+                    <div className="submenu">
+                      {menu.items.map((item, i) => (
+                        <MenuItem
+                          key={i}
+                          item={item}
+                          expandedMenus={expandedMenus}
+                          setExpandedMenus={setExpandedMenus}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </>
               )}
             </div>
           ))}

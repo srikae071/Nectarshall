@@ -95,6 +95,16 @@ import ReqOnboardingAllTab from "./pages/NavItems/IT/ItRightSide/RequestsOnBoadi
 import RequestOnboardingSaves from "./pages/NavItems/IT/ItRightSide/RequestsOnBoading/RequestsOnbordingSaves/index.jsx";
 import ReqOnboardingResolvedTab from "./pages/NavItems/IT/ItRightSide/RequestsOnBoading/ReqOnBoardingResolvedTab/index.jsx";
 import RegularForm from "./components/Layouts/FormLayouts/RegularForm/index.jsx";
+import VendorPortalDashboard from "./pages/VendorPortal/Dashboard/index.jsx";
+import VendorPortalLayout from "./pages/VendorPortal/Layout/index.jsx";
+import VendorPortalPurchaseOrders from "./pages/VendorPortal/PurchaseOrders/index.jsx";
+import VendorPortalInvoices from "./pages/VendorPortal/Invoices/index.jsx";
+import VendorCaseManagement from "./pages/VendorPortal/CaseManagement/index.jsx";
+import CaseList from "./pages/VendorPortal/CaseManagement/CaseList.jsx";
+import VendorLeaveManagement from "./pages/VendorPortal/LeaveManagement/index.jsx";
+import VendorEmployeeDirectory from "./pages/VendorPortal/EmployeeDirectory/index.jsx";
+import EmployeeList from "./pages/VendorPortal/EmployeeDirectory/EmployeeList.jsx";
+import VendorTraining from "./pages/VendorPortal/Training/index.jsx";
 import OffboardingSupplierForm from "./pages/Hrms/Offbording/Supplier/OffBoaedingSuplierForm/index.jsx";
 import OnBoardingSupplierTab from "./pages/Hrms/OnBoarding/OnBoardingSupplier/OnbSupplierTab/index.jsx";
 import BusinessEngagement from "./pages/Cnc/CncRightSide/BusinessEngagement/index.jsx";
@@ -406,7 +416,15 @@ function App() {
         path="/requests-onboarding-resolved"
         element={<ReqOnboardingResolvedTab />}
       />
-      <Route path="/regular-form" element={<RegularForm />} />
+      <Route path="/regular-form" element={<VendorPortalLayout><VendorPortalDashboard /></VendorPortalLayout>} />
+      <Route path="/vendor-portal/purchase-orders" element={<VendorPortalLayout><VendorPortalPurchaseOrders /></VendorPortalLayout>} />
+      <Route path="/vendor-portal/invoices" element={<VendorPortalLayout><VendorPortalInvoices /></VendorPortalLayout>} />
+      <Route path="/vendor-portal/cases" element={<VendorPortalLayout><VendorCaseManagement /></VendorPortalLayout>} />
+      <Route path="/vendor-portal/cases/list/:type" element={<VendorPortalLayout><CaseList /></VendorPortalLayout>} />
+      <Route path="/vendor-portal/leave" element={<VendorPortalLayout><VendorLeaveManagement /></VendorPortalLayout>} />
+      <Route path="/vendor-portal/employees" element={<VendorPortalLayout><VendorEmployeeDirectory /></VendorPortalLayout>} />
+      <Route path="/vendor-portal/employees/list/:filterType" element={<VendorPortalLayout><EmployeeList /></VendorPortalLayout>} />
+      <Route path="/vendor-portal/training" element={<VendorPortalLayout><VendorTraining /></VendorPortalLayout>} />
       <Route
         path="/offboarding-supplier-form"
         element={<OffboardingSupplierForm />}
