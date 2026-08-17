@@ -40,10 +40,10 @@ function VendorLoginPage() {
       <div className="vendorLoginCard">
         <div className="vendorLoginHeader">
           <img src={logo} alt="Enhance Logo" className="vendorLoginLogo" />
-          <div className="vendorBadgeHeader">🏬 Vendor Portal</div>
-          <h2 className="vendorLoginTitle">Welcome to Vendor Portal</h2>
+          <div className="vendorBadgeHeader">📊 Dashboard</div>
+          <h2 className="vendorLoginTitle">Welcome to Dashboard</h2>
           <p className="vendorLoginSubtitle">
-            Sign in to manage vendor compliance, deliverables & billing
+            Sign in to access dashboard, compliance & management tools
           </p>
         </div>
 

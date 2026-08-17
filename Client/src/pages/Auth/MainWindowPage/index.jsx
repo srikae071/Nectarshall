@@ -55,21 +55,22 @@ function MainWindowPage() {
           className="portalCard vendorCard"
           onClick={() => navigate("/vendor-login")}
         >
-          <div className="portalBadge vendorBadge">Suppliers & Partners</div>
+          <div className="portalBadge vendorBadge">📊 Dashboard</div>
           <div className="portalIconCircle vendorIcon">🏬</div>
-          <h2 className="portalCardTitle">Vendor Portal</h2>
+          <h2 className="portalCardTitle">Dashboard</h2>
           <p className="portalCardDesc">
-            Access Vendor Compliance, Deliverables, Invoicing, Purchase Orders
-            & Partner Management.
+            Access portal metrics, compliance status, shift rosters & management.
           </p>
           <ul className="portalFeatureList">
-            <li>✓ Vendor Compliance & Onboarding</li>
-            <li>✓ Financial Deliverables & Work Orders</li>
-            <li>✓ Vendor Invoices & Billing Reconciliation</li>
-            <li>✓ Service Contracts & Supplier Support</li>
+            <li>✓ Vendor Compliance & Audit Logs</li>
+            <li>✓ Adhoc Shift Requests</li>
+            <li>✓ Live Roster Tracking</li>
           </ul>
-          <button className="portalActionBtn vendorBtn">
-            Enter Vendor Portal →
+          <button
+            className="enterPortalBtn vendorBtn"
+            onClick={() => navigate("/vendor-login")}
+          >
+            Enter Dashboard →
           </button>
         </div>
       </div>

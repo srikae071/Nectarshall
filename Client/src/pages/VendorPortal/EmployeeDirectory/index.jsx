@@ -1,13 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { fetchApiData } from '../../../utils/apiClient';
 import { FiSearch, FiX, FiMail, FiMapPin, FiUsers, FiUserCheck, FiBriefcase, FiUserPlus, FiMoreHorizontal, FiList, FiGrid, FiChevronDown } from 'react-icons/fi';
 import '../Dashboard/index.css';
 
-export const employees = [
-  { id: 'EMP-001', name: 'Sumit sir', title: 'Head of Department', dept: 'Engineering', email: 'sumit@company.com', location: 'Head Office', status: 'Active', joiningDate: '10-Jan-2020', initials: 'SS', color: '#10b981' },
-  { id: 'EMP-002', name: 'Karan', title: 'Developer', dept: 'Engineering', email: 'karan@company.com', location: 'Remote', status: 'Active', joiningDate: '15-Mar-2022', initials: 'K', color: '#3b82f6' },
-  { id: 'EMP-003', name: 'Srikar', title: 'Full Stack Developer', dept: 'Engineering', email: 'srikar@company.com', location: 'Remote', status: 'Active', joiningDate: '20-Aug-2021', initials: 'S', color: '#8b5cf6' }
-];
+export const employees = [];
 
 export const EmpDrawer = ({ emp, onClose }) => (
   <>
@@ -15,7 +12,7 @@ export const EmpDrawer = ({ emp, onClose }) => (
     <div className="po-drawer">
       <div className="po-drawer-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div style={{ width: 48, height: 48, borderRadius: '50%', background: emp.color, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 16, flexShrink: 0 }}>{emp.initials}</div>
+          <div style={{ width: 48, height: 48, borderRadius: '50%', background: emp.color || '#10b981', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 16, flexShrink: 0 }}>{emp.initials}</div>
           <div>
             <div className="po-drawer-id" style={{ marginBottom: 2 }}>{emp.name}</div>
             <div style={{ fontSize: 13, color: '#64748b' }}>{emp.title}</div>
@@ -50,13 +47,46 @@ const VendorEmployeeDirectory = () => {
   const [deptFilter, setDeptFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
   const [locationFilter, setLocationFilter] = useState('All');
+  const [dbEmployees, setDbEmployees] = useState([]);
 
-  const totalEmployees = employees.length;
-  const activeEmployees = employees.filter(e => e.status === 'Active').length;
-  const uniqueDepts = [...new Set(employees.map(e => e.dept))];
+  useEffect(() => {
+    fetchEmployees();
+  }, []);
+
+  const fetchEmployees = async () => {
+    try {
+      const res = await fetchApiData("/api/employees");
+      const emps = (res.data || []).map((emp, index) => {
+        const name = emp.displayName || emp.employeeName || `${emp.firstName || ""} ${emp.lastName || ""}`.trim() || "Unnamed Employee";
+        const initials = name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || "EP";
+        const colors = ['#10b981', '#3b82f6', '#8b5cf6', '#ea4104', '#059669', '#0284c7'];
+        return {
+          id: emp.employeeId || `EMP-${index + 101}`,
+          name: name,
+          title: emp.jobTitle || "Employee",
+          dept: emp.department || "General",
+          email: emp.email || "N/A",
+          location: emp.officeLocation || emp.place || "Head Office",
+          status: emp.accountEnabled !== false ? "Active" : "Inactive",
+          joiningDate: emp.createdAt ? new Date(emp.createdAt).toLocaleDateString() : "N/A",
+          initials: initials,
+          color: colors[index % colors.length]
+        };
+      });
+      setDbEmployees(emps);
+    } catch (err) {
+      console.error("Error loading employees in directory:", err);
+    }
+  };
+
+  const currentEmployees = dbEmployees;
+
+  const totalEmployees = currentEmployees.length;
+  const activeEmployees = currentEmployees.filter(e => e.status === 'Active').length;
+  const uniqueDepts = [...new Set(currentEmployees.map(e => e.dept))];
   const activePct = totalEmployees > 0 ? ((activeEmployees / totalEmployees) * 100).toFixed(1) : 0;
 
-  const filtered = employees.filter(e => {
+  const filtered = currentEmployees.filter(e => {
     const matchSearch = e.name.toLowerCase().includes(search.toLowerCase()) || e.title.toLowerCase().includes(search.toLowerCase()) || e.dept.toLowerCase().includes(search.toLowerCase());
     const matchDept = deptFilter === 'All' || e.dept === deptFilter;
     const matchStatus = statusFilter === 'All' || e.status === statusFilter;

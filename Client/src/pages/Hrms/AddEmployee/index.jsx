@@ -207,13 +207,18 @@ function AddEmployee() {
 
         <div className="form-row">
           <label className="form-label">Department</label>
-          <input
+          <select
             className="form-input"
             name="department"
             value={formData.department}
             onChange={handleChange}
-            placeholder="e.g. Operations"
-          />
+          >
+            <option value="">Select Department</option>
+            <option value="HR">HR</option>
+            <option value="Operations">Operations</option>
+            <option value="IT">IT</option>
+            <option value="Patrolling">Patrolling</option>
+          </select>
         </div>
 
         <div className="form-row">

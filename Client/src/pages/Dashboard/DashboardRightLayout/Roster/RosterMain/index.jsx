@@ -257,13 +257,16 @@ function RosterMain() {
     return full || "";
   };
 
-  // 2. Employee Options (sourced ONLY from /api/employees table as requested)
+  // 2. Employee Options (sourced ONLY from /api/employees table for Operations department)
   const rawEmployeeOptions = useMemo(() => {
     const employees = new Set();
     dbEmployees.forEach((emp) => {
-      const name = getEmpName(emp);
-      if (name) {
-        employees.add(name);
+      const dept = (emp.department || "").toLowerCase().trim();
+      if (dept === "operations" || dept === "operation") {
+        const name = getEmpName(emp);
+        if (name) {
+          employees.add(name);
+        }
       }
     });
     return [...employees].sort();
@@ -1613,22 +1616,21 @@ function RosterMain() {
                 <label htmlFor="assignEmployeeInput" className="bigScopeLabel">
                   Assign To
                 </label>
-                <input
+                <select
                   id="assignEmployeeInput"
-                  type="text"
-                  list="employeeSuggestions"
                   value={newEmployeeName}
                   onChange={(e) => setNewEmployeeName(e.target.value)}
-                  placeholder="Type or select employee..."
                   className="assignInput"
-                  style={{ fontSize: "14px", padding: "10px 12px" }}
+                  style={{ fontSize: "14px", padding: "10px 12px", width: "100%", borderRadius: "8px", border: "1px solid #cbd5e1" }}
                   autoFocus
-                />
-                <datalist id="employeeSuggestions">
+                >
+                  <option value="">-- Select Employee (Operations Dept) --</option>
                   {rawEmployeeOptions.map((emp, i) => (
-                    <option key={i} value={emp} />
+                    <option key={i} value={emp}>
+                      👤 {emp}
+                    </option>
                   ))}
-                </datalist>
+                </select>
 
                 {newEmployeeName.trim() &&
                   getEmployeeLeaveStatus(
@@ -1719,16 +1721,21 @@ function RosterMain() {
 
               <div className="formGroup">
                 <label htmlFor="assignAdhocEmployeeInput">Assign To:</label>
-                <input
+                <select
                   id="assignAdhocEmployeeInput"
-                  type="text"
-                  list="employeeSuggestions"
                   value={newAdhocEmployeeName}
                   onChange={(e) => setNewAdhocEmployeeName(e.target.value)}
-                  placeholder="Type or select employee..."
                   className="assignInput"
+                  style={{ fontSize: "14px", padding: "10px 12px", width: "100%", borderRadius: "8px", border: "1px solid #cbd5e1" }}
                   autoFocus
-                />
+                >
+                  <option value="">-- Select Employee (Operations Dept) --</option>
+                  {rawEmployeeOptions.map((emp, i) => (
+                    <option key={i} value={emp}>
+                      👤 {emp}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 

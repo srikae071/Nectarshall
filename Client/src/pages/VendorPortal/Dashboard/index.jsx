@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { fetchApiData } from '../../../utils/apiClient';
 import './index.css';
 import { 
   FiFileText, 
@@ -23,13 +24,34 @@ import {
   FiMessageSquare
 } from 'react-icons/fi';
 import { mockVendorData } from '../mockData';
-import { employees } from '../EmployeeDirectory';
 
 const VendorPortalDashboard = () => {
   const { kpis, pipeline, chart, vacancies, interviews, activities } = mockVendorData;
   const [selectedInterview, setSelectedInterview] = useState(null);
   const [hoveredDept, setHoveredDept] = useState(null);
+  const [dbEmpList, setDbEmpList] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchDbEmployees();
+  }, []);
+
+  const fetchDbEmployees = async () => {
+    try {
+      const res = await fetchApiData("/api/employees");
+      setDbEmpList(res.data || []);
+    } catch (err) {
+      console.error("Error loading employees in vendor dashboard:", err);
+    }
+  };
+
+  const employees = dbEmpList.map((emp, index) => ({
+    id: emp.employeeId || `EMP-${index + 101}`,
+    name: emp.displayName || emp.employeeName || `${emp.firstName || ""} ${emp.lastName || ""}`.trim() || "Unnamed Employee",
+    title: emp.jobTitle || "Employee",
+    dept: emp.department || "General",
+    status: emp.accountEnabled !== false ? "Active" : "Inactive",
+  }));
 
   const LeaveTrendsChart = () => {
     const W = 520; const H = 240;
