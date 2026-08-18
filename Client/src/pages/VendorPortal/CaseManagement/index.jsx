@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { FiSearch, FiX, FiCheck, FiChevronRight, FiFileText, FiBox, FiCheckSquare, FiFile } from 'react-icons/fi';
 import { fetchApiData } from '../../../utils/apiClient';
 import '../Dashboard/index.css';
@@ -9,14 +9,14 @@ export const today = () => new Date().toISOString().split('T')[0];
 export const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
 
 const ALL_CASE_COLUMNS = [
-  { key: 'id', label: 'INCIDENT NUMBER' },
-  { key: 'requester', label: 'REQUESTER' },
-  { key: 'category', label: 'CATEGORY' },
-  { key: 'priority', label: 'PRIORITY' },
-  { key: 'impact', label: 'IMPACT' },
-  { key: 'status', label: 'STATUS' },
-  { key: 'lastUpdate', label: 'LAST UPDATED' },
-  { key: 'action', label: 'ACTIONS' },
+  { key: 'id', label: 'INCIDENT NUMBER', width: '15%' },
+  { key: 'requester', label: 'REQUESTER', width: '16%' },
+  { key: 'category', label: 'CATEGORY', width: '15%' },
+  { key: 'priority', label: 'PRIORITY', width: '12%' },
+  { key: 'impact', label: 'IMPACT', width: '12%' },
+  { key: 'status', label: 'STATUS', width: '14%' },
+  { key: 'lastUpdate', label: 'LAST UPDATED', width: '14%' },
+  { key: 'action', label: 'ACTIONS', width: '10%' },
 ];
 
 const CASE_STATUS_COLORS = {
@@ -95,6 +95,7 @@ export const CaseDetailDrawer = ({ c, onClose }) => (
 
 const VendorCaseManagement = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [cases, setCases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -152,11 +153,13 @@ const VendorCaseManagement = () => {
     }
   };
 
+  // Only display cases where priority is High OR status is Open for the bottom HR Cases table
   const filtered = cases.filter(c => {
     const q = search.toLowerCase();
     const matchQ = c.id.toLowerCase().includes(q) || c.subject.toLowerCase().includes(q) || c.requester.toLowerCase().includes(q) || c.category.toLowerCase().includes(q);
     const matchS = statusFilter === 'All' || c.status.toLowerCase() === statusFilter.toLowerCase();
-    return matchQ && matchS;
+    const isHighOrOpen = (c.priority && c.priority.toLowerCase() === 'high') || (c.status && c.status.toLowerCase() === 'open');
+    return matchQ && matchS && isHighOrOpen;
   });
 
   // Dynamic KPI counts
@@ -201,7 +204,7 @@ const VendorCaseManagement = () => {
     ? statusChartData.find(d => d.id === hoveredStatus)
     : { label: 'Total Cases', val: totalCount };
 
-  // Dynamic Cases Trend Calculation (7 Days, 1 Month, Custom)
+  // Dynamic Cases Trend Calculation
   const trendData = useMemo(() => {
     const now = new Date();
 
@@ -260,7 +263,6 @@ const VendorCaseManagement = () => {
     return [];
   }, [cases, trendRange, customStartDate, customEndDate]);
 
-  // Scaled Y-axis logic to keep 0, 2, 4, 6, 8, 10 strictly inside the canvas below header
   const maxTrendCount = useMemo(() => {
     const counts = trendData.map(d => d.count);
     return Math.max(4, ...counts);
@@ -324,12 +326,38 @@ const VendorCaseManagement = () => {
 
   return (
     <div className="vendor-dashboard-wrapper" style={{ padding: '32px', maxWidth: '1400px', margin: '0 auto' }}>
-      {/* Header */}
+      {/* Header with Nav Tabs Beside Title */}
       <div className="vendor-dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
-        <div>
-          <h1 style={{ fontSize: 28, fontWeight: 700, margin: '0 0 8px 0', color: '#0f172a' }}>Case Management</h1>
-          <p style={{ fontSize: 14, color: '#64748b', margin: 0 }}>HR Requests and Case Tracker (Sourced from HR Request database)</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+          <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0, color: '#0f172a' }}>Case Management</h1>
+
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', background: '#f8fafc', padding: '4px 10px', borderRadius: 8, border: '1px solid #e2e8f0' }}>
+            {[
+              { label: 'Dashboard', path: '/regular-form' },
+              { label: 'Case Management', path: '/vendor-portal/cases' },
+              { label: 'Leave Management', path: '/vendor-portal/leave' },
+              { label: 'Employee Directory', path: '/vendor-portal/employees' },
+              { label: 'Training & Dev', path: '/vendor-portal/training' },
+            ].map(tab => (
+              <span
+                key={tab.path}
+                onClick={() => navigate(tab.path)}
+                style={{
+                  cursor: 'pointer',
+                  fontSize: 13,
+                  fontWeight: location.pathname.startsWith(tab.path) && tab.path !== '/regular-form' ? 700 : tab.path === '/regular-form' && location.pathname === '/regular-form' ? 700 : 500,
+                  color: location.pathname.startsWith(tab.path) && tab.path !== '/regular-form' ? '#ea4104' : tab.path === '/regular-form' && location.pathname === '/regular-form' ? '#ea4104' : '#64748b',
+                  borderBottom: location.pathname.startsWith(tab.path) && tab.path !== '/regular-form' ? '2px solid #ea4104' : tab.path === '/regular-form' && location.pathname === '/regular-form' ? '2px solid #ea4104' : '2px solid transparent',
+                  padding: '4px 8px',
+                  transition: 'all 0.2s'
+                }}
+              >
+                {tab.label}
+              </span>
+            ))}
+          </div>
         </div>
+
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           <div style={{ position: 'relative', width: 280 }}>
             <FiSearch style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} size={16} />
@@ -373,7 +401,7 @@ const VendorCaseManagement = () => {
 
       {/* Middle Grid 1: Cases by Status & Cases Trend */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 32 }}>
-        {/* Cases by Status (Donut Chart) */}
+        {/* Cases by Status */}
         <div style={{ background: '#fff', border: '1px solid #f1f5f9', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.02)' }}>
           <h2 style={{ fontSize: 16, fontWeight: 600, color: '#0f172a', margin: '0 0 24px 0' }}>Cases by Status</h2>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -418,7 +446,7 @@ const VendorCaseManagement = () => {
           </div>
         </div>
 
-        {/* Cases Trend (7 Days, 1 Month, Custom) */}
+        {/* Cases Trend */}
         <div style={{ background: '#fff', border: '1px solid #f1f5f9', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.02)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <div>
@@ -484,7 +512,6 @@ const VendorCaseManagement = () => {
                   </linearGradient>
                 </defs>
                 
-                {/* Y Axis Grid & Labels (Kept strictly inside canvas below header) */}
                 {yTicks.map(yVal => {
                   const py = getYPos(yVal);
                   return (
@@ -495,16 +522,13 @@ const VendorCaseManagement = () => {
                   );
                 })}
 
-                {/* X Axis Labels */}
                 {trendPoints.map((pt, idx) => (
                   <text key={idx} x={pt.x} y="190" fill="#94a3b8" fontSize="11" textAnchor="middle">{pt.label}</text>
                 ))}
 
-                {/* Line & Fill Area */}
                 {trendPathStr && <path d={trendPathStr} fill="none" stroke="#3b82f6" strokeWidth="3" />}
                 {trendAreaStr && <path d={trendAreaStr} fill="url(#blueGrad)" />}
 
-                {/* Data Points */}
                 {trendPoints.map((pt, i) => (
                   <g key={i}>
                     <circle cx={pt.x} cy={pt.y} r="5" fill="#3b82f6" />
@@ -568,9 +592,12 @@ const VendorCaseManagement = () => {
       {/* Cases List */}
       <div style={{ background: '#fff', border: '1px solid #f1f5f9', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.02)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a', margin: 0 }}>All HR Cases</h2>
+          <div>
+            <h2 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a', margin: 0 }}>All HR Cases</h2>
+            <p style={{ fontSize: 12, color: '#64748b', margin: '4px 0 0 0' }}>Showing High priority and Open cases</p>
+          </div>
           <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-            {/* Settings Icon Dropdown Button */}
+            {/* Settings Icon Dropdown Button (Icon only) */}
             <div style={{ position: 'relative' }}>
               <button
                 type="button"
@@ -587,7 +614,7 @@ const VendorCaseManagement = () => {
                   alignItems: "center",
                   boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
                 }}
-                title="Customize Display Columns"
+                title="Settings"
               >
                 ⚙️
               </button>
@@ -617,7 +644,7 @@ const VendorCaseManagement = () => {
                       paddingBottom: "6px",
                     }}
                   >
-                    ⚙️ Display Columns:
+                    ⚙️ Settings
                   </div>
 
                   {ALL_CASE_COLUMNS.map(col => (
@@ -653,34 +680,50 @@ const VendorCaseManagement = () => {
         {loading ? (
           <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>Loading cases from HR Request database...</div>
         ) : filtered.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>No HR cases found in database.</div>
+          <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>No High priority or Open cases found in database.</div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+            <table style={{ width: '100%', minWidth: '800px', tableLayout: 'fixed', borderCollapse: 'collapse', textAlign: 'left' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                  {ALL_CASE_COLUMNS.filter(col => visibleColumns.includes(col.key)).map(col => (
-                    <th key={col.key} style={{ padding: '12px 16px', fontSize: 12, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', textAlign: col.key === 'action' ? 'right' : 'left' }}>{col.label}</th>
+                  {ALL_CASE_COLUMNS.map(col => (
+                    <th key={col.key} style={{ width: col.width, padding: '12px 16px', fontSize: 12, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', textAlign: col.key === 'action' ? 'right' : 'left' }}>
+                      {visibleColumns.includes(col.key) ? col.label : ''}
+                    </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {filtered.map(c => (
                   <tr key={c.id} style={{ borderBottom: '1px solid #f1f5f9', transition: 'background 0.2s', cursor: 'pointer' }} onClick={() => setSelected(c)} onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                    {visibleColumns.includes('id') && <td style={{ padding: '16px', fontSize: 13, fontWeight: 700, color: '#ea4104' }}>{c.id}</td>}
-                    {visibleColumns.includes('requester') && <td style={{ padding: '16px', fontSize: 13, color: '#0f172a', fontWeight: 600 }}>👤 {c.requester}</td>}
-                    {visibleColumns.includes('category') && <td style={{ padding: '16px', fontSize: 13, color: '#475569' }}>{c.category}</td>}
-                    {visibleColumns.includes('priority') && <td style={{ padding: '16px' }}><PriorityBadge priority={c.priority} /></td>}
-                    {visibleColumns.includes('impact') && <td style={{ padding: '16px', fontSize: 13, color: '#475569' }}>{c.impact}</td>}
-                    {visibleColumns.includes('status') && <td style={{ padding: '16px' }}><StatusBadge status={c.status} /></td>}
-                    {visibleColumns.includes('lastUpdate') && <td style={{ padding: '16px', fontSize: 13, color: '#475569' }}>{fmtDate(c.lastUpdate)}</td>}
-                    {visibleColumns.includes('action') && (
-                      <td style={{ padding: '16px', textAlign: 'right' }}>
+                    <td style={{ width: '15%', padding: '16px', fontSize: 13, fontWeight: 700, color: '#ea4104' }}>
+                      {visibleColumns.includes('id') ? c.id : ''}
+                    </td>
+                    <td style={{ width: '16%', padding: '16px', fontSize: 13, color: '#0f172a', fontWeight: 600 }}>
+                      {visibleColumns.includes('requester') ? c.requester : ''}
+                    </td>
+                    <td style={{ width: '15%', padding: '16px', fontSize: 13, color: '#475569' }}>
+                      {visibleColumns.includes('category') ? c.category : ''}
+                    </td>
+                    <td style={{ width: '12%', padding: '16px' }}>
+                      {visibleColumns.includes('priority') ? <PriorityBadge priority={c.priority} /> : ''}
+                    </td>
+                    <td style={{ width: '12%', padding: '16px', fontSize: 13, color: '#475569' }}>
+                      {visibleColumns.includes('impact') ? c.impact : ''}
+                    </td>
+                    <td style={{ width: '14%', padding: '16px' }}>
+                      {visibleColumns.includes('status') ? <StatusBadge status={c.status} /> : ''}
+                    </td>
+                    <td style={{ width: '14%', padding: '16px', fontSize: 13, color: '#475569' }}>
+                      {visibleColumns.includes('lastUpdate') ? fmtDate(c.lastUpdate) : ''}
+                    </td>
+                    <td style={{ width: '10%', padding: '16px', textAlign: 'right' }}>
+                      {visibleColumns.includes('action') ? (
                         <button style={{ background: 'none', border: 'none', color: '#ea4104', display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 13, cursor: 'pointer', fontWeight: 600 }}>
                           <FiChevronRight size={14} /> View
                         </button>
-                      </td>
-                    )}
+                      ) : ''}
+                    </td>
                   </tr>
                 ))}
               </tbody>

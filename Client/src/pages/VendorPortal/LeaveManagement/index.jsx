@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { FiSearch, FiX } from 'react-icons/fi';
 import { fetchApiData } from '../../../utils/apiClient';
 import '../Dashboard/index.css';
@@ -8,17 +9,19 @@ export const today = () => new Date().toISOString().split('T')[0];
 export const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
 
 const ALL_LEAVE_COLUMNS = [
-  { key: 'leaveNumber', label: 'Leave ID' },
-  { key: 'employeeName', label: 'Employee Name' },
-  { key: 'leaveType', label: 'Leave type' },
-  { key: 'startDate', label: 'Start date' },
-  { key: 'endDate', label: 'End date' },
-  { key: 'totalLeaves', label: 'Total leave count' },
-  { key: 'status', label: 'Status' },
-  { key: 'description', label: 'Reason' },
+  { key: 'leaveNumber', label: 'Leave ID', width: '12%' },
+  { key: 'employeeName', label: 'Employee Name', width: '18%' },
+  { key: 'leaveType', label: 'Leave type', width: '14%' },
+  { key: 'startDate', label: 'Start date', width: '13%' },
+  { key: 'endDate', label: 'End date', width: '13%' },
+  { key: 'totalLeaves', label: 'Total leave count', width: '12%' },
+  { key: 'status', label: 'Status', width: '10%' },
+  { key: 'description', label: 'Reason', width: '18%' },
 ];
 
 const VendorLeaveManagement = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [leaves, setLeaves] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -132,12 +135,35 @@ const VendorLeaveManagement = () => {
 
   return (
     <div className="vendor-dashboard-wrapper">
-      {/* Header */}
+      {/* Header with Nav Tabs Beside Title */}
       <div className="vendor-dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-        <div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
           <h1 style={{ fontSize: 26, fontWeight: 700, margin: 0, color: '#0f172a' }}>Leave Management</h1>
-          <div style={{ fontSize: 14, color: '#64748b', margin: '4px 0 0 0' }}>
-            {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', background: '#f8fafc', padding: '4px 10px', borderRadius: 8, border: '1px solid #e2e8f0' }}>
+            {[
+              { label: 'Dashboard', path: '/regular-form' },
+              { label: 'Case Management', path: '/vendor-portal/cases' },
+              { label: 'Leave Management', path: '/vendor-portal/leave' },
+              { label: 'Employee Directory', path: '/vendor-portal/employees' },
+              { label: 'Training & Dev', path: '/vendor-portal/training' },
+            ].map(tab => (
+              <span
+                key={tab.path}
+                onClick={() => navigate(tab.path)}
+                style={{
+                  cursor: 'pointer',
+                  fontSize: 13,
+                  fontWeight: location.pathname.startsWith(tab.path) && tab.path !== '/regular-form' ? 700 : tab.path === '/regular-form' && location.pathname === '/regular-form' ? 700 : 500,
+                  color: location.pathname.startsWith(tab.path) && tab.path !== '/regular-form' ? '#ea4104' : tab.path === '/regular-form' && location.pathname === '/regular-form' ? '#ea4104' : '#64748b',
+                  borderBottom: location.pathname.startsWith(tab.path) && tab.path !== '/regular-form' ? '2px solid #ea4104' : tab.path === '/regular-form' && location.pathname === '/regular-form' ? '2px solid #ea4104' : '2px solid transparent',
+                  padding: '4px 8px',
+                  transition: 'all 0.2s'
+                }}
+              >
+                {tab.label}
+              </span>
+            ))}
           </div>
         </div>
 
@@ -281,6 +307,7 @@ const VendorLeaveManagement = () => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <h2 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a', margin: 0 }}>All Leave Records</h2>
           <div style={{ position: 'relative' }}>
+            {/* Settings Icon Only Button */}
             <button
               type="button"
               onClick={() => setShowSettings(!showSettings)}
@@ -296,7 +323,7 @@ const VendorLeaveManagement = () => {
                 alignItems: "center",
                 boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
               }}
-              title="Customize Display Columns"
+              title="Settings"
             >
               ⚙️
             </button>
@@ -326,7 +353,7 @@ const VendorLeaveManagement = () => {
                     paddingBottom: "6px",
                   }}
                 >
-                  ⚙️ Display Columns:
+                  ⚙️ Settings
                 </div>
 
                 {ALL_LEAVE_COLUMNS.map(col => (
@@ -362,31 +389,47 @@ const VendorLeaveManagement = () => {
           <div style={{ textAlign: 'center', padding: 40, color: '#64748b' }}>No leave records found in database.</div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+            <table style={{ width: '100%', minWidth: '800px', tableLayout: 'fixed', borderCollapse: 'collapse', textAlign: 'left' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                  {ALL_LEAVE_COLUMNS.filter(c => visibleColumns.includes(c.key)).map(c => (
-                    <th key={c.key} style={{ padding: '12px 16px', fontSize: 12, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase' }}>{c.label}</th>
+                  {ALL_LEAVE_COLUMNS.map(c => (
+                    <th key={c.key} style={{ width: c.width, padding: '12px 16px', fontSize: 12, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase' }}>
+                      {visibleColumns.includes(c.key) ? c.label : ''}
+                    </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {filteredLeaves.map(l => (
                   <tr key={l.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    {visibleColumns.includes('leaveNumber') && <td style={{ padding: 16, fontSize: 13, fontWeight: 700, color: '#ea4104' }}>{l.id}</td>}
-                    {visibleColumns.includes('employeeName') && <td style={{ padding: 16, fontSize: 13, fontWeight: 600, color: '#0f172a' }}>👤 {l.employeeName}</td>}
-                    {visibleColumns.includes('leaveType') && <td style={{ padding: 16, fontSize: 13, color: '#475569' }}>{l.leaveType}</td>}
-                    {visibleColumns.includes('startDate') && <td style={{ padding: 16, fontSize: 13, color: '#475569' }}>{fmtDate(l.startDate)}</td>}
-                    {visibleColumns.includes('endDate') && <td style={{ padding: 16, fontSize: 13, color: '#475569' }}>{fmtDate(l.endDate)}</td>}
-                    {visibleColumns.includes('totalLeaves') && <td style={{ padding: 16, fontSize: 13, fontWeight: 700, color: '#0f172a' }}>{l.totalLeaves}d</td>}
-                    {visibleColumns.includes('status') && (
-                      <td style={{ padding: 16 }}>
+                    <td style={{ width: '12%', padding: 16, fontSize: 13, fontWeight: 700, color: '#ea4104' }}>
+                      {visibleColumns.includes('leaveNumber') ? l.id : ''}
+                    </td>
+                    <td style={{ width: '18%', padding: 16, fontSize: 13, fontWeight: 600, color: '#0f172a' }}>
+                      {visibleColumns.includes('employeeName') ? l.employeeName : ''}
+                    </td>
+                    <td style={{ width: '14%', padding: 16, fontSize: 13, color: '#475569' }}>
+                      {visibleColumns.includes('leaveType') ? l.leaveType : ''}
+                    </td>
+                    <td style={{ width: '13%', padding: 16, fontSize: 13, color: '#475569' }}>
+                      {visibleColumns.includes('startDate') ? fmtDate(l.startDate) : ''}
+                    </td>
+                    <td style={{ width: '13%', padding: 16, fontSize: 13, color: '#475569' }}>
+                      {visibleColumns.includes('endDate') ? fmtDate(l.endDate) : ''}
+                    </td>
+                    <td style={{ width: '12%', padding: 16, fontSize: 13, fontWeight: 700, color: '#0f172a' }}>
+                      {visibleColumns.includes('totalLeaves') ? `${l.totalLeaves}d` : ''}
+                    </td>
+                    <td style={{ width: '10%', padding: 16 }}>
+                      {visibleColumns.includes('status') ? (
                         <span style={{ padding: '4px 10px', borderRadius: 6, fontSize: 12, fontWeight: 600, background: l.status.toLowerCase() === 'approved' ? '#f0fdf4' : '#fff7ed', color: l.status.toLowerCase() === 'approved' ? '#16a34a' : '#ea580c' }}>
                           {l.status}
                         </span>
-                      </td>
-                    )}
-                    {visibleColumns.includes('description') && <td style={{ padding: 16, fontSize: 13, color: '#64748b' }}>{l.description}</td>}
+                      ) : ''}
+                    </td>
+                    <td style={{ width: '18%', padding: 16, fontSize: 13, color: '#64748b' }}>
+                      {visibleColumns.includes('description') ? l.description : ''}
+                    </td>
                   </tr>
                 ))}
               </tbody>

@@ -201,7 +201,7 @@ function Home() {
             <a
               role="button"
               tabIndex={0}
-              onClick={() => navigate("/hrms/hrsavescases")}
+              onClick={() => navigate("/regular-form")}
             >
               HRMS
             </a>

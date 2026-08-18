@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { fetchApiData } from '../../../utils/apiClient';
 import { FiSearch, FiX, FiMail, FiMapPin, FiUsers, FiUserCheck, FiBriefcase, FiUserPlus, FiMoreHorizontal, FiList, FiGrid, FiChevronDown } from 'react-icons/fi';
 import '../Dashboard/index.css';
 
 export const ALL_EMP_COLUMNS = [
-  { key: 'name', label: 'EMPLOYEE' },
-  { key: 'title', label: 'TITLE / POSITION' },
-  { key: 'dept', label: 'DEPARTMENT' },
-  { key: 'email', label: 'EMAIL' },
-  { key: 'location', label: 'LOCATION' },
-  { key: 'status', label: 'STATUS' },
-  { key: 'action', label: 'ACTION' },
+  { key: 'name', label: 'EMPLOYEE', width: '22%' },
+  { key: 'title', label: 'TITLE / POSITION', width: '18%' },
+  { key: 'dept', label: 'DEPARTMENT', width: '15%' },
+  { key: 'email', label: 'EMAIL', width: '18%' },
+  { key: 'location', label: 'LOCATION', width: '12%' },
+  { key: 'status', label: 'STATUS', width: '10%' },
+  { key: 'action', label: 'ACTION', width: '5%' },
 ];
 
 export const EmpDrawer = ({ emp, onClose }) => (
@@ -50,6 +50,7 @@ export const EmpDrawer = ({ emp, onClose }) => (
 
 const VendorEmployeeDirectory = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState(null);
   const [deptFilter, setDeptFilter] = useState('All');
@@ -127,12 +128,38 @@ const VendorEmployeeDirectory = () => {
 
   return (
     <div className="vendor-dashboard-wrapper" style={{ padding: '32px', maxWidth: '1400px', margin: '0 auto' }}>
-      {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 32 }}>
-        <div>
-          <h1 style={{ fontSize: 28, fontWeight: 700, color: '#0f172a', margin: '0 0 8px 0' }}>Employee Directory</h1>
-          <p style={{ fontSize: 14, color: '#64748b', margin: 0 }}>Your key company contacts (Sourced from Employee database)</p>
+      {/* Header with Nav Tabs Beside Title */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+          <h1 style={{ fontSize: 28, fontWeight: 700, color: '#0f172a', margin: 0 }}>Employee Directory</h1>
+
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', background: '#f8fafc', padding: '4px 10px', borderRadius: 8, border: '1px solid #e2e8f0' }}>
+            {[
+              { label: 'Dashboard', path: '/regular-form' },
+              { label: 'Case Management', path: '/vendor-portal/cases' },
+              { label: 'Leave Management', path: '/vendor-portal/leave' },
+              { label: 'Employee Directory', path: '/vendor-portal/employees' },
+              { label: 'Training & Dev', path: '/vendor-portal/training' },
+            ].map(tab => (
+              <span
+                key={tab.path}
+                onClick={() => navigate(tab.path)}
+                style={{
+                  cursor: 'pointer',
+                  fontSize: 13,
+                  fontWeight: location.pathname.startsWith(tab.path) && tab.path !== '/regular-form' ? 700 : tab.path === '/regular-form' && location.pathname === '/regular-form' ? 700 : 500,
+                  color: location.pathname.startsWith(tab.path) && tab.path !== '/regular-form' ? '#ea4104' : tab.path === '/regular-form' && location.pathname === '/regular-form' ? '#ea4104' : '#64748b',
+                  borderBottom: location.pathname.startsWith(tab.path) && tab.path !== '/regular-form' ? '2px solid #ea4104' : tab.path === '/regular-form' && location.pathname === '/regular-form' ? '2px solid #ea4104' : '2px solid transparent',
+                  padding: '4px 8px',
+                  transition: 'all 0.2s'
+                }}
+              >
+                {tab.label}
+              </span>
+            ))}
+          </div>
         </div>
+
         <div style={{ position: 'relative', width: 320 }}>
           <FiSearch style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} size={16} />
           <input
@@ -226,7 +253,7 @@ const VendorEmployeeDirectory = () => {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            {/* Settings Icon Dropdown Button */}
+            {/* Settings Icon Dropdown Button (Icon only) */}
             <div style={{ position: 'relative' }}>
               <button
                 type="button"
@@ -243,7 +270,7 @@ const VendorEmployeeDirectory = () => {
                   alignItems: "center",
                   boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
                 }}
-                title="Customize Display Columns"
+                title="Settings"
               >
                 ⚙️
               </button>
@@ -273,7 +300,7 @@ const VendorEmployeeDirectory = () => {
                       paddingBottom: "6px",
                     }}
                   >
-                    ⚙️ Display Columns:
+                    ⚙️ Settings
                   </div>
 
                   {ALL_EMP_COLUMNS.map(col => (
@@ -320,19 +347,21 @@ const VendorEmployeeDirectory = () => {
           </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+            <table style={{ width: '100%', minWidth: '800px', tableLayout: 'fixed', borderCollapse: 'collapse', textAlign: 'left' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                  {ALL_EMP_COLUMNS.filter(c => visibleColumns.includes(c.key)).map(col => (
-                    <th key={col.key} style={{ padding: '16px 20px', fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', textAlign: col.key === 'action' ? 'center' : 'left' }}>{col.label}</th>
+                  {ALL_EMP_COLUMNS.map(col => (
+                    <th key={col.key} style={{ width: col.width, padding: '16px 20px', fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', textAlign: col.key === 'action' ? 'center' : 'left' }}>
+                      {visibleColumns.includes(col.key) ? col.label : ''}
+                    </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {filtered.map(emp => (
                   <tr key={emp.id} style={{ borderBottom: '1px solid #f1f5f9', transition: 'background 0.2s', cursor: 'pointer' }} onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'} onClick={() => setSelected(emp)}>
-                    {visibleColumns.includes('name') && (
-                      <td style={{ padding: '16px 20px' }}>
+                    <td style={{ width: '22%', padding: '16px 20px' }}>
+                      {visibleColumns.includes('name') ? (
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                           <div style={{ width: 40, height: 40, borderRadius: '50%', background: emp.color, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 14, flexShrink: 0 }}>{emp.initials}</div>
                           <div>
@@ -340,20 +369,30 @@ const VendorEmployeeDirectory = () => {
                             <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 2 }}>{emp.id}</div>
                           </div>
                         </div>
-                      </td>
-                    )}
-                    {visibleColumns.includes('title') && <td style={{ padding: '16px 20px', fontSize: 14, color: '#0f172a', fontWeight: 500 }}>{emp.title}</td>}
-                    {visibleColumns.includes('dept') && <td style={{ padding: '16px 20px' }}><span style={{ padding: '4px 10px', borderRadius: 6, background: '#eff6ff', color: '#3b82f6', fontSize: 12, fontWeight: 600 }}>{emp.dept}</span></td>}
-                    {visibleColumns.includes('email') && <td style={{ padding: '16px 20px', fontSize: 14, color: '#3b82f6', fontWeight: 500 }}>{emp.email}</td>}
-                    {visibleColumns.includes('location') && <td style={{ padding: '16px 20px', fontSize: 14, color: '#0f172a', fontWeight: 500 }}>{emp.location}</td>}
-                    {visibleColumns.includes('status') && <td style={{ padding: '16px 20px' }}><span style={{ padding: '4px 10px', borderRadius: 6, background: '#f0fdf4', color: '#16a34a', fontSize: 12, fontWeight: 600 }}>{emp.status}</span></td>}
-                    {visibleColumns.includes('action') && (
-                      <td style={{ padding: '16px 20px', textAlign: 'center' }}>
+                      ) : ''}
+                    </td>
+                    <td style={{ width: '18%', padding: '16px 20px', fontSize: 14, color: '#0f172a', fontWeight: 500 }}>
+                      {visibleColumns.includes('title') ? emp.title : ''}
+                    </td>
+                    <td style={{ width: '15%', padding: '16px 20px' }}>
+                      {visibleColumns.includes('dept') ? <span style={{ padding: '4px 10px', borderRadius: 6, background: '#eff6ff', color: '#3b82f6', fontSize: 12, fontWeight: 600 }}>{emp.dept}</span> : ''}
+                    </td>
+                    <td style={{ width: '18%', padding: '16px 20px', fontSize: 14, color: '#3b82f6', fontWeight: 500 }}>
+                      {visibleColumns.includes('email') ? emp.email : ''}
+                    </td>
+                    <td style={{ width: '12%', padding: '16px 20px', fontSize: 14, color: '#0f172a', fontWeight: 500 }}>
+                      {visibleColumns.includes('location') ? emp.location : ''}
+                    </td>
+                    <td style={{ width: '10%', padding: '16px 20px' }}>
+                      {visibleColumns.includes('status') ? <span style={{ padding: '4px 10px', borderRadius: 6, background: '#f0fdf4', color: '#16a34a', fontSize: 12, fontWeight: 600 }}>{emp.status}</span> : ''}
+                    </td>
+                    <td style={{ width: '5%', padding: '16px 20px', textAlign: 'center' }}>
+                      {visibleColumns.includes('action') ? (
                         <button style={{ width: 32, height: 32, borderRadius: 6, background: '#fff', border: '1px solid #e2e8f0', color: '#64748b', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.color = '#0f172a'; }} onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#64748b'; }}>
                           <FiMoreHorizontal size={16} />
                         </button>
-                      </td>
-                    )}
+                      ) : ''}
+                    </td>
                   </tr>
                 ))}
               </tbody>

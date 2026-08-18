@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { fetchApiData } from '../../../utils/apiClient';
 import './index.css';
 import { 
@@ -26,11 +26,11 @@ import {
 import { mockVendorData } from '../mockData';
 
 const ALL_EMP_COLUMNS = [
-  { key: 'name', label: 'EMPLOYEE' },
-  { key: 'title', label: 'TITLE / POSITION' },
-  { key: 'dept', label: 'DEPARTMENT' },
-  { key: 'email', label: 'EMAIL' },
-  { key: 'status', label: 'STATUS' },
+  { key: 'name', label: 'EMPLOYEE', width: '25%' },
+  { key: 'title', label: 'TITLE / POSITION', width: '20%' },
+  { key: 'dept', label: 'DEPARTMENT', width: '20%' },
+  { key: 'email', label: 'EMAIL', width: '20%' },
+  { key: 'status', label: 'STATUS', width: '15%' },
 ];
 
 const VendorPortalDashboard = () => {
@@ -42,6 +42,7 @@ const VendorPortalDashboard = () => {
   const [visibleColumns, setVisibleColumns] = useState(ALL_EMP_COLUMNS.map(c => c.key));
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     fetchDbEmployees();
@@ -135,31 +136,42 @@ const VendorPortalDashboard = () => {
     );
   };
 
-  const getActivityIcon = (type) => {
-    switch(type) {
-      case 'accepted': return <FiCheckCircle />;
-      case 'submitted': return <FiBriefcase />;
-      case 'invoice': return <FiFileText />;
-      case 'rejected': return <FiXCircle />;
-      case 'new': return <FiUserPlus />;
-      case 'onboarding': return <FiCheckCircle />;
-      default: return <FiCheck />;
-    }
-  };
-
-  const getStatusClass = (status) => {
-    return status.toLowerCase().replace(' ', '-');
-  };
-
   return (
     <div className="vendor-dashboard-wrapper">
-      {/* Header */}
-      <div className="vendor-dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
-        <div>
+      {/* Header with Nav Tabs Beside Title */}
+      <div className="vendor-dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
           <h1 style={{ fontSize: 24, fontWeight: 700, margin: 0, color: '#0f172a' }}>Dashboard</h1>
-          <div style={{ fontSize: 13, color: '#94a3b8', marginTop: 5, fontWeight: 400 }}>
-            {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', background: '#f8fafc', padding: '4px 10px', borderRadius: 8, border: '1px solid #e2e8f0' }}>
+            {[
+              { label: 'Dashboard', path: '/regular-form' },
+              { label: 'Case Management', path: '/vendor-portal/cases' },
+              { label: 'Leave Management', path: '/vendor-portal/leave' },
+              { label: 'Employee Directory', path: '/vendor-portal/employees' },
+              { label: 'Training & Dev', path: '/vendor-portal/training' },
+            ].map(tab => (
+              <span
+                key={tab.path}
+                onClick={() => navigate(tab.path)}
+                style={{
+                  cursor: 'pointer',
+                  fontSize: 13,
+                  fontWeight: location.pathname === tab.path ? 700 : 500,
+                  color: location.pathname === tab.path ? '#ea4104' : '#64748b',
+                  borderBottom: location.pathname === tab.path ? '2px solid #ea4104' : '2px solid transparent',
+                  padding: '4px 8px',
+                  transition: 'all 0.2s'
+                }}
+              >
+                {tab.label}
+              </span>
+            ))}
           </div>
+        </div>
+
+        <div style={{ fontSize: 13, color: '#94a3b8', fontWeight: 400 }}>
+          {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
         </div>
       </div>
 
@@ -248,7 +260,7 @@ const VendorPortalDashboard = () => {
           </div>
           
           <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-            {/* Settings Icon Dropdown Button */}
+            {/* Icon-Only Settings Button */}
             <div style={{ position: 'relative' }}>
               <button
                 type="button"
@@ -265,7 +277,7 @@ const VendorPortalDashboard = () => {
                   alignItems: "center",
                   boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
                 }}
-                title="Customize Display Columns"
+                title="Settings"
               >
                 ⚙️
               </button>
@@ -295,7 +307,7 @@ const VendorPortalDashboard = () => {
                       paddingBottom: "6px",
                     }}
                   >
-                    ⚙️ Display Columns:
+                    ⚙️ Settings
                   </div>
 
                   {ALL_EMP_COLUMNS.map(col => (
@@ -332,22 +344,24 @@ const VendorPortalDashboard = () => {
           <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>No employees found in database.</div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
-            <table className="vendor-table">
+            <table className="vendor-table" style={{ width: '100%', minWidth: '800px', tableLayout: 'fixed', borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
-                  {ALL_EMP_COLUMNS.filter(c => visibleColumns.includes(c.key)).map(col => (
-                    <th key={col.key}>{col.label}</th>
+                  {ALL_EMP_COLUMNS.map(col => (
+                    <th key={col.key} style={{ width: col.width }}>
+                      {visibleColumns.includes(col.key) ? col.label : ''}
+                    </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {employees.slice(0, 6).map((emp) => (
                   <tr key={emp.id}>
-                    {visibleColumns.includes('name') && <td style={{ fontWeight: 600, color: '#0f172a' }}>{emp.name}</td>}
-                    {visibleColumns.includes('title') && <td>{emp.title}</td>}
-                    {visibleColumns.includes('dept') && <td><span className="vendor-badge open">{emp.dept}</span></td>}
-                    {visibleColumns.includes('email') && <td>{emp.email}</td>}
-                    {visibleColumns.includes('status') && <td><span className="vendor-badge confirmed">{emp.status}</span></td>}
+                    <td style={{ width: '25%', fontWeight: 600, color: '#0f172a' }}>{visibleColumns.includes('name') ? emp.name : ''}</td>
+                    <td style={{ width: '20%' }}>{visibleColumns.includes('title') ? emp.title : ''}</td>
+                    <td style={{ width: '20%' }}>{visibleColumns.includes('dept') ? <span className="vendor-badge open">{emp.dept}</span> : ''}</td>
+                    <td style={{ width: '20%' }}>{visibleColumns.includes('email') ? emp.email : ''}</td>
+                    <td style={{ width: '15%' }}>{visibleColumns.includes('status') ? <span className="vendor-badge confirmed">{emp.status}</span> : ''}</td>
                   </tr>
                 ))}
               </tbody>
