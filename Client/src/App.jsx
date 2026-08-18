@@ -95,6 +95,7 @@ import ReqOnboardingAllTab from "./pages/NavItems/IT/ItRightSide/RequestsOnBoadi
 import RequestOnboardingSaves from "./pages/NavItems/IT/ItRightSide/RequestsOnBoading/RequestsOnbordingSaves/index.jsx";
 import ReqOnboardingResolvedTab from "./pages/NavItems/IT/ItRightSide/RequestsOnBoading/ReqOnBoardingResolvedTab/index.jsx";
 import RegularForm from "./components/Layouts/FormLayouts/RegularForm/index.jsx";
+import Hrmsleftlayout from "./pages/Hrms/Hrmsleftlayout/index.jsx";
 import VendorPortalDashboard from "./pages/VendorPortal/Dashboard/index.jsx";
 import VendorPortalLayout from "./pages/VendorPortal/Layout/index.jsx";
 import VendorPortalPurchaseOrders from "./pages/VendorPortal/PurchaseOrders/index.jsx";
@@ -417,16 +418,16 @@ function App() {
         path="/requests-onboarding-resolved"
         element={<ReqOnboardingResolvedTab />}
       />
-      <Route path="/regular-form" element={<VendorPortalLayout><VendorPortalDashboard /></VendorPortalLayout>} />
-      <Route path="/vendor-portal/purchase-orders" element={<VendorPortalLayout><VendorPortalPurchaseOrders /></VendorPortalLayout>} />
-      <Route path="/vendor-portal/invoices" element={<VendorPortalLayout><VendorPortalInvoices /></VendorPortalLayout>} />
-      <Route path="/vendor-portal/cases" element={<VendorPortalLayout><VendorCaseManagement /></VendorPortalLayout>} />
-      <Route path="/vendor-portal/cases/list/:type" element={<VendorPortalLayout><CaseList /></VendorPortalLayout>} />
-      <Route path="/vendor-portal/leave" element={<VendorPortalLayout><VendorLeaveManagement /></VendorPortalLayout>} />
-      <Route path="/vendor-portal/employees" element={<VendorPortalLayout><VendorEmployeeDirectory /></VendorPortalLayout>} />
-      <Route path="/vendor-portal/employees/list/:filterType" element={<VendorPortalLayout><EmployeeList /></VendorPortalLayout>} />
-      <Route path="/vendor-portal/training" element={<VendorPortalLayout><VendorTraining /></VendorPortalLayout>} />
-      <Route path="/vendor-portal/training/list/:filterType" element={<VendorPortalLayout><TrainingList /></VendorPortalLayout>} />
+      <Route path="/regular-form" element={<Hrmsleftlayout><VendorPortalDashboard /></Hrmsleftlayout>} />
+      <Route path="/vendor-portal/purchase-orders" element={<Hrmsleftlayout><VendorPortalPurchaseOrders /></Hrmsleftlayout>} />
+      <Route path="/vendor-portal/invoices" element={<Hrmsleftlayout><VendorPortalInvoices /></Hrmsleftlayout>} />
+      <Route path="/vendor-portal/cases" element={<Hrmsleftlayout><VendorCaseManagement /></Hrmsleftlayout>} />
+      <Route path="/vendor-portal/cases/list/:type" element={<Hrmsleftlayout><CaseList /></Hrmsleftlayout>} />
+      <Route path="/vendor-portal/leave" element={<Hrmsleftlayout><VendorLeaveManagement /></Hrmsleftlayout>} />
+      <Route path="/vendor-portal/employees" element={<Hrmsleftlayout><VendorEmployeeDirectory /></Hrmsleftlayout>} />
+      <Route path="/vendor-portal/employees/list/:filterType" element={<Hrmsleftlayout><EmployeeList /></Hrmsleftlayout>} />
+      <Route path="/vendor-portal/training" element={<Hrmsleftlayout><VendorTraining /></Hrmsleftlayout>} />
+      <Route path="/vendor-portal/training/list/:filterType" element={<Hrmsleftlayout><TrainingList /></Hrmsleftlayout>} />
       <Route
         path="/offboarding-supplier-form"
         element={<OffboardingSupplierForm />}

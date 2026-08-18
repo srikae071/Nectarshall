@@ -6,9 +6,21 @@ import {
   FiX,
   FiChevronRight,
   FiMessageSquare,
+  FiSettings,
 } from "react-icons/fi";
 import { fetchApiData } from "../../../utils/apiClient";
 import { StatusBadge, PriorityBadge, fmtDate, CaseDetailDrawer } from "./index";
+
+const ALL_CASE_COLUMNS = [
+  { key: "id", label: "INCIDENT NUMBER" },
+  { key: "requester", label: "REQUESTER" },
+  { key: "category", label: "CATEGORY" },
+  { key: "priority", label: "PRIORITY" },
+  { key: "impact", label: "IMPACT" },
+  { key: "status", label: "STATUS" },
+  { key: "lastUpdate", label: "LAST UPDATED" },
+  { key: "action", label: "ACTIONS" },
+];
 
 const CaseList = () => {
   const { type } = useParams();
@@ -17,6 +29,12 @@ const CaseList = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState(null);
+
+  // Column Settings state
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [visibleColumns, setVisibleColumns] = useState(
+    ALL_CASE_COLUMNS.map((c) => c.key)
+  );
 
   const filterType = decodeURIComponent(type || "all");
 
@@ -59,6 +77,15 @@ const CaseList = () => {
       console.error("Error loading cases in CaseList:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const toggleColumn = (key) => {
+    if (visibleColumns.includes(key)) {
+      if (visibleColumns.length === 1) return;
+      setVisibleColumns(visibleColumns.filter((c) => c !== key));
+    } else {
+      setVisibleColumns([...visibleColumns, key]);
     }
   };
 
@@ -124,13 +151,13 @@ const CaseList = () => {
             e.currentTarget.style.color = "#64748b";
           }}
         >
-          <FiArrowLeft size={20} />
+          <FiArrowLeft size={18} />
         </button>
         <div
           style={{
             flex: 1,
             display: "flex",
-            justifyContent: "space-between",
+            justify: "space-between",
             alignItems: "center",
           }}
         >
@@ -150,55 +177,75 @@ const CaseList = () => {
               Showing {filtered.length} case{filtered.length !== 1 ? "s" : ""}
             </p>
           </div>
-          <div style={{ position: "relative", width: 320 }}>
-            <FiSearch
+          <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+            <button
+              onClick={() => setShowSettingsModal(true)}
               style={{
-                position: "absolute",
-                left: 16,
-                top: "50%",
-                transform: "translateY(-50%)",
-                color: "#94a3b8",
-              }}
-              size={16}
-            />
-            <input
-              type="text"
-              placeholder="Search by incident number or subject..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "12px 16px 12px 40px",
+                padding: "10px 16px",
                 borderRadius: 8,
-                border: "1px solid #e2e8f0",
-                background: "#fff",
-                fontSize: 14,
-                outline: "none",
-                color: "#0f172a",
+                background: "#f8fafc",
+                border: "1px solid #cbd5e1",
+                fontSize: 13,
+                fontWeight: 600,
+                color: "#475569",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
               }}
-            />
-            {search && (
-              <button
-                onClick={() => setSearch("")}
+            >
+              <FiSettings size={15} /> Column Settings ⚙️
+            </button>
+            <div style={{ position: "relative", width: 320 }}>
+              <FiSearch
                 style={{
                   position: "absolute",
-                  right: 12,
+                  left: 16,
                   top: "50%",
                   transform: "translateY(-50%)",
-                  background: "none",
-                  border: "none",
                   color: "#94a3b8",
-                  cursor: "pointer",
                 }}
-              >
-                <FiX size={14} />
-              </button>
-            )}
+                size={16}
+              />
+              <input
+                type="text"
+                placeholder="Search by incident number or subject..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "12px 16px 12px 40px",
+                  borderRadius: 8,
+                  border: "1px solid #e2e8f0",
+                  background: "#fff",
+                  fontSize: 14,
+                  outline: "none",
+                  color: "#0f172a",
+                }}
+              />
+              {search && (
+                <button
+                  onClick={() => setSearch("")}
+                  style={{
+                    position: "absolute",
+                    right: 12,
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "none",
+                    border: "none",
+                    color: "#94a3b8",
+                    cursor: "pointer",
+                  }}
+                >
+                  <FiX size={14} />
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Case List Table */}
+      {/* Table */}
       <div
         style={{
           background: "#fff",
@@ -210,24 +257,15 @@ const CaseList = () => {
       >
         {loading ? (
           <div
-            style={{ textAlign: "center", padding: "40px", color: "#64748b" }}
+            style={{ textAlign: "center", padding: "60px", color: "#64748b" }}
           >
             Loading cases from HR Request database...
           </div>
         ) : filtered.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "60px 20px" }}>
-            <FiMessageSquare
-              size={48}
-              color="#cbd5e1"
-              style={{ marginBottom: 16 }}
-            />
-            <h3 style={{ fontSize: 18, color: "#0f172a", margin: "0 0 8px 0" }}>
-              No cases found
-            </h3>
-            <p style={{ color: "#64748b", margin: 0 }}>
-              We couldn't find any cases matching your search criteria in the
-              database.
-            </p>
+          <div
+            style={{ textAlign: "center", padding: "60px", color: "#64748b" }}
+          >
+            No cases match your filters.
           </div>
         ) : (
           <div style={{ overflowX: "auto" }}>
@@ -240,95 +278,24 @@ const CaseList = () => {
             >
               <thead>
                 <tr style={{ borderBottom: "1px solid #f1f5f9" }}>
-                  <th
-                    style={{
-                      padding: "12px 16px",
-                      fontSize: 12,
-                      fontWeight: 600,
-                      color: "#94a3b8",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    INCIDENT NUMBER
-                  </th>
-                  <th
-                    style={{
-                      padding: "12px 16px",
-                      fontSize: 12,
-                      fontWeight: 600,
-                      color: "#94a3b8",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    REQUESTER
-                  </th>
-                  <th
-                    style={{
-                      padding: "12px 16px",
-                      fontSize: 12,
-                      fontWeight: 600,
-                      color: "#94a3b8",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    CATEGORY
-                  </th>
-                  <th
-                    style={{
-                      padding: "12px 16px",
-                      fontSize: 12,
-                      fontWeight: 600,
-                      color: "#94a3b8",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    PRIORITY
-                  </th>
-                  <th
-                    style={{
-                      padding: "12px 16px",
-                      fontSize: 12,
-                      fontWeight: 600,
-                      color: "#94a3b8",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    IMPACT
-                  </th>
-                  <th
-                    style={{
-                      padding: "12px 16px",
-                      fontSize: 12,
-                      fontWeight: 600,
-                      color: "#94a3b8",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    STATUS
-                  </th>
-                  <th
-                    style={{
-                      padding: "12px 16px",
-                      fontSize: 12,
-                      fontWeight: 600,
-                      color: "#94a3b8",
-                      textTransform: "uppercase",
-                    }}
-                  >
-                    LAST UPDATED
-                  </th>
-                  <th
-                    style={{
-                      padding: "12px 16px",
-                      fontSize: 12,
-                      fontWeight: 600,
-                      color: "#94a3b8",
-                      textTransform: "uppercase",
-                      textAlign: "right",
-                    }}
-                  >
-                    ACTIONS
-                  </th>
+                  {ALL_CASE_COLUMNS.filter((c) =>
+                    visibleColumns.includes(c.key)
+                  ).map((col) => (
+                    <th
+                      key={col.key}
+                      style={{
+                        padding: "14px 16px",
+                        fontSize: 12,
+                        fontWeight: 600,
+                        color: "#94a3b8",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.5px",
+                        textAlign: col.key === "action" ? "right" : "left",
+                      }}
+                    >
+                      {col.label}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
@@ -348,76 +315,92 @@ const CaseList = () => {
                       (e.currentTarget.style.background = "transparent")
                     }
                   >
-                    <td
-                      style={{
-                        padding: "16px",
-                        fontSize: 13,
-                        fontWeight: 700,
-                        color: "#ea4104",
-                      }}
-                    >
-                      {c.id}
-                    </td>
-                    <td
-                      style={{
-                        padding: "16px",
-                        fontSize: 13,
-                        color: "#0f172a",
-                        fontWeight: 600,
-                      }}
-                    >
-                      👤 {c.requester}
-                    </td>
-                    <td
-                      style={{
-                        padding: "16px",
-                        fontSize: 13,
-                        color: "#475569",
-                      }}
-                    >
-                      {c.category}
-                    </td>
-                    <td style={{ padding: "16px" }}>
-                      <PriorityBadge priority={c.priority} />
-                    </td>
-                    <td
-                      style={{
-                        padding: "16px",
-                        fontSize: 13,
-                        color: "#475569",
-                      }}
-                    >
-                      {c.impact}
-                    </td>
-                    <td style={{ padding: "16px" }}>
-                      <StatusBadge status={c.status} />
-                    </td>
-                    <td
-                      style={{
-                        padding: "16px",
-                        fontSize: 13,
-                        color: "#475569",
-                      }}
-                    >
-                      {fmtDate(c.lastUpdate)}
-                    </td>
-                    <td style={{ padding: "16px", textAlign: "right" }}>
-                      <button
+                    {visibleColumns.includes("id") && (
+                      <td
                         style={{
-                          background: "none",
-                          border: "none",
-                          color: "#ea4104",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: 4,
+                          padding: "16px",
                           fontSize: 13,
-                          cursor: "pointer",
+                          fontWeight: 700,
+                          color: "#ea4104",
+                        }}
+                      >
+                        {c.id}
+                      </td>
+                    )}
+                    {visibleColumns.includes("requester") && (
+                      <td
+                        style={{
+                          padding: "16px",
+                          fontSize: 13,
+                          color: "#0f172a",
                           fontWeight: 600,
                         }}
                       >
-                        <FiChevronRight size={14} /> View
-                      </button>
-                    </td>
+                        👤 {c.requester}
+                      </td>
+                    )}
+                    {visibleColumns.includes("category") && (
+                      <td
+                        style={{
+                          padding: "16px",
+                          fontSize: 13,
+                          color: "#475569",
+                        }}
+                      >
+                        {c.category}
+                      </td>
+                    )}
+                    {visibleColumns.includes("priority") && (
+                      <td style={{ padding: "16px" }}>
+                        <PriorityBadge priority={c.priority} />
+                      </td>
+                    )}
+                    {visibleColumns.includes("impact") && (
+                      <td
+                        style={{
+                          padding: "16px",
+                          fontSize: 13,
+                          color: "#475569",
+                        }}
+                      >
+                        {c.impact}
+                      </td>
+                    )}
+                    {visibleColumns.includes("status") && (
+                      <td style={{ padding: "16px" }}>
+                        <StatusBadge status={c.status} />
+                      </td>
+                    )}
+                    {visibleColumns.includes("lastUpdate") && (
+                      <td
+                        style={{
+                          padding: "16px",
+                          fontSize: 13,
+                          color: "#475569",
+                        }}
+                      >
+                        {fmtDate(c.lastUpdate)}
+                      </td>
+                    )}
+                    {visibleColumns.includes("action") && (
+                      <td style={{ padding: "16px", textAlign: "right" }}>
+                        <button
+                          style={{
+                            background: "none",
+                            border: "none",
+                            color: "#ea4104",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 4,
+                            fontSize: 13,
+                            cursor: "pointer",
+                            fontWeight: 600,
+                          }}
+                        >
+                          <FiChevronRight size={14} /> View
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
@@ -425,6 +408,128 @@ const CaseList = () => {
           </div>
         )}
       </div>
+
+      {/* Settings Modal for Case Column Customizer */}
+      {showSettingsModal && (
+        <div className="po-overlay" onClick={() => setShowSettingsModal(false)}>
+          <div
+            className="po-modal"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              maxWidth: 420,
+              padding: 24,
+              borderRadius: 12,
+              background: "#fff",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: 20,
+              }}
+            >
+              <h3
+                style={{
+                  margin: 0,
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: "#0f172a",
+                }}
+              >
+                ⚙️ Display Columns
+              </h3>
+              <button
+                style={{
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "#64748b",
+                }}
+                onClick={() => setShowSettingsModal(false)}
+              >
+                <FiX size={20} />
+              </button>
+            </div>
+            <p
+              style={{
+                fontSize: 13,
+                color: "#64748b",
+                marginTop: 0,
+                marginBottom: 20,
+              }}
+            >
+              Select which case table columns you want to display on your
+              screen.
+            </p>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 12,
+                marginBottom: 24,
+              }}
+            >
+              {ALL_CASE_COLUMNS.map((col) => (
+                <label
+                  key={col.key}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                    fontSize: 14,
+                    fontWeight: 500,
+                    color: "#0f172a",
+                    cursor: "pointer",
+                    padding: "6px 10px",
+                    borderRadius: 6,
+                    background: visibleColumns.includes(col.key)
+                      ? "#f8fafc"
+                      : "transparent",
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={visibleColumns.includes(col.key)}
+                    onChange={() => toggleColumn(col.key)}
+                    style={{
+                      width: 16,
+                      height: 16,
+                      accentColor: "#ea4104",
+                      cursor: "pointer",
+                    }}
+                  />
+                  <span>{col.label}</span>
+                </label>
+              ))}
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: 10,
+              }}
+            >
+              <button
+                onClick={() => setShowSettingsModal(false)}
+                style={{
+                  padding: "8px 16px",
+                  borderRadius: 8,
+                  background: "#ea4104",
+                  color: "#fff",
+                  border: "none",
+                  fontWeight: 600,
+                  fontSize: 13,
+                  cursor: "pointer",
+                }}
+              >
+                Apply & Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {selected && (
         <CaseDetailDrawer c={selected} onClose={() => setSelected(null)} />

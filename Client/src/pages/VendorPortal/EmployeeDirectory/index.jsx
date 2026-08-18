@@ -4,7 +4,15 @@ import { fetchApiData } from '../../../utils/apiClient';
 import { FiSearch, FiX, FiMail, FiMapPin, FiUsers, FiUserCheck, FiBriefcase, FiUserPlus, FiMoreHorizontal, FiList, FiGrid, FiChevronDown } from 'react-icons/fi';
 import '../Dashboard/index.css';
 
-export const employees = [];
+export const ALL_EMP_COLUMNS = [
+  { key: 'name', label: 'EMPLOYEE' },
+  { key: 'title', label: 'TITLE / POSITION' },
+  { key: 'dept', label: 'DEPARTMENT' },
+  { key: 'email', label: 'EMAIL' },
+  { key: 'location', label: 'LOCATION' },
+  { key: 'status', label: 'STATUS' },
+  { key: 'action', label: 'ACTION' },
+];
 
 export const EmpDrawer = ({ emp, onClose }) => (
   <>
@@ -48,6 +56,11 @@ const VendorEmployeeDirectory = () => {
   const [statusFilter, setStatusFilter] = useState('All');
   const [locationFilter, setLocationFilter] = useState('All');
   const [dbEmployees, setDbEmployees] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Column settings
+  const [showSettings, setShowSettings] = useState(false);
+  const [visibleColumns, setVisibleColumns] = useState(ALL_EMP_COLUMNS.map(c => c.key));
 
   useEffect(() => {
     fetchEmployees();
@@ -55,6 +68,7 @@ const VendorEmployeeDirectory = () => {
 
   const fetchEmployees = async () => {
     try {
+      setLoading(true);
       const res = await fetchApiData("/api/employees");
       const emps = (res.data || []).map((emp, index) => {
         const name = emp.displayName || emp.employeeName || `${emp.firstName || ""} ${emp.lastName || ""}`.trim() || "Unnamed Employee";
@@ -63,11 +77,11 @@ const VendorEmployeeDirectory = () => {
         return {
           id: emp.employeeId || `EMP-${index + 101}`,
           name: name,
-          title: emp.jobTitle || "Employee",
+          title: emp.jobTitle || emp.position || "Employee",
           dept: emp.department || "General",
-          email: emp.email || "N/A",
-          location: emp.officeLocation || emp.place || "Head Office",
-          status: emp.accountEnabled !== false ? "Active" : "Inactive",
+          email: emp.email || emp.workEmail || "N/A",
+          location: emp.officeLocation || emp.place || emp.city || "Head Office",
+          status: "Active",
           joiningDate: emp.createdAt ? new Date(emp.createdAt).toLocaleDateString() : "N/A",
           initials: initials,
           color: colors[index % colors.length]
@@ -76,15 +90,25 @@ const VendorEmployeeDirectory = () => {
       setDbEmployees(emps);
     } catch (err) {
       console.error("Error loading employees in directory:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleColumn = (key) => {
+    if (visibleColumns.includes(key)) {
+      if (visibleColumns.length === 1) return;
+      setVisibleColumns(visibleColumns.filter(c => c !== key));
+    } else {
+      setVisibleColumns([...visibleColumns, key]);
     }
   };
 
   const currentEmployees = dbEmployees;
-
   const totalEmployees = currentEmployees.length;
-  const activeEmployees = currentEmployees.filter(e => e.status === 'Active').length;
+  const activeEmployees = currentEmployees.length;
   const uniqueDepts = [...new Set(currentEmployees.map(e => e.dept))];
-  const activePct = totalEmployees > 0 ? ((activeEmployees / totalEmployees) * 100).toFixed(1) : 0;
+  const activePct = '100.0';
 
   const filtered = currentEmployees.filter(e => {
     const matchSearch = e.name.toLowerCase().includes(search.toLowerCase()) || e.title.toLowerCase().includes(search.toLowerCase()) || e.dept.toLowerCase().includes(search.toLowerCase());
@@ -107,13 +131,13 @@ const VendorEmployeeDirectory = () => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 32 }}>
         <div>
           <h1 style={{ fontSize: 28, fontWeight: 700, color: '#0f172a', margin: '0 0 8px 0' }}>Employee Directory</h1>
-          <p style={{ fontSize: 14, color: '#64748b', margin: 0 }}>Your key company contacts — procurement, finance, and operations.</p>
+          <p style={{ fontSize: 14, color: '#64748b', margin: 0 }}>Your key company contacts (Sourced from Employee database)</p>
         </div>
         <div style={{ position: 'relative', width: 320 }}>
           <FiSearch style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} size={16} />
           <input
             type="text"
-            placeholder="Search by name, title or department..."
+            placeholder="Search by employee name, title or department..."
             value={search}
             onChange={e => setSearch(e.target.value)}
             style={{ width: '100%', padding: '12px 16px 12px 40px', borderRadius: 8, border: '1px solid #e2e8f0', background: '#fff', fontSize: 14, outline: 'none', color: '#0f172a', boxShadow: '0 1px 2px rgba(0,0,0,0.01)' }}
@@ -129,9 +153,9 @@ const VendorEmployeeDirectory = () => {
       {/* KPI Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24, marginBottom: 32 }}>
         {[
-          { icon: <FiUsers size={24} color="#3b82f6" />, bg: '#eff6ff', title: 'TOTAL EMPLOYEES', value: totalEmployees, sub: 'All departments', path: 'total' },
+          { icon: <FiUsers size={24} color="#3b82f6" />, bg: '#eff6ff', title: 'TOTAL EMPLOYEES', value: totalEmployees, sub: 'All active employees', path: 'total' },
           { icon: <FiUserCheck size={24} color="#10b981" />, bg: '#f0fdf4', title: 'ACTIVE EMPLOYEES', value: activeEmployees, sub: `${activePct}% of total`, subColor: '#10b981', path: 'active' },
-          { icon: <FiBriefcase size={24} color="#8b5cf6" />, bg: '#f5f3ff', title: 'DEPARTMENTS', value: uniqueDepts.length, sub: 'In organization', path: 'departments' },
+          { icon: <FiBriefcase size={24} color="#8b5cf6" />, bg: '#f5f3ff', title: 'DEPARTMENTS', value: uniqueDepts.length, sub: 'In database', path: 'departments' },
           { icon: <FiUserPlus size={24} color="#f59e0b" />, bg: '#fffbeb', title: 'NEW HIRE', value: '0', sub: 'Added this month', path: 'new' }
         ].map((kpi, i) => (
           <div 
@@ -165,7 +189,7 @@ const VendorEmployeeDirectory = () => {
             All Departments <span style={{ background: deptFilter === 'All' ? 'rgba(255,255,255,0.2)' : '#e2e8f0', padding: '2px 8px', borderRadius: 12, fontSize: 11 }}>{totalEmployees}</span>
           </button>
           {uniqueDepts.map(dept => {
-            const count = employees.filter(e => e.dept === dept).length;
+            const count = currentEmployees.filter(e => e.dept === dept).length;
             const active = deptFilter === dept;
             return (
               <button 
@@ -190,20 +214,6 @@ const VendorEmployeeDirectory = () => {
               >
                 <option value="All">All Status</option>
                 <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </select>
-              <FiChevronDown style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#64748b' }} size={16} />
-            </div>
-
-            <div style={{ position: 'relative' }}>
-              <select 
-                value={locationFilter} 
-                onChange={e => setLocationFilter(e.target.value)}
-                style={{ appearance: 'none', padding: '10px 36px 10px 16px', borderRadius: 8, border: '1px solid #e2e8f0', background: '#fff', fontSize: 13, fontWeight: 500, color: '#0f172a', outline: 'none', cursor: 'pointer' }}
-              >
-                <option value="All">All Locations</option>
-                <option value="Head Office">Head Office</option>
-                <option value="Remote">Remote</option>
               </select>
               <FiChevronDown style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#64748b' }} size={16} />
             </div>
@@ -216,13 +226,82 @@ const VendorEmployeeDirectory = () => {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            {/* Settings Icon Dropdown Button */}
             <div style={{ position: 'relative' }}>
-              <select style={{ appearance: 'none', padding: '10px 36px 10px 16px', borderRadius: 8, border: '1px solid #e2e8f0', background: '#fff', fontSize: 13, fontWeight: 500, color: '#0f172a', outline: 'none', cursor: 'pointer' }}>
-                <option>Sort by: Name (A-Z)</option>
-                <option>Sort by: Name (Z-A)</option>
-              </select>
-              <FiChevronDown style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#64748b' }} size={16} />
+              <button
+                type="button"
+                onClick={() => setShowSettings(!showSettings)}
+                style={{
+                  background: "#ffffff",
+                  border: "1px solid #cbd5e1",
+                  borderRadius: "8px",
+                  padding: "6px 12px",
+                  cursor: "pointer",
+                  fontSize: "15px",
+                  color: "#334155",
+                  display: "flex",
+                  alignItems: "center",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+                }}
+                title="Customize Display Columns"
+              >
+                ⚙️
+              </button>
+
+              {showSettings && (
+                <div
+                  style={{
+                    position: "absolute",
+                    right: 0,
+                    top: "40px",
+                    background: "#ffffff",
+                    border: "1px solid #cbd5e1",
+                    borderRadius: "10px",
+                    boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
+                    padding: "14px 16px",
+                    width: "220px",
+                    zIndex: 100,
+                  }}
+                >
+                  <div
+                    style={{
+                      fontWeight: "700",
+                      fontSize: "13px",
+                      color: "#0f172a",
+                      marginBottom: "10px",
+                      borderBottom: "1px solid #e2e8f0",
+                      paddingBottom: "6px",
+                    }}
+                  >
+                    ⚙️ Display Columns:
+                  </div>
+
+                  {ALL_EMP_COLUMNS.map(col => (
+                    <label
+                      key={col.key}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        fontSize: "13px",
+                        cursor: "pointer",
+                        margin: "6px 0",
+                        color: "#334155",
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={visibleColumns.includes(col.key)}
+                        onChange={() => toggleColumn(col.key)}
+                        style={{ cursor: "pointer" }}
+                      />
+                      {col.label}
+                    </label>
+                  ))}
+                </div>
+              )}
             </div>
+
             <div style={{ display: 'flex', background: '#f8fafc', padding: 4, borderRadius: 8, border: '1px solid #e2e8f0' }}>
               <button style={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0f172a', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' }}><FiList size={16} /></button>
               <button style={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', color: '#64748b', border: 'none', borderRadius: 6, cursor: 'pointer' }}><FiGrid size={16} /></button>
@@ -231,48 +310,50 @@ const VendorEmployeeDirectory = () => {
         </div>
 
         {/* Table Area */}
-        {filtered.length === 0 ? (
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>Loading employees from database...</div>
+        ) : filtered.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px 20px' }}>
             <FiUsers size={48} color="#cbd5e1" style={{ marginBottom: 16 }} />
             <h3 style={{ fontSize: 18, color: '#0f172a', margin: '0 0 8px 0' }}>No employees found</h3>
-            <p style={{ color: '#64748b', margin: 0 }}>Try adjusting your filters or search term.</p>
+            <p style={{ color: '#64748b', margin: 0 }}>Try adjusting your search term.</p>
           </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                  <th style={{ padding: '16px 20px', fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>EMPLOYEE</th>
-                  <th style={{ padding: '16px 20px', fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>TITLE</th>
-                  <th style={{ padding: '16px 20px', fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>DEPARTMENT</th>
-                  <th style={{ padding: '16px 20px', fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>EMAIL</th>
-                  <th style={{ padding: '16px 20px', fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>LOCATION</th>
-                  <th style={{ padding: '16px 20px', fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>STATUS</th>
-                  <th style={{ padding: '16px 20px', fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', textAlign: 'center' }}>ACTION</th>
+                  {ALL_EMP_COLUMNS.filter(c => visibleColumns.includes(c.key)).map(col => (
+                    <th key={col.key} style={{ padding: '16px 20px', fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', textAlign: col.key === 'action' ? 'center' : 'left' }}>{col.label}</th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
                 {filtered.map(emp => (
                   <tr key={emp.id} style={{ borderBottom: '1px solid #f1f5f9', transition: 'background 0.2s', cursor: 'pointer' }} onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'} onClick={() => setSelected(emp)}>
-                    <td style={{ padding: '16px 20px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <div style={{ width: 40, height: 40, borderRadius: '50%', background: emp.color, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 14, flexShrink: 0 }}>{emp.initials}</div>
-                        <div>
-                          <div style={{ fontWeight: 600, color: '#0f172a', fontSize: 14 }}>{emp.name}</div>
-                          <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 2 }}>{emp.id}</div>
+                    {visibleColumns.includes('name') && (
+                      <td style={{ padding: '16px 20px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                          <div style={{ width: 40, height: 40, borderRadius: '50%', background: emp.color, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 14, flexShrink: 0 }}>{emp.initials}</div>
+                          <div>
+                            <div style={{ fontWeight: 600, color: '#0f172a', fontSize: 14 }}>{emp.name}</div>
+                            <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 2 }}>{emp.id}</div>
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td style={{ padding: '16px 20px', fontSize: 14, color: '#0f172a', fontWeight: 500 }}>{emp.title}</td>
-                    <td style={{ padding: '16px 20px' }}><span style={{ padding: '4px 10px', borderRadius: 6, background: '#eff6ff', color: '#3b82f6', fontSize: 12, fontWeight: 600 }}>{emp.dept}</span></td>
-                    <td style={{ padding: '16px 20px', fontSize: 14, color: '#3b82f6', fontWeight: 500 }}>{emp.email}</td>
-                    <td style={{ padding: '16px 20px', fontSize: 14, color: '#0f172a', fontWeight: 500 }}>{emp.location}</td>
-                    <td style={{ padding: '16px 20px' }}><span style={{ padding: '4px 10px', borderRadius: 6, background: '#f0fdf4', color: '#16a34a', fontSize: 12, fontWeight: 600 }}>{emp.status}</span></td>
-                    <td style={{ padding: '16px 20px', textAlign: 'center' }}>
-                      <button style={{ width: 32, height: 32, borderRadius: 6, background: '#fff', border: '1px solid #e2e8f0', color: '#64748b', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.color = '#0f172a'; }} onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#64748b'; }}>
-                        <FiMoreHorizontal size={16} />
-                      </button>
-                    </td>
+                      </td>
+                    )}
+                    {visibleColumns.includes('title') && <td style={{ padding: '16px 20px', fontSize: 14, color: '#0f172a', fontWeight: 500 }}>{emp.title}</td>}
+                    {visibleColumns.includes('dept') && <td style={{ padding: '16px 20px' }}><span style={{ padding: '4px 10px', borderRadius: 6, background: '#eff6ff', color: '#3b82f6', fontSize: 12, fontWeight: 600 }}>{emp.dept}</span></td>}
+                    {visibleColumns.includes('email') && <td style={{ padding: '16px 20px', fontSize: 14, color: '#3b82f6', fontWeight: 500 }}>{emp.email}</td>}
+                    {visibleColumns.includes('location') && <td style={{ padding: '16px 20px', fontSize: 14, color: '#0f172a', fontWeight: 500 }}>{emp.location}</td>}
+                    {visibleColumns.includes('status') && <td style={{ padding: '16px 20px' }}><span style={{ padding: '4px 10px', borderRadius: 6, background: '#f0fdf4', color: '#16a34a', fontSize: 12, fontWeight: 600 }}>{emp.status}</span></td>}
+                    {visibleColumns.includes('action') && (
+                      <td style={{ padding: '16px 20px', textAlign: 'center' }}>
+                        <button style={{ width: 32, height: 32, borderRadius: 6, background: '#fff', border: '1px solid #e2e8f0', color: '#64748b', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.color = '#0f172a'; }} onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#64748b'; }}>
+                          <FiMoreHorizontal size={16} />
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>

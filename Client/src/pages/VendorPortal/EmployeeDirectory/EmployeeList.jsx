@@ -3,6 +3,16 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { FiArrowLeft, FiSearch, FiX, FiUsers, FiMoreHorizontal, FiList, FiGrid, FiChevronDown, FiMapPin, FiMail } from 'react-icons/fi';
 import { fetchApiData } from '../../../utils/apiClient';
 
+export const ALL_EMP_COLUMNS = [
+  { key: 'name', label: 'EMPLOYEE' },
+  { key: 'title', label: 'TITLE / CATEGORY' },
+  { key: 'dept', label: 'DEPARTMENT' },
+  { key: 'email', label: 'EMAIL' },
+  { key: 'location', label: 'LOCATION' },
+  { key: 'status', label: 'STATUS' },
+  { key: 'action', label: 'ACTION' },
+];
+
 export const EmpDrawer = ({ emp, onClose }) => (
   <>
     <div className="po-overlay" onClick={onClose} />
@@ -49,36 +59,54 @@ const EmployeeList = () => {
   const [statusFilter, setStatusFilter] = useState('All');
   const [locationFilter, setLocationFilter] = useState('All');
 
+  // Column Settings
+  const [showSettings, setShowSettings] = useState(false);
+  const [visibleColumns, setVisibleColumns] = useState(ALL_EMP_COLUMNS.map(c => c.key));
+
   useEffect(() => {
-    fetchEmployees();
+    fetchBoardingCandidates();
   }, []);
 
-  const fetchEmployees = async () => {
+  const fetchBoardingCandidates = async () => {
     try {
       setLoading(true);
-      const res = await fetchApiData("/api/employees");
-      const emps = (res.data || []).map((emp, index) => {
-        const name = emp.displayName || emp.employeeName || `${emp.firstName || ""} ${emp.lastName || ""}`.trim() || "Unnamed Employee";
-        const initials = name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || "EP";
+      let res = await fetchApiData("/api/boardingcandidates");
+      let dataList = res.data || [];
+      if (dataList.length === 0) {
+        const empRes = await fetchApiData("/api/employees");
+        dataList = empRes.data || [];
+      }
+      const emps = dataList.map((emp, index) => {
+        const name = emp.companyName || emp.requester || emp.displayName || emp.employeeName || `${emp.firstName || ""} ${emp.lastName || ""}`.trim() || "Unnamed Candidate";
+        const initials = name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || "BC";
         const colors = ['#10b981', '#3b82f6', '#8b5cf6', '#ea4104', '#059669', '#0284c7'];
         return {
-          id: emp.employeeId || `EMP-${index + 101}`,
+          id: emp.clientId || emp.SupplierId || emp.employeeId || `BC-${index + 101}`,
           name: name,
-          title: emp.jobTitle || "Employee",
-          dept: emp.department || "General",
-          email: emp.email || "N/A",
-          location: emp.officeLocation || emp.place || "Head Office",
-          status: emp.accountEnabled !== false ? "Active" : "Inactive",
-          joiningDate: emp.createdAt ? new Date(emp.createdAt).toLocaleDateString() : "N/A",
+          title: emp.type || emp.category || emp.jobTitle || "Boarding Candidate",
+          dept: emp.category || emp.department || "General",
+          email: emp.emailAddress || emp.email || "N/A",
+          location: emp.companyAddress || emp.officeLocation || "Head Office",
+          status: "Active",
+          joiningDate: emp.onboardingDate ? new Date(emp.onboardingDate).toLocaleDateString() : emp.createdAt ? new Date(emp.createdAt).toLocaleDateString() : "N/A",
           initials: initials,
           color: colors[index % colors.length]
         };
       });
       setEmployees(emps);
     } catch (err) {
-      console.error("Error loading employees in EmployeeList:", err);
+      console.error("Error loading candidates in EmployeeList:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const toggleColumn = (key) => {
+    if (visibleColumns.includes(key)) {
+      if (visibleColumns.length === 1) return;
+      setVisibleColumns(visibleColumns.filter(c => c !== key));
+    } else {
+      setVisibleColumns([...visibleColumns, key]);
     }
   };
 
@@ -136,7 +164,7 @@ const EmployeeList = () => {
             <FiSearch style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} size={16} />
             <input
               type="text"
-              placeholder="Search by name, title or department..."
+              placeholder="Search by candidate name, title or department..."
               value={search}
               onChange={e => setSearch(e.target.value)}
               style={{ width: '100%', padding: '12px 16px 12px 40px', borderRadius: 8, border: '1px solid #e2e8f0', background: '#fff', fontSize: 14, outline: 'none', color: '#0f172a', boxShadow: '0 1px 2px rgba(0,0,0,0.01)' }}
@@ -187,7 +215,6 @@ const EmployeeList = () => {
               >
                 <option value="All">All Status</option>
                 <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
               </select>
               <FiChevronDown style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#64748b' }} size={16} />
             </div>
@@ -198,15 +225,98 @@ const EmployeeList = () => {
               </button>
             )}
           </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            {/* Settings Icon Dropdown Button */}
+            <div style={{ position: 'relative' }}>
+              <button
+                type="button"
+                onClick={() => setShowSettings(!showSettings)}
+                style={{
+                  background: "#ffffff",
+                  border: "1px solid #cbd5e1",
+                  borderRadius: "8px",
+                  padding: "6px 12px",
+                  cursor: "pointer",
+                  fontSize: "15px",
+                  color: "#334155",
+                  display: "flex",
+                  alignItems: "center",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+                }}
+                title="Customize Display Columns"
+              >
+                ⚙️
+              </button>
+
+              {showSettings && (
+                <div
+                  style={{
+                    position: "absolute",
+                    right: 0,
+                    top: "40px",
+                    background: "#ffffff",
+                    border: "1px solid #cbd5e1",
+                    borderRadius: "10px",
+                    boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
+                    padding: "14px 16px",
+                    width: "220px",
+                    zIndex: 100,
+                  }}
+                >
+                  <div
+                    style={{
+                      fontWeight: "700",
+                      fontSize: "13px",
+                      color: "#0f172a",
+                      marginBottom: "10px",
+                      borderBottom: "1px solid #e2e8f0",
+                      paddingBottom: "6px",
+                    }}
+                  >
+                    ⚙️ Display Columns:
+                  </div>
+
+                  {ALL_EMP_COLUMNS.map(col => (
+                    <label
+                      key={col.key}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        fontSize: "13px",
+                        cursor: "pointer",
+                        margin: "6px 0",
+                        color: "#334155",
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={visibleColumns.includes(col.key)}
+                        onChange={() => toggleColumn(col.key)}
+                        style={{ cursor: "pointer" }}
+                      />
+                      {col.label}
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div style={{ display: 'flex', background: '#f8fafc', padding: 4, borderRadius: 8, border: '1px solid #e2e8f0' }}>
+              <button style={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0f172a', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' }}><FiList size={16} /></button>
+              <button style={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', color: '#64748b', border: 'none', borderRadius: 6, cursor: 'pointer' }}><FiGrid size={16} /></button>
+            </div>
+          </div>
         </div>
 
         {/* Table Area */}
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>Loading employees from database...</div>
+          <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>Loading candidates from database...</div>
         ) : filtered.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px 20px' }}>
             <FiUsers size={48} color="#cbd5e1" style={{ marginBottom: 16 }} />
-            <h3 style={{ fontSize: 18, color: '#0f172a', margin: '0 0 8px 0' }}>No employees found</h3>
+            <h3 style={{ fontSize: 18, color: '#0f172a', margin: '0 0 8px 0' }}>No candidates found</h3>
             <p style={{ color: '#64748b', margin: 0 }}>Try adjusting your search term.</p>
           </div>
         ) : (
@@ -214,37 +324,37 @@ const EmployeeList = () => {
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                  <th style={{ padding: '16px 20px', fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>EMPLOYEE</th>
-                  <th style={{ padding: '16px 20px', fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>TITLE</th>
-                  <th style={{ padding: '16px 20px', fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>DEPARTMENT</th>
-                  <th style={{ padding: '16px 20px', fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>EMAIL</th>
-                  <th style={{ padding: '16px 20px', fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>LOCATION</th>
-                  <th style={{ padding: '16px 20px', fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>STATUS</th>
-                  <th style={{ padding: '16px 20px', fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', textAlign: 'center' }}>ACTION</th>
+                  {ALL_EMP_COLUMNS.filter(c => visibleColumns.includes(c.key)).map(col => (
+                    <th key={col.key} style={{ padding: '16px 20px', fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', textAlign: col.key === 'action' ? 'center' : 'left' }}>{col.label}</th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
                 {filtered.map(emp => (
                   <tr key={emp.id} style={{ borderBottom: '1px solid #f1f5f9', transition: 'background 0.2s', cursor: 'pointer' }} onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'} onClick={() => setSelected(emp)}>
-                    <td style={{ padding: '16px 20px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <div style={{ width: 40, height: 40, borderRadius: '50%', background: emp.color, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 14, flexShrink: 0 }}>{emp.initials}</div>
-                        <div>
-                          <div style={{ fontWeight: 600, color: '#0f172a', fontSize: 14 }}>{emp.name}</div>
-                          <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 2 }}>{emp.id}</div>
+                    {visibleColumns.includes('name') && (
+                      <td style={{ padding: '16px 20px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                          <div style={{ width: 40, height: 40, borderRadius: '50%', background: emp.color, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 14, flexShrink: 0 }}>{emp.initials}</div>
+                          <div>
+                            <div style={{ fontWeight: 600, color: '#0f172a', fontSize: 14 }}>{emp.name}</div>
+                            <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 2 }}>{emp.id}</div>
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td style={{ padding: '16px 20px', fontSize: 14, color: '#0f172a', fontWeight: 500 }}>{emp.title}</td>
-                    <td style={{ padding: '16px 20px' }}><span style={{ padding: '4px 10px', borderRadius: 6, background: '#eff6ff', color: '#3b82f6', fontSize: 12, fontWeight: 600 }}>{emp.dept}</span></td>
-                    <td style={{ padding: '16px 20px', fontSize: 14, color: '#3b82f6', fontWeight: 500 }}>{emp.email}</td>
-                    <td style={{ padding: '16px 20px', fontSize: 14, color: '#0f172a', fontWeight: 500 }}>{emp.location}</td>
-                    <td style={{ padding: '16px 20px' }}><span style={{ padding: '4px 10px', borderRadius: 6, background: '#f0fdf4', color: '#16a34a', fontSize: 12, fontWeight: 600 }}>{emp.status}</span></td>
-                    <td style={{ padding: '16px 20px', textAlign: 'center' }}>
-                      <button style={{ width: 32, height: 32, borderRadius: 6, background: '#fff', border: '1px solid #e2e8f0', color: '#64748b', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.color = '#0f172a'; }} onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#64748b'; }}>
-                        <FiMoreHorizontal size={16} />
-                      </button>
-                    </td>
+                      </td>
+                    )}
+                    {visibleColumns.includes('title') && <td style={{ padding: '16px 20px', fontSize: 14, color: '#0f172a', fontWeight: 500 }}>{emp.title}</td>}
+                    {visibleColumns.includes('dept') && <td style={{ padding: '16px 20px' }}><span style={{ padding: '4px 10px', borderRadius: 6, background: '#eff6ff', color: '#3b82f6', fontSize: 12, fontWeight: 600 }}>{emp.dept}</span></td>}
+                    {visibleColumns.includes('email') && <td style={{ padding: '16px 20px', fontSize: 14, color: '#3b82f6', fontWeight: 500 }}>{emp.email}</td>}
+                    {visibleColumns.includes('location') && <td style={{ padding: '16px 20px', fontSize: 14, color: '#0f172a', fontWeight: 500 }}>{emp.location}</td>}
+                    {visibleColumns.includes('status') && <td style={{ padding: '16px 20px' }}><span style={{ padding: '4px 10px', borderRadius: 6, background: '#f0fdf4', color: '#16a34a', fontSize: 12, fontWeight: 600 }}>{emp.status}</span></td>}
+                    {visibleColumns.includes('action') && (
+                      <td style={{ padding: '16px 20px', textAlign: 'center' }}>
+                        <button style={{ width: 32, height: 32, borderRadius: 6, background: '#fff', border: '1px solid #e2e8f0', color: '#64748b', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.color = '#0f172a'; }} onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#64748b'; }}>
+                          <FiMoreHorizontal size={16} />
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>

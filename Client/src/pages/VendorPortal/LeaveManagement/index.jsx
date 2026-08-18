@@ -1,199 +1,399 @@
-import React, { useState } from 'react';
-import { FiSearch, FiX, FiCalendar, FiUser } from 'react-icons/fi';
+import React, { useState, useEffect, useMemo } from 'react';
+import { FiSearch, FiX } from 'react-icons/fi';
+import { fetchApiData } from '../../../utils/apiClient';
 import '../Dashboard/index.css';
 import '../PurchaseOrders/index.css';
 
-const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
+export const today = () => new Date().toISOString().split('T')[0];
+export const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
 
-const DEPT_COLORS = {
-  'Procurement': { bg: '#eff6ff', color: '#2563eb' },
-  'Finance':     { bg: '#f0fdf4', color: '#16a34a' },
-  'IT':          { bg: '#f5f3ff', color: '#7c3aed' },
-  'Legal':       { bg: '#fff7ed', color: '#ea580c' },
-};
-
-const AVAIL_STATUS = {
-  'Available': { bg: '#f0fdf4', color: '#16a34a', border: '#bbf7d0' },
-  'On Leave':  { bg: '#fef2f2', color: '#dc2626', border: '#fecaca' },
-  'Planned':   { bg: '#fff7ed', color: '#ea580c', border: '#fed7aa' },
-};
-
-const contacts = [
-  { id: 1, name: 'Sarah Mitchell', role: 'Procurement Manager', dept: 'Procurement', leaveType: 'Annual Leave', startDate: '2026-08-15', endDate: '2026-08-22', status: 'On Leave', cover: 'James Hartley', initials: 'SM' },
-  { id: 2, name: 'James Hartley', role: 'Finance Controller', dept: 'Finance', leaveType: null, startDate: null, endDate: null, status: 'Available', cover: null, initials: 'JH' },
-  { id: 3, name: 'Priya Nair', role: 'IT Liaison', dept: 'IT', leaveType: 'Sick Leave', startDate: '2026-08-13', endDate: '2026-08-14', status: 'On Leave', cover: 'James Hartley', initials: 'PN' },
-  { id: 4, name: 'David Chen', role: 'Contract Manager', dept: 'Legal', leaveType: null, startDate: null, endDate: null, status: 'Available', cover: null, initials: 'DC' },
-  { id: 5, name: 'Emma Brown', role: 'Accounts Payable', dept: 'Finance', leaveType: 'Casual Leave', startDate: '2026-08-20', endDate: '2026-08-20', status: 'Planned', cover: 'James Hartley', initials: 'EB' },
+const ALL_LEAVE_COLUMNS = [
+  { key: 'leaveNumber', label: 'Leave ID' },
+  { key: 'employeeName', label: 'Employee Name' },
+  { key: 'leaveType', label: 'Leave type' },
+  { key: 'startDate', label: 'Start date' },
+  { key: 'endDate', label: 'End date' },
+  { key: 'totalLeaves', label: 'Total leave count' },
+  { key: 'status', label: 'Status' },
+  { key: 'description', label: 'Reason' },
 ];
 
 const VendorLeaveManagement = () => {
+  const [leaves, setLeaves] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [showSettings, setShowSettings] = useState(false);
+  const [visibleColumns, setVisibleColumns] = useState(ALL_LEAVE_COLUMNS.map(c => c.key));
 
-  const filtered = contacts.filter(c => c.name.toLowerCase().includes(search.toLowerCase()));
-  const onLeaveList = filtered.filter(c => c.status !== 'Available');
+  useEffect(() => {
+    loadLeaves();
+  }, []);
 
-  const getInitialsBg = (dept) => DEPT_COLORS[dept]?.color || '#64748b';
+  const loadLeaves = async () => {
+    try {
+      setLoading(true);
+      const res = await fetchApiData("/api/leaves");
+      const mapped = (res.data || []).map((l, idx) => ({
+        id: l.leaveNumber || `LV-${String(idx + 1).padStart(3, '0')}`,
+        employeeName: l.employeeName || l.requester || "Unnamed Employee",
+        leaveType: l.leaveType || "Casual Leave",
+        startDate: l.startDate || today(),
+        endDate: l.endDate || today(),
+        totalLeaves: Number(l.totalLeaves) || 1,
+        status: l.status || "Pending",
+        description: l.description || l.comment || "N/A",
+        dept: l.department || "General",
+        initials: (l.employeeName || l.requester || "EP").split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+      }));
+      setLeaves(mapped);
+    } catch (err) {
+      console.error("Error loading leaves in VendorLeaveManagement:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleColumn = (key) => {
+    if (visibleColumns.includes(key)) {
+      if (visibleColumns.length === 1) return;
+      setVisibleColumns(visibleColumns.filter(c => c !== key));
+    } else {
+      setVisibleColumns([...visibleColumns, key]);
+    }
+  };
+
+  const todayStr = today();
+
+  // On Leave Today
+  const onLeaveToday = useMemo(() => {
+    return leaves.filter(l => {
+      const isStatusOk = l.status.toLowerCase() === 'approved' || l.status.toLowerCase() === 'pending';
+      return isStatusOk && l.startDate <= todayStr && l.endDate >= todayStr;
+    });
+  }, [leaves, todayStr]);
+
+  // Upcoming Leaves
+  const upcomingLeaves = useMemo(() => {
+    return leaves.filter(l => {
+      const isStatusOk = l.status.toLowerCase() !== 'rejected';
+      return isStatusOk && l.startDate > todayStr;
+    });
+  }, [leaves, todayStr]);
+
+  // Top Leave Takers
+  const topLeaveTakers = useMemo(() => {
+    const takerMap = {};
+    leaves.forEach(l => {
+      const name = l.employeeName || "Employee";
+      if (!takerMap[name]) {
+        takerMap[name] = { name, requests: 0, days: 0, initials: l.initials };
+      }
+      takerMap[name].requests += 1;
+      takerMap[name].days += l.totalLeaves;
+    });
+    return Object.values(takerMap).sort((a, b) => b.days - a.days).slice(0, 5);
+  }, [leaves]);
+
+  // Leaves by Department
+  const deptLeaves = useMemo(() => {
+    const deptMap = {};
+    leaves.forEach(l => {
+      const dept = l.dept || "General";
+      if (!deptMap[dept]) deptMap[dept] = { dept, days: 0, count: 0 };
+      deptMap[dept].days += l.totalLeaves;
+      deptMap[dept].count += 1;
+    });
+    const maxDays = Math.max(1, ...Object.values(deptMap).map(d => d.days));
+    return Object.values(deptMap).map(d => ({
+      ...d,
+      pct: Math.min(100, Math.round((d.days / maxDays) * 100))
+    }));
+  }, [leaves]);
+
+  // Leave Utilization
+  const utilizationData = useMemo(() => {
+    const typeMap = {};
+    leaves.forEach(l => {
+      const type = l.leaveType || "Casual Leave";
+      typeMap[type] = (typeMap[type] || 0) + l.totalLeaves;
+    });
+    const totalDays = leaves.reduce((sum, l) => sum + l.totalLeaves, 0) || 1;
+    return Object.entries(typeMap).map(([type, days]) => ({
+      type,
+      days,
+      pct: Math.min(100, Math.round((days / totalDays) * 100))
+    }));
+  }, [leaves]);
+
+  const filteredLeaves = leaves.filter(l => {
+    const q = search.toLowerCase();
+    return l.id.toLowerCase().includes(q) || l.employeeName.toLowerCase().includes(q) || l.leaveType.toLowerCase().includes(q);
+  });
 
   return (
     <div className="vendor-dashboard-wrapper">
-      <div className="vendor-dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
+      {/* Header */}
+      <div className="vendor-dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontSize: 24, fontWeight: 700, margin: 0, color: '#0f172a' }}>Leave Management</h1>
-          <div style={{ fontSize: 14, color: '#64748b', margin: '8px 0 0 0' }}>
+          <h1 style={{ fontSize: 26, fontWeight: 700, margin: 0, color: '#0f172a' }}>Leave Management</h1>
+          <div style={{ fontSize: 14, color: '#64748b', margin: '4px 0 0 0' }}>
             {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </div>
         </div>
+
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+          <div style={{ position: 'relative', width: 260 }}>
+            <FiSearch style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} size={15} />
+            <input
+              type="text"
+              placeholder="Search leaves by employee or ID..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              style={{ width: '100%', padding: '8px 12px 8px 36px', borderRadius: 8, border: '1px solid #e2e8f0', background: '#fff', fontSize: 13, outline: 'none' }}
+            />
+          </div>
+        </div>
       </div>
 
-      {/* Row 3: Lists */}
+      {/* Row 1: Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 24 }}>
         {/* On Leave Today */}
-        <div className="vendor-section-card" style={{ marginBottom: 0, padding: 24, borderRadius: 12, border: '1px solid #e2e8f0', boxShadow: 'none', height: 440, overflowY: 'auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+        <div className="vendor-section-card" style={{ marginBottom: 0, padding: 24, borderRadius: 12, border: '1px solid #e2e8f0', height: 380, overflowY: 'auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
             <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', margin: 0 }}>On Leave Today</h2>
-            <span style={{ fontSize: 13, color: '#f43f5e', cursor: 'pointer' }}>View all</span>
+            <span style={{ fontSize: 13, color: '#f43f5e', fontWeight: 600 }}>{onLeaveToday.length} employee(s)</span>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-             {[
-               {i: 'AA', n: 'Adam Admin', t: 'Casual Leave', d: 'Aug 25', bg: '#ef4444'},
-               {i: 'AS', n: 'Alexander Smith', t: 'Casual Leave', d: 'Aug 28', bg: '#78716c'},
-               {i: 'AC', n: 'Amelia Cooper', t: 'Casual Leave', d: 'Aug 03 – Aug 05', bg: '#ea580c'},
-               {i: 'CW', n: 'Charlotte White', t: 'Casual Leave', d: 'Aug 02', bg: '#0ea5e9'},
-               {i: 'CW', n: 'Charlotte White', t: 'Sick Leave', d: 'Aug 30', bg: '#0ea5e9'},
-             ].map((x, i) => (
-               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                 <div style={{ width: 40, height: 40, borderRadius: '50%', background: x.bg, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 600 }}>{x.i}</div>
-                 <div style={{ flex: 1 }}>
-                   <div style={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>{x.n}</div>
-                   <div style={{ fontSize: 13, color: '#64748b' }}>{x.t}</div>
-                 </div>
-                 <div style={{ fontSize: 13, fontWeight: 600, color: '#475569' }}>{x.d}</div>
-               </div>
-             ))}
-          </div>
+          {onLeaveToday.length === 0 ? (
+            <div style={{ color: '#64748b', fontSize: 13, textAlign: 'center', paddingTop: 60 }}>No leaves as of now.</div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {onLeaveToday.map((x, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div style={{ width: 38, height: 38, borderRadius: '50%', background: '#3b82f6', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700 }}>{x.initials}</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>{x.employeeName}</div>
+                    <div style={{ fontSize: 12, color: '#64748b' }}>{x.leaveType}</div>
+                  </div>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: '#475569' }}>{x.startDate} – {x.endDate}</div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Upcoming Leaves */}
-        <div className="vendor-section-card" style={{ marginBottom: 0, padding: 24, borderRadius: 12, border: '1px solid #e2e8f0', boxShadow: 'none', height: 440, overflowY: 'auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+        <div className="vendor-section-card" style={{ marginBottom: 0, padding: 24, borderRadius: 12, border: '1px solid #e2e8f0', height: 380, overflowY: 'auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
             <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', margin: 0 }}>Upcoming Leaves</h2>
-            <span style={{ fontSize: 13, color: '#64748b' }}>Next 7 days</span>
+            <span style={{ fontSize: 13, color: '#64748b' }}>Scheduled</span>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-             {[
-               {i: 'SM', n: 'Sebastian Mitchell', t: 'Casual Leave · Aug 01 – Aug 31', d: '-13d', bg: '#22c55e', bb: '#dcfce7', bc: '#16a34a'},
-               {i: 'CW', n: 'Charlotte White', t: 'Casual Leave · Aug 02', d: '-12d', bg: '#0ea5e9', bb: '#dcfce7', bc: '#16a34a'},
-               {i: 'AC', n: 'Amelia Cooper', t: 'Casual Leave · Aug 03 – Aug 05', d: '-11d', bg: '#ea580c', bb: '#dcfce7', bc: '#16a34a'},
-               {i: 'CM', n: 'Chloe Morgan', t: 'Casual Leave · Aug 14', d: '0d', bg: '#3b82f6', bb: '#dcfce7', bc: '#16a34a'},
-               {i: 'AA', n: 'Adam Admin', t: 'Casual Leave · Aug 25', d: '11d', bg: '#ef4444', bb: '#dcfce7', bc: '#16a34a'},
-             ].map((x, i) => (
-               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                 <div style={{ width: 40, height: 40, borderRadius: '50%', background: x.bg, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 600 }}>{x.i}</div>
-                 <div style={{ flex: 1 }}>
-                   <div style={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>{x.n}</div>
-                   <div style={{ fontSize: 13, color: '#64748b' }}>{x.t}</div>
-                 </div>
-                 <div style={{ fontSize: 12, fontWeight: 700, color: x.bc, background: x.bb, padding: '4px 8px', borderRadius: 4 }}>{x.d}</div>
-               </div>
-             ))}
-          </div>
+          {upcomingLeaves.length === 0 ? (
+            <div style={{ color: '#64748b', fontSize: 13, textAlign: 'center', paddingTop: 60 }}>No upcoming leaves.</div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {upcomingLeaves.map((x, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div style={{ width: 38, height: 38, borderRadius: '50%', background: '#10b981', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700 }}>{x.initials}</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>{x.employeeName}</div>
+                    <div style={{ fontSize: 12, color: '#64748b' }}>{x.leaveType} · {x.startDate}</div>
+                  </div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: '#16a34a', background: '#dcfce7', padding: '3px 8px', borderRadius: 4 }}>{x.totalLeaves}d</div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Top Leave Takers */}
-        <div className="vendor-section-card" style={{ marginBottom: 0, padding: 24, borderRadius: 12, border: '1px solid #e2e8f0', boxShadow: 'none', height: 440, overflowY: 'auto' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+        <div className="vendor-section-card" style={{ marginBottom: 0, padding: 24, borderRadius: 12, border: '1px solid #e2e8f0', height: 380, overflowY: 'auto' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
             <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', margin: 0 }}>Top Leave Takers</h2>
-            <span style={{ fontSize: 13, color: '#64748b' }}>August 2026</span>
+            <span style={{ fontSize: 13, color: '#64748b' }}>Database Total</span>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-             {[
-               {i: 'SM', n: 'Sebastian Mitchell', t: '1 request(s)', d: '23d', bg: '#86efac'},
-               {i: 'AC', n: 'Amelia Cooper', t: '1 request(s)', d: '3d', bg: '#f97316'},
-               {i: 'AA', n: 'Adam Admin', t: '1 request(s)', d: '1d', bg: '#ef4444'},
-               {i: 'SA', n: 'Sarah Anderson', t: '1 request(s)', d: '1d', bg: '#f59e0b'},
-               {i: 'AS', n: 'Alexander Smith', t: '1 request(s)', d: '1d', bg: '#78716c'},
-             ].map((x, i) => (
-               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                 <div style={{ width: 40, height: 40, borderRadius: '50%', background: x.bg, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 600 }}>{x.i}</div>
-                 <div style={{ flex: 1 }}>
-                   <div style={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>{x.n}</div>
-                   <div style={{ fontSize: 13, color: '#64748b' }}>{x.t}</div>
-                 </div>
-                 <div style={{ fontSize: 14, fontWeight: 600, color: '#f59e0b' }}>{x.d}</div>
-               </div>
-             ))}
-          </div>
-        </div>
-      </div>
-      {/* Row 2: Charts */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 24, marginBottom: 24 }}>
-        <div className="vendor-section-card" style={{ marginBottom: 0, padding: 24, borderRadius: 12, border: '1px solid #e2e8f0', boxShadow: 'none' }}>
-          <h2 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a', margin: 0 }}>Leave by Department</h2>
-          <p style={{ fontSize: 14, color: '#64748b', marginTop: 4, marginBottom: 32 }}>August 2026</p>
-          
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{ width: 140, fontSize: 14, color: '#475569', textAlign: 'right', paddingRight: 20 }}>Finance</div>
-              <div style={{ flex: 1, position: 'relative', height: 28, borderLeft: '1px solid #e2e8f0', paddingLeft: 12 }}>
-                <div style={{ width: '96%', height: '100%', background: '#f43f5e', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 13, fontWeight: 600 }}>24d (2)</div>
-              </div>
+          {topLeaveTakers.length === 0 ? (
+            <div style={{ color: '#64748b', fontSize: 13, textAlign: 'center', paddingTop: 60 }}>Nobody is there.</div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {topLeaveTakers.map((x, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div style={{ width: 38, height: 38, borderRadius: '50%', background: '#ea4104', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700 }}>{x.initials}</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>{x.name}</div>
+                    <div style={{ fontSize: 12, color: '#64748b' }}>{x.requests} request(s)</div>
+                  </div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: '#ea4104' }}>{x.days}d</div>
+                </div>
+              ))}
             </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{ width: 140, fontSize: 14, color: '#475569', textAlign: 'right', paddingRight: 20 }}>Human Resources</div>
-              <div style={{ flex: 1, position: 'relative', height: 28, borderLeft: '1px solid #e2e8f0', paddingLeft: 12 }}>
-                <div style={{ width: '12%', height: '100%', background: '#22c55e', borderRadius: 6, display: 'flex', alignItems: 'center', paddingLeft: 12, color: 'white', fontSize: 13, fontWeight: 600 }}>3d (1)</div>
-              </div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{ width: 140, fontSize: 14, color: '#475569', textAlign: 'right', paddingRight: 20 }}>Engineering</div>
-              <div style={{ flex: 1, position: 'relative', height: 28, borderLeft: '1px solid #e2e8f0', paddingLeft: 12 }}>
-                <div style={{ width: '8%', height: '100%', background: '#f59e0b', borderRadius: 6, display: 'flex', alignItems: 'center', paddingLeft: 12, color: 'white', fontSize: 13, fontWeight: 600 }}>2d (2)</div>
-              </div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{ width: 140, fontSize: 14, color: '#475569', textAlign: 'right', paddingRight: 20 }}>Sales</div>
-              <div style={{ flex: 1, position: 'relative', height: 28, borderLeft: '1px solid #e2e8f0', paddingLeft: 12 }}>
-                <div style={{ width: '4%', height: '100%', background: '#f43f5e', borderRadius: 6, display: 'flex', alignItems: 'center', paddingLeft: 8, color: 'white', fontSize: 13, fontWeight: 600 }}>1d</div>
-              </div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{ width: 140, fontSize: 14, color: '#475569', textAlign: 'right', paddingRight: 20 }}>Marketing</div>
-              <div style={{ flex: 1, position: 'relative', height: 28, borderLeft: '1px solid #e2e8f0', paddingLeft: 12 }}>
-                <div style={{ width: '4%', height: '100%', background: '#3b82f6', borderRadius: 6, display: 'flex', alignItems: 'center', paddingLeft: 8, color: 'white', fontSize: 13, fontWeight: 600 }}>1d</div>
-              </div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', marginTop: 12 }}>
-              <div style={{ width: 140 }}></div>
-              <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', paddingLeft: 12, borderTop: '1px solid #e2e8f0', paddingTop: 12, fontSize: 14, color: '#64748b' }}>
-                <span>0</span><span>5</span><span>10</span><span>15</span><span>20</span><span>25</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="vendor-section-card" style={{ marginBottom: 0, padding: 24, borderRadius: 12, border: '1px solid #e2e8f0', boxShadow: 'none' }}>
-          <h2 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a', margin: 0 }}>Leave Utilization</h2>
-          <p style={{ fontSize: 14, color: '#64748b', marginTop: 4, marginBottom: 32 }}>Used vs remaining by leave type — all employees</p>
-          
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-              <div style={{ width: 120, fontSize: 14, fontWeight: 600, color: '#0f172a' }}>Sick Leave</div>
-              <div style={{ flex: 1, height: 10, background: '#f1f5f9', borderRadius: 5, overflow: 'hidden' }}>
-                <div style={{ width: '0%', height: '100%', background: '#22c55e' }}></div>
-              </div>
-              <div style={{ width: 50, textAlign: 'right', fontSize: 14, fontWeight: 600, color: '#22c55e' }}>0%</div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-              <div style={{ width: 120, fontSize: 14, fontWeight: 600, color: '#0f172a' }}>Casual Leave</div>
-              <div style={{ flex: 1, height: 10, background: '#f1f5f9', borderRadius: 5, overflow: 'hidden' }}>
-                <div style={{ width: '2.4%', height: '100%', background: '#22c55e' }}></div>
-              </div>
-              <div style={{ width: 50, textAlign: 'right', fontSize: 14, fontWeight: 600, color: '#22c55e' }}>2.4%</div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
+      {/* Row 2: Department & Utilization */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 32 }}>
+        {/* Leaves by Department */}
+        <div className="vendor-section-card" style={{ marginBottom: 0, padding: 24, borderRadius: 12, border: '1px solid #e2e8f0' }}>
+          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', margin: 0 }}>Leaves by Department</h2>
+          <p style={{ fontSize: 13, color: '#64748b', marginTop: 4, marginBottom: 24 }}>Database Distribution</p>
+          {deptLeaves.length === 0 ? (
+            <div style={{ color: '#64748b', fontSize: 13 }}>No department data available.</div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+              {deptLeaves.map(d => (
+                <div key={d.dept} style={{ display: 'flex', alignItems: 'center' }}>
+                  <div style={{ width: 120, fontSize: 13, color: '#475569', fontWeight: 600 }}>{d.dept}</div>
+                  <div style={{ flex: 1, height: 24, background: '#f1f5f9', borderRadius: 6, margin: '0 16px', overflow: 'hidden' }}>
+                    <div style={{ width: `${d.pct}%`, height: '100%', background: '#ea4104', borderRadius: 6, display: 'flex', alignItems: 'center', paddingLeft: 8, color: 'white', fontSize: 12, fontWeight: 700 }}>
+                      {d.days}d ({d.count})
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Leave Utilization */}
+        <div className="vendor-section-card" style={{ marginBottom: 0, padding: 24, borderRadius: 12, border: '1px solid #e2e8f0' }}>
+          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', margin: 0 }}>Leave Utilization</h2>
+          <p style={{ fontSize: 13, color: '#64748b', marginTop: 4, marginBottom: 24 }}>By Leave Type — Database Total</p>
+          {utilizationData.length === 0 ? (
+            <div style={{ color: '#64748b', fontSize: 13 }}>No leave utilization data recorded.</div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+              {utilizationData.map(u => (
+                <div key={u.type} style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                  <div style={{ width: 120, fontSize: 13, fontWeight: 600, color: '#0f172a' }}>{u.type}</div>
+                  <div style={{ flex: 1, height: 10, background: '#f1f5f9', borderRadius: 5, overflow: 'hidden' }}>
+                    <div style={{ width: `${u.pct}%`, height: '100%', background: '#10b981', borderRadius: 5 }}></div>
+                  </div>
+                  <div style={{ width: 60, textAlign: 'right', fontSize: 13, fontWeight: 700, color: '#10b981' }}>{u.pct}%</div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Row 3: All Leaves Table */}
+      <div style={{ background: '#fff', border: '1px solid #f1f5f9', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.02)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+          <h2 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a', margin: 0 }}>All Leave Records</h2>
+          <div style={{ position: 'relative' }}>
+            <button
+              type="button"
+              onClick={() => setShowSettings(!showSettings)}
+              style={{
+                background: "#ffffff",
+                border: "1px solid #cbd5e1",
+                borderRadius: "8px",
+                padding: "6px 12px",
+                cursor: "pointer",
+                fontSize: "15px",
+                color: "#334155",
+                display: "flex",
+                alignItems: "center",
+                boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+              }}
+              title="Customize Display Columns"
+            >
+              ⚙️
+            </button>
+
+            {showSettings && (
+              <div
+                style={{
+                  position: "absolute",
+                  right: 0,
+                  top: "40px",
+                  background: "#ffffff",
+                  border: "1px solid #cbd5e1",
+                  borderRadius: "10px",
+                  boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
+                  padding: "14px 16px",
+                  width: "220px",
+                  zIndex: 100,
+                }}
+              >
+                <div
+                  style={{
+                    fontWeight: "700",
+                    fontSize: "13px",
+                    color: "#0f172a",
+                    marginBottom: "10px",
+                    borderBottom: "1px solid #e2e8f0",
+                    paddingBottom: "6px",
+                  }}
+                >
+                  ⚙️ Display Columns:
+                </div>
+
+                {ALL_LEAVE_COLUMNS.map(col => (
+                  <label
+                    key={col.key}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      fontSize: "13px",
+                      cursor: "pointer",
+                      margin: "6px 0",
+                      color: "#334155",
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={visibleColumns.includes(col.key)}
+                      onChange={() => toggleColumn(col.key)}
+                      style={{ cursor: "pointer" }}
+                    />
+                    {col.label}
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: 40, color: '#64748b' }}>Loading leaves from database...</div>
+        ) : filteredLeaves.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: 40, color: '#64748b' }}>No leave records found in database.</div>
+        ) : (
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+              <thead>
+                <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
+                  {ALL_LEAVE_COLUMNS.filter(c => visibleColumns.includes(c.key)).map(c => (
+                    <th key={c.key} style={{ padding: '12px 16px', fontSize: 12, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase' }}>{c.label}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filteredLeaves.map(l => (
+                  <tr key={l.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                    {visibleColumns.includes('leaveNumber') && <td style={{ padding: 16, fontSize: 13, fontWeight: 700, color: '#ea4104' }}>{l.id}</td>}
+                    {visibleColumns.includes('employeeName') && <td style={{ padding: 16, fontSize: 13, fontWeight: 600, color: '#0f172a' }}>👤 {l.employeeName}</td>}
+                    {visibleColumns.includes('leaveType') && <td style={{ padding: 16, fontSize: 13, color: '#475569' }}>{l.leaveType}</td>}
+                    {visibleColumns.includes('startDate') && <td style={{ padding: 16, fontSize: 13, color: '#475569' }}>{fmtDate(l.startDate)}</td>}
+                    {visibleColumns.includes('endDate') && <td style={{ padding: 16, fontSize: 13, color: '#475569' }}>{fmtDate(l.endDate)}</td>}
+                    {visibleColumns.includes('totalLeaves') && <td style={{ padding: 16, fontSize: 13, fontWeight: 700, color: '#0f172a' }}>{l.totalLeaves}d</td>}
+                    {visibleColumns.includes('status') && (
+                      <td style={{ padding: 16 }}>
+                        <span style={{ padding: '4px 10px', borderRadius: 6, fontSize: 12, fontWeight: 600, background: l.status.toLowerCase() === 'approved' ? '#f0fdf4' : '#fff7ed', color: l.status.toLowerCase() === 'approved' ? '#16a34a' : '#ea580c' }}>
+                          {l.status}
+                        </span>
+                      </td>
+                    )}
+                    {visibleColumns.includes('description') && <td style={{ padding: 16, fontSize: 13, color: '#64748b' }}>{l.description}</td>}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

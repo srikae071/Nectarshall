@@ -29,73 +29,74 @@ const menuData = [
     ],
   },
   {
+    title: "Onboarding",
+    items: [
+      {
+        label: "Employe",
+        children: [
+          {
+            label: "All",
+            path: "/onboarding/resonancerequirement/all",
+          },
+          {
+            label: "Create New",
+            path: "/onboarding/resonancerequirement/createnew",
+          },
+          {
+            label: "Resolve",
+            path: "/onboardingresolved",
+          },
+          {
+            label: "Employe Request",
+            path: "/onboarding/employerequest",
+          },
+          {
+            label: "Pre-Joining Compilence",
+            path: "/onboarding/prejoining",
+          },
+          {
+            label: "Interview",
+            path: "/onboarding/Interview",
+          },
+          {
+            label: "Offer Letter",
+            path: "/onboarding/Offerletter",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Offboarding",
+    items: [
+      {
+        label: "Employe",
+        children: [
+          {
+            label: "All",
+            path: "/offboarding-employes-all",
+          },
+          {
+            label: "Create New",
+            path: "/offboarding/createnew",
+          },
+          {
+            label: "Closed",
+            path: "/offboarding-closed",
+          },
+          {
+            label: "Employe Request",
+            path: "/offboarding/employerequest",
+          },
+        ],
+      },
+    ],
+  },
+  {
     title: "Employee Management",
     items: [
+      { label: "Add Employee", path: "/hrms/add-employee" },
       { label: "All Employees", path: "/hrms/all-employees" },
-      {
-        label: "Onboarding",
-        children: [
-          {
-            label: "Employe",
-            children: [
-              {
-                label: "All",
-                path: "/onboarding/resonancerequirement/all",
-              },
-              {
-                label: "Create New",
-                path: "/onboarding/resonancerequirement/createnew",
-              },
-              {
-                label: "Resolve",
-                path: "/onboardingresolved",
-              },
-              {
-                label: "Employe Request",
-                path: "/onboarding/employerequest",
-              },
-              {
-                label: "Pre-Joining Compilence",
-                path: "/onboarding/prejoining",
-              },
-              {
-                label: "Interview",
-                path: "/onboarding/Interview",
-              },
-              {
-                label: "Offer Letter",
-                path: "/onboarding/Offerletter",
-              },
-            ],
-          },
-        ],
-      },
-      {
-        label: "Offboarding",
-        children: [
-          {
-            label: "Employe",
-            children: [
-              {
-                label: "All",
-                path: "/offboarding-employes-all",
-              },
-              {
-                label: "Create New",
-                path: "/offboarding/createnew",
-              },
-              {
-                label: "Closed",
-                path: "/offboarding-closed",
-              },
-              {
-                label: "Employe Request",
-                path: "/offboarding/employerequest",
-              },
-            ],
-          },
-        ],
-      },
     ],
   },
   {
@@ -107,6 +108,7 @@ const menuData = [
   },
 ];
 
+/* ================= REUSABLE MENU ITEM ================= */
 const MenuItem = ({ item, level = 0, expandedMenus, setExpandedMenus }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -124,9 +126,7 @@ const MenuItem = ({ item, level = 0, expandedMenus, setExpandedMenus }) => {
   };
 
   const isActive = checkActive(item);
-
   const itemKey = item.label + level;
-
   const isExpanded = expandedMenus[itemKey] ?? false;
 
   const handleClick = (e) => {
@@ -150,7 +150,6 @@ const MenuItem = ({ item, level = 0, expandedMenus, setExpandedMenus }) => {
       >
         <div style={{ display: "flex", alignItems: "center" }}>
           <span style={{ marginRight: "2px" }}>{item.icon || "•"}</span>
-
           <span>{item.label}</span>
         </div>
 
@@ -174,6 +173,90 @@ const MenuItem = ({ item, level = 0, expandedMenus, setExpandedMenus }) => {
   );
 };
 
+/* ================= TOP DASHBOARD NAVIGATION TABS ================= */
+const DashboardNavTabs = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const path = location.pathname;
+
+  const isDashboardRoute =
+    path === "/regular-form" ||
+    path.startsWith("/vendor-portal");
+
+  if (!isDashboardRoute) return null;
+
+  const isActive = (p) => {
+    if (p === "/regular-form") return path === "/regular-form";
+    return path.startsWith(p);
+  };
+
+  const getBreadcrumb = () => {
+    if (path.includes("cases")) return "Case Management";
+    if (path.includes("leave")) return "Leave Management";
+    if (path.includes("employees")) return "Employee Directory";
+    if (path.includes("training")) return "Training & Dev";
+    if (path.includes("purchase-orders")) return "Purchase Orders";
+    if (path.includes("invoices")) return "Invoices";
+    return "Dashboard";
+  };
+
+  const navItems = [
+    { label: "Dashboard", path: "/regular-form" },
+    { label: "Case Management", path: "/vendor-portal/cases" },
+    { label: "Leave Management", path: "/vendor-portal/leave" },
+    { label: "Employee Directory", path: "/vendor-portal/employees" },
+    { label: "Training & Dev", path: "/vendor-portal/training" },
+  ];
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        padding: "14px 32px",
+        background: "#ffffff",
+        borderBottom: "1px solid #e2e8f0",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "14px", fontWeight: 600, color: "#64748b" }}>
+        <span
+          onClick={() => navigate("/regular-form")}
+          style={{ cursor: "pointer", color: "#3b82f6" }}
+        >
+          Nectershell
+        </span>
+        <span style={{ color: "#94a3b8" }}>›</span>
+        <span style={{ color: "#0f172a" }}>{getBreadcrumb()}</span>
+      </div>
+
+      <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
+        {navItems.map((item) => {
+          const active = isActive(item.path);
+          return (
+            <span
+              key={item.path}
+              onClick={() => navigate(item.path)}
+              style={{
+                cursor: "pointer",
+                fontSize: "14px",
+                fontWeight: active ? 700 : 500,
+                color: active ? "#ea4104" : "#64748b",
+                borderBottom: active ? "2px solid #ea4104" : "2px solid transparent",
+                paddingBottom: "4px",
+                transition: "all 0.2s ease-in-out",
+              }}
+            >
+              {item.label}
+            </span>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
 /* ================= MAIN LAYOUT ================= */
 function HrmsLeftLayout({ children }) {
   const navigate = useNavigate();
@@ -187,18 +270,7 @@ function HrmsLeftLayout({ children }) {
     if (!currentPath || currentPath === "/") return;
 
     const itemMatchesPath = (item) => {
-      const pathLower = (item.path || "").toLowerCase();
-      const currentLower = currentPath.toLowerCase();
-
-      if (pathLower && currentLower === pathLower) return true;
-
-      if (currentLower.includes("interview") && pathLower.includes("interview")) return true;
-      if (currentLower.includes("prejoining") && pathLower.includes("prejoining")) return true;
-      if (currentLower.includes("offerletter") && pathLower.includes("offerletter")) return true;
-      if (currentLower.includes("employerequest") && pathLower.includes("employerequest")) return true;
-      if (currentLower.includes("employee-request-save") && pathLower.includes("employerequest")) return true;
-      if (currentLower.includes("onboarding-saves") && pathLower.includes("resonancerequirement")) return true;
-
+      if (item.path && item.path === currentPath) return true;
       if (item.children) {
         return item.children.some((child) => itemMatchesPath(child));
       }
@@ -206,24 +278,18 @@ function HrmsLeftLayout({ children }) {
     };
 
     menuData.forEach((menu, index) => {
-      // Skip direct-link entries (like Vendor Portal) that have no items array
       if (!menu.items) return;
 
       const hasMatch = menu.items.some((item) => itemMatchesPath(item));
       if (hasMatch) {
         setOpenMenus((prev) => ({ ...prev, [index]: true }));
 
-        const expandRecursive = (items, level = 0) => {
-          items.forEach((item) => {
-            if (item.children && itemMatchesPath(item)) {
-              const itemKey = item.label + level;
-              setExpandedMenus((prev) => ({ ...prev, [itemKey]: true }));
-              expandRecursive(item.children, level + 1);
-            }
-          });
-        };
-
-        expandRecursive(menu.items);
+        menu.items.forEach((item) => {
+          if (item.children && itemMatchesPath(item)) {
+            const itemKey = item.label + 0;
+            setExpandedMenus((prev) => ({ ...prev, [itemKey]: true }));
+          }
+        });
       }
     });
   }, [location.pathname]);
@@ -270,7 +336,7 @@ function HrmsLeftLayout({ children }) {
           {menuData.map((menu, index) => (
             <div key={index} className="menuBlock">
               {menu.directPath ? (
-                // Direct navigation link — no dropdown
+                // Direct navigation link (e.g. Dashboard)
                 <div
                   className="hrmsmenuHeader"
                   onClick={() => navigate(menu.directPath)}
@@ -305,7 +371,10 @@ function HrmsLeftLayout({ children }) {
 
         <div className="resizer" onMouseDown={startResize}></div>
 
-        <div className="rightContent">{children}</div>
+        <div className="rightContent">
+          <DashboardNavTabs />
+          {children}
+        </div>
       </div>
     </div>
   );
