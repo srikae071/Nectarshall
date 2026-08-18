@@ -64,47 +64,53 @@ const VendorPortalLayout = ({ children }) => {
         </div>
 
 
-        {/* PURCHASE */}
-        <div className="vendor-sidebar-section">
-          <div className="vendor-sidebar-section-title">PURCHASE</div>
-          <div className="vendor-sidebar-nav">
-            <NavLink path="/vendor-portal/purchase-orders" icon={FiFileText} label="Purchase Orders" />
-            <NavLink path="/vendor-portal/invoices"        icon={FiFile}     label="Invoices" />
-          </div>
-        </div>
+
 
         <div className="vendor-sidebar-footer">
-          <div className="vendor-sidebar-profile">
-            <div className="vendor-sidebar-profile-icon"><FiShield /></div>
-            <div className="vendor-sidebar-profile-info">
-              <span className="vendor-sidebar-profile-name">Wwe Vendors</span>
-              <span className="vendor-sidebar-profile-role">Vendor ID: VND-1024</span>
-            </div>
-          </div>
-          <FiChevronRight className="vendor-sidebar-chevron" />
         </div>
       </div>
 
       {/* Main Content */}
       <div className="vendor-main-content">
-        <div className="vendor-top-header">
+        <div className="vendor-top-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingRight: '32px' }}>
           <div className="vendor-breadcrumb">
             <span className="vendor-breadcrumb-parent vendor-breadcrumb-link" onClick={() => navigate('/')}>Nectershell</span>
             <FiChevronRight className="vendor-breadcrumb-separator" />
             <span className="vendor-breadcrumb-current">{breadcrumbLabel()}</span>
           </div>
-          <div className="vendor-top-actions">
-            <div className="vendor-top-icon-btn">
-              <FiBell size={18} />
-              <span className="vendor-notification-dot"></span>
-            </div>
-            <div className="vendor-top-profile">
-              <div className="vendor-top-profile-text">
-                <span className="vendor-top-profile-name">Wwe Vendors</span>
-                <span className="vendor-top-profile-role">Vendor</span>
-              </div>
-              <FiChevronDown className="vendor-top-profile-chevron" size={14} />
-            </div>
+          <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+            <span 
+              onClick={() => navigate('/vendor-portal/cases')} 
+              style={{ cursor: 'pointer', fontSize: '14px', fontWeight: 500, color: isActive('/vendor-portal/cases') ? '#3b82f6' : '#64748b', transition: 'color 0.2s' }}
+              onMouseEnter={e => e.target.style.color = '#3b82f6'}
+              onMouseLeave={e => e.target.style.color = isActive('/vendor-portal/cases') ? '#3b82f6' : '#64748b'}
+            >
+              Case Management
+            </span>
+            <span 
+              onClick={() => navigate('/vendor-portal/leave')} 
+              style={{ cursor: 'pointer', fontSize: '14px', fontWeight: 500, color: isActive('/vendor-portal/leave') ? '#3b82f6' : '#64748b', transition: 'color 0.2s' }}
+              onMouseEnter={e => e.target.style.color = '#3b82f6'}
+              onMouseLeave={e => e.target.style.color = isActive('/vendor-portal/leave') ? '#3b82f6' : '#64748b'}
+            >
+              Leave Management
+            </span>
+            <span 
+              onClick={() => navigate('/vendor-portal/employees')} 
+              style={{ cursor: 'pointer', fontSize: '14px', fontWeight: 500, color: isActive('/vendor-portal/employees') ? '#3b82f6' : '#64748b', transition: 'color 0.2s' }}
+              onMouseEnter={e => e.target.style.color = '#3b82f6'}
+              onMouseLeave={e => e.target.style.color = isActive('/vendor-portal/employees') ? '#3b82f6' : '#64748b'}
+            >
+              Employee Directory
+            </span>
+            <span 
+              onClick={() => navigate('/vendor-portal/training')} 
+              style={{ cursor: 'pointer', fontSize: '14px', fontWeight: 500, color: isActive('/vendor-portal/training') ? '#3b82f6' : '#64748b', transition: 'color 0.2s' }}
+              onMouseEnter={e => e.target.style.color = '#3b82f6'}
+              onMouseLeave={e => e.target.style.color = isActive('/vendor-portal/training') ? '#3b82f6' : '#64748b'}
+            >
+              Training & Dev
+            </span>
           </div>
         </div>
         <div className="vendor-main-inner">

@@ -90,7 +90,7 @@ const CaseList = () => {
               <tbody>
                 {filtered.map(c => (
                   <tr key={c.id} style={{ borderBottom: '1px solid #f1f5f9', transition: 'background 0.2s', cursor: 'pointer' }} onClick={() => setSelected(c)} onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                    <td style={{ padding: '16px', fontSize: 13, fontWeight: 600, color: '#3b82f6' }}>{c.id}</td>
+                    <td style={{ padding: '16px', fontSize: 13, fontWeight: 600, color: '#3b82f6', whiteSpace: 'nowrap' }}>{c.id}</td>
                     <td style={{ padding: '16px', fontSize: 13, color: '#0f172a', fontWeight: 500 }}>{c.subject}</td>
                     <td style={{ padding: '16px', fontSize: 13, color: '#475569' }}>{c.category}</td>
                     <td style={{ padding: '16px' }}><PriorityBadge priority={c.priority} /></td>

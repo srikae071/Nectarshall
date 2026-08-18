@@ -39,130 +39,8 @@ const VendorLeaveManagement = () => {
       <div className="vendor-dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
         <div>
           <h1 style={{ fontSize: 24, fontWeight: 700, margin: 0, color: '#0f172a' }}>Leave Management</h1>
-          <div style={{ fontSize: 14, color: '#64748b', margin: '8px 0 0 0' }}>Friday, August 14, 2026</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#94a3b8', marginTop: 8 }}>
-            <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#10b981' }}></div>
-            1m ago ↻
-          </div>
-        </div>
-        <div className="vendor-header-actions" style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <div className="vendor-date-filters" style={{ display: 'flex', gap: 8 }}>
-            <button className="vendor-filter-btn active" style={{ padding: '8px 12px', border: '1px solid #e2e8f0', borderRadius: 6, background: 'white', color: '#0f172a', fontSize: 13, fontWeight: 500 }}>This Month</button>
-            <button className="vendor-filter-btn" style={{ padding: '8px 12px', border: '1px solid #e2e8f0', borderRadius: 6, background: 'white', color: '#64748b', fontSize: 13, fontWeight: 500 }}>Last Month</button>
-          </div>
-          <div className="vendor-date-range" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div className="vendor-date-input" style={{ padding: '8px 12px', border: '1px solid #e2e8f0', borderRadius: 6, background: 'white', color: '#475569', fontSize: 13, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 8 }}>
-              08/01/2026 <FiCalendar size={14} color="#94a3b8" />
-            </div>
-            <span style={{ color: '#cbd5e1' }}>→</span>
-            <div className="vendor-date-input" style={{ padding: '8px 12px', border: '1px solid #e2e8f0', borderRadius: 6, background: 'white', color: '#475569', fontSize: 13, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 8 }}>
-              08/30/2026 <FiCalendar size={14} color="#94a3b8" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* KPI Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
-        <div className="vendor-section-card" style={{ marginBottom: 0, padding: 24, borderRadius: 12, border: '1px solid #e2e8f0', boxShadow: 'none' }}>
-          <div style={{ width: 40, height: 40, borderRadius: 8, background: '#fef3c7', color: '#f59e0b', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
-            <span style={{ fontSize: 20 }}>⏳</span>
-          </div>
-          <div style={{ fontSize: 12, fontWeight: 700, color: '#64748b', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Pending Approval</div>
-          <div style={{ fontSize: 32, fontWeight: 800, color: '#0f172a', marginBottom: 12, lineHeight: 1 }}>5</div>
-          <div style={{ display: 'inline-block', padding: '4px 10px', borderRadius: 12, background: '#fef3c7', color: '#d97706', fontSize: 12, fontWeight: 600 }}>2 allocation req</div>
-        </div>
-        <div className="vendor-section-card" style={{ marginBottom: 0, padding: 24, borderRadius: 12, border: '1px solid #e2e8f0', boxShadow: 'none' }}>
-          <div style={{ width: 40, height: 40, borderRadius: 8, background: '#dcfce7', color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
-            <span style={{ fontSize: 20 }}>✅</span>
-          </div>
-          <div style={{ fontSize: 12, fontWeight: 700, color: '#64748b', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Approved</div>
-          <div style={{ fontSize: 32, fontWeight: 800, color: '#0f172a', marginBottom: 12, lineHeight: 1 }}>9</div>
-          <div style={{ display: 'inline-block', padding: '4px 10px', borderRadius: 12, background: '#dcfce7', color: '#16a34a', fontSize: 12, fontWeight: 600 }}>31 days used</div>
-        </div>
-        <div className="vendor-section-card" style={{ marginBottom: 0, padding: 24, borderRadius: 12, border: '1px solid #e2e8f0', boxShadow: 'none' }}>
-          <div style={{ width: 40, height: 40, borderRadius: 8, background: '#fee2e2', color: '#f43f5e', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
-            <span style={{ fontSize: 20 }}>❌</span>
-          </div>
-          <div style={{ fontSize: 12, fontWeight: 700, color: '#64748b', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Rejected</div>
-          <div style={{ fontSize: 32, fontWeight: 800, color: '#0f172a', marginBottom: 12, lineHeight: 1 }}>1</div>
-          <div style={{ fontSize: 13, color: '#64748b', fontWeight: 500 }}>August 2026</div>
-        </div>
-        <div className="vendor-section-card" style={{ marginBottom: 0, padding: 24, borderRadius: 12, border: '1px solid #e2e8f0', boxShadow: 'none' }}>
-          <div style={{ width: 40, height: 40, borderRadius: 8, background: '#e0e7ff', color: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
-            <span style={{ fontSize: 20 }}>📅</span>
-          </div>
-          <div style={{ fontSize: 12, fontWeight: 700, color: '#64748b', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>On Leave Today</div>
-          <div style={{ fontSize: 32, fontWeight: 800, color: '#0f172a', marginBottom: 12, lineHeight: 1 }}>2</div>
-          <div style={{ fontSize: 13, color: '#64748b', fontWeight: 500 }}>Employees away</div>
-        </div>
-      </div>
-
-      {/* Row 2: Charts */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 24, marginBottom: 24 }}>
-        <div className="vendor-section-card" style={{ marginBottom: 0, padding: 24, borderRadius: 12, border: '1px solid #e2e8f0', boxShadow: 'none' }}>
-          <h2 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a', margin: 0 }}>Leave by Department</h2>
-          <p style={{ fontSize: 14, color: '#64748b', marginTop: 4, marginBottom: 32 }}>August 2026</p>
-          
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{ width: 140, fontSize: 14, color: '#475569', textAlign: 'right', paddingRight: 20 }}>Finance</div>
-              <div style={{ flex: 1, position: 'relative', height: 28, borderLeft: '1px solid #e2e8f0', paddingLeft: 12 }}>
-                <div style={{ width: '96%', height: '100%', background: '#f43f5e', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 13, fontWeight: 600 }}>24d (2)</div>
-              </div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{ width: 140, fontSize: 14, color: '#475569', textAlign: 'right', paddingRight: 20 }}>Human Resources</div>
-              <div style={{ flex: 1, position: 'relative', height: 28, borderLeft: '1px solid #e2e8f0', paddingLeft: 12 }}>
-                <div style={{ width: '12%', height: '100%', background: '#22c55e', borderRadius: 6, display: 'flex', alignItems: 'center', paddingLeft: 12, color: 'white', fontSize: 13, fontWeight: 600 }}>3d (1)</div>
-              </div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{ width: 140, fontSize: 14, color: '#475569', textAlign: 'right', paddingRight: 20 }}>Engineering</div>
-              <div style={{ flex: 1, position: 'relative', height: 28, borderLeft: '1px solid #e2e8f0', paddingLeft: 12 }}>
-                <div style={{ width: '8%', height: '100%', background: '#f59e0b', borderRadius: 6, display: 'flex', alignItems: 'center', paddingLeft: 12, color: 'white', fontSize: 13, fontWeight: 600 }}>2d (2)</div>
-              </div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{ width: 140, fontSize: 14, color: '#475569', textAlign: 'right', paddingRight: 20 }}>Sales</div>
-              <div style={{ flex: 1, position: 'relative', height: 28, borderLeft: '1px solid #e2e8f0', paddingLeft: 12 }}>
-                <div style={{ width: '4%', height: '100%', background: '#f43f5e', borderRadius: 6, display: 'flex', alignItems: 'center', paddingLeft: 8, color: 'white', fontSize: 13, fontWeight: 600 }}>1d</div>
-              </div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <div style={{ width: 140, fontSize: 14, color: '#475569', textAlign: 'right', paddingRight: 20 }}>Marketing</div>
-              <div style={{ flex: 1, position: 'relative', height: 28, borderLeft: '1px solid #e2e8f0', paddingLeft: 12 }}>
-                <div style={{ width: '4%', height: '100%', background: '#3b82f6', borderRadius: 6, display: 'flex', alignItems: 'center', paddingLeft: 8, color: 'white', fontSize: 13, fontWeight: 600 }}>1d</div>
-              </div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', marginTop: 12 }}>
-              <div style={{ width: 140 }}></div>
-              <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', paddingLeft: 12, borderTop: '1px solid #e2e8f0', paddingTop: 12, fontSize: 14, color: '#64748b' }}>
-                <span>0</span><span>5</span><span>10</span><span>15</span><span>20</span><span>25</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="vendor-section-card" style={{ marginBottom: 0, padding: 24, borderRadius: 12, border: '1px solid #e2e8f0', boxShadow: 'none' }}>
-          <h2 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a', margin: 0 }}>Leave Utilization</h2>
-          <p style={{ fontSize: 14, color: '#64748b', marginTop: 4, marginBottom: 32 }}>Used vs remaining by leave type — all employees</p>
-          
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-              <div style={{ width: 120, fontSize: 14, fontWeight: 600, color: '#0f172a' }}>Sick Leave</div>
-              <div style={{ flex: 1, height: 10, background: '#f1f5f9', borderRadius: 5, overflow: 'hidden' }}>
-                <div style={{ width: '0%', height: '100%', background: '#22c55e' }}></div>
-              </div>
-              <div style={{ width: 50, textAlign: 'right', fontSize: 14, fontWeight: 600, color: '#22c55e' }}>0%</div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-              <div style={{ width: 120, fontSize: 14, fontWeight: 600, color: '#0f172a' }}>Casual Leave</div>
-              <div style={{ flex: 1, height: 10, background: '#f1f5f9', borderRadius: 5, overflow: 'hidden' }}>
-                <div style={{ width: '2.4%', height: '100%', background: '#22c55e' }}></div>
-              </div>
-              <div style={{ width: 50, textAlign: 'right', fontSize: 14, fontWeight: 600, color: '#22c55e' }}>2.4%</div>
-            </div>
+          <div style={{ fontSize: 14, color: '#64748b', margin: '8px 0 0 0' }}>
+            {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </div>
         </div>
       </div>
@@ -247,6 +125,75 @@ const VendorLeaveManagement = () => {
           </div>
         </div>
       </div>
+      {/* Row 2: Charts */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 24, marginBottom: 24 }}>
+        <div className="vendor-section-card" style={{ marginBottom: 0, padding: 24, borderRadius: 12, border: '1px solid #e2e8f0', boxShadow: 'none' }}>
+          <h2 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a', margin: 0 }}>Leave by Department</h2>
+          <p style={{ fontSize: 14, color: '#64748b', marginTop: 4, marginBottom: 32 }}>August 2026</p>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div style={{ width: 140, fontSize: 14, color: '#475569', textAlign: 'right', paddingRight: 20 }}>Finance</div>
+              <div style={{ flex: 1, position: 'relative', height: 28, borderLeft: '1px solid #e2e8f0', paddingLeft: 12 }}>
+                <div style={{ width: '96%', height: '100%', background: '#f43f5e', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 13, fontWeight: 600 }}>24d (2)</div>
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div style={{ width: 140, fontSize: 14, color: '#475569', textAlign: 'right', paddingRight: 20 }}>Human Resources</div>
+              <div style={{ flex: 1, position: 'relative', height: 28, borderLeft: '1px solid #e2e8f0', paddingLeft: 12 }}>
+                <div style={{ width: '12%', height: '100%', background: '#22c55e', borderRadius: 6, display: 'flex', alignItems: 'center', paddingLeft: 12, color: 'white', fontSize: 13, fontWeight: 600 }}>3d (1)</div>
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div style={{ width: 140, fontSize: 14, color: '#475569', textAlign: 'right', paddingRight: 20 }}>Engineering</div>
+              <div style={{ flex: 1, position: 'relative', height: 28, borderLeft: '1px solid #e2e8f0', paddingLeft: 12 }}>
+                <div style={{ width: '8%', height: '100%', background: '#f59e0b', borderRadius: 6, display: 'flex', alignItems: 'center', paddingLeft: 12, color: 'white', fontSize: 13, fontWeight: 600 }}>2d (2)</div>
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div style={{ width: 140, fontSize: 14, color: '#475569', textAlign: 'right', paddingRight: 20 }}>Sales</div>
+              <div style={{ flex: 1, position: 'relative', height: 28, borderLeft: '1px solid #e2e8f0', paddingLeft: 12 }}>
+                <div style={{ width: '4%', height: '100%', background: '#f43f5e', borderRadius: 6, display: 'flex', alignItems: 'center', paddingLeft: 8, color: 'white', fontSize: 13, fontWeight: 600 }}>1d</div>
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div style={{ width: 140, fontSize: 14, color: '#475569', textAlign: 'right', paddingRight: 20 }}>Marketing</div>
+              <div style={{ flex: 1, position: 'relative', height: 28, borderLeft: '1px solid #e2e8f0', paddingLeft: 12 }}>
+                <div style={{ width: '4%', height: '100%', background: '#3b82f6', borderRadius: 6, display: 'flex', alignItems: 'center', paddingLeft: 8, color: 'white', fontSize: 13, fontWeight: 600 }}>1d</div>
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', marginTop: 12 }}>
+              <div style={{ width: 140 }}></div>
+              <div style={{ flex: 1, display: 'flex', justifyContent: 'space-between', paddingLeft: 12, borderTop: '1px solid #e2e8f0', paddingTop: 12, fontSize: 14, color: '#64748b' }}>
+                <span>0</span><span>5</span><span>10</span><span>15</span><span>20</span><span>25</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="vendor-section-card" style={{ marginBottom: 0, padding: 24, borderRadius: 12, border: '1px solid #e2e8f0', boxShadow: 'none' }}>
+          <h2 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a', margin: 0 }}>Leave Utilization</h2>
+          <p style={{ fontSize: 14, color: '#64748b', marginTop: 4, marginBottom: 32 }}>Used vs remaining by leave type — all employees</p>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+              <div style={{ width: 120, fontSize: 14, fontWeight: 600, color: '#0f172a' }}>Sick Leave</div>
+              <div style={{ flex: 1, height: 10, background: '#f1f5f9', borderRadius: 5, overflow: 'hidden' }}>
+                <div style={{ width: '0%', height: '100%', background: '#22c55e' }}></div>
+              </div>
+              <div style={{ width: 50, textAlign: 'right', fontSize: 14, fontWeight: 600, color: '#22c55e' }}>0%</div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+              <div style={{ width: 120, fontSize: 14, fontWeight: 600, color: '#0f172a' }}>Casual Leave</div>
+              <div style={{ flex: 1, height: 10, background: '#f1f5f9', borderRadius: 5, overflow: 'hidden' }}>
+                <div style={{ width: '2.4%', height: '100%', background: '#22c55e' }}></div>
+              </div>
+              <div style={{ width: 50, textAlign: 'right', fontSize: 14, fontWeight: 600, color: '#22c55e' }}>2.4%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 };

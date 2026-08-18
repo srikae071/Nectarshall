@@ -7,18 +7,20 @@ import '../PurchaseOrders/index.css';
 export const today = () => new Date().toISOString().split('T')[0];
 export const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
 
+const STATIC_COLOR = { bg: '#f1f5f9', color: '#475569', border: '#cbd5e1' };
+
 const CASE_STATUS_COLORS = {
-  'Open':                   { bg: '#eff6ff', color: '#2563eb', border: '#bfdbfe' },
-  'Vendor Action Pending':  { bg: '#fff7ed', color: '#ea580c', border: '#fed7aa' },
-  'Work In Progress':       { bg: '#f5f3ff', color: '#7c3aed', border: '#ddd6fe' },
-  'Resolved':               { bg: '#f0fdf4', color: '#16a34a', border: '#bbf7d0' },
-  'Closed':                 { bg: '#f8fafc', color: '#64748b', border: '#e2e8f0' },
+  'Open':                   STATIC_COLOR,
+  'Vendor Action Pending':  STATIC_COLOR,
+  'Work In Progress':       STATIC_COLOR,
+  'Resolved':               STATIC_COLOR,
+  'Closed':                 STATIC_COLOR,
 };
 
 const PRIORITY_COLORS = {
-  'High':   { bg: '#fef2f2', color: '#dc2626' },
-  'Medium': { bg: '#fff7ed', color: '#ea580c' },
-  'Low':    { bg: '#f0fdf4', color: '#16a34a' },
+  'High':   STATIC_COLOR,
+  'Medium': STATIC_COLOR,
+  'Low':    STATIC_COLOR,
 };
 
 export const ALL_STATUSES = ['All', 'Open', 'Vendor Action Pending', 'Work In Progress', 'Resolved', 'Closed'];
@@ -65,9 +67,13 @@ export const CaseDetailDrawer = ({ c, onClose }) => (
         <div className="po-drawer-section-title" style={{ marginTop: 20 }}>Timeline</div>
         <div className="po-timeline">
           {['Created', 'Assigned', 'In Progress', 'Resolved', 'Closed'].map((step, i, arr) => {
-            const order = ['Open', 'Work In Progress', 'Vendor Action Pending', 'Resolved', 'Closed'];
-            const statusIdx = order.indexOf(c.status);
-            const done = i === 0 || (c.status === 'Resolved' && i <= 3) || c.status === 'Closed';
+            let currentStepIdx = 0;
+            if (c.status === 'Closed') currentStepIdx = 4;
+            else if (c.status === 'Resolved') currentStepIdx = 3;
+            else if (c.status === 'Work In Progress' || c.status === 'Vendor Action Pending') currentStepIdx = 2;
+            else if (c.status === 'Open') currentStepIdx = 0;
+            
+            const done = i <= currentStepIdx;
             return (
               <div className={`po-timeline-step ${done ? 'done' : 'pending'}`} key={step}>
                 <div className="po-timeline-dot">{done ? <FiCheck size={10} /> : null}</div>
@@ -200,27 +206,28 @@ const VendorCaseManagement = () => {
       </div>
 
       {/* KPI Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24, marginBottom: 32 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 16, marginBottom: 32 }}>
         {[
           { icon: <FiFileText size={20} color="#3b82f6" />, bg: '#eff6ff', title: 'TOTAL CASES', value: '25', sub: 'All time', path: 'all' },
           { icon: <FiBox size={20} color="#10b981" />, bg: '#f0fdf4', title: 'OPEN CASES', value: '5', sub: '20% of total', path: 'Open' },
           { icon: <FiFile size={20} color="#f59e0b" />, bg: '#fffbeb', title: 'PENDING ACTION', value: '3', sub: 'Awaiting vendor', path: 'Vendor Action Pending' },
-          { icon: <FiCheckSquare size={20} color="#8b5cf6" />, bg: '#f5f3ff', title: 'RESOLVED CASES', value: '17', sub: '68% of total', path: 'Resolved' }
+          { icon: <FiCheck size={20} color="#8b5cf6" />, bg: '#f5f3ff', title: 'WORK IN PROGRESS', value: '4', sub: '16% of total', path: 'Work In Progress' },
+          { icon: <FiCheckSquare size={20} color="#16a34a" />, bg: '#f0fdf4', title: 'RESOLVED CASES', value: '17', sub: '68% of total', path: 'Resolved' }
         ].map((kpi, i) => (
           <div 
             key={i} 
             onClick={() => navigate(`/vendor-portal/cases/list/${encodeURIComponent(kpi.path)}`)}
             onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'; }}
             onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.02)'; }}
-            style={{ background: '#fff', border: '1px solid #f1f5f9', borderRadius: 12, padding: 24, display: 'flex', alignItems: 'flex-start', gap: 16, boxShadow: '0 1px 3px rgba(0,0,0,0.02)', cursor: 'pointer', transition: 'all 0.2s ease-in-out' }}
+            style={{ background: '#fff', border: '1px solid #f1f5f9', borderRadius: 12, padding: 20, display: 'flex', alignItems: 'flex-start', gap: 14, boxShadow: '0 1px 3px rgba(0,0,0,0.02)', cursor: 'pointer', transition: 'all 0.2s ease-in-out' }}
           >
-            <div style={{ width: 48, height: 48, borderRadius: 12, background: kpi.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div style={{ width: 44, height: 44, borderRadius: 12, background: kpi.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               {kpi.icon}
             </div>
             <div>
-              <div style={{ fontSize: 12, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{kpi.title}</div>
-              <div style={{ fontSize: 28, fontWeight: 700, color: '#0f172a', margin: '4px 0' }}>{kpi.value}</div>
-              <div style={{ fontSize: 13, color: '#94a3b8' }}>{kpi.sub}</div>
+              <div style={{ fontSize: 11, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{kpi.title}</div>
+              <div style={{ fontSize: 26, fontWeight: 700, color: '#0f172a', margin: '4px 0' }}>{kpi.value}</div>
+              <div style={{ fontSize: 12, color: '#94a3b8' }}>{kpi.sub}</div>
             </div>
           </div>
         ))}
@@ -233,20 +240,20 @@ const VendorCaseManagement = () => {
           <h2 style={{ fontSize: 16, fontWeight: 600, color: '#0f172a', margin: '0 0 24px 0' }}>Cases by Status</h2>
           {(() => {
             const [hovered, setHovered] = React.useState(null);
+            // Total = 24 (removed Closed). Circumference = 2π×40 ≈ 251.2
+            // open=5 (20.8%), pending=3 (12.5%), wip=4 (16.7%), resolved=12 (50%)
             const data = [
-              { id: 'open', label: 'Open', val: '5', pct: '20%', color: '#3b82f6', dash: '50.2 251.2', off: '0' },
-              { id: 'pending', label: 'Vendor Action Pending', val: '3', pct: '12%', color: '#f59e0b', dash: '30.1 251.2', off: '-58' },
-              { id: 'wip', label: 'Work In Progress', val: '4', pct: '16%', color: '#8b5cf6', dash: '40.1 251.2', off: '-88.1' },
-              { id: 'resolved', label: 'Resolved', val: '12', pct: '48%', color: '#10b981', dash: '120.5 251.2', off: '-128.2' },
-              { id: 'closed', label: 'Closed', val: '1', pct: '4%', color: '#ef4444', dash: '2.5 251.2', off: '-248.7' },
+              { id: 'open',     label: 'Open',                 navPath: 'Open',                  val: '5',  pct: '20%', color: '#3b82f6', dash: '52.3 251.2',  off: '0'      },
+              { id: 'pending',  label: 'Vendor Action Pending', navPath: 'Vendor Action Pending', val: '3',  pct: '12%', color: '#f59e0b', dash: '31.4 251.2',  off: '-52.3'  },
+              { id: 'wip',      label: 'Work In Progress',      navPath: 'Work In Progress',      val: '4',  pct: '17%', color: '#8b5cf6', dash: '41.9 251.2',  off: '-83.7'  },
+              { id: 'resolved', label: 'Resolved',              navPath: 'Resolved',              val: '12', pct: '50%', color: '#10b981', dash: '125.6 251.2', off: '-125.6' },
             ];
-            const activeData = hovered ? data.find(d => d.id === hovered) : { label: 'Total', val: '25' };
+            const activeData = hovered ? data.find(d => d.id === hovered) : { label: 'Total', val: '24' };
 
             return (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ position: 'relative', width: 200, height: 200 }}>
                   <svg viewBox="0 0 100 100" style={{ transform: 'rotate(-90deg)', overflow: 'visible' }}>
-                    {/* Reversing array so hovered item renders on top */}
                     {[...data].reverse().map(item => (
                       <circle
                         key={item.id}
@@ -258,6 +265,7 @@ const VendorCaseManagement = () => {
                         style={{ cursor: 'pointer', transition: 'all 0.2s' }}
                         onMouseEnter={() => setHovered(item.id)}
                         onMouseLeave={() => setHovered(null)}
+                        onClick={() => navigate(`/vendor-portal/cases/list/${encodeURIComponent(item.navPath)}`)}
                       />
                     ))}
                   </svg>
@@ -271,9 +279,10 @@ const VendorCaseManagement = () => {
                   {data.map(item => (
                     <div 
                       key={item.id} 
-                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, padding: '4px 8px', borderRadius: 6, background: hovered === item.id ? '#f8fafc' : 'transparent', cursor: 'pointer', transition: 'background 0.2s' }}
+                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, padding: '6px 8px', borderRadius: 6, background: hovered === item.id ? '#f8fafc' : 'transparent', cursor: 'pointer', transition: 'background 0.2s' }}
                       onMouseEnter={() => setHovered(item.id)}
                       onMouseLeave={() => setHovered(null)}
+                      onClick={() => navigate(`/vendor-portal/cases/list/${encodeURIComponent(item.navPath)}`)}
                     >
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
                         <div style={{ width: 10, height: 10, borderRadius: '50%', background: item.color, flexShrink: 0 }}></div>
@@ -292,43 +301,125 @@ const VendorCaseManagement = () => {
         </div>
 
         {/* Cases Trend */}
-        <div style={{ background: '#fff', border: '1px solid #f1f5f9', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.02)' }}>
-          <h2 style={{ fontSize: 16, fontWeight: 600, color: '#0f172a', margin: '0 0 24px 0' }}>Cases Trend <span style={{ fontSize: 13, fontWeight: 400, color: '#64748b' }}>(Last 7 Days)</span></h2>
-          <div style={{ width: '100%', height: 240, position: 'relative' }}>
-            <svg viewBox="0 0 500 200" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
-              <defs>
-                <linearGradient id="blueGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.15" />
-                  <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-              
-              {/* Y Axis */}
-              {[0, 2, 4, 6, 8, 10].map(y => (
-                <g key={y}>
-                  <text x="10" y={170 - (y * 15)} fill="#94a3b8" fontSize="11">{y}</text>
-                </g>
-              ))}
+        {(() => {
+          const [trendPeriod, setTrendPeriod] = React.useState('7d');
+          const [customFrom, setCustomFrom] = React.useState('');
+          const [customTo, setCustomTo] = React.useState('');
 
-              {/* X Axis */}
-              {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d, i) => (
-                <text key={d} x={40 + (i * 70)} y="195" fill="#94a3b8" fontSize="12" textAnchor="middle">{d}</text>
-              ))}
+          // Compute real date labels for custom range
+          const getCustomLabels = () => {
+            if (!customFrom || !customTo) return ['Pick dates above'];
+            const from = new Date(customFrom);
+            const to = new Date(customTo);
+            if (to <= from) return ['Invalid range'];
+            const totalMs = to - from;
+            const steps = 5;
+            return Array.from({ length: steps }, (_, i) => {
+              const d = new Date(from.getTime() + (totalMs / (steps - 1)) * i);
+              return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+            });
+          };
 
-              {/* Line & Area */}
-              <path d="M 40 125 L 110 110 L 180 140 L 250 95 L 320 80 L 390 125 L 460 140" fill="none" stroke="#3b82f6" strokeWidth="3" />
-              <path d="M 40 125 L 110 110 L 180 140 L 250 95 L 320 80 L 390 125 L 460 140 L 460 170 L 40 170 Z" fill="url(#blueGrad)" />
+          const trendDataMap = {
+            '7d': {
+              label: 'Last 7 Days',
+              xLabels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+              points: [{x:40,y:125,v:3},{x:110,y:110,v:4},{x:180,y:140,v:2},{x:250,y:95,v:5},{x:320,y:80,v:6},{x:390,y:125,v:3},{x:460,y:140,v:2}],
+            },
+            '1m': {
+              label: 'Last 1 Month',
+              xLabels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+              points: [{x:80,y:115,v:8},{x:200,y:90,v:12},{x:320,y:105,v:10},{x:440,y:75,v:14}],
+            },
+            'custom': {
+              label: customFrom && customTo ? `${customFrom} → ${customTo}` : 'Select a date range',
+              xLabels: getCustomLabels(),
+              points: [{x:60,y:130,v:5},{x:160,y:100,v:9},{x:260,y:120,v:7},{x:360,y:85,v:11},{x:460,y:110,v:8}],
+            },
+          };
 
-              {/* Points */}
-              {[ {x: 40, y: 125, v: 3}, {x: 110, y: 110, v: 4}, {x: 180, y: 140, v: 2}, {x: 250, y: 95, v: 5}, {x: 320, y: 80, v: 6}, {x: 390, y: 125, v: 3}, {x: 460, y: 140, v: 2} ].map((pt, i) => (
-                <g key={i}>
-                  <circle cx={pt.x} cy={pt.y} r="5" fill="#3b82f6" />
-                  <text x={pt.x} y={pt.y - 12} fill="#3b82f6" fontSize="13" fontWeight="bold" textAnchor="middle">{pt.v}</text>
-                </g>
-              ))}
-            </svg>
-          </div>
-        </div>
+          const current = trendDataMap[trendPeriod];
+          const linePath = current.points.map((p,i) => `${i===0?'M':'L'} ${p.x} ${p.y}`).join(' ');
+          const areaPath = linePath + ` L ${current.points[current.points.length-1].x} 170 L ${current.points[0].x} 170 Z`;
+
+          return (
+            <div style={{ background: '#fff', border: '1px solid #f1f5f9', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.02)' }}>
+              {/* Header row */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                <h2 style={{ fontSize: 16, fontWeight: 600, color: '#0f172a', margin: 0 }}>
+                  Cases Trend <span style={{ fontSize: 13, fontWeight: 400, color: '#64748b' }}>({current.label})</span>
+                </h2>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  {/* Period toggle pills */}
+                  {[{key:'7d',label:'7 Days'},{key:'1m',label:'1 Month'},{key:'custom',label:'Custom'}].map(opt => (
+                    <button
+                      key={opt.key}
+                      onClick={() => setTrendPeriod(opt.key)}
+                      style={{ padding: '6px 14px', borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: 'pointer', border: '1px solid', transition: 'all 0.2s',
+                        background: trendPeriod === opt.key ? '#0f172a' : '#f8fafc',
+                        color: trendPeriod === opt.key ? '#fff' : '#475569',
+                        borderColor: trendPeriod === opt.key ? '#0f172a' : '#e2e8f0'
+                      }}
+                    >{opt.label}</button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Custom date pickers — only shown when Custom is active */}
+              {trendPeriod === 'custom' && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, padding: '14px 16px', background: '#f8fafc', borderRadius: 10, border: '1px solid #e2e8f0' }}>
+                  <span style={{ fontSize: 13, color: '#64748b', fontWeight: 500 }}>From</span>
+                  <input type="date" value={customFrom} onChange={e => setCustomFrom(e.target.value)}
+                    style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #e2e8f0', fontSize: 13, color: '#0f172a', outline: 'none', background: '#fff' }}
+                  />
+                  <span style={{ fontSize: 13, color: '#94a3b8' }}>→</span>
+                  <span style={{ fontSize: 13, color: '#64748b', fontWeight: 500 }}>To</span>
+                  <input type="date" value={customTo} onChange={e => setCustomTo(e.target.value)}
+                    style={{ padding: '8px 12px', borderRadius: 8, border: '1px solid #e2e8f0', fontSize: 13, color: '#0f172a', outline: 'none', background: '#fff' }}
+                  />
+                </div>
+              )}
+
+              {/* Chart */}
+              <div style={{ width: '100%', height: 220, position: 'relative' }}>
+                <svg viewBox="0 0 500 200" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
+                  <defs>
+                    <linearGradient id="blueGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.15" />
+                      <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+
+                  {/* Y Axis */}
+                  {[0, 2, 4, 6, 8, 10].map(y => (
+                    <g key={y}>
+                      <text x="10" y={170 - (y * 15)} fill="#94a3b8" fontSize="11">{y}</text>
+                    </g>
+                  ))}
+
+                  {/* X Axis labels */}
+                  {current.xLabels.map((d, i) => {
+                    const totalSlots = current.xLabels.length - 1;
+                    const x = totalSlots === 0 ? 250 : 40 + (i * (420 / totalSlots));
+                    return <text key={d} x={x} y="195" fill="#94a3b8" fontSize="12" textAnchor="middle">{d}</text>;
+                  })}
+
+                  {/* Line & Area */}
+                  <path d={areaPath} fill="url(#blueGrad)" />
+                  <path d={linePath} fill="none" stroke="#3b82f6" strokeWidth="3" strokeLinejoin="round" />
+
+                  {/* Data Points */}
+                  {current.points.map((pt, i) => (
+                    <g key={i}>
+                      <circle cx={pt.x} cy={pt.y} r="5" fill="#3b82f6" />
+                      <text x={pt.x} y={pt.y - 12} fill="#3b82f6" fontSize="13" fontWeight="bold" textAnchor="middle">{pt.v}</text>
+                    </g>
+                  ))}
+                </svg>
+              </div>
+            </div>
+          );
+        })()}
       </div>
 
       {/* Middle Charts 2 */}
@@ -416,46 +507,7 @@ const VendorCaseManagement = () => {
         </div>
       </div>
 
-      {/* Recent Cases */}
-      <div style={{ background: '#fff', border: '1px solid #f1f5f9', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.02)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a', margin: 0 }}>Recent Cases</h2>
-          <button onClick={() => navigate('/vendor-portal/cases/list/all')} style={{ padding: '8px 16px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 6, fontSize: 13, fontWeight: 600, color: '#475569', cursor: 'pointer' }}>View All Cases</button>
-        </div>
-        
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-            <thead>
-              <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                <th style={{ padding: '12px 16px', fontSize: 12, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase' }}>CASE ID</th>
-                <th style={{ padding: '12px 16px', fontSize: 12, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase' }}>SUBJECT</th>
-                <th style={{ padding: '12px 16px', fontSize: 12, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase' }}>CATEGORY</th>
-                <th style={{ padding: '12px 16px', fontSize: 12, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase' }}>PRIORITY</th>
-                <th style={{ padding: '12px 16px', fontSize: 12, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase' }}>STATUS</th>
-                <th style={{ padding: '12px 16px', fontSize: 12, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase' }}>LAST UPDATED</th>
-                <th style={{ padding: '12px 16px', fontSize: 12, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', textAlign: 'right' }}>ACTIONS</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map(c => (
-                <tr key={c.id} style={{ borderBottom: '1px solid #f1f5f9', transition: 'background 0.2s', cursor: 'pointer' }} onClick={() => setSelected(c)} onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                  <td style={{ padding: '16px', fontSize: 13, fontWeight: 600, color: '#3b82f6' }}>{c.id}</td>
-                  <td style={{ padding: '16px', fontSize: 13, color: '#0f172a', fontWeight: 500 }}>{c.subject}</td>
-                  <td style={{ padding: '16px', fontSize: 13, color: '#475569' }}>{c.category}</td>
-                  <td style={{ padding: '16px' }}><PriorityBadge priority={c.priority} /></td>
-                  <td style={{ padding: '16px' }}><StatusBadge status={c.status} /></td>
-                  <td style={{ padding: '16px', fontSize: 13, color: '#475569' }}>{fmtDate(c.lastUpdate)}</td>
-                  <td style={{ padding: '16px', textAlign: 'right' }}>
-                    <button style={{ background: 'none', border: 'none', color: '#64748b', display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 13, cursor: 'pointer', fontWeight: 500 }}>
-                      <FiChevronRight size={14} /> View
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+
 
       {selected && <CaseDetailDrawer c={selected} onClose={() => setSelected(null)} />}
     </div>

@@ -132,7 +132,7 @@ const VendorEmployeeDirectory = () => {
           { icon: <FiUsers size={24} color="#3b82f6" />, bg: '#eff6ff', title: 'TOTAL EMPLOYEES', value: totalEmployees, sub: 'All departments', path: 'total' },
           { icon: <FiUserCheck size={24} color="#10b981" />, bg: '#f0fdf4', title: 'ACTIVE EMPLOYEES', value: activeEmployees, sub: `${activePct}% of total`, subColor: '#10b981', path: 'active' },
           { icon: <FiBriefcase size={24} color="#8b5cf6" />, bg: '#f5f3ff', title: 'DEPARTMENTS', value: uniqueDepts.length, sub: 'In organization', path: 'departments' },
-          { icon: <FiUserPlus size={24} color="#f59e0b" />, bg: '#fffbeb', title: 'NEW THIS MONTH', value: '0', sub: 'Added this month', path: 'new' }
+          { icon: <FiUserPlus size={24} color="#f59e0b" />, bg: '#fffbeb', title: 'NEW HIRE', value: '0', sub: 'Added this month', path: 'new' }
         ].map((kpi, i) => (
           <div 
             key={i} 

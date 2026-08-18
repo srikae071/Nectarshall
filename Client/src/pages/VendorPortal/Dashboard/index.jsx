@@ -144,23 +144,7 @@ const VendorPortalDashboard = () => {
             {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </div>
         </div>
-        <div className="vendor-header-actions" style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <div className="vendor-date-filters" style={{ display: 'flex', gap: 8 }}>
-            <button className="vendor-filter-btn active" style={{ padding: '8px 12px', border: '1px solid #e2e8f0', borderRadius: 6, background: 'white', color: '#0f172a', fontSize: 13, fontWeight: 500 }}>This Month</button>
-            <button className="vendor-filter-btn" style={{ padding: '8px 12px', border: '1px solid #e2e8f0', borderRadius: 6, background: 'white', color: '#64748b', fontSize: 13, fontWeight: 500 }}>Last Month</button>
-          </div>
-          <div className="vendor-date-range" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div className="vendor-date-input" style={{ padding: '8px 12px', border: '1px solid #e2e8f0', borderRadius: 6, background: 'white', color: '#475569', fontSize: 13, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 8 }}>
-              08/01/2026 <FiCalendar size={14} color="#94a3b8" />
-            </div>
-            <span style={{ color: '#cbd5e1' }}>→</span>
-            <div className="vendor-date-input" style={{ padding: '8px 12px', border: '1px solid #e2e8f0', borderRadius: 6, background: 'white', color: '#475569', fontSize: 13, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 8 }}>
-              08/31/2026 <FiCalendar size={14} color="#94a3b8" />
-            </div>
-          </div>
-        </div>
       </div>
-
       {/* KPIs */}
       {/* Services Strip */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
