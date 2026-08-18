@@ -316,12 +316,12 @@ const VendorPortalDashboard = () => {
           <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>No employees found in database.</div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
-            <table className="vendor-table" style={{ width: '100%', minWidth: '800px', tableLayout: 'fixed', borderCollapse: 'collapse' }}>
+            <table className="vendor-table" style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
                   {ALL_EMP_COLUMNS.map(col => (
-                    <th key={col.key} style={{ width: col.width }}>
-                      {visibleColumns.includes(col.key) ? col.label : ''}
+                    <th key={col.key} style={{ width: col.width, visibility: visibleColumns.includes(col.key) ? 'visible' : 'hidden' }}>
+                      {col.label}
                     </th>
                   ))}
                 </tr>
@@ -329,11 +329,11 @@ const VendorPortalDashboard = () => {
               <tbody>
                 {employees.slice(0, 6).map((emp) => (
                   <tr key={emp.id}>
-                    <td style={{ width: '25%', fontWeight: 600, color: '#0f172a' }}>{visibleColumns.includes('name') ? emp.name : ''}</td>
-                    <td style={{ width: '20%' }}>{visibleColumns.includes('title') ? emp.title : ''}</td>
-                    <td style={{ width: '20%' }}>{visibleColumns.includes('dept') ? <span className="vendor-badge open">{emp.dept}</span> : ''}</td>
-                    <td style={{ width: '20%' }}>{visibleColumns.includes('email') ? emp.email : ''}</td>
-                    <td style={{ width: '15%' }}>{visibleColumns.includes('status') ? <span className="vendor-badge confirmed">{emp.status}</span> : ''}</td>
+                    <td style={{ width: '25%', fontWeight: 600, color: '#0f172a', visibility: visibleColumns.includes('name') ? 'visible' : 'hidden' }}>{emp.name}</td>
+                    <td style={{ width: '20%', visibility: visibleColumns.includes('title') ? 'visible' : 'hidden' }}>{emp.title}</td>
+                    <td style={{ width: '20%', visibility: visibleColumns.includes('dept') ? 'visible' : 'hidden' }}><span className="vendor-badge open">{emp.dept}</span></td>
+                    <td style={{ width: '20%', visibility: visibleColumns.includes('email') ? 'visible' : 'hidden' }}>{emp.email}</td>
+                    <td style={{ width: '15%', visibility: visibleColumns.includes('status') ? 'visible' : 'hidden' }}><span className="vendor-badge confirmed">{emp.status}</span></td>
                   </tr>
                 ))}
               </tbody>

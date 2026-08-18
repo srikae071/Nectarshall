@@ -365,12 +365,23 @@ const VendorLeaveManagement = () => {
           <div style={{ textAlign: 'center', padding: 40, color: '#64748b' }}>No leave records found in database.</div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', minWidth: '800px', tableLayout: 'fixed', borderCollapse: 'collapse', textAlign: 'left' }}>
+            <table style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse', textAlign: 'left' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
                   {ALL_LEAVE_COLUMNS.map(c => (
-                    <th key={c.key} style={{ width: c.width, padding: '12px 16px', fontSize: 12, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase' }}>
-                      {visibleColumns.includes(c.key) ? c.label : ''}
+                    <th
+                      key={c.key}
+                      style={{
+                        width: c.width,
+                        padding: '12px 16px',
+                        fontSize: 12,
+                        fontWeight: 600,
+                        color: '#94a3b8',
+                        textTransform: 'uppercase',
+                        visibility: visibleColumns.includes(c.key) ? 'visible' : 'hidden',
+                      }}
+                    >
+                      {c.label}
                     </th>
                   ))}
                 </tr>
@@ -378,33 +389,31 @@ const VendorLeaveManagement = () => {
               <tbody>
                 {filteredLeaves.map(l => (
                   <tr key={l.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ width: '12%', padding: 16, fontSize: 13, fontWeight: 700, color: '#ea4104' }}>
-                      {visibleColumns.includes('leaveNumber') ? l.id : ''}
+                    <td style={{ width: '12%', padding: 16, fontSize: 13, fontWeight: 700, color: '#ea4104', visibility: visibleColumns.includes('leaveNumber') ? 'visible' : 'hidden' }}>
+                      {l.id}
                     </td>
-                    <td style={{ width: '18%', padding: 16, fontSize: 13, fontWeight: 600, color: '#0f172a' }}>
-                      {visibleColumns.includes('employeeName') ? l.employeeName : ''}
+                    <td style={{ width: '18%', padding: 16, fontSize: 13, fontWeight: 600, color: '#0f172a', visibility: visibleColumns.includes('employeeName') ? 'visible' : 'hidden' }}>
+                      {l.employeeName}
                     </td>
-                    <td style={{ width: '14%', padding: 16, fontSize: 13, color: '#475569' }}>
-                      {visibleColumns.includes('leaveType') ? l.leaveType : ''}
+                    <td style={{ width: '14%', padding: 16, fontSize: 13, color: '#475569', visibility: visibleColumns.includes('leaveType') ? 'visible' : 'hidden' }}>
+                      {l.leaveType}
                     </td>
-                    <td style={{ width: '13%', padding: 16, fontSize: 13, color: '#475569' }}>
-                      {visibleColumns.includes('startDate') ? fmtDate(l.startDate) : ''}
+                    <td style={{ width: '13%', padding: 16, fontSize: 13, color: '#475569', visibility: visibleColumns.includes('startDate') ? 'visible' : 'hidden' }}>
+                      {fmtDate(l.startDate)}
                     </td>
-                    <td style={{ width: '13%', padding: 16, fontSize: 13, color: '#475569' }}>
-                      {visibleColumns.includes('endDate') ? fmtDate(l.endDate) : ''}
+                    <td style={{ width: '13%', padding: 16, fontSize: 13, color: '#475569', visibility: visibleColumns.includes('endDate') ? 'visible' : 'hidden' }}>
+                      {fmtDate(l.endDate)}
                     </td>
-                    <td style={{ width: '12%', padding: 16, fontSize: 13, fontWeight: 700, color: '#0f172a' }}>
-                      {visibleColumns.includes('totalLeaves') ? `${l.totalLeaves}d` : ''}
+                    <td style={{ width: '12%', padding: 16, fontSize: 13, fontWeight: 700, color: '#0f172a', visibility: visibleColumns.includes('totalLeaves') ? 'visible' : 'hidden' }}>
+                      {`${l.totalLeaves}d`}
                     </td>
-                    <td style={{ width: '10%', padding: 16 }}>
-                      {visibleColumns.includes('status') ? (
-                        <span style={{ padding: '4px 10px', borderRadius: 6, fontSize: 12, fontWeight: 600, background: l.status.toLowerCase() === 'approved' ? '#f0fdf4' : '#fff7ed', color: l.status.toLowerCase() === 'approved' ? '#16a34a' : '#ea580c' }}>
-                          {l.status}
-                        </span>
-                      ) : ''}
+                    <td style={{ width: '10%', padding: 16, visibility: visibleColumns.includes('status') ? 'visible' : 'hidden' }}>
+                      <span style={{ padding: '4px 10px', borderRadius: 6, fontSize: 12, fontWeight: 600, background: l.status.toLowerCase() === 'approved' ? '#f0fdf4' : '#fff7ed', color: l.status.toLowerCase() === 'approved' ? '#16a34a' : '#ea580c' }}>
+                        {l.status}
+                      </span>
                     </td>
-                    <td style={{ width: '18%', padding: 16, fontSize: 13, color: '#64748b' }}>
-                      {visibleColumns.includes('description') ? l.description : ''}
+                    <td style={{ width: '18%', padding: 16, fontSize: 13, color: '#64748b', visibility: visibleColumns.includes('description') ? 'visible' : 'hidden' }}>
+                      {l.description}
                     </td>
                   </tr>
                 ))}

@@ -321,12 +321,25 @@ const VendorEmployeeDirectory = () => {
           </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', minWidth: '800px', tableLayout: 'fixed', borderCollapse: 'collapse', textAlign: 'left' }}>
+            <table style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse', textAlign: 'left' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
                   {ALL_EMP_COLUMNS.map(col => (
-                    <th key={col.key} style={{ width: col.width, padding: '16px 20px', fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', textAlign: col.key === 'action' ? 'center' : 'left' }}>
-                      {visibleColumns.includes(col.key) ? col.label : ''}
+                    <th
+                      key={col.key}
+                      style={{
+                        width: col.width,
+                        padding: '16px 20px',
+                        fontSize: 11,
+                        fontWeight: 700,
+                        color: '#94a3b8',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                        textAlign: col.key === 'action' ? 'center' : 'left',
+                        visibility: visibleColumns.includes(col.key) ? 'visible' : 'hidden',
+                      }}
+                    >
+                      {col.label}
                     </th>
                   ))}
                 </tr>
@@ -334,38 +347,34 @@ const VendorEmployeeDirectory = () => {
               <tbody>
                 {filtered.map(emp => (
                   <tr key={emp.id} style={{ borderBottom: '1px solid #f1f5f9', transition: 'background 0.2s', cursor: 'pointer' }} onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'} onClick={() => setSelected(emp)}>
-                    <td style={{ width: '22%', padding: '16px 20px' }}>
-                      {visibleColumns.includes('name') ? (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                          <div style={{ width: 40, height: 40, borderRadius: '50%', background: emp.color, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 14, flexShrink: 0 }}>{emp.initials}</div>
-                          <div>
-                            <div style={{ fontWeight: 600, color: '#0f172a', fontSize: 14 }}>{emp.name}</div>
-                            <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 2 }}>{emp.id}</div>
-                          </div>
+                    <td style={{ width: '22%', padding: '16px 20px', visibility: visibleColumns.includes('name') ? 'visible' : 'hidden' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <div style={{ width: 40, height: 40, borderRadius: '50%', background: emp.color, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 14, flexShrink: 0 }}>{emp.initials}</div>
+                        <div>
+                          <div style={{ fontWeight: 600, color: '#0f172a', fontSize: 14 }}>{emp.name}</div>
+                          <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 2 }}>{emp.id}</div>
                         </div>
-                      ) : ''}
+                      </div>
                     </td>
-                    <td style={{ width: '18%', padding: '16px 20px', fontSize: 14, color: '#0f172a', fontWeight: 500 }}>
-                      {visibleColumns.includes('title') ? emp.title : ''}
+                    <td style={{ width: '18%', padding: '16px 20px', fontSize: 14, color: '#0f172a', fontWeight: 500, visibility: visibleColumns.includes('title') ? 'visible' : 'hidden' }}>
+                      {emp.title}
                     </td>
-                    <td style={{ width: '15%', padding: '16px 20px' }}>
-                      {visibleColumns.includes('dept') ? <span style={{ padding: '4px 10px', borderRadius: 6, background: '#eff6ff', color: '#3b82f6', fontSize: 12, fontWeight: 600 }}>{emp.dept}</span> : ''}
+                    <td style={{ width: '15%', padding: '16px 20px', visibility: visibleColumns.includes('dept') ? 'visible' : 'hidden' }}>
+                      <span style={{ padding: '4px 10px', borderRadius: 6, background: '#eff6ff', color: '#3b82f6', fontSize: 12, fontWeight: 600 }}>{emp.dept}</span>
                     </td>
-                    <td style={{ width: '18%', padding: '16px 20px', fontSize: 14, color: '#3b82f6', fontWeight: 500 }}>
-                      {visibleColumns.includes('email') ? emp.email : ''}
+                    <td style={{ width: '18%', padding: '16px 20px', fontSize: 14, color: '#3b82f6', fontWeight: 500, visibility: visibleColumns.includes('email') ? 'visible' : 'hidden' }}>
+                      {emp.email}
                     </td>
-                    <td style={{ width: '12%', padding: '16px 20px', fontSize: 14, color: '#0f172a', fontWeight: 500 }}>
-                      {visibleColumns.includes('location') ? emp.location : ''}
+                    <td style={{ width: '12%', padding: '16px 20px', fontSize: 14, color: '#0f172a', fontWeight: 500, visibility: visibleColumns.includes('location') ? 'visible' : 'hidden' }}>
+                      {emp.location}
                     </td>
-                    <td style={{ width: '10%', padding: '16px 20px' }}>
-                      {visibleColumns.includes('status') ? <span style={{ padding: '4px 10px', borderRadius: 6, background: '#f0fdf4', color: '#16a34a', fontSize: 12, fontWeight: 600 }}>{emp.status}</span> : ''}
+                    <td style={{ width: '10%', padding: '16px 20px', visibility: visibleColumns.includes('status') ? 'visible' : 'hidden' }}>
+                      <span style={{ padding: '4px 10px', borderRadius: 6, background: '#f0fdf4', color: '#16a34a', fontSize: 12, fontWeight: 600 }}>{emp.status}</span>
                     </td>
-                    <td style={{ width: '5%', padding: '16px 20px', textAlign: 'center' }}>
-                      {visibleColumns.includes('action') ? (
-                        <button style={{ width: 32, height: 32, borderRadius: 6, background: '#fff', border: '1px solid #e2e8f0', color: '#64748b', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.color = '#0f172a'; }} onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#64748b'; }}>
-                          <FiMoreHorizontal size={16} />
-                        </button>
-                      ) : ''}
+                    <td style={{ width: '5%', padding: '16px 20px', textAlign: 'center', visibility: visibleColumns.includes('action') ? 'visible' : 'hidden' }}>
+                      <button style={{ width: 32, height: 32, borderRadius: 6, background: '#fff', border: '1px solid #e2e8f0', color: '#64748b', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.color = '#0f172a'; }} onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#64748b'; }}>
+                        <FiMoreHorizontal size={16} />
+                      </button>
                     </td>
                   </tr>
                 ))}

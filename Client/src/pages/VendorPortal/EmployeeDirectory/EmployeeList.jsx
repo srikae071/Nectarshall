@@ -1,67 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FiArrowLeft, FiSearch, FiX, FiUsers, FiMoreHorizontal, FiList, FiGrid, FiChevronDown, FiMapPin, FiMail } from 'react-icons/fi';
 import { fetchApiData } from '../../../utils/apiClient';
-
-export const ALL_EMP_COLUMNS = [
-  { key: 'name', label: 'EMPLOYEE', width: '22%' },
-  { key: 'title', label: 'TITLE / POSITION', width: '18%' },
-  { key: 'dept', label: 'DEPARTMENT', width: '15%' },
-  { key: 'email', label: 'EMAIL', width: '18%' },
-  { key: 'location', label: 'LOCATION', width: '12%' },
-  { key: 'status', label: 'STATUS', width: '10%' },
-  { key: 'action', label: 'ACTION', width: '5%' },
-];
-
-export const EmpDrawer = ({ emp, onClose }) => (
-  <>
-    <div className="po-overlay" onClick={onClose} />
-    <div className="po-drawer">
-      <div className="po-drawer-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div style={{ width: 48, height: 48, borderRadius: '50%', background: emp.color || '#10b981', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 16, flexShrink: 0 }}>{emp.initials}</div>
-          <div>
-            <div className="po-drawer-id" style={{ marginBottom: 2 }}>{emp.name}</div>
-            <div style={{ fontSize: 13, color: '#64748b' }}>{emp.title}</div>
-          </div>
-        </div>
-        <button className="po-icon-btn" onClick={onClose}><FiX size={18} /></button>
-      </div>
-      <div className="po-drawer-body">
-        <div className="po-info-grid">
-          <div className="po-info-item"><span>Employee ID</span><strong>{emp.id}</strong></div>
-          <div className="po-info-item"><span>Department</span><strong>{emp.dept}</strong></div>
-          <div className="po-info-item"><span>Location</span><strong><FiMapPin size={11} style={{ marginRight: 4 }} />{emp.location}</strong></div>
-          <div className="po-info-item"><span>Joining Date</span><strong>{emp.joiningDate}</strong></div>
-          <div className="po-info-item"><span>Status</span><strong><span className="po-status-badge" style={{ background: '#f0fdf4', color: '#16a34a', borderColor: '#bbf7d0' }}>{emp.status}</span></strong></div>
-          <div className="po-info-item" style={{ gridColumn: '1/-1' }}><span>Email</span><strong>{emp.email}</strong></div>
-        </div>
-      </div>
-      <div className="po-drawer-footer">
-        <button className="po-btn po-btn-ghost" onClick={onClose}>Close</button>
-        <button className="po-btn po-btn-primary" onClick={() => { window.location.href = `mailto:${emp.email}`; }}>
-          <FiMail /> Send Email
-        </button>
-      </div>
-    </div>
-  </>
-);
+import { FiArrowLeft, FiSearch, FiX, FiMail, FiMapPin, FiUsers, FiUserCheck, FiBriefcase, FiUserPlus, FiMoreHorizontal, FiList, FiGrid, FiChevronDown } from 'react-icons/fi';
+import { ALL_EMP_COLUMNS, EmpDrawer } from './index';
+import '../Dashboard/index.css';
 
 const EmployeeList = () => {
-  const { filterType } = useParams();
+  const { type } = useParams();
   const navigate = useNavigate();
-  
-  const [employees, setEmployees] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState(null);
   const [deptFilter, setDeptFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
   const [locationFilter, setLocationFilter] = useState('All');
+  const [employees, setEmployees] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // Column Settings
   const [showSettings, setShowSettings] = useState(false);
   const [visibleColumns, setVisibleColumns] = useState(ALL_EMP_COLUMNS.map(c => c.key));
+
+  const filterType = decodeURIComponent(type || 'total');
 
   useEffect(() => {
     fetchEmployees();
@@ -105,18 +64,20 @@ const EmployeeList = () => {
     }
   };
 
-  useEffect(() => {
-    if (filterType === 'active') {
-      setStatusFilter('Active');
-    } else {
-      setStatusFilter('All');
-    }
-  }, [filterType]);
-
   const totalEmployees = employees.length;
   const uniqueDepts = [...new Set(employees.map(e => e.dept))];
 
-  const filtered = employees.filter(e => {
+  const getFilteredList = () => {
+    const t = filterType.toLowerCase();
+    if (t === 'active' || t === 'total') return employees;
+    if (t === 'new') return [];
+    if (t === 'departments') return employees;
+    return employees;
+  };
+
+  const currentEmployees = getFilteredList();
+
+  const filtered = currentEmployees.filter(e => {
     const matchSearch = e.name.toLowerCase().includes(search.toLowerCase()) || e.title.toLowerCase().includes(search.toLowerCase()) || e.dept.toLowerCase().includes(search.toLowerCase());
     const matchDept = deptFilter === 'All' || e.dept === deptFilter;
     const matchStatus = statusFilter === 'All' || e.status === statusFilter;
@@ -132,10 +93,11 @@ const EmployeeList = () => {
   };
 
   const getTitle = () => {
-    if (filterType === 'active') return 'Active Employees';
-    if (filterType === 'departments') return 'Departments';
-    if (filterType === 'new') return 'New This Month';
-    return 'All Employees';
+    const t = filterType.toLowerCase();
+    if (t === 'active') return 'Active Employees';
+    if (t === 'new') return 'New Hire Employees';
+    if (t === 'departments') return 'Employees by Department';
+    return 'Total Employees';
   };
 
   return (
@@ -269,7 +231,7 @@ const EmployeeList = () => {
                       paddingBottom: "6px",
                     }}
                   >
-                    ⚙️ Settings:
+                    ⚙️ Settings
                   </div>
 
                   {ALL_EMP_COLUMNS.map(col => (
@@ -316,12 +278,25 @@ const EmployeeList = () => {
           </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', minWidth: '800px', tableLayout: 'fixed', borderCollapse: 'collapse', textAlign: 'left' }}>
+            <table style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse', textAlign: 'left' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
                   {ALL_EMP_COLUMNS.map(col => (
-                    <th key={col.key} style={{ width: col.width, padding: '16px 20px', fontSize: 11, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px', textAlign: col.key === 'action' ? 'center' : 'left' }}>
-                      {visibleColumns.includes(col.key) ? col.label : ''}
+                    <th
+                      key={col.key}
+                      style={{
+                        width: col.width,
+                        padding: '16px 20px',
+                        fontSize: 11,
+                        fontWeight: 700,
+                        color: '#94a3b8',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                        textAlign: col.key === 'action' ? 'center' : 'left',
+                        visibility: visibleColumns.includes(col.key) ? 'visible' : 'hidden',
+                      }}
+                    >
+                      {col.label}
                     </th>
                   ))}
                 </tr>
@@ -329,38 +304,34 @@ const EmployeeList = () => {
               <tbody>
                 {filtered.map(emp => (
                   <tr key={emp.id} style={{ borderBottom: '1px solid #f1f5f9', transition: 'background 0.2s', cursor: 'pointer' }} onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'} onClick={() => setSelected(emp)}>
-                    <td style={{ width: '22%', padding: '16px 20px' }}>
-                      {visibleColumns.includes('name') ? (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                          <div style={{ width: 40, height: 40, borderRadius: '50%', background: emp.color, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 14, flexShrink: 0 }}>{emp.initials}</div>
-                          <div>
-                            <div style={{ fontWeight: 600, color: '#0f172a', fontSize: 14 }}>{emp.name}</div>
-                            <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 2 }}>{emp.id}</div>
-                          </div>
+                    <td style={{ width: '22%', padding: '16px 20px', visibility: visibleColumns.includes('name') ? 'visible' : 'hidden' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <div style={{ width: 40, height: 40, borderRadius: '50%', background: emp.color, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 14, flexShrink: 0 }}>{emp.initials}</div>
+                        <div>
+                          <div style={{ fontWeight: 600, color: '#0f172a', fontSize: 14 }}>{emp.name}</div>
+                          <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 2 }}>{emp.id}</div>
                         </div>
-                      ) : ''}
+                      </div>
                     </td>
-                    <td style={{ width: '18%', padding: '16px 20px', fontSize: 14, color: '#0f172a', fontWeight: 500 }}>
-                      {visibleColumns.includes('title') ? emp.title : ''}
+                    <td style={{ width: '18%', padding: '16px 20px', fontSize: 14, color: '#0f172a', fontWeight: 500, visibility: visibleColumns.includes('title') ? 'visible' : 'hidden' }}>
+                      {emp.title}
                     </td>
-                    <td style={{ width: '15%', padding: '16px 20px' }}>
-                      {visibleColumns.includes('dept') ? <span style={{ padding: '4px 10px', borderRadius: 6, background: '#eff6ff', color: '#3b82f6', fontSize: 12, fontWeight: 600 }}>{emp.dept}</span> : ''}
+                    <td style={{ width: '15%', padding: '16px 20px', visibility: visibleColumns.includes('dept') ? 'visible' : 'hidden' }}>
+                      <span style={{ padding: '4px 10px', borderRadius: 6, background: '#eff6ff', color: '#3b82f6', fontSize: 12, fontWeight: 600 }}>{emp.dept}</span>
                     </td>
-                    <td style={{ width: '18%', padding: '16px 20px', fontSize: 14, color: '#3b82f6', fontWeight: 500 }}>
-                      {visibleColumns.includes('email') ? emp.email : ''}
+                    <td style={{ width: '18%', padding: '16px 20px', fontSize: 14, color: '#3b82f6', fontWeight: 500, visibility: visibleColumns.includes('email') ? 'visible' : 'hidden' }}>
+                      {emp.email}
                     </td>
-                    <td style={{ width: '12%', padding: '16px 20px', fontSize: 14, color: '#0f172a', fontWeight: 500 }}>
-                      {visibleColumns.includes('location') ? emp.location : ''}
+                    <td style={{ width: '12%', padding: '16px 20px', fontSize: 14, color: '#0f172a', fontWeight: 500, visibility: visibleColumns.includes('location') ? 'visible' : 'hidden' }}>
+                      {emp.location}
                     </td>
-                    <td style={{ width: '10%', padding: '16px 20px' }}>
-                      {visibleColumns.includes('status') ? <span style={{ padding: '4px 10px', borderRadius: 6, background: '#f0fdf4', color: '#16a34a', fontSize: 12, fontWeight: 600 }}>{emp.status}</span> : ''}
+                    <td style={{ width: '10%', padding: '16px 20px', visibility: visibleColumns.includes('status') ? 'visible' : 'hidden' }}>
+                      <span style={{ padding: '4px 10px', borderRadius: 6, background: '#f0fdf4', color: '#16a34a', fontSize: 12, fontWeight: 600 }}>{emp.status}</span>
                     </td>
-                    <td style={{ width: '5%', padding: '16px 20px', textAlign: 'center' }}>
-                      {visibleColumns.includes('action') ? (
-                        <button style={{ width: 32, height: 32, borderRadius: 6, background: '#fff', border: '1px solid #e2e8f0', color: '#64748b', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.color = '#0f172a'; }} onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#64748b'; }}>
-                          <FiMoreHorizontal size={16} />
-                        </button>
-                      ) : ''}
+                    <td style={{ width: '5%', padding: '16px 20px', textAlign: 'center', visibility: visibleColumns.includes('action') ? 'visible' : 'hidden' }}>
+                      <button style={{ width: 32, height: 32, borderRadius: 6, background: '#fff', border: '1px solid #e2e8f0', color: '#64748b', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.color = '#0f172a'; }} onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#64748b'; }}>
+                        <FiMoreHorizontal size={16} />
+                      </button>
                     </td>
                   </tr>
                 ))}

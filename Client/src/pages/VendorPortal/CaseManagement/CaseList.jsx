@@ -6,20 +6,19 @@ import {
   FiX,
   FiChevronRight,
   FiMessageSquare,
-  FiSettings,
 } from "react-icons/fi";
 import { fetchApiData } from "../../../utils/apiClient";
 import { StatusBadge, PriorityBadge, fmtDate, CaseDetailDrawer } from "./index";
 
 const ALL_CASE_COLUMNS = [
-  { key: "id", label: "INCIDENT NUMBER" },
-  { key: "requester", label: "REQUESTER" },
-  { key: "category", label: "CATEGORY" },
-  { key: "priority", label: "PRIORITY" },
-  { key: "impact", label: "IMPACT" },
-  { key: "status", label: "STATUS" },
-  { key: "lastUpdate", label: "LAST UPDATED" },
-  { key: "action", label: "ACTIONS" },
+  { key: "id", label: "INCIDENT NUMBER", width: "15%" },
+  { key: "requester", label: "REQUESTER", width: "16%" },
+  { key: "category", label: "CATEGORY", width: "15%" },
+  { key: "priority", label: "PRIORITY", width: "12%" },
+  { key: "impact", label: "IMPACT", width: "12%" },
+  { key: "status", label: "STATUS", width: "14%" },
+  { key: "lastUpdate", label: "LAST UPDATED", width: "14%" },
+  { key: "action", label: "ACTIONS", width: "10%" },
 ];
 
 const CaseList = () => {
@@ -157,7 +156,7 @@ const CaseList = () => {
           style={{
             flex: 1,
             display: "flex",
-            justify: "space-between",
+            justifyContent: "space-between",
             alignItems: "center",
           }}
         >
@@ -178,23 +177,25 @@ const CaseList = () => {
             </p>
           </div>
           <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+            {/* Icon-Only Settings Button */}
             <button
+              type="button"
               onClick={() => setShowSettingsModal(true)}
               style={{
-                padding: "10px 16px",
-                borderRadius: 8,
-                background: "#f8fafc",
+                background: "#ffffff",
                 border: "1px solid #cbd5e1",
-                fontSize: 13,
-                fontWeight: 600,
-                color: "#475569",
+                borderRadius: "8px",
+                padding: "6px 12px",
                 cursor: "pointer",
+                fontSize: "15px",
+                color: "#334155",
                 display: "flex",
                 alignItems: "center",
-                gap: 6,
+                boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
               }}
+              title="Settings"
             >
-              <FiSettings size={15} /> Column Settings ⚙️
+              ⚙️
             </button>
             <div style={{ position: "relative", width: 320 }}>
               <FiSearch
@@ -272,18 +273,18 @@ const CaseList = () => {
             <table
               style={{
                 width: "100%",
+                tableLayout: "fixed",
                 borderCollapse: "collapse",
                 textAlign: "left",
               }}
             >
               <thead>
                 <tr style={{ borderBottom: "1px solid #f1f5f9" }}>
-                  {ALL_CASE_COLUMNS.filter((c) =>
-                    visibleColumns.includes(c.key)
-                  ).map((col) => (
+                  {ALL_CASE_COLUMNS.map((col) => (
                     <th
                       key={col.key}
                       style={{
+                        width: col.width,
                         padding: "14px 16px",
                         fontSize: 12,
                         fontWeight: 600,
@@ -291,6 +292,9 @@ const CaseList = () => {
                         textTransform: "uppercase",
                         letterSpacing: "0.5px",
                         textAlign: col.key === "action" ? "right" : "left",
+                        visibility: visibleColumns.includes(col.key)
+                          ? "visible"
+                          : "hidden",
                       }}
                     >
                       {col.label}
@@ -315,92 +319,121 @@ const CaseList = () => {
                       (e.currentTarget.style.background = "transparent")
                     }
                   >
-                    {visibleColumns.includes("id") && (
-                      <td
+                    <td
+                      style={{
+                        width: "15%",
+                        padding: "16px",
+                        fontSize: 13,
+                        fontWeight: 700,
+                        color: "#ea4104",
+                        visibility: visibleColumns.includes("id")
+                          ? "visible"
+                          : "hidden",
+                      }}
+                    >
+                      {c.id}
+                    </td>
+                    <td
+                      style={{
+                        width: "16%",
+                        padding: "16px",
+                        fontSize: 13,
+                        color: "#0f172a",
+                        fontWeight: 600,
+                        visibility: visibleColumns.includes("requester")
+                          ? "visible"
+                          : "hidden",
+                      }}
+                    >
+                      {c.requester}
+                    </td>
+                    <td
+                      style={{
+                        width: "15%",
+                        padding: "16px",
+                        fontSize: 13,
+                        color: "#475569",
+                        visibility: visibleColumns.includes("category")
+                          ? "visible"
+                          : "hidden",
+                      }}
+                    >
+                      {c.category}
+                    </td>
+                    <td
+                      style={{
+                        width: "12%",
+                        padding: "16px",
+                        visibility: visibleColumns.includes("priority")
+                          ? "visible"
+                          : "hidden",
+                      }}
+                    >
+                      <PriorityBadge priority={c.priority} />
+                    </td>
+                    <td
+                      style={{
+                        width: "12%",
+                        padding: "16px",
+                        fontSize: 13,
+                        color: "#475569",
+                        visibility: visibleColumns.includes("impact")
+                          ? "visible"
+                          : "hidden",
+                      }}
+                    >
+                      {c.impact}
+                    </td>
+                    <td
+                      style={{
+                        width: "14%",
+                        padding: "16px",
+                        visibility: visibleColumns.includes("status")
+                          ? "visible"
+                          : "hidden",
+                      }}
+                    >
+                      <StatusBadge status={c.status} />
+                    </td>
+                    <td
+                      style={{
+                        width: "14%",
+                        padding: "16px",
+                        fontSize: 13,
+                        color: "#475569",
+                        visibility: visibleColumns.includes("lastUpdate")
+                          ? "visible"
+                          : "hidden",
+                      }}
+                    >
+                      {fmtDate(c.lastUpdate)}
+                    </td>
+                    <td
+                      style={{
+                        width: "10%",
+                        padding: "16px",
+                        textAlign: "right",
+                        visibility: visibleColumns.includes("action")
+                          ? "visible"
+                          : "hidden",
+                      }}
+                    >
+                      <button
                         style={{
-                          padding: "16px",
-                          fontSize: 13,
-                          fontWeight: 700,
+                          background: "none",
+                          border: "none",
                           color: "#ea4104",
-                        }}
-                      >
-                        {c.id}
-                      </td>
-                    )}
-                    {visibleColumns.includes("requester") && (
-                      <td
-                        style={{
-                          padding: "16px",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 4,
                           fontSize: 13,
-                          color: "#0f172a",
+                          cursor: "pointer",
                           fontWeight: 600,
                         }}
                       >
-                        👤 {c.requester}
-                      </td>
-                    )}
-                    {visibleColumns.includes("category") && (
-                      <td
-                        style={{
-                          padding: "16px",
-                          fontSize: 13,
-                          color: "#475569",
-                        }}
-                      >
-                        {c.category}
-                      </td>
-                    )}
-                    {visibleColumns.includes("priority") && (
-                      <td style={{ padding: "16px" }}>
-                        <PriorityBadge priority={c.priority} />
-                      </td>
-                    )}
-                    {visibleColumns.includes("impact") && (
-                      <td
-                        style={{
-                          padding: "16px",
-                          fontSize: 13,
-                          color: "#475569",
-                        }}
-                      >
-                        {c.impact}
-                      </td>
-                    )}
-                    {visibleColumns.includes("status") && (
-                      <td style={{ padding: "16px" }}>
-                        <StatusBadge status={c.status} />
-                      </td>
-                    )}
-                    {visibleColumns.includes("lastUpdate") && (
-                      <td
-                        style={{
-                          padding: "16px",
-                          fontSize: 13,
-                          color: "#475569",
-                        }}
-                      >
-                        {fmtDate(c.lastUpdate)}
-                      </td>
-                    )}
-                    {visibleColumns.includes("action") && (
-                      <td style={{ padding: "16px", textAlign: "right" }}>
-                        <button
-                          style={{
-                            background: "none",
-                            border: "none",
-                            color: "#ea4104",
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: 4,
-                            fontSize: 13,
-                            cursor: "pointer",
-                            fontWeight: 600,
-                          }}
-                        >
-                          <FiChevronRight size={14} /> View
-                        </button>
-                      </td>
-                    )}
+                        <FiChevronRight size={14} /> View
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -438,7 +471,7 @@ const CaseList = () => {
                   color: "#0f172a",
                 }}
               >
-                ⚙️ Display Columns
+                ⚙️ Settings
               </h3>
               <button
                 style={{

@@ -571,7 +571,7 @@ const VendorCaseManagement = () => {
             <p style={{ fontSize: 12, color: '#64748b', margin: '4px 0 0 0' }}>Showing High priority and Open cases</p>
           </div>
           <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-            {/* Settings Icon Dropdown Button (Icon only) */}
+            {/* Settings Icon Only Dropdown Button */}
             <div style={{ position: 'relative' }}>
               <button
                 type="button"
@@ -657,12 +657,24 @@ const VendorCaseManagement = () => {
           <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>No High priority or Open cases found in database.</div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', minWidth: '800px', tableLayout: 'fixed', borderCollapse: 'collapse', textAlign: 'left' }}>
+            <table style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse', textAlign: 'left' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
                   {ALL_CASE_COLUMNS.map(col => (
-                    <th key={col.key} style={{ width: col.width, padding: '12px 16px', fontSize: 12, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', textAlign: col.key === 'action' ? 'right' : 'left' }}>
-                      {visibleColumns.includes(col.key) ? col.label : ''}
+                    <th
+                      key={col.key}
+                      style={{
+                        width: col.width,
+                        padding: '12px 16px',
+                        fontSize: 12,
+                        fontWeight: 600,
+                        color: '#94a3b8',
+                        textTransform: 'uppercase',
+                        textAlign: col.key === 'action' ? 'right' : 'left',
+                        visibility: visibleColumns.includes(col.key) ? 'visible' : 'hidden',
+                      }}
+                    >
+                      {col.label}
                     </th>
                   ))}
                 </tr>
@@ -670,33 +682,31 @@ const VendorCaseManagement = () => {
               <tbody>
                 {filtered.map(c => (
                   <tr key={c.id} style={{ borderBottom: '1px solid #f1f5f9', transition: 'background 0.2s', cursor: 'pointer' }} onClick={() => setSelected(c)} onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                    <td style={{ width: '15%', padding: '16px', fontSize: 13, fontWeight: 700, color: '#ea4104' }}>
-                      {visibleColumns.includes('id') ? c.id : ''}
+                    <td style={{ width: '15%', padding: '16px', fontSize: 13, fontWeight: 700, color: '#ea4104', visibility: visibleColumns.includes('id') ? 'visible' : 'hidden' }}>
+                      {c.id}
                     </td>
-                    <td style={{ width: '16%', padding: '16px', fontSize: 13, color: '#0f172a', fontWeight: 600 }}>
-                      {visibleColumns.includes('requester') ? c.requester : ''}
+                    <td style={{ width: '16%', padding: '16px', fontSize: 13, color: '#0f172a', fontWeight: 600, visibility: visibleColumns.includes('requester') ? 'visible' : 'hidden' }}>
+                      {c.requester}
                     </td>
-                    <td style={{ width: '15%', padding: '16px', fontSize: 13, color: '#475569' }}>
-                      {visibleColumns.includes('category') ? c.category : ''}
+                    <td style={{ width: '15%', padding: '16px', fontSize: 13, color: '#475569', visibility: visibleColumns.includes('category') ? 'visible' : 'hidden' }}>
+                      {c.category}
                     </td>
-                    <td style={{ width: '12%', padding: '16px' }}>
-                      {visibleColumns.includes('priority') ? <PriorityBadge priority={c.priority} /> : ''}
+                    <td style={{ width: '12%', padding: '16px', visibility: visibleColumns.includes('priority') ? 'visible' : 'hidden' }}>
+                      <PriorityBadge priority={c.priority} />
                     </td>
-                    <td style={{ width: '12%', padding: '16px', fontSize: 13, color: '#475569' }}>
-                      {visibleColumns.includes('impact') ? c.impact : ''}
+                    <td style={{ width: '12%', padding: '16px', fontSize: 13, color: '#475569', visibility: visibleColumns.includes('impact') ? 'visible' : 'hidden' }}>
+                      {c.impact}
                     </td>
-                    <td style={{ width: '14%', padding: '16px' }}>
-                      {visibleColumns.includes('status') ? <StatusBadge status={c.status} /> : ''}
+                    <td style={{ width: '14%', padding: '16px', visibility: visibleColumns.includes('status') ? 'visible' : 'hidden' }}>
+                      <StatusBadge status={c.status} />
                     </td>
-                    <td style={{ width: '14%', padding: '16px', fontSize: 13, color: '#475569' }}>
-                      {visibleColumns.includes('lastUpdate') ? fmtDate(c.lastUpdate) : ''}
+                    <td style={{ width: '14%', padding: '16px', fontSize: 13, color: '#475569', visibility: visibleColumns.includes('lastUpdate') ? 'visible' : 'hidden' }}>
+                      {fmtDate(c.lastUpdate)}
                     </td>
-                    <td style={{ width: '10%', padding: '16px', textAlign: 'right' }}>
-                      {visibleColumns.includes('action') ? (
-                        <button style={{ background: 'none', border: 'none', color: '#ea4104', display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 13, cursor: 'pointer', fontWeight: 600 }}>
-                          <FiChevronRight size={14} /> View
-                        </button>
-                      ) : ''}
+                    <td style={{ width: '10%', padding: '16px', textAlign: 'right', visibility: visibleColumns.includes('action') ? 'visible' : 'hidden' }}>
+                      <button style={{ background: 'none', border: 'none', color: '#ea4104', display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 13, cursor: 'pointer', fontWeight: 600 }}>
+                        <FiChevronRight size={14} /> View
+                      </button>
                     </td>
                   </tr>
                 ))}
