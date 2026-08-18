@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { FiSearch, FiX, FiCheck, FiChevronRight, FiFileText, FiBox, FiCheckSquare, FiFile } from 'react-icons/fi';
 import { fetchApiData } from '../../../utils/apiClient';
 import '../Dashboard/index.css';
@@ -95,7 +95,6 @@ export const CaseDetailDrawer = ({ c, onClose }) => (
 
 const VendorCaseManagement = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [cases, setCases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -326,36 +325,11 @@ const VendorCaseManagement = () => {
 
   return (
     <div className="vendor-dashboard-wrapper" style={{ padding: '32px', maxWidth: '1400px', margin: '0 auto' }}>
-      {/* Header with Nav Tabs Beside Title */}
+      {/* Header */}
       <div className="vendor-dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+        <div>
           <h1 style={{ fontSize: 28, fontWeight: 700, margin: 0, color: '#0f172a' }}>Case Management</h1>
-
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center', background: '#f8fafc', padding: '4px 10px', borderRadius: 8, border: '1px solid #e2e8f0' }}>
-            {[
-              { label: 'Dashboard', path: '/regular-form' },
-              { label: 'Case Management', path: '/vendor-portal/cases' },
-              { label: 'Leave Management', path: '/vendor-portal/leave' },
-              { label: 'Employee Directory', path: '/vendor-portal/employees' },
-              { label: 'Training & Dev', path: '/vendor-portal/training' },
-            ].map(tab => (
-              <span
-                key={tab.path}
-                onClick={() => navigate(tab.path)}
-                style={{
-                  cursor: 'pointer',
-                  fontSize: 13,
-                  fontWeight: location.pathname.startsWith(tab.path) && tab.path !== '/regular-form' ? 700 : tab.path === '/regular-form' && location.pathname === '/regular-form' ? 700 : 500,
-                  color: location.pathname.startsWith(tab.path) && tab.path !== '/regular-form' ? '#ea4104' : tab.path === '/regular-form' && location.pathname === '/regular-form' ? '#ea4104' : '#64748b',
-                  borderBottom: location.pathname.startsWith(tab.path) && tab.path !== '/regular-form' ? '2px solid #ea4104' : tab.path === '/regular-form' && location.pathname === '/regular-form' ? '2px solid #ea4104' : '2px solid transparent',
-                  padding: '4px 8px',
-                  transition: 'all 0.2s'
-                }}
-              >
-                {tab.label}
-              </span>
-            ))}
-          </div>
+          <p style={{ fontSize: 14, color: '#64748b', margin: '4px 0 0 0' }}>HR Requests and Case Tracker (Sourced from HR Request database)</p>
         </div>
 
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>

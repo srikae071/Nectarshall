@@ -372,6 +372,7 @@ function HrmsLeftLayout({ children }) {
         <div className="resizer" onMouseDown={startResize}></div>
 
         <div className="rightContent">
+          <DashboardNavTabs />
           {children}
         </div>
       </div>

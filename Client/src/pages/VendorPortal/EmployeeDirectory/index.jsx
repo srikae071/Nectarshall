@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { fetchApiData } from '../../../utils/apiClient';
 import { FiSearch, FiX, FiMail, FiMapPin, FiUsers, FiUserCheck, FiBriefcase, FiUserPlus, FiMoreHorizontal, FiList, FiGrid, FiChevronDown } from 'react-icons/fi';
 import '../Dashboard/index.css';
@@ -50,7 +50,6 @@ export const EmpDrawer = ({ emp, onClose }) => (
 
 const VendorEmployeeDirectory = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState(null);
   const [deptFilter, setDeptFilter] = useState('All');
@@ -128,36 +127,11 @@ const VendorEmployeeDirectory = () => {
 
   return (
     <div className="vendor-dashboard-wrapper" style={{ padding: '32px', maxWidth: '1400px', margin: '0 auto' }}>
-      {/* Header with Nav Tabs Beside Title */}
+      {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-          <h1 style={{ fontSize: 28, fontWeight: 700, color: '#0f172a', margin: 0 }}>Employee Directory</h1>
-
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center', background: '#f8fafc', padding: '4px 10px', borderRadius: 8, border: '1px solid #e2e8f0' }}>
-            {[
-              { label: 'Dashboard', path: '/regular-form' },
-              { label: 'Case Management', path: '/vendor-portal/cases' },
-              { label: 'Leave Management', path: '/vendor-portal/leave' },
-              { label: 'Employee Directory', path: '/vendor-portal/employees' },
-              { label: 'Training & Dev', path: '/vendor-portal/training' },
-            ].map(tab => (
-              <span
-                key={tab.path}
-                onClick={() => navigate(tab.path)}
-                style={{
-                  cursor: 'pointer',
-                  fontSize: 13,
-                  fontWeight: location.pathname.startsWith(tab.path) && tab.path !== '/regular-form' ? 700 : tab.path === '/regular-form' && location.pathname === '/regular-form' ? 700 : 500,
-                  color: location.pathname.startsWith(tab.path) && tab.path !== '/regular-form' ? '#ea4104' : tab.path === '/regular-form' && location.pathname === '/regular-form' ? '#ea4104' : '#64748b',
-                  borderBottom: location.pathname.startsWith(tab.path) && tab.path !== '/regular-form' ? '2px solid #ea4104' : tab.path === '/regular-form' && location.pathname === '/regular-form' ? '2px solid #ea4104' : '2px solid transparent',
-                  padding: '4px 8px',
-                  transition: 'all 0.2s'
-                }}
-              >
-                {tab.label}
-              </span>
-            ))}
-          </div>
+        <div>
+          <h1 style={{ fontSize: 28, fontWeight: 700, color: '#0f172a', margin: '0 0 4px 0' }}>Employee Directory</h1>
+          <p style={{ fontSize: 14, color: '#64748b', margin: 0 }}>Your key company contacts (Sourced from Employee database)</p>
         </div>
 
         <div style={{ position: 'relative', width: 320 }}>

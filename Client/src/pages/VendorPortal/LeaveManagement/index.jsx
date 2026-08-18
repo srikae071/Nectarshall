@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { FiSearch, FiX } from 'react-icons/fi';
 import { fetchApiData } from '../../../utils/apiClient';
 import '../Dashboard/index.css';
@@ -21,7 +21,6 @@ const ALL_LEAVE_COLUMNS = [
 
 const VendorLeaveManagement = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [leaves, setLeaves] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -135,35 +134,12 @@ const VendorLeaveManagement = () => {
 
   return (
     <div className="vendor-dashboard-wrapper">
-      {/* Header with Nav Tabs Beside Title */}
+      {/* Header */}
       <div className="vendor-dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+        <div>
           <h1 style={{ fontSize: 26, fontWeight: 700, margin: 0, color: '#0f172a' }}>Leave Management</h1>
-
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center', background: '#f8fafc', padding: '4px 10px', borderRadius: 8, border: '1px solid #e2e8f0' }}>
-            {[
-              { label: 'Dashboard', path: '/regular-form' },
-              { label: 'Case Management', path: '/vendor-portal/cases' },
-              { label: 'Leave Management', path: '/vendor-portal/leave' },
-              { label: 'Employee Directory', path: '/vendor-portal/employees' },
-              { label: 'Training & Dev', path: '/vendor-portal/training' },
-            ].map(tab => (
-              <span
-                key={tab.path}
-                onClick={() => navigate(tab.path)}
-                style={{
-                  cursor: 'pointer',
-                  fontSize: 13,
-                  fontWeight: location.pathname.startsWith(tab.path) && tab.path !== '/regular-form' ? 700 : tab.path === '/regular-form' && location.pathname === '/regular-form' ? 700 : 500,
-                  color: location.pathname.startsWith(tab.path) && tab.path !== '/regular-form' ? '#ea4104' : tab.path === '/regular-form' && location.pathname === '/regular-form' ? '#ea4104' : '#64748b',
-                  borderBottom: location.pathname.startsWith(tab.path) && tab.path !== '/regular-form' ? '2px solid #ea4104' : tab.path === '/regular-form' && location.pathname === '/regular-form' ? '2px solid #ea4104' : '2px solid transparent',
-                  padding: '4px 8px',
-                  transition: 'all 0.2s'
-                }}
-              >
-                {tab.label}
-              </span>
-            ))}
+          <div style={{ fontSize: 14, color: '#64748b', margin: '4px 0 0 0' }}>
+            {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
           </div>
         </div>
 
