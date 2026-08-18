@@ -137,12 +137,10 @@ function DashboardLayout({ children }) {
               navigate("/main-dashboard");
             }}
           >
-            <span className="menuIcon">📊</span>
+            <span className="menuIcon"></span>
 
             {!sidebarCollapsed && <span className="menuText">Dashboard</span>}
           </div>
-
-
 
           {/* TIMESHEETS */}
 
@@ -152,7 +150,7 @@ function DashboardLayout({ children }) {
             }`}
             onClick={() => navigate("/timesheets")}
           >
-            <span className="menuIcon">⏱️</span>
+            <span className="menuIcon"></span>
 
             {!sidebarCollapsed && <span className="menuText">Timesheets</span>}
           </div>
@@ -165,7 +163,7 @@ function DashboardLayout({ children }) {
             }`}
             onClick={() => navigate("/reports")}
           >
-            <span className="menuIcon">📊</span>
+            <span className="menuIcon"></span>
 
             {!sidebarCollapsed && <span className="menuText">Reports</span>}
           </div>
@@ -178,7 +176,7 @@ function DashboardLayout({ children }) {
             }`}
             onClick={() => navigate("/incidents")}
           >
-            <span className="menuIcon">📌</span>
+            <span className="menuIcon"></span>
 
             {!sidebarCollapsed && <span className="menuText">Incidents</span>}
           </div>
@@ -199,7 +197,7 @@ function DashboardLayout({ children }) {
               }}
             >
               <div className="menuLeft">
-                <span className="menuIcon">👤</span>
+                <span className="menuIcon"></span>
 
                 {!sidebarCollapsed && (
                   <span className="menuText">On Boarding Client</span>
@@ -221,7 +219,7 @@ function DashboardLayout({ children }) {
                   }`}
                   onClick={() => navigate("/Operations-Complience/All")}
                 >
-                  📋 All
+                  All
                 </div>
 
                 <div
@@ -232,7 +230,7 @@ function DashboardLayout({ children }) {
                   }`}
                   onClick={() => navigate("/onboarding-client-open")}
                 >
-                  🟢 Open
+                  Open
                 </div>
 
                 <div
@@ -243,7 +241,7 @@ function DashboardLayout({ children }) {
                   }`}
                   onClick={() => navigate("/onboarding-client-pending")}
                 >
-                  🟡 Pending
+                  Pending
                 </div>
 
                 <div
@@ -254,7 +252,7 @@ function DashboardLayout({ children }) {
                   }`}
                   onClick={() => navigate("/onboarding-client-new")}
                 >
-                  ➕ New Client
+                  New Client
                 </div>
               </div>
             )}
@@ -265,7 +263,7 @@ function DashboardLayout({ children }) {
             }`}
             onClick={() => navigate("/roster")}
           >
-            <span className="menuIcon">⏱️</span>
+            <span className="menuIcon"></span>
 
             {!sidebarCollapsed && <span className="menuText">Roster</span>}
           </div>
@@ -275,7 +273,7 @@ function DashboardLayout({ children }) {
             }`}
             onClick={() => navigate("/add-adhoc")}
           >
-            <span className="menuIcon">➕</span>
+            <span className="menuIcon"></span>
 
             {!sidebarCollapsed && <span className="menuText">Add Adhoc</span>}
           </div>

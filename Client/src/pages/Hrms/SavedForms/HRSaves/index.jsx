@@ -64,11 +64,7 @@ function HRSaves() {
   };
   const handleSave = async () => {
     try {
-      await sendApiData(
-        `/api/hrrequests/${id}`,
-        formData,
-        "put"
-      );
+      await sendApiData(`/api/hrrequests/${id}`, formData, "put");
 
       alert("Case Updated Successfully");
     } catch (error) {
@@ -189,7 +185,7 @@ function HRSaves() {
               <option value="CNC">CNC</option>
               <option value="Accounts">Accounts</option>
               <option value="Operations">Operations</option>
-              <option value="PetroLink">PetroLink</option>
+              <option value="PetroLink">Petroling</option>
             </select>
           </div>
 
