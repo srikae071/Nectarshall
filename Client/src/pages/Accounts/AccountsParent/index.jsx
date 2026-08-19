@@ -2,7 +2,34 @@ import React, { useMemo, useState, useEffect } from "react";
 import { fetchApiData } from "../../../utils/apiClient";
 import "./index.css";
 
+const ALL_PARENT_COLUMNS = [
+  { key: "workerName", label: "WORKER NAME", width: "13%" },
+  { key: "serviceType", label: "TYPE OF SERVICE", width: "10%" },
+  { key: "position", label: "POSITION", width: "8%" },
+  { key: "company", label: "COMPANY / CLIENT", width: "11%" },
+  { key: "siteName", label: "SITE NAME", width: "11%" },
+  { key: "assignedDate", label: "ASSIGNED DATE", width: "9%" },
+  { key: "scheduledShift", label: "SCHEDULED SHIFT", width: "10%" },
+  { key: "actualWorkedTime", label: "ACTUAL WORKED TIME", width: "12%" },
+  { key: "hours", label: "HOURS", width: "5%" },
+  { key: "ratePerHour", label: "RATE / HR", width: "5%" },
+  { key: "totalPay", label: "TOTAL PAY", width: "6%" },
+];
+
 function AccountsParent() {
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [visibleColumns, setVisibleColumns] = useState(
+    ALL_PARENT_COLUMNS.map((c) => c.key)
+  );
+
+  const toggleColumn = (key) => {
+    if (visibleColumns.includes(key)) {
+      if (visibleColumns.length === 1) return;
+      setVisibleColumns(visibleColumns.filter((c) => c !== key));
+    } else {
+      setVisibleColumns([...visibleColumns, key]);
+    }
+  };
   // Helper to parse dates into week numbers (1 - 52)
   const getWeekNumberFromDate = (dateObj) => {
     if (!dateObj || isNaN(new Date(dateObj).getTime())) return 1;
@@ -410,7 +437,7 @@ function AccountsParent() {
           </p>
         </div>
 
-        <div className="weekSelectorContainer">
+        <div className="weekSelectorContainer" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           <label
             style={{ fontWeight: "700", color: "#0f172a", fontSize: "14px" }}
           >
@@ -430,6 +457,25 @@ function AccountsParent() {
               </option>
             ))}
           </select>
+          <button
+            type="button"
+            onClick={() => setShowSettingsModal(true)}
+            style={{
+              background: "#ffffff",
+              border: "1px solid #cbd5e1",
+              borderRadius: "8px",
+              padding: "6px 12px",
+              cursor: "pointer",
+              fontSize: "15px",
+              color: "#334155",
+              display: "flex",
+              alignItems: "center",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+            }}
+            title="Settings"
+          >
+            ⚙️
+          </button>
         </div>
       </div>
 
@@ -448,26 +494,28 @@ function AccountsParent() {
         </div>
       ) : (
         <div className="accountsTableWrapper">
-          <table className="accountsTable">
+          <table className="accountsTable" style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse" }}>
             <thead>
               <tr>
-                <th>Worker Name</th>
-                <th>Type Of Service</th>
-                <th>Position</th>
-                <th>Company / Client</th>
-                <th>Site Name</th>
-                <th>Assigned Date</th>
-                <th>Scheduled Shift</th>
-                <th>Actual Worked Time & Meal</th>
-                <th>Hours</th>
-                <th>Rate / Hr</th>
-                <th>Total Pay</th>
+                {ALL_PARENT_COLUMNS.map((col) => (
+                  <th
+                    key={col.key}
+                    style={{
+                      width: col.width,
+                      visibility: visibleColumns.includes(col.key)
+                        ? "visible"
+                        : "hidden",
+                    }}
+                  >
+                    {col.label}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
               {groupedWorkerShifts.length === 0 ? (
                 <tr>
-                  <td colSpan="11" className="accountsEmpty">
+                  <td colSpan={ALL_PARENT_COLUMNS.length} className="accountsEmpty">
                     No employee shift placements found for Week {selectedWeek}.
                   </td>
                 </tr>
@@ -486,7 +534,12 @@ function AccountsParent() {
                             <td
                               className="empNameText"
                               rowSpan={workerGroup.shifts.length}
-                              style={{ verticalAlign: "top" }}
+                              style={{
+                                verticalAlign: "top",
+                                visibility: visibleColumns.includes("workerName")
+                                  ? "visible"
+                                  : "hidden",
+                              }}
                             >
                               <div
                                 className="empClickableName"
@@ -513,7 +566,7 @@ function AccountsParent() {
                                       className="multiCompanyBadge"
                                       style={{ marginTop: "2px" }}
                                     >
-                                      🏢 {workerGroup.uniqueCompanies.length}{" "}
+                                      {workerGroup.uniqueCompanies.length}{" "}
                                       Companies
                                     </span>
                                   ) : (
@@ -530,15 +583,15 @@ function AccountsParent() {
                               </div>
                             </td>
                           ) : null}
-                          <td>🛡️ {shift.serviceType}</td>
-                          <td>👔 {shift.position}</td>
-                          <td>🏢 {shift.companyName}</td>
-                          <td>📍 {shift.siteName}</td>
-                          <td>📅 {shift.assignedDate}</td>
-                          <td>
-                            ⏰ {shift.shiftStartTime} - {shift.shiftEndTime}
+                          <td style={{ visibility: visibleColumns.includes("serviceType") ? "visible" : "hidden" }}>{shift.serviceType}</td>
+                          <td style={{ visibility: visibleColumns.includes("position") ? "visible" : "hidden" }}>{shift.position}</td>
+                          <td style={{ visibility: visibleColumns.includes("company") ? "visible" : "hidden" }}>{shift.companyName}</td>
+                          <td style={{ visibility: visibleColumns.includes("siteName") ? "visible" : "hidden" }}>{shift.siteName}</td>
+                          <td style={{ visibility: visibleColumns.includes("assignedDate") ? "visible" : "hidden" }}>{shift.assignedDate}</td>
+                          <td style={{ visibility: visibleColumns.includes("scheduledShift") ? "visible" : "hidden" }}>
+                            {shift.shiftStartTime} - {shift.shiftEndTime}
                           </td>
-                          <td>
+                          <td style={{ visibility: visibleColumns.includes("actualWorkedTime") ? "visible" : "hidden" }}>
                             <div
                               style={{
                                 display: "flex",
@@ -562,7 +615,7 @@ function AccountsParent() {
                                       : "#64748b",
                                 }}
                               >
-                                ⏱️ {shift.actualStartTime} -{" "}
+                                {shift.actualStartTime} -{" "}
                                 {shift.actualEndTime}
                               </span>
                               <span
@@ -572,12 +625,12 @@ function AccountsParent() {
                                   fontWeight: "600",
                                 }}
                               >
-                                🍱 Meal: {shift.mealTime}
+                                Meal: {shift.mealTime}
                               </span>
                             </div>
                           </td>
-                          <td>{shift.hours} hrs</td>
-                          <td style={{ fontWeight: "700", color: "#047857" }}>
+                          <td style={{ visibility: visibleColumns.includes("hours") ? "visible" : "hidden" }}>{shift.hours} hrs</td>
+                          <td style={{ fontWeight: "700", color: "#047857", visibility: visibleColumns.includes("ratePerHour") ? "visible" : "hidden" }}>
                             {formatCurrency(shift.ratePerHour)}
                           </td>
                           <td
@@ -585,6 +638,7 @@ function AccountsParent() {
                               fontWeight: "700",
                               color: "#0f172a",
                               position: "relative",
+                              visibility: visibleColumns.includes("totalPay") ? "visible" : "hidden",
                             }}
                           >
                             <div
@@ -1029,6 +1083,127 @@ function AccountsParent() {
               )}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {showSettingsModal && (
+        <div className="po-overlay" onClick={() => setShowSettingsModal(false)}>
+          <div
+            className="po-modal"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              maxWidth: 420,
+              padding: 24,
+              borderRadius: 12,
+              background: "#fff",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: 20,
+              }}
+            >
+              <h3
+                style={{
+                  margin: 0,
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: "#0f172a",
+                }}
+              >
+                ⚙️ Settings
+              </h3>
+              <button
+                style={{
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "#64748b",
+                  fontSize: 18,
+                }}
+                onClick={() => setShowSettingsModal(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <p
+              style={{
+                fontSize: 13,
+                color: "#64748b",
+                marginTop: 0,
+                marginBottom: 20,
+              }}
+            >
+              Select which table columns you want to display on your screen.
+            </p>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 12,
+                marginBottom: 24,
+              }}
+            >
+              {ALL_PARENT_COLUMNS.map((col) => (
+                <label
+                  key={col.key}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                    fontSize: 14,
+                    fontWeight: 500,
+                    color: "#0f172a",
+                    cursor: "pointer",
+                    padding: "6px 10px",
+                    borderRadius: 6,
+                    background: visibleColumns.includes(col.key)
+                      ? "#f8fafc"
+                      : "transparent",
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={visibleColumns.includes(col.key)}
+                    onChange={() => toggleColumn(col.key)}
+                    style={{
+                      width: 16,
+                      height: 16,
+                      accentColor: "#ea4104",
+                      cursor: "pointer",
+                    }}
+                  />
+                  <span>{col.label}</span>
+                </label>
+              ))}
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: 10,
+              }}
+            >
+              <button
+                onClick={() => setShowSettingsModal(false)}
+                style={{
+                  padding: "8px 16px",
+                  borderRadius: 8,
+                  background: "#ea4104",
+                  color: "#fff",
+                  border: "none",
+                  fontWeight: 600,
+                  fontSize: 13,
+                  cursor: "pointer",
+                }}
+              >
+                Apply & Save
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

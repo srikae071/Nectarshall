@@ -3,19 +3,19 @@ import { fetchApiData, extractArrayData } from "../../../utils/apiClient";
 import "./index.css";
 
 const ALL_COLUMNS = [
-  { key: "empName", label: "Worker Name" },
-  { key: "serviceType", label: "Type Of Service" },
-  { key: "position", label: "Position" },
-  { key: "companyName", label: "Company / Client" },
-  { key: "siteName", label: "Site Name" },
-  { key: "assignedDate", label: "Assigned Date" },
-  { key: "scheduledShift", label: "Scheduled Shift" },
-  { key: "actualWorkedTime", label: "Actual Worked Time" },
-  { key: "mealTime", label: "Meal Time" },
-  { key: "hours", label: "Hours" },
-  { key: "ratePerHour", label: "Rate / Hr" },
-  { key: "totalPay", label: "Total Amount" },
-  { key: "status", label: "Status" },
+  { key: "empName", label: "WORKER NAME", width: "12%" },
+  { key: "serviceType", label: "TYPE OF SERVICE", width: "10%" },
+  { key: "position", label: "POSITION", width: "8%" },
+  { key: "companyName", label: "COMPANY / CLIENT", width: "11%" },
+  { key: "siteName", label: "SITE NAME", width: "11%" },
+  { key: "assignedDate", label: "ASSIGNED DATE", width: "9%" },
+  { key: "scheduledShift", label: "SCHEDULED SHIFT", width: "9%" },
+  { key: "actualWorkedTime", label: "ACTUAL WORKED TIME", width: "10%" },
+  { key: "mealTime", label: "MEAL", width: "6%" },
+  { key: "hours", label: "HOURS", width: "5%" },
+  { key: "ratePerHour", label: "RATE / HR", width: "5%" },
+  { key: "totalPay", label: "TOTAL AMOUNT", width: "6%" },
+  { key: "status", label: "STATUS", width: "8%" },
 ];
 
 const DEFAULT_COLUMNS = ALL_COLUMNS.map((c) => c.key);
@@ -308,16 +308,23 @@ function AccountsCustomerBilling() {
           {/* Column Settings Toggle Button */}
           <div style={{ position: "relative" }} ref={settingsRef}>
             <button
-              className="accountsTabBtn"
+              type="button"
+              onClick={() => setShowSettings(!showSettings)}
               style={{
+                background: "#ffffff",
+                border: "1px solid #cbd5e1",
+                borderRadius: "8px",
+                padding: "6px 12px",
+                cursor: "pointer",
+                fontSize: "15px",
+                color: "#334155",
                 display: "flex",
                 alignItems: "center",
-                gap: "6px",
-                background: showSettings ? "#e2e8f0" : "#ffffff",
+                boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
               }}
-              onClick={() => setShowSettings(!showSettings)}
+              title="Settings"
             >
-              ⚙️ Column Settings {showSettings ? "▲" : "▼"}
+              ⚙️
             </button>
 
             {showSettings && (
@@ -346,7 +353,7 @@ function AccountsCustomerBilling() {
                     paddingBottom: "6px",
                   }}
                 >
-                  Select Visible Columns
+                  ⚙️ Settings
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: "8px", maxHeight: "260px", overflowY: "auto" }}>
                   {ALL_COLUMNS.map((col) => (
@@ -514,11 +521,21 @@ function AccountsCustomerBilling() {
         <div className="accountsLoading">⌛ Loading Customer Billing Records...</div>
       ) : (
         <div className="accountsTableWrapper">
-          <table className="accountsTable">
+          <table className="accountsTable" style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse" }}>
             <thead>
               <tr>
-                {ALL_COLUMNS.filter((col) => visibleColumns.includes(col.key)).map((col) => (
-                  <th key={col.key}>{col.label}</th>
+                {ALL_COLUMNS.map((col) => (
+                  <th
+                    key={col.key}
+                    style={{
+                      width: col.width,
+                      visibility: visibleColumns.includes(col.key)
+                        ? "visible"
+                        : "hidden",
+                    }}
+                  >
+                    {col.label}
+                  </th>
                 ))}
               </tr>
             </thead>
@@ -526,7 +543,7 @@ function AccountsCustomerBilling() {
               {filteredRecords.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={visibleColumns.length}
+                    colSpan={ALL_COLUMNS.length}
                     className="accountsEmpty"
                   >
                     No matching customer billing records found.
@@ -535,73 +552,54 @@ function AccountsCustomerBilling() {
               ) : (
                 filteredRecords.map((item) => (
                   <tr key={item.id}>
-                    {visibleColumns.includes("empName") && (
-                      <td className="empNameText" style={{ fontWeight: "700" }}>
-                        👤 {item.empName}
-                      </td>
-                    )}
-                    {visibleColumns.includes("serviceType") && (
-                      <td>🛡️ {item.serviceType}</td>
-                    )}
-                    {visibleColumns.includes("position") && (
-                      <td>👔 {item.position}</td>
-                    )}
-                    {visibleColumns.includes("companyName") && (
-                      <td className="boldText">🏢 {item.companyName}</td>
-                    )}
-                    {visibleColumns.includes("siteName") && (
-                      <td>📍 {item.siteName}</td>
-                    )}
-                    {visibleColumns.includes("assignedDate") && (
-                      <td>📅 {item.assignedDate}</td>
-                    )}
-                    {visibleColumns.includes("scheduledShift") && (
-                      <td>⏰ {item.scheduledShift}</td>
-                    )}
-                    {visibleColumns.includes("actualWorkedTime") && (
-                      <td>
-                        <span
-                          style={{
-                            padding: "2px 8px",
-                            borderRadius: "4px",
-                            fontSize: "11.5px",
-                            fontWeight: "600",
-                            background: "#dcfce7",
-                            color: "#166534",
-                          }}
-                        >
-                          ⏱️ {item.actualWorkedTime}
-                        </span>
-                      </td>
-                    )}
-                    {visibleColumns.includes("mealTime") && (
-                      <td style={{ fontSize: "12px", color: "#64748b", fontWeight: "600" }}>
-                        🍱 {item.mealTime}
-                      </td>
-                    )}
-                    {visibleColumns.includes("hours") && (
-                      <td>{item.hours} hrs</td>
-                    )}
-                    {visibleColumns.includes("ratePerHour") && (
-                      <td style={{ fontWeight: "700", color: "#047857" }}>
-                        {formatCurrency(item.ratePerHour)}
-                      </td>
-                    )}
-                    {visibleColumns.includes("totalPay") && (
-                      <td style={{ fontWeight: "700", color: "#0f172a" }}>
-                        {formatCurrency(item.totalPay)}
-                      </td>
-                    )}
-                    {visibleColumns.includes("status") && (
-                      <td>
-                        <span className="statusBadgeAccepted">✓ Accepted</span>
-                      </td>
-                    )}
+                    <td
+                      className="empNameText"
+                      style={{
+                        fontWeight: "700",
+                        visibility: visibleColumns.includes("empName")
+                          ? "visible"
+                          : "hidden",
+                      }}
+                    >
+                      {item.empName}
+                    </td>
+                    <td style={{ visibility: visibleColumns.includes("serviceType") ? "visible" : "hidden" }}>{item.serviceType}</td>
+                    <td style={{ visibility: visibleColumns.includes("position") ? "visible" : "hidden" }}>{item.position}</td>
+                    <td className="boldText" style={{ visibility: visibleColumns.includes("companyName") ? "visible" : "hidden" }}>{item.companyName}</td>
+                    <td style={{ visibility: visibleColumns.includes("siteName") ? "visible" : "hidden" }}>{item.siteName}</td>
+                    <td style={{ visibility: visibleColumns.includes("assignedDate") ? "visible" : "hidden" }}>{item.assignedDate}</td>
+                    <td style={{ visibility: visibleColumns.includes("scheduledShift") ? "visible" : "hidden" }}>{item.scheduledShift}</td>
+                    <td style={{ visibility: visibleColumns.includes("actualWorkedTime") ? "visible" : "hidden" }}>
+                      <span
+                        style={{
+                          padding: "2px 8px",
+                          borderRadius: "4px",
+                          fontSize: "11.5px",
+                          fontWeight: "600",
+                          background: "#dcfce7",
+                          color: "#166534",
+                        }}
+                      >
+                        {item.actualWorkedTime}
+                      </span>
+                    </td>
+                    <td style={{ fontSize: "12px", color: "#64748b", fontWeight: "600", visibility: visibleColumns.includes("mealTime") ? "visible" : "hidden" }}>
+                      Meal: {item.mealTime}
+                    </td>
+                    <td style={{ visibility: visibleColumns.includes("hours") ? "visible" : "hidden" }}>{item.hours} hrs</td>
+                    <td style={{ fontWeight: "700", color: "#047857", visibility: visibleColumns.includes("ratePerHour") ? "visible" : "hidden" }}>
+                      {formatCurrency(item.ratePerHour)}
+                    </td>
+                    <td style={{ fontWeight: "700", color: "#0f172a", visibility: visibleColumns.includes("totalPay") ? "visible" : "hidden" }}>
+                      {formatCurrency(item.totalPay)}
+                    </td>
+                    <td style={{ visibility: visibleColumns.includes("status") ? "visible" : "hidden" }}>
+                      <span className="statusBadgeAccepted">✓ Accepted</span>
+                    </td>
                   </tr>
                 ))
               )}
-
-              {filteredRecords.length > 0 && visibleColumns.includes("totalPay") && (
+              {filteredRecords.length > 0 && (
                 <tr
                   style={{
                     background: "#f8fafc",
@@ -609,11 +607,12 @@ function AccountsCustomerBilling() {
                   }}
                 >
                   <td
-                    colSpan={Math.max(1, visibleColumns.indexOf("totalPay"))}
+                    colSpan={11}
                     style={{
                       textAlign: "right",
                       fontWeight: "700",
                       padding: "12px 16px",
+                      visibility: visibleColumns.includes("totalPay") ? "visible" : "hidden",
                     }}
                   >
                     Total Customer Billing Amount:
@@ -624,17 +623,12 @@ function AccountsCustomerBilling() {
                       color: "#047857",
                       fontSize: "15px",
                       padding: "12px 16px",
+                      visibility: visibleColumns.includes("totalPay") ? "visible" : "hidden",
                     }}
                   >
                     {formatCurrency(totalPayAmount)}
                   </td>
-                  {visibleColumns.length - 1 > visibleColumns.indexOf("totalPay") && (
-                    <td
-                      colSpan={
-                        visibleColumns.length - 1 - visibleColumns.indexOf("totalPay")
-                      }
-                    />
-                  )}
+                  <td style={{ visibility: visibleColumns.includes("status") ? "visible" : "hidden" }} />
                 </tr>
               )}
             </tbody>

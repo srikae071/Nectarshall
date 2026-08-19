@@ -3,7 +3,35 @@ import axios from "axios";
 import { fetchApiData, sendApiData, extractArrayData } from "../../../../utils/apiClient";
 import "./index.css";
 
+const ALL_TS_COLUMNS = [
+  { key: "date", label: "DATE", width: "8%" },
+  { key: "customer", label: "CUSTOMER", width: "11%" },
+  { key: "employeeName", label: "EMPLOYEE NAME", width: "12%" },
+  { key: "position", label: "POSITION", width: "7%" },
+  { key: "typeOfService", label: "TYPE", width: "8%" },
+  { key: "shiftStartTime", label: "SHIFT START", width: "8%" },
+  { key: "shiftEndTime", label: "SHIFT END", width: "8%" },
+  { key: "actualStartTime", label: "ACTUAL START", width: "9%" },
+  { key: "actualEndTime", label: "ACTUAL END", width: "9%" },
+  { key: "summary", label: "SUMMARY", width: "7%" },
+  { key: "notes", label: "NOTES", width: "6%" },
+  { key: "action", label: "ACTION", width: "7%" },
+];
+
 function TimesheetPage() {
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [visibleColumns, setVisibleColumns] = useState(
+    ALL_TS_COLUMNS.map((c) => c.key)
+  );
+
+  const toggleColumn = (key) => {
+    if (visibleColumns.includes(key)) {
+      if (visibleColumns.length === 1) return;
+      setVisibleColumns(visibleColumns.filter((c) => c !== key));
+    } else {
+      setVisibleColumns([...visibleColumns, key]);
+    }
+  };
   const [candidates, setCandidates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionLoadingId, setActionLoadingId] = useState(null);
@@ -339,30 +367,52 @@ function TimesheetPage() {
       </div>
 
       {/* FILTER BAR */}
-      <div className="filterBar">
-        <div className="filterGroup">
-          <label>SELECT CUSTOMER:</label>
-          <select
-            value={selectedCustomer}
-            onChange={(e) => setSelectedCustomer(e.target.value)}
-          >
-            {customerOptions.map((cust) => (
-              <option key={cust} value={cust}>
-                {cust}
-              </option>
-            ))}
-          </select>
+      <div className="filterBar" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
+          <div className="filterGroup">
+            <label>SELECT CUSTOMER:</label>
+            <select
+              value={selectedCustomer}
+              onChange={(e) => setSelectedCustomer(e.target.value)}
+            >
+              {customerOptions.map((cust) => (
+                <option key={cust} value={cust}>
+                  {cust}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="filterGroup searchBox">
+            <label>SEARCH:</label>
+            <input
+              type="text"
+              placeholder="Search by employee, customer, position..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
         </div>
 
-        <div className="filterGroup searchBox">
-          <label>SEARCH:</label>
-          <input
-            type="text"
-            placeholder="Search by employee, customer, position..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
+        <button
+          type="button"
+          onClick={() => setShowSettingsModal(true)}
+          style={{
+            background: "#ffffff",
+            border: "1px solid #cbd5e1",
+            borderRadius: "8px",
+            padding: "6px 12px",
+            cursor: "pointer",
+            fontSize: "15px",
+            color: "#334155",
+            display: "flex",
+            alignItems: "center",
+            boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+          }}
+          title="Settings"
+        >
+          ⚙️
+        </button>
       </div>
 
       {/* TABLE */}
@@ -374,23 +424,24 @@ function TimesheetPage() {
             No submitted timesheet records found. Submit actual shift times in Roster Shifts Main to display them here.
           </div>
         ) : (
-          <table>
+          <table style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse" }}>
             <thead>
               <tr>
-                <th className="timesheatsheading">Date</th>
-                <th className="timesheatsheading">Customer</th>
-                <th className="timesheatsheading">Employee Name</th>
-                <th className="timesheatsheading">Position</th>
-                <th className="timesheatsheading">Type</th>
-                <th className="timesheatsheading">Shift Start</th>
-                <th className="timesheatsheading">Shift End</th>
-                <th className="timesheatsheading">Actual Start</th>
-                <th className="timesheatsheading">Actual End</th>
-                <th className="timesheatsheading">Summary</th>
-                <th className="timesheatsheading">Notes</th>
-                <th className="timesheatsheading" style={{ textAlign: "center" }}>
-                  Action
-                </th>
+                {ALL_TS_COLUMNS.map((col) => (
+                  <th
+                    key={col.key}
+                    className="timesheatsheading"
+                    style={{
+                      width: col.width,
+                      textAlign: col.key === "action" ? "center" : "left",
+                      visibility: visibleColumns.includes(col.key)
+                        ? "visible"
+                        : "hidden",
+                    }}
+                  >
+                    {col.label}
+                  </th>
+                ))}
               </tr>
             </thead>
 
@@ -400,42 +451,42 @@ function TimesheetPage() {
 
                 return (
                   <tr key={row.id}>
-                    <td style={{ fontWeight: 600 }}>{row.date}</td>
-                    <td>🏢 {row.customer}</td>
-                    <td style={{ fontWeight: 700, color: "#0f172a" }}>
-                      👤 {row.employeeName}
+                    <td style={{ fontWeight: 600, visibility: visibleColumns.includes("date") ? "visible" : "hidden" }}>{row.date}</td>
+                    <td style={{ visibility: visibleColumns.includes("customer") ? "visible" : "hidden" }}>{row.customer}</td>
+                    <td style={{ fontWeight: 700, color: "#0f172a", visibility: visibleColumns.includes("employeeName") ? "visible" : "hidden" }}>
+                      {row.employeeName}
                     </td>
-                    <td>
+                    <td style={{ visibility: visibleColumns.includes("position") ? "visible" : "hidden" }}>
                       <span className="posBadge">{row.position}</span>
                     </td>
-                    <td>
+                    <td style={{ visibility: visibleColumns.includes("typeOfService") ? "visible" : "hidden" }}>
                       <span className="svcBadge">{row.typeOfService}</span>
                     </td>
-                    <td className="tsTimeCell">
-                      🕒 {row.shiftStartTime}
+                    <td className="tsTimeCell" style={{ visibility: visibleColumns.includes("shiftStartTime") ? "visible" : "hidden" }}>
+                      {row.shiftStartTime}
                     </td>
-                    <td className="tsTimeCell">
-                      🕒 {row.shiftEndTime}
+                    <td className="tsTimeCell" style={{ visibility: visibleColumns.includes("shiftEndTime") ? "visible" : "hidden" }}>
+                      {row.shiftEndTime}
                     </td>
-                    <td className="tsTimeCell" style={{ color: "#047857", fontWeight: 700 }}>
-                      🕒 {row.actualStartTime}
+                    <td className="tsTimeCell" style={{ color: "#047857", fontWeight: 700, visibility: visibleColumns.includes("actualStartTime") ? "visible" : "hidden" }}>
+                      {row.actualStartTime}
                     </td>
-                    <td className="tsTimeCell" style={{ color: "#047857", fontWeight: 700 }}>
-                      🕒 {row.actualEndTime}
+                    <td className="tsTimeCell" style={{ color: "#047857", fontWeight: 700, visibility: visibleColumns.includes("actualEndTime") ? "visible" : "hidden" }}>
+                      {row.actualEndTime}
                     </td>
-                    <td>
-                      <span className="summaryBadge">⏱️ {row.summary}</span>
+                    <td style={{ visibility: visibleColumns.includes("summary") ? "visible" : "hidden" }}>
+                      <span className="summaryBadge">{row.summary}</span>
                     </td>
-                    <td>
+                    <td style={{ visibility: visibleColumns.includes("notes") ? "visible" : "hidden" }}>
                       <button
                         type="button"
                         className="notesBtn"
                         onClick={() => handleOpenNotes(row)}
                       >
-                        📝 Notes
+                        Notes
                       </button>
                     </td>
-                    <td style={{ textAlign: "center" }}>
+                    <td style={{ textAlign: "center", visibility: visibleColumns.includes("action") ? "visible" : "hidden" }}>
                       {isApproved ? (
                         <div className="tsStatusBadge acceptedBadge">
                           <span>✓ Approved</span>
@@ -561,6 +612,126 @@ function TimesheetPage() {
           </div>
         );
       })()}
+      {showSettingsModal && (
+        <div className="po-overlay" onClick={() => setShowSettingsModal(false)}>
+          <div
+            className="po-modal"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              maxWidth: 420,
+              padding: 24,
+              borderRadius: 12,
+              background: "#fff",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: 20,
+              }}
+            >
+              <h3
+                style={{
+                  margin: 0,
+                  fontSize: 18,
+                  fontWeight: 700,
+                  color: "#0f172a",
+                }}
+              >
+                ⚙️ Settings
+              </h3>
+              <button
+                style={{
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "#64748b",
+                  fontSize: 18,
+                }}
+                onClick={() => setShowSettingsModal(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <p
+              style={{
+                fontSize: 13,
+                color: "#64748b",
+                marginTop: 0,
+                marginBottom: 20,
+              }}
+            >
+              Select which timesheet table columns you want to display on your screen.
+            </p>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 12,
+                marginBottom: 24,
+              }}
+            >
+              {ALL_TS_COLUMNS.map((col) => (
+                <label
+                  key={col.key}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                    fontSize: 14,
+                    fontWeight: 500,
+                    color: "#0f172a",
+                    cursor: "pointer",
+                    padding: "6px 10px",
+                    borderRadius: 6,
+                    background: visibleColumns.includes(col.key)
+                      ? "#f8fafc"
+                      : "transparent",
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={visibleColumns.includes(col.key)}
+                    onChange={() => toggleColumn(col.key)}
+                    style={{
+                      width: 16,
+                      height: 16,
+                      accentColor: "#ea4104",
+                      cursor: "pointer",
+                    }}
+                  />
+                  <span>{col.label}</span>
+                </label>
+              ))}
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: 10,
+              }}
+            >
+              <button
+                onClick={() => setShowSettingsModal(false)}
+                style={{
+                  padding: "8px 16px",
+                  borderRadius: 8,
+                  background: "#ea4104",
+                  color: "#fff",
+                  border: "none",
+                  fontWeight: 600,
+                  fontSize: 13,
+                  cursor: "pointer",
+                }}
+              >
+                Apply & Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
