@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchApiData } from '../../../utils/apiClient';
-import { FiSearch, FiX, FiMail, FiMapPin, FiUsers, FiUserCheck, FiBriefcase, FiUserPlus, FiMoreHorizontal, FiList, FiGrid, FiChevronDown } from 'react-icons/fi';
+import { FiSearch, FiX, FiMail, FiMapPin, FiUsers, FiUserCheck, FiBriefcase, FiUserPlus, FiMoreHorizontal, FiList, FiGrid, FiChevronDown, FiDownload } from 'react-icons/fi';
 import '../Dashboard/index.css';
 
 export const ALL_EMP_COLUMNS = [
@@ -134,20 +134,35 @@ const VendorEmployeeDirectory = () => {
           <p style={{ fontSize: 14, color: '#64748b', margin: 0 }}>Your key company contacts (Sourced from Employee database)</p>
         </div>
 
-        <div style={{ position: 'relative', width: 320 }}>
-          <FiSearch style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} size={16} />
-          <input
-            type="text"
-            placeholder="Search by employee name, title or department..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            style={{ width: '100%', padding: '12px 16px 12px 40px', borderRadius: 8, border: '1px solid #e2e8f0', background: '#fff', fontSize: 14, outline: 'none', color: '#0f172a', boxShadow: '0 1px 2px rgba(0,0,0,0.01)' }}
-          />
-          {search && (
-            <button onClick={() => setSearch('')} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}>
-              <FiX size={14} />
-            </button>
-          )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ position: 'relative', width: 320 }}>
+            <FiSearch style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} size={16} />
+            <input
+              type="text"
+              placeholder="Search by employee name, title or department..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              style={{ width: '100%', padding: '12px 16px 12px 40px', borderRadius: 8, border: '1px solid #e2e8f0', background: '#fff', fontSize: 14, outline: 'none', color: '#0f172a', boxShadow: '0 1px 2px rgba(0,0,0,0.01)' }}
+            />
+            {search && (
+              <button onClick={() => setSearch('')} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}>
+                <FiX size={14} />
+              </button>
+            )}
+          </div>
+          <button
+            onClick={() => {
+              const headers = ['Employee ID', 'Name', 'Title', 'Department', 'Email', 'Location', 'Status', 'Joining Date'];
+              const rows = filtered.map(e => [e.id, e.name, e.title, e.dept, e.email, e.location, e.status, e.joiningDate]);
+              const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+              const a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv); a.download = 'employees.csv'; a.click();
+            }}
+            style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '11px 18px', borderRadius: 8, border: '1px solid #e2e8f0', background: '#fff', color: '#475569', fontSize: 14, fontWeight: 500, cursor: 'pointer', whiteSpace: 'nowrap', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}
+            onMouseEnter={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.borderColor = '#cbd5e1'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.borderColor = '#e2e8f0'; }}
+          >
+            <FiDownload size={15} /> Export
+          </button>
         </div>
       </div>
 

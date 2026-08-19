@@ -147,7 +147,7 @@ const VendorPortalDashboard = () => {
         </div>
       </div>
 
-      {/* Services Strip */}
+      {/* Services Strip
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
         {[
           { icon: FiMessageSquare, label: 'Case Management', sub: 'View & manage cases', path: '/vendor-portal/cases', color: '#3b82f6' },
@@ -179,6 +179,7 @@ const VendorPortalDashboard = () => {
           </div>
         ))}
       </div>
+      */}
 
       {/* KPIs */}
       <div className="vendor-grid-kpi" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>

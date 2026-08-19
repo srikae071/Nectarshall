@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiSearch, FiX, FiCheck, FiChevronRight, FiFileText, FiBox, FiCheckSquare, FiFile } from 'react-icons/fi';
+import { FiSearch, FiX, FiCheck, FiChevronRight, FiFileText, FiBox, FiCheckSquare, FiFile, FiDownload } from 'react-icons/fi';
 import { fetchApiData } from '../../../utils/apiClient';
 import '../Dashboard/index.css';
 import '../PurchaseOrders/index.css';
@@ -343,6 +343,19 @@ const VendorCaseManagement = () => {
               style={{ width: '100%', padding: '10px 14px 10px 38px', borderRadius: 8, border: '1px solid #e2e8f0', background: '#fff', fontSize: 13, outline: 'none', color: '#0f172a' }}
             />
           </div>
+          <button
+            onClick={() => {
+              const headers = ['Incident Number', 'Requester', 'Category', 'Priority', 'Impact', 'Status', 'Last Updated'];
+              const rows = filtered.map(c => [c.id, c.requester, c.category, c.priority, c.impact, c.status, c.lastUpdate]);
+              const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+              const a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv); a.download = 'hr_cases.csv'; a.click();
+            }}
+            style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 16px', borderRadius: 8, border: '1px solid #e2e8f0', background: '#fff', color: '#475569', fontSize: 13, fontWeight: 500, cursor: 'pointer', whiteSpace: 'nowrap', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}
+            onMouseEnter={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.borderColor = '#cbd5e1'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.borderColor = '#e2e8f0'; }}
+          >
+            <FiDownload size={14} /> Export
+          </button>
         </div>
       </div>
 
@@ -392,6 +405,7 @@ const VendorCaseManagement = () => {
                     style={{ cursor: 'pointer', transition: 'all 0.2s' }}
                     onMouseEnter={() => setHoveredStatus(item.id)}
                     onMouseLeave={() => setHoveredStatus(null)}
+                    onClick={() => navigate(`/vendor-portal/cases/list/${encodeURIComponent(item.label)}`)}
                   />
                 ))}
               </svg>
@@ -408,6 +422,7 @@ const VendorCaseManagement = () => {
                   style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, padding: '4px 8px', borderRadius: 6, background: hoveredStatus === item.id ? '#f8fafc' : 'transparent', cursor: 'pointer', transition: 'background 0.2s' }}
                   onMouseEnter={() => setHoveredStatus(item.id)}
                   onMouseLeave={() => setHoveredStatus(null)}
+                  onClick={() => navigate(`/vendor-portal/cases/list/${encodeURIComponent(item.label)}`)}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
                     <div style={{ width: 10, height: 10, borderRadius: '50%', background: item.color, flexShrink: 0 }}></div>

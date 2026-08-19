@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FiArrowLeft, FiSearch, FiX, FiVideo, FiFileText, FiLock, FiBookOpen } from 'react-icons/fi';
+import { FiArrowLeft, FiSearch, FiX, FiVideo, FiFileText, FiLock, FiBookOpen, FiDownload } from 'react-icons/fi';
 import { trainingData, TrainingDrawer, TRN_STATUS_COLORS } from './index';
 
 const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
@@ -52,20 +52,35 @@ const TrainingList = () => {
             <h1 style={{ fontSize: 24, fontWeight: 700, margin: '0 0 4px 0', color: '#0f172a' }}>{getTitle()}</h1>
             <p style={{ fontSize: 14, color: '#64748b', margin: 0 }}>Showing {filtered.length} item{filtered.length !== 1 ? 's' : ''}</p>
           </div>
-          <div style={{ position: 'relative', width: 320 }}>
-            <FiSearch style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} size={16} />
-            <input
-              type="text"
-              placeholder="Search training items..."
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              style={{ width: '100%', padding: '12px 16px 12px 40px', borderRadius: 8, border: '1px solid #e2e8f0', background: '#fff', fontSize: 14, outline: 'none', color: '#0f172a', boxShadow: '0 1px 2px rgba(0,0,0,0.01)' }}
-            />
-            {search && (
-              <button onClick={() => setSearch('')} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}>
-                <FiX size={14} />
-              </button>
-            )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ position: 'relative', width: 320 }}>
+              <FiSearch style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} size={16} />
+              <input
+                type="text"
+                placeholder="Search training items..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                style={{ width: '100%', padding: '12px 16px 12px 40px', borderRadius: 8, border: '1px solid #e2e8f0', background: '#fff', fontSize: 14, outline: 'none', color: '#0f172a', boxShadow: '0 1px 2px rgba(0,0,0,0.01)' }}
+              />
+              {search && (
+                <button onClick={() => setSearch('')} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}>
+                  <FiX size={14} />
+                </button>
+              )}
+            </div>
+            <button
+              onClick={() => {
+                const headers = ['Training Code', 'Title', 'Type', 'Status', 'Due Date', 'Mandatory'];
+                const rows = filtered.map(t => [t.id, t.title, t.type, t.status, t.due, t.mandatory ? 'Yes' : 'No']);
+                const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+                const a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv); a.download = 'training_list.csv'; a.click();
+              }}
+              style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '11px 18px', borderRadius: 8, border: '1px solid #e2e8f0', background: '#fff', color: '#475569', fontSize: 14, fontWeight: 500, cursor: 'pointer', whiteSpace: 'nowrap', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.borderColor = '#cbd5e1'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.borderColor = '#e2e8f0'; }}
+            >
+              <FiDownload size={15} /> Export
+            </button>
           </div>
         </div>
       </div>

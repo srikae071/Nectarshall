@@ -6,6 +6,7 @@ import {
   FiX,
   FiChevronRight,
   FiMessageSquare,
+  FiDownload,
 } from "react-icons/fi";
 import { fetchApiData } from "../../../utils/apiClient";
 import { StatusBadge, PriorityBadge, fmtDate, CaseDetailDrawer } from "./index";
@@ -90,11 +91,13 @@ const CaseList = () => {
 
   const displayCases = cases.filter((c) => {
     if (filterType.toLowerCase() === "all") return true;
-    return (
-      c.status.toLowerCase() === filterType.toLowerCase() ||
-      (filterType.toLowerCase() === "in progress" &&
-        c.status.toLowerCase().includes("progress"))
-    );
+    if (filterType.toLowerCase() === "in progress") {
+      return c.status.toLowerCase().includes("progress") || c.status.toLowerCase().includes("pending");
+    }
+    if (filterType.toLowerCase() === "resolved") {
+      return c.status.toLowerCase() === "resolved" || c.status.toLowerCase() === "closed";
+    }
+    return c.status.toLowerCase() === filterType.toLowerCase();
   });
 
   const filtered = displayCases.filter((c) => {
@@ -109,6 +112,8 @@ const CaseList = () => {
 
   const getTitle = () => {
     if (filterType.toLowerCase() === "all") return "All HR Cases";
+    if (filterType.toLowerCase() === "in progress") return "In Progress / Pending Cases";
+    if (filterType.toLowerCase() === "resolved") return "Resolved / Closed Cases";
     return `${filterType} Cases`;
   };
 
@@ -242,6 +247,19 @@ const CaseList = () => {
                 </button>
               )}
             </div>
+            <button
+              onClick={() => {
+                const headers = ['Incident Number', 'Requester', 'Category', 'Priority', 'Impact', 'Status', 'Last Updated'];
+                const rows = filtered.map(c => [c.id, c.requester, c.category, c.priority, c.impact, c.status, c.lastUpdate]);
+                const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+                const a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv); a.download = 'cases_list.csv'; a.click();
+              }}
+              style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '11px 18px', borderRadius: 8, border: '1px solid #e2e8f0', background: '#fff', color: '#475569', fontSize: 14, fontWeight: 500, cursor: 'pointer', whiteSpace: 'nowrap', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.borderColor = '#cbd5e1'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.borderColor = '#e2e8f0'; }}
+            >
+              <FiDownload size={15} /> Export
+            </button>
           </div>
         </div>
       </div>
