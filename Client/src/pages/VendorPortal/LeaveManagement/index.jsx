@@ -26,6 +26,8 @@ const VendorLeaveManagement = () => {
   const [search, setSearch] = useState('');
   const [showSettings, setShowSettings] = useState(false);
   const [visibleColumns, setVisibleColumns] = useState(ALL_LEAVE_COLUMNS.map(c => c.key));
+  const [hoveredType, setHoveredType] = useState(null);
+  const [selectedType, setSelectedType] = useState(null);
 
   useEffect(() => {
     loadLeaves();
@@ -131,6 +133,75 @@ const VendorLeaveManagement = () => {
     const q = search.toLowerCase();
     return l.id.toLowerCase().includes(q) || l.employeeName.toLowerCase().includes(q) || l.leaveType.toLowerCase().includes(q);
   });
+
+  if (selectedType) {
+    const typeLeaves = leaves.filter(l => l.leaveType === selectedType);
+    return (
+      <div className="vendor-dashboard-wrapper" style={{ padding: '32px', maxWidth: '1400px', margin: '0 auto' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 32 }}>
+          <button
+            onClick={() => setSelectedType(null)}
+            style={{ width: 40, height: 40, borderRadius: '50%', background: '#fff', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b', transition: 'all 0.2s' }}
+            onMouseEnter={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.color = '#0f172a'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#64748b'; }}
+          >
+            <FiX size={20} />
+          </button>
+          <div>
+            <h1 style={{ fontSize: 24, fontWeight: 700, margin: '0 0 4px 0', color: '#0f172a' }}>{selectedType}</h1>
+            <p style={{ fontSize: 14, color: '#64748b', margin: 0 }}>Showing all {selectedType.toLowerCase()} records</p>
+          </div>
+        </div>
+
+        <div style={{ background: '#fff', border: '1px solid #f1f5f9', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.02)' }}>
+          {typeLeaves.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: 40, color: '#64748b' }}>No leave records found.</div>
+          ) : (
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse', textAlign: 'left' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
+                    {ALL_LEAVE_COLUMNS.filter(c => c.key !== 'leaveType').map(c => (
+                      <th
+                        key={c.key}
+                        style={{
+                          width: c.width,
+                          padding: '12px 16px',
+                          fontSize: 12,
+                          fontWeight: 600,
+                          color: '#94a3b8',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        {c.label}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {typeLeaves.map(l => (
+                    <tr key={l.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                      <td style={{ width: '13%', padding: 16, fontSize: 13, fontWeight: 700, color: '#ea4104' }}>{l.id}</td>
+                      <td style={{ width: '20%', padding: 16, fontSize: 13, fontWeight: 600, color: '#0f172a' }}>{l.employeeName}</td>
+                      <td style={{ width: '14%', padding: 16, fontSize: 13, color: '#475569' }}>{fmtDate(l.startDate)}</td>
+                      <td style={{ width: '14%', padding: 16, fontSize: 13, color: '#475569' }}>{fmtDate(l.endDate)}</td>
+                      <td style={{ width: '13%', padding: 16, fontSize: 13, fontWeight: 700, color: '#0f172a' }}>{`${l.totalLeaves}d`}</td>
+                      <td style={{ width: '11%', padding: 16 }}>
+                        <span style={{ padding: '4px 10px', borderRadius: 6, fontSize: 12, fontWeight: 600, background: l.status.toLowerCase() === 'approved' ? '#f0fdf4' : '#fff7ed', color: l.status.toLowerCase() === 'approved' ? '#16a34a' : '#ea580c' }}>
+                          {l.status}
+                        </span>
+                      </td>
+                      <td style={{ width: '15%', padding: 16, fontSize: 13, color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={l.description}>{l.description}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="vendor-dashboard-wrapper">
@@ -278,149 +349,166 @@ const VendorLeaveManagement = () => {
         </div>
       </div>
 
-      {/* Row 3: All Leaves Table */}
-      <div style={{ background: '#fff', border: '1px solid #f1f5f9', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.02)' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a', margin: 0 }}>All Leave Records</h2>
-          <div style={{ position: 'relative' }}>
-            {/* Settings Icon Only Button */}
-            <button
-              type="button"
-              onClick={() => setShowSettings(!showSettings)}
-              style={{
-                background: "#ffffff",
-                border: "1px solid #cbd5e1",
-                borderRadius: "8px",
-                padding: "6px 12px",
-                cursor: "pointer",
-                fontSize: "15px",
-                color: "#334155",
-                display: "flex",
-                alignItems: "center",
-                boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-              }}
-              title="Settings"
-            >
-              ⚙️
-            </button>
-
-            {showSettings && (
-              <div
-                style={{
-                  position: "absolute",
-                  right: 0,
-                  top: "40px",
-                  background: "#ffffff",
-                  border: "1px solid #cbd5e1",
-                  borderRadius: "10px",
-                  boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
-                  padding: "14px 16px",
-                  width: "220px",
-                  zIndex: 100,
-                }}
-              >
-                <div
-                  style={{
-                    fontWeight: "700",
-                    fontSize: "13px",
-                    color: "#0f172a",
-                    marginBottom: "10px",
-                    borderBottom: "1px solid #e2e8f0",
-                    paddingBottom: "6px",
-                  }}
-                >
-                  ⚙️ Settings
-                </div>
-
-                {ALL_LEAVE_COLUMNS.map(col => (
-                  <label
-                    key={col.key}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                      fontSize: "13px",
-                      cursor: "pointer",
-                      margin: "6px 0",
-                      color: "#334155",
-                    }}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={visibleColumns.includes(col.key)}
-                      onChange={() => toggleColumn(col.key)}
-                      style={{ cursor: "pointer" }}
-                    />
-                    {col.label}
-                  </label>
-                ))}
-              </div>
-            )}
+      {/* Row 3: Leave Types Overview Redesign */}
+      <div className="vendor-section-card" style={{ padding: 32, borderRadius: 16, border: '1px solid #f1f5f9', background: '#fff', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
+        {/* Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 40 }}>
+          <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+            <div style={{ width: 48, height: 48, borderRadius: 12, background: '#eff6ff', color: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><rect x="8" y="14" width="8" height="4" rx="1"></rect></svg>
+            </div>
+            <div>
+              <h2 style={{ fontSize: 20, fontWeight: 700, color: '#0f172a', margin: '0 0 6px 0' }}>Leave Types Overview</h2>
+              <p style={{ fontSize: 14, color: '#64748b', margin: 0 }}>Track and analyze leave distribution across all leave types</p>
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px', border: '1px solid #e2e8f0', borderRadius: 8, fontSize: 14, fontWeight: 600, color: '#334155', cursor: 'pointer' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            This Month
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 4 }}><polyline points="6 9 12 15 18 9"></polyline></svg>
           </div>
         </div>
+        
+        {(() => {
+          if (loading) return <div style={{ textAlign: 'center', padding: 40, color: '#64748b' }}>Loading data...</div>;
+          if (utilizationData.length === 0) return <div style={{ textAlign: 'center', padding: 40, color: '#64748b' }}>No data available.</div>;
+          
+          const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#14b8a6', '#f43f5e'];
+          const BG_COLORS = ['#eff6ff', '#ecfdf5', '#fffbeb', '#f5f3ff', '#fdf2f8', '#f0fdfa', '#fff1f2'];
+          
+          const totalDays = leaves.reduce((sum, l) => sum + l.totalLeaves, 0) || 1;
 
-        {loading ? (
-          <div style={{ textAlign: 'center', padding: 40, color: '#64748b' }}>Loading leaves from database...</div>
-        ) : filteredLeaves.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: 40, color: '#64748b' }}>No leave records found in database.</div>
-        ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse', textAlign: 'left' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                  {ALL_LEAVE_COLUMNS.map(c => (
-                    <th
-                      key={c.key}
-                      style={{
-                        width: c.width,
-                        padding: '12px 16px',
-                        fontSize: 12,
-                        fontWeight: 600,
-                        color: '#94a3b8',
-                        textTransform: 'uppercase',
-                        visibility: visibleColumns.includes(c.key) ? 'visible' : 'hidden',
-                      }}
-                    >
-                      {c.label}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {filteredLeaves.map(l => (
-                  <tr key={l.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ width: '12%', padding: 16, fontSize: 13, fontWeight: 700, color: '#ea4104', visibility: visibleColumns.includes('leaveNumber') ? 'visible' : 'hidden' }}>
-                      {l.id}
-                    </td>
-                    <td style={{ width: '18%', padding: 16, fontSize: 13, fontWeight: 600, color: '#0f172a', visibility: visibleColumns.includes('employeeName') ? 'visible' : 'hidden' }}>
-                      {l.employeeName}
-                    </td>
-                    <td style={{ width: '14%', padding: 16, fontSize: 13, color: '#475569', visibility: visibleColumns.includes('leaveType') ? 'visible' : 'hidden' }}>
-                      {l.leaveType}
-                    </td>
-                    <td style={{ width: '13%', padding: 16, fontSize: 13, color: '#475569', visibility: visibleColumns.includes('startDate') ? 'visible' : 'hidden' }}>
-                      {fmtDate(l.startDate)}
-                    </td>
-                    <td style={{ width: '13%', padding: 16, fontSize: 13, color: '#475569', visibility: visibleColumns.includes('endDate') ? 'visible' : 'hidden' }}>
-                      {fmtDate(l.endDate)}
-                    </td>
-                    <td style={{ width: '12%', padding: 16, fontSize: 13, fontWeight: 700, color: '#0f172a', visibility: visibleColumns.includes('totalLeaves') ? 'visible' : 'hidden' }}>
-                      {`${l.totalLeaves}d`}
-                    </td>
-                    <td style={{ width: '10%', padding: 16, visibility: visibleColumns.includes('status') ? 'visible' : 'hidden' }}>
-                      <span style={{ padding: '4px 10px', borderRadius: 6, fontSize: 12, fontWeight: 600, background: l.status.toLowerCase() === 'approved' ? '#f0fdf4' : '#fff7ed', color: l.status.toLowerCase() === 'approved' ? '#16a34a' : '#ea580c' }}>
-                        {l.status}
-                      </span>
-                    </td>
-                    <td style={{ width: '18%', padding: 16, fontSize: 13, color: '#64748b', visibility: visibleColumns.includes('description') ? 'visible' : 'hidden' }}>
-                      {l.description}
-                    </td>
-                  </tr>
+          const r = 110;
+          const cx = 140;
+          const cy = 140;
+          const circ = 2 * Math.PI * r;
+          const gap = 6; // pixel gap between arcs
+          
+          let currentOffset = circ * 0.25; // start at top
+          
+          const activeData = hoveredType ? utilizationData.find(u => u.type === hoveredType) : null;
+          const activeIndex = activeData ? utilizationData.findIndex(u => u.type === hoveredType) : 0;
+          
+          const innerTitle = activeData ? activeData.type : "Total Leave Taken";
+          const innerDays = activeData ? activeData.days : totalDays;
+          const innerSubtitle = activeData ? `${activeData.pct}% of total` : "of total allocated";
+          const innerColor = activeData ? COLORS[activeIndex % COLORS.length] : '#3b82f6';
+          const innerBgColor = activeData ? BG_COLORS[activeIndex % BG_COLORS.length] : '#eff6ff';
+
+          return (
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40, alignItems: 'center' }}>
+              {/* Left Side: Donut */}
+              <div 
+                style={{ position: 'relative', width: 280, height: 280, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                onMouseLeave={() => setHoveredType(null)}
+              >
+                <svg width="280" height="280" viewBox="0 0 280 280" style={{ position: 'absolute', top: 0, left: 0, transform: 'rotate(-90deg)' }}>
+                  <circle cx={cx} cy={cy} r={r} fill="none" stroke="#f8fafc" strokeWidth="28" />
+                  
+                  {utilizationData.map((u, i) => {
+                    const pct = u.days / totalDays;
+                    const dashLength = circ * pct;
+                    const strokeColor = COLORS[i % COLORS.length];
+                    const isHovered = hoveredType === u.type;
+                    
+                    const offset = currentOffset;
+                    currentOffset -= dashLength;
+                    
+                    // Don't render empty segments
+                    if (dashLength <= gap) return null;
+
+                    return (
+                      <circle
+                        key={u.type}
+                        cx={cx} cy={cy} r={r}
+                        fill="none"
+                        stroke={strokeColor}
+                        strokeWidth={isHovered ? "32" : "28"}
+                        strokeDasharray={`${Math.max(0, dashLength - gap)} ${circ}`}
+                        strokeDashoffset={offset}
+                        style={{ cursor: 'pointer', transition: 'all 0.3s ease' }}
+                        onMouseEnter={() => setHoveredType(u.type)}
+                        onClick={() => setSelectedType(u.type)}
+                      />
+                    );
+                  })}
+                </svg>
+                
+                {/* Inner HTML Circle with Drop Shadow */}
+                <div style={{
+                  width: 170, height: 170, borderRadius: '50%', background: '#fff',
+                  boxShadow: '0 10px 40px -10px rgba(0,0,0,0.15)', zIndex: 10,
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                  padding: 16, textAlign: 'center', transition: 'all 0.3s'
+                }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: '#64748b', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: 4 }}>{innerTitle}</div>
+                  <div style={{ fontSize: 36, fontWeight: 800, color: '#0f172a', lineHeight: 1.1 }}>{innerDays}d</div>
+                  <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 4, marginBottom: 12 }}>{innerSubtitle}</div>
+                  <div style={{ width: 28, height: 28, borderRadius: '50%', background: innerBgColor, color: innerColor, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s' }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Right Side: Cards */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                {utilizationData.map((u, i) => (
+                  <div
+                    key={u.type}
+                    onClick={() => setSelectedType(u.type)}
+                    style={{ 
+                      padding: 20, borderRadius: 16, border: '1px solid #f1f5f9', background: '#fff',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.02)', cursor: 'pointer', transition: 'all 0.2s',
+                      transform: hoveredType === u.type ? 'scale(1.02)' : 'scale(1)'
+                    }}
+                    onMouseEnter={() => setHoveredType(u.type)}
+                    onMouseLeave={() => setHoveredType(null)}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
+                      <div style={{ display: 'flex', gap: 16 }}>
+                        <div style={{ width: 56, height: 56, borderRadius: 16, background: BG_COLORS[i % BG_COLORS.length], color: COLORS[i % COLORS.length], display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', marginBottom: 4 }}>{u.type}</div>
+                          <div style={{ fontSize: 16, fontWeight: 600, color: COLORS[i % COLORS.length] }}>{u.days} days</div>
+                        </div>
+                      </div>
+                      <div style={{ background: BG_COLORS[i % BG_COLORS.length], color: COLORS[i % COLORS.length], padding: '6px 12px', borderRadius: 8, fontSize: 14, fontWeight: 700 }}>
+                        {u.pct}%
+                      </div>
+                    </div>
+                    <div style={{ height: 6, background: '#f1f5f9', borderRadius: 3, width: '100%', overflow: 'hidden' }}>
+                      <div style={{ height: '100%', background: COLORS[i % COLORS.length], width: `${u.pct}%`, borderRadius: 3 }}></div>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+                
+                {/* Bottom Stats Card */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, padding: 24, borderRadius: 16, border: '1px solid #f1f5f9', background: '#fff', marginTop: 8 }}>
+                  <div style={{ display: 'flex', gap: 16, alignItems: 'center', borderRight: '1px solid #f1f5f9' }}>
+                    <div style={{ width: 48, height: 48, borderRadius: 12, background: '#f5f3ff', color: '#8b5cf6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 12, color: '#64748b', fontWeight: 600, marginBottom: 2 }}>Total Leave Taken</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: '#0f172a' }}>{totalDays} days</div>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 16, alignItems: 'center', paddingLeft: 8 }}>
+                    <div style={{ width: 48, height: 48, borderRadius: 12, background: '#fffbeb', color: '#f59e0b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 12, color: '#64748b', fontWeight: 600, marginBottom: 2 }}>Utilization Rate</div>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: '#0f172a' }}>62%</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
       </div>
     </div>
   );

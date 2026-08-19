@@ -40,6 +40,7 @@ const VendorPortalDashboard = () => {
   const [dbEmpList, setDbEmpList] = useState([]);
   const [showSettings, setShowSettings] = useState(false);
   const [visibleColumns, setVisibleColumns] = useState(ALL_EMP_COLUMNS.map(c => c.key));
+  const [empHovered, setEmpHovered] = useState('active');
 
   const navigate = useNavigate();
 
@@ -151,7 +152,7 @@ const VendorPortalDashboard = () => {
       {/* Header */}
       <div className="vendor-dashboard-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontSize: 24, fontWeight: 700, margin: 0, color: '#0f172a' }}>Dashboard</h1>
+          <h1 style={{ fontSize: 24, fontWeight: 700, margin: 0, color: '#0f172a' }}>Overview</h1>
         </div>
         <div style={{ fontSize: 13, color: '#94a3b8', fontWeight: 400 }}>
           {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
@@ -375,37 +376,42 @@ const VendorPortalDashboard = () => {
               <p style={{ fontSize: 13, color: '#64748b', marginTop: 4 }}>Active vs Inactive</p>
             </div>
           </div>
-          {(() => {
-            const activeCount = employees.filter(e => e.status === 'Active').length;
-            const inactiveCount = employees.filter(e => e.status !== 'Active').length;
-            const totalCount = employees.length;
-            return (
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: 20 }}>
-                <svg width="200" height="200" viewBox="0 0 200 200">
-                  <circle
-                    cx="100" cy="100" r="70"
-                    fill="none"
-                    stroke="#10b981"
-                    strokeWidth="18"
-                  />
-                  <circle cx="100" cy="100" r="50" fill="none" stroke="#f1f5f9" strokeWidth="12" />
-                  <text x="100" y="95" textAnchor="middle" fill="#64748b" fontSize="13" fontWeight="600" fontFamily="inherit">Active</text>
-                  <text x="100" y="122" textAnchor="middle" fill="#1e293b" fontSize="28" fontWeight="bold" fontFamily="inherit">{totalCount}</text>
-                </svg>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: 20 }}>
+            <svg width="200" height="200" viewBox="0 0 200 200">
+              <circle cx="100" cy="100" r="70" fill="none" stroke="#10b981" strokeWidth="18" />
+              <circle cx="100" cy="100" r="50" fill="none" stroke="#f1f5f9" strokeWidth="12" />
+              <text x="100" y="95" textAnchor="middle" fill="#64748b" fontSize="13" fontWeight="600" fontFamily="inherit">
+                {empHovered === 'active' ? 'Active' : 'In-Active'}
+              </text>
+              <text x="100" y="122" textAnchor="middle" fill="#1e293b" fontSize="28" fontWeight="bold" fontFamily="inherit">
+                {empHovered === 'active' 
+                  ? employees.filter(e => e.status === 'Active').length 
+                  : employees.filter(e => e.status !== 'Active').length}
+              </text>
+            </svg>
 
-                <div style={{ display: 'flex', gap: 24, marginTop: 24 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#10b981' }}></div>
-                    <span style={{ fontSize: 13, color: '#1e293b', fontWeight: 500 }}>Active ({activeCount})</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#f43f5e' }}></div>
-                    <span style={{ fontSize: 13, color: '#1e293b', fontWeight: 500 }}>In-Active ({inactiveCount})</span>
-                  </div>
-                </div>
+            <div style={{ display: 'flex', gap: 24, marginTop: 24 }}>
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', padding: '8px' }}
+                onMouseEnter={() => setEmpHovered('active')}
+              >
+                <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#10b981' }}></div>
+                <span style={{ fontSize: 13, color: '#1e293b', fontWeight: 500 }}>
+                  Active ({employees.filter(e => e.status === 'Active').length})
+                </span>
               </div>
-            );
-          })()}
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', padding: '8px' }}
+                onMouseEnter={() => setEmpHovered('inactive')}
+                onMouseLeave={() => setEmpHovered('active')}
+              >
+                <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#f43f5e' }}></div>
+                <span style={{ fontSize: 13, color: '#1e293b', fontWeight: 500 }}>
+                  In-Active ({employees.filter(e => e.status !== 'Active').length})
+                </span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

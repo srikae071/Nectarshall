@@ -136,7 +136,7 @@ const VendorEmployeeDirectory = () => {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
         <div>
-          <h1 style={{ fontSize: 28, fontWeight: 700, color: '#0f172a', margin: '0 0 4px 0' }}>Employee Directory</h1>
+          <h1 style={{ fontSize: 28, fontWeight: 700, color: '#0f172a', margin: '0 0 4px 0' }}>Employee Management</h1>
           <p style={{ fontSize: 14, color: '#64748b', margin: 0 }}>Your key company contacts (Sourced from Employee database)</p>
         </div>
 

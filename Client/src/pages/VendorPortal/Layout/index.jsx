@@ -17,9 +17,9 @@ const VendorPortalLayout = ({ children }) => {
     if (p.includes('invoices')) return 'Invoices';
     if (p.includes('cases')) return 'Case Management';
     if (p.includes('leave')) return 'Leave Management';
-    if (p.includes('employees')) return 'Employee Directory';
+    if (p.includes('employees')) return 'Employee Management';
     if (p.includes('training')) return 'Training & Dev';
-    return 'Dashboard';
+    return 'Overview';
   };
 
   const NavLink = ({ path, icon: Icon, label }) => (
@@ -57,7 +57,7 @@ const VendorPortalLayout = ({ children }) => {
             >
               <div className="vendor-sidebar-link-content">
                 <FiGrid className="vendor-sidebar-icon" />
-                <span>Dashboard</span>
+                <span>Overview</span>
               </div>
             </div>
           </div>
@@ -101,7 +101,7 @@ const VendorPortalLayout = ({ children }) => {
               onMouseEnter={e => e.target.style.color = '#3b82f6'}
               onMouseLeave={e => e.target.style.color = isActive('/vendor-portal/employees') ? '#3b82f6' : '#64748b'}
             >
-              Employee Directory
+              Employee Management
             </span>
             <span 
               onClick={() => navigate('/vendor-portal/training')} 

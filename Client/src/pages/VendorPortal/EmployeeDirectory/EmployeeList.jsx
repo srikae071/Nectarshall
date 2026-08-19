@@ -6,7 +6,7 @@ import { ALL_EMP_COLUMNS, EmpDrawer } from './index';
 import '../Dashboard/index.css';
 
 const EmployeeList = () => {
-  const { type } = useParams();
+  const { filterType: routeParam } = useParams();
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState(null);
@@ -20,7 +20,7 @@ const EmployeeList = () => {
   const [showSettings, setShowSettings] = useState(false);
   const [visibleColumns, setVisibleColumns] = useState(ALL_EMP_COLUMNS.map(c => c.key));
 
-  const filterType = decodeURIComponent(type || 'total');
+  const filterType = decodeURIComponent(routeParam || 'total');
 
   useEffect(() => {
     fetchEmployees();
@@ -105,6 +105,184 @@ const EmployeeList = () => {
     if (t === 'departments') return 'Employees by Department';
     return 'Total Employees';
   };
+
+  // ── NEW HIRE dedicated view ──────────────────────────────────────────
+  if (filterType.toLowerCase() === 'new') {
+    const newHireCards = [
+      {
+        title: 'OPEN',
+        value: 8,
+        sub: 'Positions currently open',
+        color: '#3b82f6',
+        bg: '#eff6ff',
+        emoji: '📂',
+        candidates: [
+          { id: 'NH-001', name: 'Rahul Sharma',   role: 'Frontend Developer', dept: 'Engineering',  date: '12 Aug 2026', status: 'Open' },
+          { id: 'NH-002', name: 'Priya Nair',     role: 'HR Executive',       dept: 'Human Resources', date: '10 Aug 2026', status: 'Open' },
+          { id: 'NH-003', name: 'Amit Verma',     role: 'Data Analyst',       dept: 'Analytics',   date: '08 Aug 2026', status: 'Open' },
+          { id: 'NH-004', name: 'Sonal Mehta',    role: 'DevOps Engineer',    dept: 'Engineering',  date: '06 Aug 2026', status: 'Open' },
+          { id: 'NH-005', name: 'Ravi Kumar',     role: 'Sales Executive',    dept: 'Sales',        date: '05 Aug 2026', status: 'Open' },
+        ],
+      },
+      {
+        title: 'INTERVIEW',
+        value: 5,
+        sub: 'Scheduled this week',
+        color: '#8b5cf6',
+        bg: '#f5f3ff',
+        emoji: '🎙️',
+        candidates: [
+          { id: 'NH-006', name: 'Sneha Patil',    role: 'Product Manager',    dept: 'Product',      date: '19 Aug 2026', status: 'Interview' },
+          { id: 'NH-007', name: 'Karan Mehta',    role: 'DevOps Engineer',    dept: 'Engineering',  date: '20 Aug 2026', status: 'Interview' },
+          { id: 'NH-008', name: 'Divya Iyer',     role: 'UI/UX Designer',     dept: 'Design',       date: '21 Aug 2026', status: 'Interview' },
+          { id: 'NH-009', name: 'Arjun Reddy',    role: 'Backend Developer',  dept: 'Engineering',  date: '21 Aug 2026', status: 'Interview' },
+          { id: 'NH-010', name: 'Nisha Gupta',    role: 'Finance Analyst',    dept: 'Finance',      date: '22 Aug 2026', status: 'Interview' },
+        ],
+      },
+      {
+        title: 'PRE-JOINING',
+        value: 3,
+        sub: 'Awaiting joining formalities',
+        color: '#f59e0b',
+        bg: '#fef3c7',
+        emoji: '📋',
+        candidates: [
+          { id: 'NH-011', name: 'Rohan Das',      role: 'Backend Developer',  dept: 'Engineering',  date: '25 Aug 2026', status: 'Pre-joining' },
+          { id: 'NH-012', name: 'Meera Joshi',    role: 'Finance Analyst',    dept: 'Finance',      date: '28 Aug 2026', status: 'Pre-joining' },
+          { id: 'NH-013', name: 'Suresh Kumar',   role: 'Sales Executive',    dept: 'Sales',        date: '01 Sep 2026', status: 'Pre-joining' },
+        ],
+      },
+      {
+        title: 'RESOLVE',
+        value: 4,
+        sub: 'Successfully onboarded',
+        color: '#10b981',
+        bg: '#d1fae5',
+        emoji: '✅',
+        candidates: [
+          { id: 'NH-014', name: 'Ananya Singh',   role: 'Marketing Lead',     dept: 'Marketing',   date: '05 Aug 2026', status: 'Resolved' },
+          { id: 'NH-015', name: 'Vijay Reddy',    role: 'QA Engineer',        dept: 'Engineering',  date: '02 Aug 2026', status: 'Resolved' },
+          { id: 'NH-016', name: 'Pooja Sharma',   role: 'Content Writer',     dept: 'Marketing',   date: '30 Jul 2026', status: 'Resolved' },
+          { id: 'NH-017', name: 'Deepak Nair',    role: 'System Analyst',     dept: 'IT',           date: '28 Jul 2026', status: 'Resolved' },
+        ],
+      },
+    ];
+
+    const NewHireView = () => {
+      const [activeStage, setActiveStage] = React.useState(null);
+      const activeCard = newHireCards.find(c => c.title === activeStage);
+
+      return (
+        <div className="vendor-dashboard-wrapper" style={{ padding: '32px', maxWidth: '1400px', margin: '0 auto' }}>
+          {/* Header */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 32 }}>
+            <button
+              onClick={() => navigate('/vendor-portal/employees')}
+              style={{ width: 40, height: 40, borderRadius: '50%', background: '#fff', border: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b', transition: 'all 0.2s' }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.color = '#0f172a'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#64748b'; }}
+            >
+              <FiArrowLeft size={20} />
+            </button>
+            <div>
+              <h1 style={{ fontSize: 24, fontWeight: 700, margin: '0 0 4px 0', color: '#0f172a' }}>New Hire</h1>
+              <p style={{ fontSize: 14, color: '#64748b', margin: 0 }}>Click a stage to view candidates</p>
+            </div>
+          </div>
+
+          {/* 4 Clickable Stage Cards */}
+          <div className="vendor-grid-kpi" style={{ gridTemplateColumns: 'repeat(4, 1fr)', marginBottom: 32 }}>
+            {newHireCards.map((card, i) => {
+              const isActive = activeStage === card.title;
+              return (
+                <div
+                  className="vendor-kpi-card"
+                  key={i}
+                  onClick={() => setActiveStage(isActive ? null : card.title)}
+                  style={{
+                    cursor: 'pointer',
+                    borderBottom: isActive ? `3px solid ${card.color}` : '1px solid #f8fafc',
+                    transform: isActive ? 'translateY(-3px)' : 'none',
+                    boxShadow: isActive ? `0 8px 20px ${card.color}22` : '0 4px 12px rgba(0,0,0,0.03)',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  <div className="vendor-kpi-bg-circle"></div>
+                  <div className="vendor-kpi-icon-container" style={{ color: card.color, background: card.bg, fontSize: 20 }}>
+                    {card.emoji}
+                  </div>
+                  <div className="vendor-kpi-label">{card.title}</div>
+                  <div className="vendor-kpi-value">{card.value}</div>
+                  <div className="vendor-kpi-badge" style={{ background: card.bg, color: card.color }}>{card.sub}</div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Dummy Data Table — shown when a card is clicked */}
+          {activeCard && (
+            <div className="vendor-section-card">
+              <div className="vendor-section-header">
+                <h2 className="vendor-section-title" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span style={{ fontSize: 20 }}>{activeCard.emoji}</span>
+                  {activeCard.title.charAt(0) + activeCard.title.slice(1).toLowerCase()} Candidates
+                  <span className="vendor-kpi-badge" style={{ background: activeCard.bg, color: activeCard.color, fontSize: 12 }}>
+                    {activeCard.candidates.length} records
+                  </span>
+                </h2>
+              </div>
+
+              <table className="vendor-table" style={{ width: '100%' }}>
+                <thead>
+                  <tr>
+                    <th style={{ width: '10%' }}>ID</th>
+                    <th style={{ width: '22%' }}>CANDIDATE NAME</th>
+                    <th style={{ width: '22%' }}>ROLE</th>
+                    <th style={{ width: '18%' }}>DEPARTMENT</th>
+                    <th style={{ width: '15%' }}>DATE</th>
+                    <th style={{ width: '13%' }}>STATUS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {activeCard.candidates.map((c, j) => (
+                    <tr key={j} style={{ cursor: 'pointer' }}
+                      onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                    >
+                      <td style={{ fontWeight: 600, color: '#94a3b8' }}>{c.id}</td>
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <div style={{ width: 34, height: 34, borderRadius: '50%', background: activeCard.color, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 12, flexShrink: 0 }}>
+                            {c.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                          </div>
+                          <span style={{ fontWeight: 600, color: '#0f172a' }}>{c.name}</span>
+                        </div>
+                      </td>
+                      <td style={{ color: '#475569' }}>{c.role}</td>
+                      <td>
+                        <span style={{ padding: '3px 10px', borderRadius: 6, background: '#eff6ff', color: '#3b82f6', fontSize: 12, fontWeight: 600 }}>
+                          {c.dept}
+                        </span>
+                      </td>
+                      <td style={{ color: '#64748b', fontSize: 13 }}>{c.date}</td>
+                      <td>
+                        <span className="vendor-badge" style={{ background: activeCard.bg, color: activeCard.color, border: `1px solid ${activeCard.color}33` }}>
+                          {c.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    return <NewHireView />;
+  }
+  // ── END NEW HIRE view ─────────────────────────────────────────────────
 
   return (
     <div className="vendor-dashboard-wrapper" style={{ padding: '32px', maxWidth: '1400px', margin: '0 auto' }}>

@@ -192,18 +192,18 @@ const DashboardNavTabs = () => {
   const getBreadcrumb = () => {
     if (path.includes("cases")) return "Case Management";
     if (path.includes("leave")) return "Leave Management";
-    if (path.includes("employees")) return "Employee Directory";
+    if (path.includes("employees")) return "Employee Management";
     if (path.includes("training")) return "Training & Dev";
     if (path.includes("purchase-orders")) return "Purchase Orders";
     if (path.includes("invoices")) return "Invoices";
-    return "Dashboard";
+    return "Overview";
   };
 
   const navItems = [
-    { label: "Dashboard", path: "/regular-form" },
+    { label: "Overview", path: "/regular-form" },
     { label: "Case Management", path: "/vendor-portal/cases" },
     { label: "Leave Management", path: "/vendor-portal/leave" },
-    { label: "Employee Directory", path: "/vendor-portal/employees" },
+    { label: "Employee Management", path: "/vendor-portal/employees" },
     { label: "Training & Dev", path: "/vendor-portal/training" },
   ];
 
