@@ -49,6 +49,7 @@ function AddEmployee() {
     consentProvidedForMinor: "No",
 
     // Settings
+    accountActive: true,
     accountEnabled: true,
     usageLocation: "",
   });
@@ -64,14 +65,17 @@ function AddEmployee() {
   const { reloadEmployees } = useAuth();
 
   const handleSave = async () => {
-    if (!formData.displayName.trim()) {
-      alert("Display Name is required!");
+    if (!formData.displayName || !formData.userPrincipalName) {
+      alert("Please fill in required fields: Display Name and User Principal Name.");
       return;
     }
 
     try {
       const payload = {
         ...formData,
+        accountActive: formData.accountActive,
+        accountEnabled: formData.accountActive,
+        status: formData.accountActive ? "Active" : "Inactive",
         employeeHireDate: formData.employeeHireDate || null,
         employeeName: formData.displayName,
         place: formData.officeLocation,
@@ -479,14 +483,21 @@ function AddEmployee() {
         </div>
 
         <div className="form-row">
-          <label className="form-label">Account Enabled</label>
+          <label className="form-label">Account Active</label>
           <div style={{ display: "flex", alignItems: "center" }}>
             <input
               type="checkbox"
-              id="accountEnabled"
-              name="accountEnabled"
-              checked={formData.accountEnabled}
-              onChange={handleChange}
+              id="accountActive"
+              name="accountActive"
+              checked={formData.accountActive}
+              onChange={(e) => {
+                const checked = e.target.checked;
+                setFormData((prev) => ({
+                  ...prev,
+                  accountActive: checked,
+                  accountEnabled: checked,
+                }));
+              }}
               style={{
                 width: "20px",
                 height: "20px",

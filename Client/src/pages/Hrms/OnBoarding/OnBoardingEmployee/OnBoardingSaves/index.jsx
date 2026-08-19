@@ -88,13 +88,13 @@ function OnBoardingSaves() {
         {/* Basic Details */}
         <div className="OfferRow">
           <div className="OfferField">
-            <label>Name</label>
-            <input value={jobRequest.requesterName || ""} readOnly />
+            <label>Case ID</label>
+            <input value={jobRequest.caseId || ""} readOnly />
           </div>
 
           <div className="OfferField">
-            <label>Case ID</label>
-            <input value={jobRequest.caseId || ""} readOnly />
+            <label>Name</label>
+            <input value={jobRequest.requesterName || ""} readOnly />
           </div>
         </div>
 

@@ -325,12 +325,12 @@ function OnBoardingResolvesSaves() {
 
           <div className="CreateRow">
             <div className="CreateField">
-              <label>Requester Name</label>
-              <input value={formData.requesterName} readOnly />
-            </div>
-            <div className="CreateField">
               <label>Case Id *</label>
               <input name="CaseId" value={formData.caseId} readOnly />
+            </div>
+            <div className="CreateField">
+              <label>Requester Name</label>
+              <input value={formData.requesterName} readOnly />
             </div>
             <div className="CreateField">
               <label>Department</label>

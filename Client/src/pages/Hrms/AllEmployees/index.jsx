@@ -127,17 +127,20 @@ function AllEmployees() {
                         <td>{emp.email || "-"}</td>
                         <td>{emp.officeLocation || emp.place || "-"}</td>
                         <td>
-                          <span
-                            className={`statusBadge ${
-                              emp.accountEnabled !== false
-                                ? "active"
-                                : "inactive"
-                            }`}
-                          >
-                            {emp.accountEnabled !== false
-                              ? "Enabled"
-                              : "Disabled"}
-                          </span>
+                          {(() => {
+                            const isActive = emp.accountActive !== undefined 
+                              ? Boolean(emp.accountActive) 
+                              : (emp.status ? emp.status.toLowerCase() === "active" : emp.accountEnabled !== false);
+                            return (
+                              <span
+                                className={`statusBadge ${
+                                  isActive ? "active" : "inactive"
+                                }`}
+                              >
+                                {isActive ? "Active" : "Inactive"}
+                              </span>
+                            );
+                          })()}
                         </td>
                       </tr>
                     );

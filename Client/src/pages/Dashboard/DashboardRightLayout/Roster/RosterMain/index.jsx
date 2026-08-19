@@ -257,10 +257,18 @@ function RosterMain() {
     return full || "";
   };
 
-  // 2. Employee Options (sourced from backend Employee table /api/employees irrespective of department)
+  // 2. Employee Options (sourced from backend Employee table /api/employees irrespective of department - active employees only)
   const rawEmployeeOptions = useMemo(() => {
     const employees = new Set();
     dbEmployees.forEach((emp) => {
+      const isActive = emp.accountActive !== undefined 
+        ? Boolean(emp.accountActive) 
+        : emp.accountEnabled !== undefined 
+        ? Boolean(emp.accountEnabled) 
+        : emp.status ? emp.status.toLowerCase() === "active" : true;
+
+      if (!isActive) return;
+
       const name = getEmpName(emp);
       if (name) {
         employees.add(name);

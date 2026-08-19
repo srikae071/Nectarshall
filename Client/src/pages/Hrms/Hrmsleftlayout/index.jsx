@@ -29,74 +29,73 @@ const menuData = [
     ],
   },
   {
-    title: "Onboarding",
-    items: [
-      {
-        label: "Employe",
-        children: [
-          {
-            label: "All",
-            path: "/onboarding/resonancerequirement/all",
-          },
-          {
-            label: "Create New",
-            path: "/onboarding/resonancerequirement/createnew",
-          },
-          {
-            label: "Resolve",
-            path: "/onboardingresolved",
-          },
-          {
-            label: "Employe Request",
-            path: "/onboarding/employerequest",
-          },
-          {
-            label: "Pre-Joining Compilence",
-            path: "/onboarding/prejoining",
-          },
-          {
-            label: "Interview",
-            path: "/onboarding/Interview",
-          },
-          {
-            label: "Offer Letter",
-            path: "/onboarding/Offerletter",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    title: "Offboarding",
-    items: [
-      {
-        label: "Employe",
-        children: [
-          {
-            label: "All",
-            path: "/offboarding-employes-all",
-          },
-          {
-            label: "Create New",
-            path: "/offboarding/createnew",
-          },
-          {
-            label: "Closed",
-            path: "/offboarding-closed",
-          },
-          {
-            label: "Employe Request",
-            path: "/offboarding/employerequest",
-          },
-        ],
-      },
-    ],
-  },
-  {
     title: "Employee Management",
     items: [
-      { label: "Add Employee", path: "/hrms/add-employee" },
       { label: "All Employees", path: "/hrms/all-employees" },
+      {
+        label: "Onboarding",
+        children: [
+          {
+            label: "Employe",
+            children: [
+              {
+                label: "All",
+                path: "/onboarding/resonancerequirement/all",
+              },
+              {
+                label: "Create New",
+                path: "/onboarding/resonancerequirement/createnew",
+              },
+              {
+                label: "Resolve",
+                path: "/onboardingresolved",
+              },
+              {
+                label: "Employe Request",
+                path: "/onboarding/employerequest",
+              },
+              {
+                label: "Pre-Joining Compilence",
+                path: "/onboarding/prejoining",
+              },
+              {
+                label: "Interview",
+                path: "/onboarding/Interview",
+              },
+              {
+                label: "Offer Letter",
+                path: "/onboarding/Offerletter",
+              },
+            ],
+          },
+        ],
+      },
+      {
+        label: "Offboarding",
+        children: [
+          {
+            label: "Employe",
+            children: [
+              {
+                label: "All",
+                path: "/offboarding-employes-all",
+              },
+              {
+                label: "Create New",
+                path: "/offboarding/createnew",
+              },
+              {
+                label: "Closed",
+                path: "/offboarding-closed",
+              },
+              {
+                label: "Employe Request",
+                path: "/offboarding/employerequest",
+              },
+            ],
+          },
+        ],
+      },
     ],
   },
   {
@@ -284,12 +283,16 @@ function HrmsLeftLayout({ children }) {
       if (hasMatch) {
         setOpenMenus((prev) => ({ ...prev, [index]: true }));
 
-        menu.items.forEach((item) => {
-          if (item.children && itemMatchesPath(item)) {
-            const itemKey = item.label + 0;
-            setExpandedMenus((prev) => ({ ...prev, [itemKey]: true }));
-          }
-        });
+        const autoExpand = (items, level = 0) => {
+          items.forEach((item) => {
+            if (item.children && itemMatchesPath(item)) {
+              const itemKey = item.label + level;
+              setExpandedMenus((prev) => ({ ...prev, [itemKey]: true }));
+              autoExpand(item.children, level + 1);
+            }
+          });
+        };
+        autoExpand(menu.items, 0);
       }
     });
   }, [location.pathname]);

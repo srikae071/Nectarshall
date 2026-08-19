@@ -34,6 +34,12 @@ const EmployeeList = () => {
         const name = emp.displayName || emp.employeeName || `${emp.firstName || ""} ${emp.lastName || ""}`.trim() || "Unnamed Employee";
         const initials = name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || "EP";
         const colors = ['#10b981', '#3b82f6', '#8b5cf6', '#ea4104', '#059669', '#0284c7'];
+        const isActive = emp.accountActive !== undefined 
+          ? Boolean(emp.accountActive) 
+          : emp.accountEnabled !== undefined 
+          ? Boolean(emp.accountEnabled) 
+          : emp.status ? emp.status.toLowerCase() === "active" : true;
+
         return {
           id: emp.employeeId || `EMP-${index + 101}`,
           name: name,
@@ -41,7 +47,7 @@ const EmployeeList = () => {
           dept: emp.department || "General",
           email: emp.email || emp.workEmail || "N/A",
           location: emp.officeLocation || emp.place || emp.city || "Head Office",
-          status: "Active",
+          status: isActive ? "Active" : "Inactive",
           joiningDate: emp.createdAt ? new Date(emp.createdAt).toLocaleDateString() : "N/A",
           initials: initials,
           color: colors[index % colors.length]
@@ -326,7 +332,9 @@ const EmployeeList = () => {
                       {emp.location}
                     </td>
                     <td style={{ width: '10%', padding: '16px 20px', visibility: visibleColumns.includes('status') ? 'visible' : 'hidden' }}>
-                      <span style={{ padding: '4px 10px', borderRadius: 6, background: '#f0fdf4', color: '#16a34a', fontSize: 12, fontWeight: 600 }}>{emp.status}</span>
+                      <span style={{ padding: '4px 10px', borderRadius: 6, background: emp.status === 'Active' ? '#f0fdf4' : '#fef2f2', color: emp.status === 'Active' ? '#16a34a' : '#dc2626', fontSize: 12, fontWeight: 600 }}>
+                        {emp.status}
+                      </span>
                     </td>
                     <td style={{ width: '5%', padding: '16px 20px', textAlign: 'center', visibility: visibleColumns.includes('action') ? 'visible' : 'hidden' }}>
                       <button style={{ width: 32, height: 32, borderRadius: 6, background: '#fff', border: '1px solid #e2e8f0', color: '#64748b', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }} onMouseEnter={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.color = '#0f172a'; }} onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#64748b'; }}>

@@ -101,7 +101,8 @@ function MainEmployeesSaves() {
           ageGroup: emp.ageGroup || "Adult",
           consentProvidedForMinor: emp.consentProvidedForMinor || "No",
 
-          accountEnabled: emp.accountEnabled !== false,
+          accountActive: emp.accountActive !== undefined ? Boolean(emp.accountActive) : emp.accountEnabled !== false,
+          accountEnabled: emp.accountActive !== undefined ? Boolean(emp.accountActive) : emp.accountEnabled !== false,
           usageLocation: emp.usageLocation || "",
         });
       }
@@ -130,6 +131,9 @@ function MainEmployeesSaves() {
     try {
       const payload = {
         ...formData,
+        accountActive: formData.accountActive,
+        accountEnabled: formData.accountActive,
+        status: formData.accountActive ? "Active" : "Inactive",
         employeeHireDate: formData.employeeHireDate || null,
         employeeName: formData.displayName,
         place: formData.officeLocation,
@@ -538,14 +542,21 @@ function MainEmployeesSaves() {
         </div>
 
         <div className="form-row">
-          <label className="form-label">Account Enabled</label>
+          <label className="form-label">Account Active</label>
           <div style={{ display: "flex", alignItems: "center" }}>
             <input
               type="checkbox"
-              id="accountEnabled"
-              name="accountEnabled"
-              checked={formData.accountEnabled}
-              onChange={handleChange}
+              id="accountActive"
+              name="accountActive"
+              checked={formData.accountActive}
+              onChange={(e) => {
+                const checked = e.target.checked;
+                setFormData((prev) => ({
+                  ...prev,
+                  accountActive: checked,
+                  accountEnabled: checked,
+                }));
+              }}
               style={{ width: "20px", height: "20px", cursor: "pointer", marginLeft: "60px" }}
             />
           </div>

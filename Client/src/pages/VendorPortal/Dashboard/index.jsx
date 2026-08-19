@@ -65,14 +65,25 @@ const VendorPortalDashboard = () => {
     }
   };
 
-  const employees = dbEmpList.map((emp, index) => ({
-    id: emp.employeeId || `EMP-${index + 101}`,
-    name: emp.displayName || emp.employeeName || `${emp.firstName || ""} ${emp.lastName || ""}`.trim() || "Unnamed Employee",
-    title: emp.jobTitle || emp.position || "Employee",
-    dept: emp.department || "General",
-    email: emp.email || emp.workEmail || "N/A",
-    status: "Active",
-  }));
+  const employees = dbEmpList.map((emp, index) => {
+    const isActive = emp.accountActive !== undefined 
+      ? Boolean(emp.accountActive) 
+      : emp.accountEnabled !== undefined 
+      ? Boolean(emp.accountEnabled) 
+      : emp.status ? emp.status.toLowerCase() === "active" : true;
+
+    return {
+      id: emp.employeeId || `EMP-${index + 101}`,
+      name: emp.displayName || emp.employeeName || `${emp.firstName || ""} ${emp.lastName || ""}`.trim() || "Unnamed Employee",
+      title: emp.jobTitle || emp.position || "Employee",
+      dept: emp.department || "General",
+      email: emp.email || emp.workEmail || "N/A",
+      status: isActive ? "Active" : "Inactive",
+    };
+  });
+
+  const activeEmployeesCount = employees.filter((e) => e.status === "Active").length;
+  const activeEmployeesPct = employees.length > 0 ? ((activeEmployeesCount / employees.length) * 100).toFixed(0) : "0";
 
   const LeaveTrendsChart = () => {
     const W = 520; const H = 240;
@@ -199,8 +210,8 @@ const VendorPortalDashboard = () => {
             <FiUserCheck />
           </div>
           <div className="vendor-kpi-label">ACTIVE EMPLOYEES</div>
-          <div className="vendor-kpi-value">{employees.length}</div>
-          <div className="vendor-kpi-badge" style={{ background: '#dcfce7', color: '#16a34a' }}>100% active</div>
+          <div className="vendor-kpi-value">{activeEmployeesCount}</div>
+          <div className="vendor-kpi-badge" style={{ background: '#dcfce7', color: '#16a34a' }}>{activeEmployeesPct}% active</div>
         </div>
 
         <div className="vendor-kpi-card">
@@ -389,7 +400,7 @@ const VendorPortalDashboard = () => {
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#f43f5e' }}></div>
-                    <span style={{ fontSize: 13, color: '#1e293b', fontWeight: 500 }}>In-Active (0)</span>
+                    <span style={{ fontSize: 13, color: '#1e293b', fontWeight: 500 }}>In-Active ({inactiveCount})</span>
                   </div>
                 </div>
               </div>

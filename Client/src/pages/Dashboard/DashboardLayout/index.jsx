@@ -137,7 +137,9 @@ function DashboardLayout({ children }) {
               navigate("/main-dashboard");
             }}
           >
-            <span className="menuIcon"></span>
+            <span className="menuIcon" style={{ fontWeight: 700, fontSize: "16px", color: "#ffffff" }}>
+              {sidebarCollapsed ? "D" : ""}
+            </span>
 
             {!sidebarCollapsed && <span className="menuText">Dashboard</span>}
           </div>
@@ -150,7 +152,9 @@ function DashboardLayout({ children }) {
             }`}
             onClick={() => navigate("/timesheets")}
           >
-            <span className="menuIcon"></span>
+            <span className="menuIcon" style={{ fontWeight: 700, fontSize: "16px", color: "#ffffff" }}>
+              {sidebarCollapsed ? "T" : ""}
+            </span>
 
             {!sidebarCollapsed && <span className="menuText">Timesheets</span>}
           </div>
@@ -163,7 +167,9 @@ function DashboardLayout({ children }) {
             }`}
             onClick={() => navigate("/reports")}
           >
-            <span className="menuIcon"></span>
+            <span className="menuIcon" style={{ fontWeight: 700, fontSize: "16px", color: "#ffffff" }}>
+              {sidebarCollapsed ? "R" : ""}
+            </span>
 
             {!sidebarCollapsed && <span className="menuText">Reports</span>}
           </div>
@@ -176,7 +182,9 @@ function DashboardLayout({ children }) {
             }`}
             onClick={() => navigate("/incidents")}
           >
-            <span className="menuIcon"></span>
+            <span className="menuIcon" style={{ fontWeight: 700, fontSize: "16px", color: "#ffffff" }}>
+              {sidebarCollapsed ? "I" : ""}
+            </span>
 
             {!sidebarCollapsed && <span className="menuText">Incidents</span>}
           </div>
@@ -197,7 +205,9 @@ function DashboardLayout({ children }) {
               }}
             >
               <div className="menuLeft">
-                <span className="menuIcon"></span>
+                <span className="menuIcon" style={{ fontWeight: 700, fontSize: "16px", color: "#ffffff" }}>
+                  {sidebarCollapsed ? "O" : ""}
+                </span>
 
                 {!sidebarCollapsed && (
                   <span className="menuText">On Boarding Client</span>
@@ -219,7 +229,7 @@ function DashboardLayout({ children }) {
                   }`}
                   onClick={() => navigate("/Operations-Complience/All")}
                 >
-                  All
+                  {sidebarCollapsed ? "A" : "All"}
                 </div>
 
                 <div
@@ -230,7 +240,7 @@ function DashboardLayout({ children }) {
                   }`}
                   onClick={() => navigate("/onboarding-client-open")}
                 >
-                  Open
+                  {sidebarCollapsed ? "O" : "Open"}
                 </div>
 
                 <div
@@ -241,7 +251,7 @@ function DashboardLayout({ children }) {
                   }`}
                   onClick={() => navigate("/onboarding-client-pending")}
                 >
-                  Pending
+                  {sidebarCollapsed ? "P" : "Pending"}
                 </div>
 
                 <div
@@ -252,7 +262,7 @@ function DashboardLayout({ children }) {
                   }`}
                   onClick={() => navigate("/onboarding-client-new")}
                 >
-                  New Client
+                  {sidebarCollapsed ? "N" : "New Client"}
                 </div>
               </div>
             )}
@@ -263,7 +273,9 @@ function DashboardLayout({ children }) {
             }`}
             onClick={() => navigate("/roster")}
           >
-            <span className="menuIcon"></span>
+            <span className="menuIcon" style={{ fontWeight: 700, fontSize: "16px", color: "#ffffff" }}>
+              {sidebarCollapsed ? "R" : ""}
+            </span>
 
             {!sidebarCollapsed && <span className="menuText">Roster</span>}
           </div>
@@ -273,7 +285,9 @@ function DashboardLayout({ children }) {
             }`}
             onClick={() => navigate("/add-adhoc")}
           >
-            <span className="menuIcon"></span>
+            <span className="menuIcon" style={{ fontWeight: 700, fontSize: "16px", color: "#ffffff" }}>
+              {sidebarCollapsed ? "A" : ""}
+            </span>
 
             {!sidebarCollapsed && <span className="menuText">Add Adhoc</span>}
           </div>

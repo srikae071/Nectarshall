@@ -102,13 +102,13 @@ function Candidateform2() {
       <div className="OfferContainer">
         <div className="OfferRow">
           <div className="OfferField">
-            <label>Name</label>
-            <input value={formData.requesterName || ""} readOnly />
+            <label>Case ID</label>
+            <input value={formData.caseId || ""} readOnly />
           </div>
 
           <div className="OfferField">
-            <label>Case ID</label>
-            <input value={formData.caseId || ""} readOnly />
+            <label>Name</label>
+            <input value={formData.requesterName || ""} readOnly />
           </div>
         </div>
 

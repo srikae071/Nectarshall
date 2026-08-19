@@ -125,8 +125,8 @@ function AccountsLayout({ children }) {
                         )}
                       </div>
                       {!sidebarCollapsed && (
-                        <span className="categoryArrowIcon">
-                          {isOpen ? "▲" : "▼"}
+                        <span className="categoryArrowIcon" style={{ fontWeight: 700, fontSize: "16px" }}>
+                          {isOpen ? "-" : "+"}
                         </span>
                       )}
                     </div>
