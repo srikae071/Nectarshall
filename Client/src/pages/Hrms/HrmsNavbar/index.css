@@ -3,11 +3,11 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px 24px;
-  background-color: #0284c7;
-
+  background-color: #1e293b;
+  background: #1e293b;
   height: 60px;
   box-sizing: border-box;
-  border-bottom: 1px solid #0369a1;
+  border-bottom: 1px solid #334155;
 }
 
 .hrmslogo {
