@@ -456,43 +456,78 @@ function OnBoardingResonanceRequirementsCreateNew() {
                 {formData.candidates.map((cand, candIdx) => (
                   <div
                     key={candIdx}
-                    className="CreateRow"
                     style={{
                       background: "#f8fafc",
-                      padding: "12px",
+                      padding: "14px 16px",
                       borderRadius: "8px",
                       border: "1px solid #cbd5e1",
-                      marginBottom: "10px",
-                      alignItems: "center",
-                      display: "flex",
-                      gap: "12px",
+                      marginBottom: "12px",
+                      display: "grid",
+                      gridTemplateColumns: "180px 1fr 1fr 48px",
+                      gap: "16px",
+                      alignItems: "flex-end",
+                      boxSizing: "border-box",
+                      width: "100%",
                     }}
                   >
-                    <div className="CreateField" style={{ flex: "0 0 160px" }}>
-                      <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155" }}>Employee / Candidate ID</label>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                      <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155", whiteSpace: "nowrap" }}>Candidate ID</label>
                       <input
                         value={cand.candidateId || `CND-${String(candIdx + 1).padStart(3, "0")}`}
                         readOnly
-                        style={{ background: "#e2e8f0", fontWeight: "700", color: "#0f172a" }}
+                        style={{
+                          height: "38px",
+                          padding: "0 10px",
+                          background: "#e2e8f0",
+                          fontWeight: "700",
+                          color: "#0f172a",
+                          borderRadius: "6px",
+                          border: "1px solid #cbd5e1",
+                          fontSize: "13px",
+                          width: "100%",
+                          boxSizing: "border-box",
+                        }}
                       />
                     </div>
 
-                    <div className="CreateField" style={{ flex: 1 }}>
-                      <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155" }}>Employee Name *</label>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                      <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155", whiteSpace: "nowrap" }}>Employee Name *</label>
                       <input
                         value={cand.name || ""}
                         onChange={(e) => handleCandidateChange(candIdx, "name", e.target.value)}
                         placeholder="Enter employee name..."
+                        style={{
+                          height: "38px",
+                          padding: "0 12px",
+                          background: "#ffffff",
+                          color: "#0f172a",
+                          borderRadius: "6px",
+                          border: "1px solid #cbd5e1",
+                          fontSize: "13px",
+                          width: "100%",
+                          boxSizing: "border-box",
+                        }}
                       />
                     </div>
 
-                    <div className="CreateField" style={{ flex: 1 }}>
-                      <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155" }}>Employee Email ID *</label>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                      <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155", whiteSpace: "nowrap" }}>Employee Email ID *</label>
                       <input
                         type="email"
                         value={cand.email || ""}
                         onChange={(e) => handleCandidateChange(candIdx, "email", e.target.value)}
                         placeholder="Enter email ID..."
+                        style={{
+                          height: "38px",
+                          padding: "0 12px",
+                          background: "#ffffff",
+                          color: "#0f172a",
+                          borderRadius: "6px",
+                          border: "1px solid #cbd5e1",
+                          fontSize: "13px",
+                          width: "100%",
+                          boxSizing: "border-box",
+                        }}
                       />
                     </div>
 
@@ -501,14 +536,20 @@ function OnBoardingResonanceRequirementsCreateNew() {
                       onClick={() => handleRemoveCandidate(candIdx)}
                       title="Remove Candidate"
                       style={{
+                        height: "38px",
+                        width: "48px",
                         background: "#fee2e2",
                         color: "#dc2626",
                         border: "1px solid #fecaca",
                         borderRadius: "6px",
-                        padding: "8px 12px",
                         fontWeight: "700",
                         cursor: "pointer",
-                        marginTop: "16px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "16px",
+                        flexShrink: 0,
+                        boxSizing: "border-box",
                       }}
                     >
                       🗑️

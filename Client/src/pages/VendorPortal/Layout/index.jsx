@@ -72,45 +72,52 @@ const VendorPortalLayout = ({ children }) => {
 
       {/* Main Content */}
       <div className="vendor-main-content">
-        <div className="vendor-top-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingRight: '32px' }}>
-          <div className="vendor-breadcrumb">
-            <span className="vendor-breadcrumb-parent vendor-breadcrumb-link" onClick={() => navigate('/')}>Nectershell</span>
-            <FiChevronRight className="vendor-breadcrumb-separator" />
-            <span className="vendor-breadcrumb-current">{breadcrumbLabel()}</span>
+        <div className="vendor-top-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 40px', height: '56px', width: '100%', boxSizing: 'border-box', background: '#ffffff', borderBottom: '1px solid #e2e8f0' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
+            <span 
+              onClick={() => navigate('/regular-form')}
+              style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', cursor: 'pointer' }}
+            >
+              Nectershell
+            </span>
           </div>
-          <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-            <span 
+
+          <div style={{ display: 'flex', gap: '36px', alignItems: 'center' }}>
+            <div 
+              onClick={() => navigate('/regular-form')} 
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '14.5px', fontWeight: isActive('/regular-form') ? 600 : 500, color: isActive('/regular-form') ? '#2563eb' : '#64748b', borderBottom: isActive('/regular-form') ? '2.5px solid #2563eb' : '2.5px solid transparent', padding: '16px 4px 14px 4px' }}
+            >
+              <FiGrid size={16} />
+              <span>Overview</span>
+            </div>
+            <div 
               onClick={() => navigate('/vendor-portal/cases')} 
-              style={{ cursor: 'pointer', fontSize: '14px', fontWeight: 500, color: isActive('/vendor-portal/cases') ? '#3b82f6' : '#64748b', transition: 'color 0.2s' }}
-              onMouseEnter={e => e.target.style.color = '#3b82f6'}
-              onMouseLeave={e => e.target.style.color = isActive('/vendor-portal/cases') ? '#3b82f6' : '#64748b'}
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '14.5px', fontWeight: isActive('/vendor-portal/cases') ? 600 : 500, color: isActive('/vendor-portal/cases') ? '#2563eb' : '#64748b', borderBottom: isActive('/vendor-portal/cases') ? '2.5px solid #2563eb' : '2.5px solid transparent', padding: '16px 4px 14px 4px' }}
             >
-              Case Management
-            </span>
-            <span 
+              <FiFileText size={16} />
+              <span>Case Management</span>
+            </div>
+            <div 
               onClick={() => navigate('/vendor-portal/leave')} 
-              style={{ cursor: 'pointer', fontSize: '14px', fontWeight: 500, color: isActive('/vendor-portal/leave') ? '#3b82f6' : '#64748b', transition: 'color 0.2s' }}
-              onMouseEnter={e => e.target.style.color = '#3b82f6'}
-              onMouseLeave={e => e.target.style.color = isActive('/vendor-portal/leave') ? '#3b82f6' : '#64748b'}
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '14.5px', fontWeight: isActive('/vendor-portal/leave') ? 600 : 500, color: isActive('/vendor-portal/leave') ? '#2563eb' : '#64748b', borderBottom: isActive('/vendor-portal/leave') ? '2.5px solid #2563eb' : '2.5px solid transparent', padding: '16px 4px 14px 4px' }}
             >
-              Leave Management
-            </span>
-            <span 
+              <FiCalendar size={16} />
+              <span>Leave Management</span>
+            </div>
+            <div 
               onClick={() => navigate('/vendor-portal/employees')} 
-              style={{ cursor: 'pointer', fontSize: '14px', fontWeight: 500, color: isActive('/vendor-portal/employees') ? '#3b82f6' : '#64748b', transition: 'color 0.2s' }}
-              onMouseEnter={e => e.target.style.color = '#3b82f6'}
-              onMouseLeave={e => e.target.style.color = isActive('/vendor-portal/employees') ? '#3b82f6' : '#64748b'}
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '14.5px', fontWeight: isActive('/vendor-portal/employees') ? 600 : 500, color: isActive('/vendor-portal/employees') ? '#2563eb' : '#64748b', borderBottom: isActive('/vendor-portal/employees') ? '2.5px solid #2563eb' : '2.5px solid transparent', padding: '16px 4px 14px 4px' }}
             >
-              Employee Management
-            </span>
-            <span 
+              <FiUsers size={16} />
+              <span>Employee Management</span>
+            </div>
+            <div 
               onClick={() => navigate('/vendor-portal/training')} 
-              style={{ cursor: 'pointer', fontSize: '14px', fontWeight: 500, color: isActive('/vendor-portal/training') ? '#3b82f6' : '#64748b', transition: 'color 0.2s' }}
-              onMouseEnter={e => e.target.style.color = '#3b82f6'}
-              onMouseLeave={e => e.target.style.color = isActive('/vendor-portal/training') ? '#3b82f6' : '#64748b'}
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '14.5px', fontWeight: isActive('/vendor-portal/training') ? 600 : 500, color: isActive('/vendor-portal/training') ? '#2563eb' : '#64748b', borderBottom: isActive('/vendor-portal/training') ? '2.5px solid #2563eb' : '2.5px solid transparent', padding: '16px 4px 14px 4px' }}
             >
-              Training & Dev
-            </span>
+              <FiBookOpen size={16} />
+              <span>Training & Dev</span>
+            </div>
           </div>
         </div>
         <div className="vendor-main-inner">

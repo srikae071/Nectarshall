@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { FiGrid, FiFileText, FiCalendar, FiUsers, FiBookOpen } from "react-icons/fi";
 import "./index.css";
 import HrmsNavbar from "../HrmsNavbar";
 
@@ -189,66 +190,64 @@ const DashboardNavTabs = () => {
     return path.startsWith(p);
   };
 
-  const getBreadcrumb = () => {
-    if (path.includes("cases")) return "Case Management";
-    if (path.includes("leave")) return "Leave Management";
-    if (path.includes("employees")) return "Employee Management";
-    if (path.includes("training")) return "Training & Dev";
-    if (path.includes("purchase-orders")) return "Purchase Orders";
-    if (path.includes("invoices")) return "Invoices";
-    return "Overview";
-  };
-
   const navItems = [
-    { label: "Overview", path: "/regular-form" },
-    { label: "Case Management", path: "/vendor-portal/cases" },
-    { label: "Leave Management", path: "/vendor-portal/leave" },
-    { label: "Employee Management", path: "/vendor-portal/employees" },
-    { label: "Training & Dev", path: "/vendor-portal/training" },
+    { label: "Overview", path: "/regular-form", icon: FiGrid },
+    { label: "Case Management", path: "/vendor-portal/cases", icon: FiFileText },
+    { label: "Leave Management", path: "/vendor-portal/leave", icon: FiCalendar },
+    { label: "Employee Management", path: "/vendor-portal/employees", icon: FiUsers },
+    { label: "Training & Dev", path: "/vendor-portal/training", icon: FiBookOpen },
   ];
 
   return (
     <div
       style={{
         display: "flex",
-        justifyContent: "space-between",
         alignItems: "center",
-        padding: "14px 32px",
+        justifyContent: "space-between",
+        padding: "0 40px",
+        height: "56px",
         background: "#ffffff",
         borderBottom: "1px solid #e2e8f0",
-        boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.03)",
+        width: "100%",
+        boxSizing: "border-box",
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "14px", fontWeight: 600, color: "#64748b" }}>
+      {/* Left Title */}
+      <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
         <span
           onClick={() => navigate("/regular-form")}
-          style={{ cursor: "pointer", color: "#3b82f6" }}
+          style={{ cursor: "pointer", color: "#0f172a", fontSize: "16px", fontWeight: 700 }}
         >
           Nectershell
         </span>
-        <span style={{ color: "#94a3b8" }}>›</span>
-        <span style={{ color: "#0f172a" }}>{getBreadcrumb()}</span>
       </div>
 
-      <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
+      {/* Nav Tabs with Icons */}
+      <div style={{ display: "flex", gap: "36px", alignItems: "center" }}>
         {navItems.map((item) => {
           const active = isActive(item.path);
+          const Icon = item.icon;
           return (
-            <span
+            <div
               key={item.path}
               onClick={() => navigate(item.path)}
               style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
                 cursor: "pointer",
-                fontSize: "14px",
-                fontWeight: active ? 700 : 500,
-                color: active ? "#ea4104" : "#64748b",
-                borderBottom: active ? "2px solid #ea4104" : "2px solid transparent",
-                paddingBottom: "4px",
-                transition: "all 0.2s ease-in-out",
+                fontSize: "14.5px",
+                fontWeight: active ? 600 : 500,
+                color: active ? "#2563eb" : "#64748b",
+                borderBottom: active ? "2.5px solid #2563eb" : "2.5px solid transparent",
+                padding: "16px 4px 14px 4px",
+                transition: "all 0.15s ease-in-out",
               }}
             >
-              {item.label}
-            </span>
+              <Icon size={16} style={{ color: active ? "#2563eb" : "#64748b" }} />
+              <span>{item.label}</span>
+            </div>
           );
         })}
       </div>
