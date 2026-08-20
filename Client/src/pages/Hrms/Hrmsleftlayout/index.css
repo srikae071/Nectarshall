@@ -95,6 +95,23 @@ body.theme-green .rightContent,
   background: #f0f7f4 !important;
 }
 
+[data-theme="white"] .hrmssidebar,
+body.theme-white .hrmssidebar {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  border-right: 1px solid #d1d5db !important;
+}
+
+[data-theme="white"] .hrmssidebar .hrmsmenuHeader,
+body.theme-white .hrmssidebar .hrmsmenuHeader {
+  color: #1f2937 !important;
+}
+
+[data-theme="white"] .hrmssidebar .menuBlock,
+body.theme-white .hrmssidebar .menuBlock {
+  border-bottom-color: #e5e7eb;
+}
+
 html[data-theme="green"] .Openhome,
 body.theme-green .Openhome,
 [data-theme="green"] .Openhome {
