@@ -635,8 +635,8 @@ const EmployeeList = () => {
                     <td style={{ width: '15%', padding: '16px 20px', visibility: visibleColumns.includes('dept') ? 'visible' : 'hidden' }}>
                       <span style={{ padding: '4px 10px', borderRadius: 6, background: '#eff6ff', color: '#3b82f6', fontSize: 12, fontWeight: 600 }}>{emp.dept}</span>
                     </td>
-                    <td style={{ width: '18%', padding: '16px 20px', fontSize: 14, color: '#3b82f6', fontWeight: 500, visibility: visibleColumns.includes('email') ? 'visible' : 'hidden' }}>
-                      {emp.email}
+                    <td style={{ width: '18%', padding: '16px 20px', fontSize: 14, color: '#3b82f6', fontWeight: 500, visibility: visibleColumns.includes('email') ? 'visible' : 'hidden', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={emp.email}>
+                      <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{emp.email}</div>
                     </td>
                     <td style={{ width: '12%', padding: '16px 20px', fontSize: 14, color: '#0f172a', fontWeight: 500, visibility: visibleColumns.includes('location') ? 'visible' : 'hidden' }}>
                       {emp.location}
