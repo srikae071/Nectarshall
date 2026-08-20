@@ -1,8 +1,10 @@
+html,
 body {
   margin: 0;
-  font-family: Arial; /* background: #892424; */
-  background-color: #2563eb; /* overflow-wrap: break-word; */
-  height: 100vh;
+  padding: 0;
+  font-family: "Inter", Arial, sans-serif;
+  background-color: #f8fafc;
+  min-height: 100vh;
   overflow-y: auto;
   width: 100%;
 } /* NAVBAR */
@@ -616,11 +618,11 @@ body.theme-green .MyTaskNotificationWrapper a {
   justify-content: space-between !important;
   align-items: center !important;
   padding: 10px 24px !important;
-  background-color: #1e293b !important;
-  background: #1e293b !important;
+  background-color: #0284c7 !important;
+  background: #0284c7 !important;
   height: 60px !important;
   box-sizing: border-box !important;
-  border-bottom: 1px solid #334155 !important;
+  border-bottom: 1px solid #0369a1 !important;
 }
 
 .hrmslogo {
