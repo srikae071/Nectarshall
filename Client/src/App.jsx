@@ -48,6 +48,7 @@ import HomeLeaveBalance from "./pages/Home/LeaveManagement/LeaveManagementRightS
 import HomeLeaveCalendar from "./pages/Home/LeaveManagement/LeaveManagementRightSide/HomeLeaveCalender/index.jsx";
 import MyTasks from "./pages/MyTasks/index.jsx";
 import AssignmentGroupMain from "./pages/AssignmentGroup/AssignmentGroupMain/index.jsx";
+import HrmsAssignmentGroup from "./pages/Hrms/AssignmentGroup/index.jsx";
 import ITSaves from "./pages/Hrms/SavedForms/ITSaves/index.jsx";
 import HRSaves from "./pages/Hrms/SavedForms/HRSaves/index.jsx";
 import HRSavesCases from "./pages/Hrms/HRSavesCases/index.jsx";
@@ -323,6 +324,7 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route path="/hrms/assignment-group" element={<HrmsAssignmentGroup />} />
       {/* <Route path="/hrms/itsaves" element={<ITSaves />} /> */}
       <Route path="/hrms/itsaves/:id" element={<ITSaves />} />
       <Route path="/hrms/hrsaves/:id" element={<HRSaves />} />
@@ -399,6 +401,10 @@ function App() {
       <Route path="/exit/" element={<Exit />} />
       <Route
         path="/offboarding/employerequest"
+        element={<OffBoardingEmployesAll />}
+      />
+      <Route
+        path="/offboarding-employes-all"
         element={<OffBoardingEmployesAll />}
       />
       <Route path="/offboarding-saves/:id" element={<OffBoardingSaves />} />

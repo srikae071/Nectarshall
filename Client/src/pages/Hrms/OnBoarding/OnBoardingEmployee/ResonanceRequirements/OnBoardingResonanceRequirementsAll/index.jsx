@@ -14,7 +14,13 @@ function OnBoardingResonanceRequirementsAll() {
   const fetchData = async () => {
     try {
       const response = await fetchApiData("/api/jobrequests");
-      setData(response.data || []);
+      const list = (response.data || []).filter(
+        (item) =>
+          item.category !== "Offboarding" &&
+          item.category !== "offboarding" &&
+          item.category !== "Exit",
+      );
+      setData(list);
     } catch (error) {
       console.error(error);
     }

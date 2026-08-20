@@ -20,7 +20,33 @@ function Assigntome() {
 
       const openCases = response.data.filter((item) => item.status === "Open");
 
-      setData(openCases);
+      let authUser = null;
+      try {
+        const saved = localStorage.getItem("authUser") || localStorage.getItem("user") || localStorage.getItem("username");
+        if (saved) authUser = JSON.parse(saved);
+      } catch (e) {
+        const raw = localStorage.getItem("authUser") || localStorage.getItem("user") || localStorage.getItem("username");
+        if (raw && typeof raw === "string") authUser = { username: raw };
+      }
+      const username = (authUser?.username || authUser?.name || authUser?.displayName || (typeof authUser === "string" ? authUser : "")).trim();
+      const role = (authUser?.role || "").toUpperCase();
+      const isAdmin = role === "ADMIN" || username.toLowerCase().includes("sumit");
+
+      if (isAdmin) {
+        setData(openCases);
+      } else if (username) {
+        const u = username.toLowerCase();
+        setData(
+          openCases.filter((item) => {
+            const r1 = (item.requester || "").toLowerCase();
+            const r2 = (item.requesterFor || "").toLowerCase();
+            const r3 = (item.assignedTo || "").toLowerCase();
+            return r1.includes(u) || u.includes(r1 && r1.length > 2 ? r1 : "___never___") || r2.includes(u) || r3.includes(u);
+          })
+        );
+      } else {
+        setData([]);
+      }
     } catch (error) {
       console.log(error);
     }

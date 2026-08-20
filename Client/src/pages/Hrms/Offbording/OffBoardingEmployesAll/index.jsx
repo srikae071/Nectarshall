@@ -1,4 +1,4 @@
-import CncLeftLayout from "../../../Cnc/CncLeftLayout";
+import HrmsLeftLayout from "../../Hrmsleftlayout";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -19,10 +19,11 @@ function OffBoardingEmployesAll() {
     try {
       const response = await fetchApiData("/api/jobrequests");
 
-      const filteredData = response.data.filter(
+      const filteredData = (response.data || []).filter(
         (item) =>
-          item.category === "Offboarding" &&
-          (item.status === "Open" || item.status === "Approved"),
+          item.category === "Offboarding" ||
+          item.category === "offboarding" ||
+          item.category === "Exit",
       );
 
       setData(filteredData);
@@ -36,10 +37,10 @@ function OffBoardingEmployesAll() {
   };
 
   return (
-    <CncLeftLayout>
+    <HrmsLeftLayout>
       <div className="Openhome">
         <div>
-          <h3 className="openheading">Offboarding Requests</h3>
+          <h3 className="openheading">Offboarding Requests (All)</h3>
           <table className="opentable">
             <thead>
               <tr className="opentablerow">
@@ -60,18 +61,18 @@ function OffBoardingEmployesAll() {
                   </td>
                 </tr>
               ) : (
-                data.map((item) => (
+                data.map((item, idx) => (
                   <tr
-                    key={item._id}
+                    key={item._id || idx}
                     onClick={() => handleRowClick(item)}
                     style={{ cursor: "pointer" }}
                   >
-                    <td>{item.caseId}</td>
-                    <td>{item.requesterName}</td>
-                    <td>{item.resignationDate}</td>
-                    <td>{item.lastWorkingDay}</td>
-                    <td>{item.resignationReason}</td>
-                    <td>{item.status}</td>
+                    <td>{item.caseId || item.jobRequestId || `OFF-${String(idx + 1).padStart(3, "0")}`}</td>
+                    <td>{item.requesterName || item.requester || item.name || "N/A"}</td>
+                    <td>{item.resignationDate || item.startDate || "N/A"}</td>
+                    <td>{item.lastWorkingDay || item.endDate || "N/A"}</td>
+                    <td>{item.resignationReason || item.reason || item.description || "N/A"}</td>
+                    <td>{item.status || "Open"}</td>
                   </tr>
                 ))
               )}
@@ -79,7 +80,7 @@ function OffBoardingEmployesAll() {
           </table>
         </div>
       </div>
-    </CncLeftLayout>
+    </HrmsLeftLayout>
   );
 }
 

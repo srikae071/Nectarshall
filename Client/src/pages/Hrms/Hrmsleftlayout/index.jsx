@@ -1,6 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { FiGrid, FiFileText, FiCalendar, FiUsers, FiBookOpen } from "react-icons/fi";
+import {
+  FiGrid,
+  FiFileText,
+  FiCalendar,
+  FiUsers,
+  FiBookOpen,
+} from "react-icons/fi";
 import "./index.css";
 import HrmsNavbar from "../HrmsNavbar";
 
@@ -89,10 +95,10 @@ const menuData = [
                 label: "Closed",
                 path: "/offboarding-closed",
               },
-              {
-                label: "Employe Request",
-                path: "/offboarding/employerequest",
-              },
+              // {
+              //   label: "Employe Request",
+              //   path: "/offboarding/employerequest",
+              // },
             ],
           },
         ],
@@ -104,6 +110,12 @@ const menuData = [
     items: [
       { label: "All", path: "/hrms/training/all" },
       { label: "Create New", path: "/hrms/training/createnew" },
+    ],
+  },
+  {
+    title: "Assignment Group",
+    items: [
+      { label: "All Groups", path: "/hrms/assignment-group" },
     ],
   },
 ];
@@ -180,8 +192,7 @@ const DashboardNavTabs = () => {
   const path = location.pathname;
 
   const isDashboardRoute =
-    path === "/regular-form" ||
-    path.startsWith("/vendor-portal");
+    path === "/regular-form" || path.startsWith("/vendor-portal");
 
   if (!isDashboardRoute) return null;
 
@@ -192,10 +203,26 @@ const DashboardNavTabs = () => {
 
   const navItems = [
     { label: "Overview", path: "/regular-form", icon: FiGrid },
-    { label: "Case Management", path: "/vendor-portal/cases", icon: FiFileText },
-    { label: "Leave Management", path: "/vendor-portal/leave", icon: FiCalendar },
-    { label: "Employee Management", path: "/vendor-portal/employees", icon: FiUsers },
-    { label: "Training & Dev", path: "/vendor-portal/training", icon: FiBookOpen },
+    {
+      label: "Case Management",
+      path: "/vendor-portal/cases",
+      icon: FiFileText,
+    },
+    {
+      label: "Leave Management",
+      path: "/vendor-portal/leave",
+      icon: FiCalendar,
+    },
+    {
+      label: "Employee Management",
+      path: "/vendor-portal/employees",
+      icon: FiUsers,
+    },
+    {
+      label: "Training & Dev",
+      path: "/vendor-portal/training",
+      icon: FiBookOpen,
+    },
   ];
 
   return (
@@ -214,10 +241,22 @@ const DashboardNavTabs = () => {
       }}
     >
       {/* Left Title */}
-      <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          flexShrink: 0,
+        }}
+      >
         <span
           onClick={() => navigate("/regular-form")}
-          style={{ cursor: "pointer", color: "#0f172a", fontSize: "16px", fontWeight: 700 }}
+          style={{
+            cursor: "pointer",
+            color: "#0f172a",
+            fontSize: "16px",
+            fontWeight: 700,
+          }}
         >
           Nectershell
         </span>
@@ -240,12 +279,17 @@ const DashboardNavTabs = () => {
                 fontSize: "14.5px",
                 fontWeight: active ? 600 : 500,
                 color: active ? "#2563eb" : "#64748b",
-                borderBottom: active ? "2.5px solid #2563eb" : "2.5px solid transparent",
+                borderBottom: active
+                  ? "2.5px solid #2563eb"
+                  : "2.5px solid transparent",
                 padding: "16px 4px 14px 4px",
                 transition: "all 0.15s ease-in-out",
               }}
             >
-              <Icon size={16} style={{ color: active ? "#2563eb" : "#64748b" }} />
+              <Icon
+                size={16}
+                style={{ color: active ? "#2563eb" : "#64748b" }}
+              />
               <span>{item.label}</span>
             </div>
           );
@@ -340,9 +384,14 @@ function HrmsLeftLayout({ children }) {
               {menu.directPath ? (
                 // Direct navigation link (e.g. Dashboard)
                 <div
-                  className="hrmsmenuHeader"
+                  className={`hrmsmenuHeader ${
+                    location.pathname === menu.directPath ||
+                    (menu.directPath === "/regular-form" && (location.pathname === "/regular-form" || location.pathname.startsWith("/vendor-portal")))
+                      ? "active"
+                      : ""
+                  }`}
                   onClick={() => navigate(menu.directPath)}
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: "pointer" }}
                 >
                   <span>{menu.title}</span>
                 </div>

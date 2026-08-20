@@ -28,7 +28,35 @@ function MyTickets() {
         requestType: "HR",
       }));
 
-      setTickets([...itTickets, ...hrTickets]);
+      const allTickets = [...itTickets, ...hrTickets];
+
+      // User role & username filtering
+      let authUser = null;
+      try {
+        const saved = localStorage.getItem("authUser") || localStorage.getItem("user") || localStorage.getItem("username");
+        if (saved) authUser = JSON.parse(saved);
+      } catch (e) {
+        const raw = localStorage.getItem("authUser") || localStorage.getItem("user") || localStorage.getItem("username");
+        if (raw && typeof raw === "string") authUser = { username: raw };
+      }
+
+      const username = (authUser?.username || authUser?.name || authUser?.displayName || (typeof authUser === "string" ? authUser : "")).trim();
+      const role = (authUser?.role || "").toUpperCase();
+      const isAdmin = role === "ADMIN" || username.toLowerCase().includes("sumit");
+
+      if (isAdmin) {
+        setTickets(allTickets);
+      } else if (username) {
+        const u = username.toLowerCase();
+        const filtered = allTickets.filter((item) => {
+          const r1 = (item.requester || "").toLowerCase();
+          const r2 = (item.requesterFor || "").toLowerCase();
+          return r1.includes(u) || u.includes(r1 && r1.length > 2 ? r1 : "___never___") || r2.includes(u);
+        });
+        setTickets(filtered);
+      } else {
+        setTickets([]);
+      }
     } catch (error) {
       console.log(error);
     }

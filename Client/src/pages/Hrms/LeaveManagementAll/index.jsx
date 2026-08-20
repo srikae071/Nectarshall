@@ -78,8 +78,34 @@ function LeaveManagementAll() {
   const fetchLeaves = async () => {
     try {
       const response = await fetchApiData("/api/leaves");
+      const allLeaves = response.data || [];
 
-      setData(response.data);
+      let authUser = null;
+      try {
+        const saved = localStorage.getItem("authUser") || localStorage.getItem("user") || localStorage.getItem("username");
+        if (saved) authUser = JSON.parse(saved);
+      } catch (e) {
+        const raw = localStorage.getItem("authUser") || localStorage.getItem("user") || localStorage.getItem("username");
+        if (raw && typeof raw === "string") authUser = { username: raw };
+      }
+
+      const username = (authUser?.username || authUser?.name || authUser?.displayName || (typeof authUser === "string" ? authUser : "")).trim();
+      const role = (authUser?.role || "").toUpperCase();
+      const isAdmin = role === "ADMIN" || username.toLowerCase().includes("sumit");
+
+      if (isAdmin) {
+        setData(allLeaves);
+      } else if (username) {
+        const u = username.toLowerCase();
+        const userLeaves = allLeaves.filter((item) => {
+          const r1 = (item.requester || item.employeeName || "").trim().toLowerCase();
+          const r2 = (item.requesterFor || "").trim().toLowerCase();
+          return r1.includes(u) || u.includes(r1 && r1.length > 2 ? r1 : "___never___") || r2.includes(u);
+        });
+        setData(userLeaves);
+      } else {
+        setData([]);
+      }
     } catch (error) {
       console.log(error);
     }

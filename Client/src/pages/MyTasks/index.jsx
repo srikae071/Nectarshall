@@ -13,24 +13,66 @@ function ApprovalTable() {
     fetchLeaves();
     fetchOffboarding();
   }, []);
+  const getAuthDetails = () => {
+    let authUser = null;
+    try {
+      const saved = localStorage.getItem("authUser") || localStorage.getItem("user") || localStorage.getItem("username");
+      if (saved) authUser = JSON.parse(saved);
+    } catch (e) {
+      const raw = localStorage.getItem("authUser") || localStorage.getItem("user") || localStorage.getItem("username");
+      if (raw && typeof raw === "string") authUser = { username: raw };
+    }
+    const username = (authUser?.username || authUser?.name || authUser?.displayName || (typeof authUser === "string" ? authUser : "")).trim();
+    const role = (authUser?.role || "").toUpperCase();
+    const isAdmin = role === "ADMIN" || username.toLowerCase().includes("sumit");
+    return { username, isAdmin };
+  };
+
   const fetchOffboarding = async () => {
     try {
       const response = await fetchApiData("/api/jobrequests");
-
-      setOffboardingData(
-        response.data.filter(
-          (item) => item.category === "Offboarding" && item.status === "Open",
-        ),
+      const list = response.data.filter(
+        (item) => item.category === "Offboarding" && item.status === "Open",
       );
+      const { username, isAdmin } = getAuthDetails();
+      if (isAdmin) {
+        setOffboardingData(list);
+      } else if (username) {
+        const u = username.toLowerCase();
+        setOffboardingData(
+          list.filter((item) => {
+            const r1 = (item.requester || item.name || item.employeeName || "").toLowerCase();
+            const r2 = (item.requesterFor || "").toLowerCase();
+            return r1.includes(u) || u.includes(r1 && r1.length > 2 ? r1 : "___never___") || r2.includes(u);
+          })
+        );
+      } else {
+        setOffboardingData([]);
+      }
     } catch (error) {
       console.log(error);
     }
   };
+
   const fetchLeaves = async () => {
     try {
       const response = await fetchApiData("/api/leaves");
-
-      setData(response.data.filter((item) => item.status === "Pending"));
+      const list = response.data.filter((item) => item.status === "Pending");
+      const { username, isAdmin } = getAuthDetails();
+      if (isAdmin) {
+        setData(list);
+      } else if (username) {
+        const u = username.toLowerCase();
+        setData(
+          list.filter((item) => {
+            const r1 = (item.requester || item.employeeName || "").toLowerCase();
+            const r2 = (item.requesterFor || "").toLowerCase();
+            return r1.includes(u) || u.includes(r1 && r1.length > 2 ? r1 : "___never___") || r2.includes(u);
+          })
+        );
+      } else {
+        setData([]);
+      }
     } catch (error) {
       console.log(error);
     }
