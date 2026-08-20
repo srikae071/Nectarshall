@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { fetchApiData } from '../../../utils/apiClient';
 import { FiSearch, FiX, FiMail, FiMapPin, FiUsers, FiUserCheck, FiBriefcase, FiUserPlus, FiMoreHorizontal, FiList, FiGrid, FiChevronDown, FiDownload } from 'react-icons/fi';
 import '../Dashboard/index.css';
@@ -50,10 +50,11 @@ export const EmpDrawer = ({ emp, onClose }) => (
 
 const VendorEmployeeDirectory = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState(null);
   const [deptFilter, setDeptFilter] = useState('All');
-  const [statusFilter, setStatusFilter] = useState('All');
+  const [statusFilter, setStatusFilter] = useState(location.state?.statusFilter || 'All');
   const [locationFilter, setLocationFilter] = useState('All');
   const [dbEmployees, setDbEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -236,6 +237,7 @@ const VendorEmployeeDirectory = () => {
               >
                 <option value="All">All Status</option>
                 <option value="Active">Active</option>
+                <option value="Inactive">In-Active</option>
               </select>
               <FiChevronDown style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#64748b' }} size={16} />
             </div>

@@ -347,7 +347,7 @@ function HrmsLeftLayout({ children }) {
     }));
   };
 
-  const [sidebarWidth, setSidebarWidth] = useState(250);
+  const [sidebarWidth, setSidebarWidth] = useState(180);
 
   const isResizing = useRef(false);
 

@@ -17,7 +17,7 @@ function CncNavbar() {
 
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
         <ThemeSelector />
-        <div className="profile">👤</div>
+        <div className="profile"></div>
       </div>
     </div>
   );

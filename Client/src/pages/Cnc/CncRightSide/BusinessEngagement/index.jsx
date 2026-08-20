@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import BusinessEngagementNavBar from "../../CncRightSide/BusinessEngagementNav";
 import TableLayout2 from "../../../../components/Layouts/TableLayouts/TableLayout2";
 
-import "./index.css";
+import "../../../../styles/SharedFormStyle.css";
 
 function BusinessEngagement() {
   const [formData, setFormData] = useState({
@@ -152,7 +152,7 @@ function BusinessEngagement() {
           <label className="table2-label">Requester</label>
 
           <input
-            className="table2-input"
+            className="table2-input lr-input"
             name="requester"
             value={formData.requester}
             onChange={handleChange}
@@ -163,7 +163,7 @@ function BusinessEngagement() {
           <label className="table2-label">Requested For</label>
 
           <input
-            className="table2-input"
+            className="table2-input lr-input"
             name="requesterFor"
             value={formData.requesterFor}
             onChange={handleChange}
@@ -174,7 +174,7 @@ function BusinessEngagement() {
           <label className="table2-label">Company Name</label>
 
           <input
-            className="table2-input"
+            className="table2-input lr-input"
             name="companyName"
             value={formData.companyName}
             onChange={handleChange}
@@ -185,7 +185,7 @@ function BusinessEngagement() {
           <label className="table2-label">ABN</label>
 
           <input
-            className="table2-input"
+            className="table2-input lr-input"
             name="abn"
             maxLength={11}
             value={formData.abn}
@@ -197,7 +197,7 @@ function BusinessEngagement() {
           <label className="table2-label">ACN</label>
 
           <input
-            className="table2-input"
+            className="table2-input lr-input"
             name="acn"
             value={formData.acn}
             maxLength={9}
@@ -209,7 +209,7 @@ function BusinessEngagement() {
           <label className="table2-label">Company Address</label>
 
           <input
-            className="table2-input"
+            className="table2-input lr-input"
             name="companyAddress"
             value={formData.companyAddress}
             onChange={handleChange}
@@ -220,7 +220,7 @@ function BusinessEngagement() {
           <label className="table2-label">Managing Agent Name</label>
 
           <input
-            className="table2-input"
+            className="table2-input lr-input"
             name="managingAgentName"
             value={formData.managingAgentName}
             onChange={handleChange}
@@ -231,7 +231,7 @@ function BusinessEngagement() {
           <label className="table2-label">Managing Agent Email</label>
 
           <input
-            className="table2-input"
+            className="table2-input lr-input"
             name="managingAgentEmail"
             value={formData.managingAgentEmail}
             onChange={handleChange}
@@ -242,7 +242,7 @@ function BusinessEngagement() {
           <label className="table2-label">Short Description</label>
 
           <textarea
-            className="table2-textarea"
+            className="table2-textarea lr-textarea"
             name="shortDescription"
             value={formData.shortDescription}
             onChange={handleChange}
@@ -253,7 +253,7 @@ function BusinessEngagement() {
           <label className="table2-label">Description</label>
 
           <textarea
-            className="table2-textarea"
+            className="table2-textarea lr-textarea"
             name="description"
             value={formData.description}
             onChange={handleChange}

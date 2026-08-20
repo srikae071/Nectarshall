@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import ResonanceNav from "../ExitNav";
 import "./index.css";
+import "../../../../styles/SharedFormStyle.css";
 
 function Exit() {
   const [formData, setFormData] = useState({
@@ -75,13 +76,6 @@ function Exit() {
       lastWorkingDay,
     }));
   }, []);
-  //   const navigate = useNavigate();
-  //   const handleChange = (e) => {
-  //     setFormData({
-  //       ...formData,
-  //       [e.target.name]: e.target.value,
-  //     });
-  //   };
 
   const handleSave = async () => {
     try {
@@ -108,99 +102,101 @@ function Exit() {
   return (
     <>
       <ResonanceNav />
-      <div className="CreateContainer">
-        <div className="CreateRow">
-          <div className="CreateField">
-            <label>Requester</label>
+      <div className="lr-page">
+        <div className="lr-card">
+          <h2 className="lr-title">Exit</h2>
+          
+          <div className="lr-grid-2">
+            <div className="lr-field">
+              <label className="lr-label">Requester</label>
+              <input
+                className="lr-input"
+                name="requesterName"
+                value={formData.requesterName}
+                onChange={handleChange}
+              />
+            </div>
 
-            <input
-              name="requesterName"
-              value={formData.requesterName}
+            <div className="lr-field">
+              <label className="lr-label">Date of Resignation</label>
+              <input
+                className="lr-input"
+                type="date"
+                name="resignationDate"
+                value={formData.resignationDate}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="lr-field">
+              <label className="lr-label">Last Working Day</label>
+              <input
+                className="lr-input"
+                type="date"
+                name="lastWorkingDay"
+                value={formData.lastWorkingDay}
+                readOnly
+              />
+            </div>
+
+            <div className="lr-field">
+              <label className="lr-label">Resignation Reason</label>
+              <select
+                className="lr-input"
+                name="resignationReason"
+                value={formData.resignationReason}
+                onChange={handleChange}
+              >
+                <option value="">Select Reason</option>
+                <option value="Personal">Personal</option>
+                <option value="Career Growth">Career Growth</option>
+                <option value="Relocation">Relocation</option>
+                <option value="Health">Health</option>
+                <option value="Higher Studies">Higher Studies</option>
+                <option value="Salary">Salary</option>
+                <option value="Work Environment">Work Environment</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="lr-field">
+            <label className="lr-label">Description</label>
+            <textarea
+              className="lr-textarea"
+              name="description"
+              value={formData.description}
               onChange={handleChange}
             />
           </div>
-
-          <div className="CreateField">
-            <label>Date of Resignation</label>
-
-            <input
-              type="date"
-              name="resignationDate"
-              value={formData.resignationDate}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className="CreateField">
-            <label>Last Working Day</label>
-
-            <input
-              type="date"
-              name="lastWorkingDay"
-              value={formData.lastWorkingDay}
-              readOnly
-            />
-          </div>
-        </div>
-
-        <div className="CreateRow">
-          <div className="CreateField">
-            <label>Resignation Reason</label>
-
-            <select
-              name="resignationReason"
-              value={formData.resignationReason}
-              onChange={handleChange}
+          
+          <div className="CreateFooter">
+            <button
+              type="button"
+              className="CreateBtn btn-cancel"
+              onClick={() =>
+                setFormData({
+                  requesterName: "",
+                  department: "",
+                  skillSet: "",
+                  experience: "",
+                  urgency: "",
+                  shortDescription: "",
+                  description: "",
+                })
+              }
             >
-              <option value="">Select Reason</option>
-              <option value="Personal">Personal</option>
-              <option value="Career Growth">Career Growth</option>
-              <option value="Relocation">Relocation</option>
-              <option value="Health">Health</option>
-              <option value="Higher Studies">Higher Studies</option>
-              <option value="Salary">Salary</option>
-              <option value="Work Environment">Work Environment</option>
-              <option value="Other">Other</option>
-            </select>
+              Cancel
+            </button>
+
+            <button type="button" className="CreateBtn btn-save" onClick={handleSave}>
+              Save
+            </button>
+
+            <button type="button" className="CreateBtn btn-submit" onClick={handleSave}>
+              Submit
+            </button>
           </div>
-        </div>
-
-        <div className="CreateTextareaGroup">
-          <label>Description</label>
-
-          <textarea
-            className="CreateTextarea CreateDescriptionTextarea"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="CreateFooter">
-          <button
-            type="button"
-            className="CreateBtn btn-cancel"
-            onClick={() =>
-              setFormData({
-                requesterName: "",
-                department: "",
-                skillSet: "",
-                experience: "",
-                urgency: "",
-                shortDescription: "",
-                description: "",
-              })
-            }
-          >
-            Cancel
-          </button>
-
-          <button type="button" className="CreateBtn btn-save" onClick={handleSave}>
-            Save
-          </button>
-
-          <button type="button" className="CreateBtn btn-submit" onClick={handleSave}>
-            Submit
-          </button>
         </div>
       </div>
     </>

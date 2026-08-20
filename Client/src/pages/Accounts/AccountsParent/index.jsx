@@ -429,7 +429,7 @@ function AccountsParent() {
     <div className="accountsParentContainer">
       <div className="accountsHeader">
         <div>
-          <h2>📋 PayRun Accounts Dashboard (52 Weeks View)</h2>
+          <h2>PayRun Accounts Dashboard (52 Weeks View)</h2>
           <p className="accountsSubtext">
             Click on any worker's name to smoothly expand multi-company shift
             breakdowns, total hours worked, and combined weekly pay
@@ -481,7 +481,7 @@ function AccountsParent() {
 
       <div className="accountsTabButtons">
         <button className="accountsTabBtn active">
-          📋{" "}
+          {" "}
           {weekOptions.find((w) => w.id === selectedWeek)?.label ||
             `Week ${selectedWeek}`}{" "}
           Weekly Wage View ({selectedWeekShifts.length} Shift Placements)

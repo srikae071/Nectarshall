@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import AshrNavBar from "../AshrNavBar";
-import "./index.css";
+import "../../../styles/SharedFormStyle.css";
 import { fetchApiData, sendApiData } from "../../../utils/apiClient";
 
 function AskForHrMainPage() {
@@ -84,169 +84,132 @@ function AskForHrMainPage() {
     <>
       <AshrNavBar />
 
-      <div className="CreateContainer">
-        {/* <h2 className="CreateTitle">Create New Case</h2> */}
+      <div className="lr-page">
+        <div className="lr-card">
+          <h2 className="lr-title">Create New Case</h2>
 
-        {/* ROW 1 */}
-        <div className="CreateRow">
-          <div className="CreateField">
-            <label>Requested</label>
-            <input
-              name="requester"
-              value={formData.requester}
-              onChange={handleChange}
-            />
+          {/* ROW 1 */}
+          <div className="lr-grid-2">
+            <div className="lr-field">
+              <label className="lr-label">Requested</label>
+              <input
+                className="lr-input"
+                name="requester"
+                value={formData.requester}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="lr-field">
+              <label className="lr-label">Requested For</label>
+              <input
+                className="lr-input"
+                name="requesterFor"
+                value={formData.requesterFor}
+                onChange={handleChange}
+              />
+            </div>
           </div>
 
-          <div className="CreateField">
-            <label>Requested For</label>
-            <input
-              name="requesterFor"
-              value={formData.requesterFor}
-              onChange={handleChange}
-            />
+          {/* ROW 2 */}
+          <div className="lr-grid-2">
+            <div className="lr-field">
+              <label className="lr-label">Category</label>
+              <select
+                className="lr-input"
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+              >
+                <option value="">Select</option>
+                <option value="Leave Request">Leave Request</option>
+                <option value="Payroll Query">Payroll Query</option>
+                <option value="Employee Relations">Employee Relations</option>
+              </select>
+            </div>
+            <div className="lr-field">
+              <label className="lr-label">Sub Category</label>
+              <select
+                className="lr-input"
+                name="subCategory"
+                value={formData.subCategory}
+                onChange={handleChange}
+                disabled={!formData.category}
+              >
+                <option value="">Select</option>
+
+                {subCategoryOptions[formData.category]?.map((item, index) => (
+                  <option key={index} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="lr-field">
+              <label className="lr-label">Urgency</label>
+
+              <select
+                className="lr-input"
+                name="urgency"
+                value={formData.urgency}
+                onChange={handleChange}
+              >
+                <option value="">Select</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+              </select>
+            </div>
           </div>
 
-          {/* <div className="CreateField">
-          <label>Department</label>
-          <select>
-            <option>IT</option>
-          </select>
-        </div> */}
-        </div>
-
-        {/* ROW 2 */}
-        <div className="CreateRow">
-          <div className="CreateField">
-            <label>Category</label>
-            <select
-              name="category"
-              value={formData.category}
+          {/* TEXTAREAS */}
+          <div className="lr-field">
+            <label className="lr-label">Short Description</label>
+            <textarea
+              className="lr-textarea"
+              name="shortDescription"
+              value={formData.shortDescription}
               onChange={handleChange}
+            ></textarea>
+          </div>
+
+          <div className="lr-field">
+            <label className="lr-label">Description</label>
+            <textarea
+              className="lr-textarea"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+            ></textarea>
+          </div>
+
+          {/* BUTTONS */}
+          <div className="lr-actions">
+            <button
+              type="button"
+              className="lr-btn-cancel"
+              onClick={() =>
+                setFormData({
+                  requesterName: "",
+                  category: "",
+                  urgency: "",
+                  shortDescription: "",
+                  description: "",
+                })
+              }
             >
-              <option value="">Select</option>
-              <option value="Leave Request">Leave Request</option>
-              <option value="Payroll Query">Payroll Query</option>
-              <option value="Employee Relations">Employee Relations</option>
-            </select>
-            {/* <select>
-            <option>Status</option>
-          </select> */}
+              Cancel
+            </button>
+
+            <button type="button" className="lr-btn-submit" onClick={handleSave}>
+              Save
+            </button>
+
+            <button type="button" className="lr-btn-submit" onClick={handleSave}>
+              Submit
+            </button>
           </div>
-          <div className="CreateField">
-            <label>Sub Category</label>
-            <select
-              name="subCategory"
-              value={formData.subCategory}
-              onChange={handleChange}
-              disabled={!formData.category}
-            >
-              <option value="">Select</option>
-
-              {subCategoryOptions[formData.category]?.map((item, index) => (
-                <option key={index} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
-            {/* <select>
-            <option>Pending</option>
-          </select> */}
-          </div>
-
-          <div className="CreateField">
-            <label>Urgency</label>
-
-            <select
-              name="urgency"
-              value={formData.urgency}
-              onChange={handleChange}
-            >
-              <option value="">Select</option>
-              <option value="High">High</option>
-              <option value="Medium">Medium</option>
-              <option value="Low">Low</option>
-            </select>
-          </div>
-        </div>
-
-        {/* ROW 3 */}
-        {/* <div className="CreateRow">
-        <div className="CreateField">
-          <label>Assignment Group</label>
-          <input />
-        </div>
-
-        <div className="CreateField">
-          <label>Assign To</label>
-          <input />
-        </div>
-
-        <div className="CreateField">
-          <label>Impact</label>
-          <input />
-        </div>
-      </div> */}
-
-        {/* ROW 4 */}
-        {/* <div className="CreateRow">
-        <div className="CreateField">
-          <label>Urgency</label>
-          <input />
-        </div>
-
-        <div className="CreateField">
-          <label>Priority</label>
-          <input />
-        </div>
-      </div> */}
-
-        {/* TEXTAREAS */}
-        <div className="CreateTextareaGroup">
-          <label>Short Description</label>
-          <textarea
-            className="CreateTextarea shortTextarea"
-            name="shortDescription"
-            value={formData.shortDescription}
-            onChange={handleChange}
-          ></textarea>
-        </div>
-
-        <div className="CreateTextareaGroup">
-          <label>Description</label>
-          <textarea
-            className="CreateTextarea"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-          ></textarea>
-        </div>
-
-        {/* BUTTONS */}
-        <div className="CreateFooter">
-          <button
-            type="button"
-            className="CreateBtn btn-cancel"
-            onClick={() =>
-              setFormData({
-                requesterName: "",
-                category: "",
-                urgency: "",
-                shortDescription: "",
-                description: "",
-              })
-            }
-          >
-            Cancel
-          </button>
-
-          <button type="button" className="CreateBtn btn-save" onClick={handleSave}>
-            Save
-          </button>
-
-          <button type="button" className="CreateBtn btn-submit" onClick={handleSave}>
-            Submit
-          </button>
         </div>
       </div>
     </>

@@ -46,7 +46,7 @@ function AllEmployees() {
       <div className="allEmployeesContainer">
         <div className="allEmployeesHeader">
           <div>
-            <h2>All Employees Directory</h2>
+            <h2>Employee Management</h2>
             <p className="allEmployeesSub">
               Click anywhere on a line to view employee profile details
             </p>

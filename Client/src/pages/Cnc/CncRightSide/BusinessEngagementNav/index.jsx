@@ -14,7 +14,7 @@ function BusinessEngagementNavBar() {
         </div>
       </div>
 
-      <div className="profile">👤</div>
+      <div className="profile"></div>
     </div>
   );
 }

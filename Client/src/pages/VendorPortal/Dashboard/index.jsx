@@ -164,7 +164,7 @@ const VendorPortalDashboard = () => {
         {[
           { icon: FiMessageSquare, label: 'Case Management', sub: 'View & manage cases', path: '/vendor-portal/cases', color: '#3b82f6' },
           { icon: FiCalendar, label: 'Leave Management', sub: 'Manage leave requests', path: '/vendor-portal/leave', color: '#10b981' },
-          { icon: FiUsers, label: 'Employee Directory', sub: 'Employee profiles list', path: '/vendor-portal/employees', color: '#8b5cf6' },
+          { icon: FiUsers, label: 'Employee Management', sub: 'Employee profiles list', path: '/vendor-portal/employees', color: '#8b5cf6' },
           { icon: FiBriefcase, label: 'Training & Dev', sub: 'Explore training programs', path: '/vendor-portal/training', color: '#f59e0b' },
         ].map(({ icon: Icon, label, sub, path, color }) => (
           <div
@@ -236,11 +236,11 @@ const VendorPortalDashboard = () => {
         </div>
       </div>
 
-      {/* Employee Directory Section in Dashboard */}
+      {/* Employee Management Section in Dashboard */}
       <div className="vendor-section-card" style={{ marginBottom: 24, padding: 24, borderRadius: 12, border: '1px solid #e2e8f0', background: '#fff' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <div>
-            <h2 className="vendor-section-title" style={{ fontSize: 18, color: '#0f172a', fontWeight: 700, margin: 0 }}>Employee Directory</h2>
+            <h2 className="vendor-section-title" style={{ fontSize: 18, color: '#0f172a', fontWeight: 700, margin: 0 }}>Employee Management</h2>
             <p style={{ fontSize: 13, color: '#64748b', margin: '4px 0 0 0' }}>Sourced directly from Employee database</p>
           </div>
           
@@ -388,6 +388,7 @@ const VendorPortalDashboard = () => {
                 style={{ cursor: 'pointer', transition: 'stroke-width 0.2s' }}
                 onMouseEnter={() => setEmpHovered('active')}
                 onMouseOver={() => setEmpHovered('active')}
+                onClick={() => navigate('/vendor-portal/employees', { state: { statusFilter: 'Active' } })}
               />
               <circle 
                 cx="100" 
@@ -399,6 +400,7 @@ const VendorPortalDashboard = () => {
                 style={{ cursor: 'pointer', transition: 'stroke-width 0.2s' }}
                 onMouseEnter={() => setEmpHovered('inactive')}
                 onMouseOver={() => setEmpHovered('inactive')}
+                onClick={() => navigate('/vendor-portal/employees', { state: { statusFilter: 'Inactive' } })}
               />
               <text x="100" y="95" textAnchor="middle" fill="#64748b" fontSize="13" fontWeight="600" fontFamily="inherit">
                 {empHovered === 'active' ? 'Active' : 'In-Active'}

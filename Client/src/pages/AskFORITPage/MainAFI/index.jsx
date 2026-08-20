@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import AskForItNavBar from "../AskForItNavBar";
 import "./index.css";
+import "../../../styles/SharedFormStyle.css";
 
 import { fetchApiData, sendApiData } from "../../../utils/apiClient";
 
@@ -93,145 +94,134 @@ function MainAFI() {
     <>
       <AskForItNavBar />
 
-      <div className="CreateContainer">
-        {/* ROW 1 */}
-        <div className="CreateRow">
-          <div className="CreateField">
-            <label>Requester</label>
-            <input
-              name="requester"
-              value={formData.requester}
+      <div className="lr-page">
+        <div className="lr-card">
+          <h2 className="lr-title">Ask For IT</h2>
+
+          {/* ROW 1 */}
+          <div className="lr-grid-2">
+            <div className="lr-field">
+              <label className="lr-label">Requester</label>
+              <input
+                className="lr-input"
+                name="requester"
+                value={formData.requester}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="lr-field">
+              <label className="lr-label">Requester For</label>
+              <input
+                className="lr-input"
+                name="requesterFor"
+                value={formData.requesterFor}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
+          {/* ROW 2 */}
+          <div className="lr-grid-2">
+            <div className="lr-field">
+              <label className="lr-label">Category</label>
+              <select
+                className="lr-input"
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+              >
+                <option value="">Select</option>
+                <option value="Network">Network</option>
+                <option value="Application">Application</option>
+                <option value="Desk Side Support">Desk Side Support</option>
+              </select>
+            </div>
+
+            <div className="lr-field">
+              <label className="lr-label">Sub Category</label>
+              <select
+                className="lr-input"
+                name="subCategory"
+                value={formData.subCategory}
+                onChange={handleChange}
+                disabled={!formData.category}
+              >
+                <option value="">Select</option>
+                {subCategoryOptions[formData.category]?.map((item, index) => (
+                  <option key={index} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="lr-field">
+              <label className="lr-label">Urgency</label>
+              <select
+                className="lr-input"
+                name="urgency"
+                value={formData.urgency}
+                onChange={handleChange}
+              >
+                <option value="">Select</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+              </select>
+            </div>
+          </div>
+
+          {/* SHORT DESCRIPTION */}
+          <div className="lr-field">
+            <label className="lr-label">Short Description</label>
+            <textarea
+              className="lr-textarea"
+              name="shortDescription"
+              value={formData.shortDescription}
               onChange={handleChange}
             />
           </div>
 
-          <div className="CreateField">
-            <label>Requester For</label>
-            <input
-              name="requesterFor"
-              value={formData.requesterFor}
+          {/* DESCRIPTION */}
+          <div className="lr-field">
+            <label className="lr-label">Description</label>
+            <textarea
+              className="lr-textarea"
+              name="description"
+              value={formData.description}
               onChange={handleChange}
+              placeholder="Enter detailed description..."
             />
           </div>
-        </div>
 
-        {/* ROW 2 */}
-        <div className="CreateRow">
-          <div className="CreateField">
-            <label>Category</label>
-
-            <select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
+          {/* BUTTONS */}
+          <div className="CreateFooter">
+            <button
+              type="button"
+              className="CreateBtn btn-cancel"
+              onClick={() =>
+                setFormData({
+                  requesterName: "",
+                  category: "",
+                  subCategory: "",
+                  urgency: "",
+                  shortDescription: "",
+                  description: "",
+                })
+              }
             >
-              <option value="">Select</option>
-              <option value="Network">Network</option>
-              <option value="Application">Application</option>
-              <option value="Desk Side Support">Desk Side Support</option>
-            </select>
+              Cancel
+            </button>
+
+            <button type="button" className="CreateBtn btn-save" onClick={handleSave}>
+              Save
+            </button>
+
+            <button type="button" className="CreateBtn btn-submit" onClick={handleSave}>
+              Submit
+            </button>
           </div>
-
-          <div className="CreateField">
-            <label>Sub Category</label>
-
-            <select
-              name="subCategory"
-              value={formData.subCategory}
-              onChange={handleChange}
-              disabled={!formData.category}
-            >
-              <option value="">Select</option>
-
-              {subCategoryOptions[formData.category]?.map((item, index) => (
-                <option key={index} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="CreateField">
-            <label>Urgency</label>
-
-            <select
-              name="urgency"
-              value={formData.urgency}
-              onChange={handleChange}
-            >
-              <option value="">Select</option>
-              <option value="High">High</option>
-              <option value="Medium">Medium</option>
-              <option value="Low">Low</option>
-            </select>
-          </div>
-        </div>
-
-        {/* SHORT DESCRIPTION */}
-        <div className="CreateTextareaGroup">
-          <label>Short Description</label>
-
-          <textarea
-            className="CreateTextarea shortTextarea"
-            name="shortDescription"
-            value={formData.shortDescription}
-            onChange={handleChange}
-          />
-        </div>
-
-        {/* DESCRIPTION */}
-        {/* DESCRIPTION */}
-        <div className="CreateTextareaGroup">
-          <label>Description</label>
-
-          <textarea
-            className="CreateTextarea CreateDescriptionTextarea"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            placeholder="Enter detailed description..."
-          />
-        </div>
-
-        {/* WORK NOTES */}
-        {/* <div className="CreateTextareaGroup">
-          <label>Work Notes</label>
-
-          <textarea
-            className="CreateTextarea CreateWorkNotesTextarea"
-            name="workNotes"
-            value={formData.workNotes || ""}
-            onChange={handleChange}
-            placeholder="Add work notes..."
-          />
-        </div> */}
-
-        {/* BUTTONS */}
-        <div className="CreateFooter">
-          <button
-            type="button"
-            className="CreateBtn btn-cancel"
-            onClick={() =>
-              setFormData({
-                requesterName: "",
-                category: "",
-                subCategory: "",
-                urgency: "",
-                shortDescription: "",
-                description: "",
-              })
-            }
-          >
-            Cancel
-          </button>
-
-          <button type="button" className="CreateBtn btn-save" onClick={handleSave}>
-            Save
-          </button>
-
-          <button type="button" className="CreateBtn btn-submit" onClick={handleSave}>
-            Submit
-          </button>
         </div>
       </div>
     </>
@@ -239,3 +229,4 @@ function MainAFI() {
 }
 
 export default MainAFI;
+

@@ -1,6 +1,6 @@
 // import "../LeaveBalance/LeaveBalance.css";
 import PayrolLayout from "../PayrollLayout";
-
+import "../../../styles/SharedFormStyle.css";
 import "./index.css";
 
 const Payroll = () => {
@@ -23,27 +23,34 @@ const Payroll = () => {
 
   return (
     <PayrolLayout>
-      <div className="page-container">
-        <div className="card">
-          <h2 className="title">Salary Slip</h2>
+      <div className="lr-page">
+        <div className="lr-card">
+          <h2 className="lr-title">Salary Slip</h2>
+
+          <div className="lr-grid-2">
+            <div className="lr-field">
+              <label className="lr-label">Month</label>
+              <select className="lr-input">
+                <option>Select Month</option>
+                {months.map((month, index) => (
+                  <option key={index}>{month}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="lr-field">
+              <label className="lr-label">Year</label>
+              <select className="lr-input">
+                <option>Year</option>
+                {years.map((year, index) => (
+                  <option key={index}>{year}</option>
+                ))}
+              </select>
+            </div>
+          </div>
 
           <div className="controls">
-            <select className="dropdown">
-              <option>Select Month</option>
-              {months.map((month, index) => (
-                <option key={index}>{month}</option>
-              ))}
-            </select>
-
-            <select className="dropdown">
-              <option>Year</option>
-              {years.map((year, index) => (
-                <option key={index}>{year}</option>
-              ))}
-            </select>
-
             <button className="btn view-btn">View</button>
-
             <button className="btn download-btn">Download</button>
           </div>
         </div>

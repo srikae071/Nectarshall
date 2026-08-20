@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { fetchApiData, sendApiData } from "../../../utils/apiClient";
 import HrmsLeftLayout from "../../Hrms/Hrmsleftlayout";
 import axios from "axios";
-import "./index.css";
+import "../../../styles/SharedFormStyle.css";
 
 function EmployeRequestSave() {
   const [showFullForm, setShowFullForm] = useState(false);
@@ -426,11 +426,10 @@ function EmployeRequestSave() {
 
   return (
     <HrmsLeftLayout>
-      <div className="CreateContainer">
-        {/* ... */}
+      <div className="lr-page">
         <div className="SectionCard">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
-            <h3 style={{ margin: 0 }}>1. Preliminary Information</h3>
+            <h2 style={{ margin: 0 }}>1. Preliminary Information</h2>
             <button
               type="button"
               onClick={handleAddCandidate}
@@ -449,18 +448,18 @@ function EmployeRequestSave() {
             </button>
           </div>
 
-          <div className="CreateRow">
-            <div className="CreateField">
-              <label>Case Id *</label>
-              <input name="CaseId" value={formData.caseId} readOnly />
+          <div className="lr-grid-2">
+            <div className="lr-field">
+              <label className="lr-label">Case Id *</label>
+              <input className="lr-input" name="CaseId" value={formData.caseId} readOnly />
             </div>
-            <div className="CreateField">
-              <label>Requester Name</label>
-              <input value={formData.requesterName} readOnly />
+            <div className="lr-field">
+              <label className="lr-label">Requester Name</label>
+              <input className="lr-input" value={formData.requesterName} readOnly />
             </div>
 
-            <div className="CreateField">
-              <label>Department</label>
+            <div className="lr-field">
+              <label className="lr-label">Department</label>
               <input
                 name="department"
                 value={formData.department}
@@ -471,9 +470,9 @@ function EmployeRequestSave() {
             </div>
           </div>
 
-          <div className="CreateRow">
-            <div className="CreateField">
-              <label>SkillSet *</label>
+          <div className="lr-grid-2">
+            <div className="lr-field">
+              <label className="lr-label">SkillSet *</label>
               <input
                 name="Slillset"
                 value={formData.skillSet}
@@ -481,16 +480,16 @@ function EmployeRequestSave() {
               />
             </div>
 
-            <div className="CreateField">
-              <label>Urgency*</label>
+            <div className="lr-field">
+              <label className="lr-label">Urgency*</label>
               <input
                 name="Urgency"
                 value={formData.urgency}
                 onChange={handleChange}
               />
             </div>
-            <div className="CreateField">
-              <label>First Name*</label>
+            <div className="lr-field">
+              <label className="lr-label">First Name*</label>
               <input
                 name="firstName"
                 value={formData.firstName}
@@ -498,9 +497,9 @@ function EmployeRequestSave() {
               />
             </div>
           </div>
-          <div className="CreateRow">
-            <div className="CreateField">
-              <label>Last Name *</label>
+          <div className="lr-grid-2">
+            <div className="lr-field">
+              <label className="lr-label">Last Name *</label>
               <input
                 name="lastName"
                 value={formData.lastName}
@@ -508,16 +507,16 @@ function EmployeRequestSave() {
               />
             </div>
 
-            <div className="CreateField">
-              <label>Preferd Name*</label>
+            <div className="lr-field">
+              <label className="lr-label">Preferd Name*</label>
               <input
                 name="preferredName"
                 value={formData.preferredName}
                 onChange={handleChange}
               />
             </div>
-            <div className="CreateField">
-              <label>Primary Email *</label>
+            <div className="lr-field">
+              <label className="lr-label">Primary Email *</label>
               <input
                 name="email"
                 value={formData.email}
@@ -525,9 +524,9 @@ function EmployeRequestSave() {
               />
             </div>
           </div>
-          <div className="CreateRow">
-            <div className="CreateField">
-              <label>Contact Number *</label>
+          <div className="lr-grid-2">
+            <div className="lr-field">
+              <label className="lr-label">Contact Number *</label>
               <input
                 name="contactNumber"
                 value={formData.contactNumber}
@@ -535,14 +534,14 @@ function EmployeRequestSave() {
               />
             </div>
 
-            <div className="CreateField">
-              <label>Status *</label>
+            <div className="lr-field">
+              <label className="lr-label">Status *</label>
 
               <select
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
-                className="EmployeeSaveStatusDropdown"
+                className="EmployeeSaveStatusDropdown lr-input"
               >
                 <option value="">Select Status</option>
                 <option value="Open">Open</option>
@@ -581,7 +580,7 @@ function EmployeRequestSave() {
                   }}
                 >
                   <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155", whiteSpace: "nowrap" }}>Candidate ID</label>
+                    <label className="lr-label" style={{ fontSize: "12px", fontWeight: "700", color: "#334155", whiteSpace: "nowrap" }}>Candidate ID</label>
                     <input
                       value={cand.candidateId || `CND-${String(candIdx + 1).padStart(3, "0")}`}
                       readOnly
@@ -601,7 +600,7 @@ function EmployeRequestSave() {
                   </div>
 
                   <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155", whiteSpace: "nowrap" }}>Employee Name *</label>
+                    <label className="lr-label" style={{ fontSize: "12px", fontWeight: "700", color: "#334155", whiteSpace: "nowrap" }}>Employee Name *</label>
                     <input
                       value={cand.name || ""}
                       onChange={(e) => handleCandidateChange(candIdx, "name", e.target.value)}
@@ -621,7 +620,7 @@ function EmployeRequestSave() {
                   </div>
 
                   <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155", whiteSpace: "nowrap" }}>Employee Email ID *</label>
+                    <label className="lr-label" style={{ fontSize: "12px", fontWeight: "700", color: "#334155", whiteSpace: "nowrap" }}>Employee Email ID *</label>
                     <input
                       type="email"
                       value={cand.email || ""}
@@ -669,24 +668,24 @@ function EmployeRequestSave() {
             </div>
           )}
           <div className="EmployeeSaveNotesContainer">
-            <label>Short Description</label>
+            <label className="lr-label">Short Description</label>
 
             <textarea
               name="employeeShortDescription"
               value={formData.shortDescription || ""}
               onChange={handleChange}
-              className="EmployeeSaveShortDescriptionBox"
+              className="EmployeeSaveShortDescriptionBox lr-textarea"
             />
           </div>
 
           <div className="EmployeeSaveNotesContainer">
-            <label>Description</label>
+            <label className="lr-label">Description</label>
 
             <textarea
               name="employeeDescription"
               value={formData.description || ""}
               onChange={handleChange}
-              className="EmployeeSaveDescriptionBox"
+              className="EmployeeSaveDescriptionBox lr-textarea"
               placeholder="Enter detailed description..."
             />
           </div>
@@ -789,11 +788,11 @@ function EmployeRequestSave() {
             ) : (
               <>
             <div className="SectionCard">
-              <h3>2. Barriers To Employment (Self Declaration) - {currentCand.candidateId || "CND-001"} ({currentCand.name || "Candidate"})</h3>
+              <h2 className="lr-title">2. Barriers To Employment (Self Declaration) - {currentCand.candidateId || "CND-001"} ({currentCand.name || "Candidate"})</h2>
 
               {/* Modern Slavery */}
               <div className="BarrierRow">
-                <label>Modern Slavery *</label>
+                <label className="lr-label">Modern Slavery *</label>
 
                 {/* Candidate Answer */}
                 <span
@@ -837,7 +836,7 @@ function EmployeRequestSave() {
 
               {/* Legal Barrier */}
               <div className="BarrierRow">
-                <label>Legal Barrier *</label>
+                <label className="lr-label">Legal Barrier *</label>
 
                 {/* Candidate Answer */}
                 <span
@@ -881,7 +880,7 @@ function EmployeRequestSave() {
 
               {/* Medical Limitations */}
               <div className="BarrierRow">
-                <label>Medical Limitations *</label>
+                <label className="lr-label">Medical Limitations *</label>
 
                 {/* Candidate Answer */}
                 <span
@@ -925,7 +924,7 @@ function EmployeRequestSave() {
 
               {/* Work Rights */}
               <div className="BarrierRow">
-                <label>Work Rights *</label>
+                <label className="lr-label">Work Rights *</label>
 
                 {/* Candidate Answer */}
                 <span
@@ -968,7 +967,7 @@ function EmployeRequestSave() {
               </div>
             </div>            
             <div className="SectionCard">
-              <h3>3. Qualifications & Licences - {currentCand.candidateId || "CND-001"}</h3>
+              <h2 className="lr-title">3. Qualifications & Licences - {currentCand.candidateId || "CND-001"}</h2>
 
               {/* Security Licence */}
               <div className="QualificationCard">
@@ -1456,10 +1455,10 @@ function EmployeRequestSave() {
 
             {showReferenceSection && (
               <div className="SectionCard">
-                <h3>4. References</h3>
+                <h2 className="lr-title">4. References</h2>
 
                 <div className="BarrierRow">
-                  <label>Interview *</label>
+                  <label className="lr-label">Interview *</label>
 
                   <div className="ToggleGroup">
                     <button
@@ -1502,10 +1501,10 @@ function EmployeRequestSave() {
 
             {/* 5. OFFER LETTER SECTION */}
             <div className="SectionCard">
-              <h3>5. Offer Letter <span style={{ fontSize: "11px", background: "#ef4444", color: "#ffffff", padding: "2px 8px", borderRadius: "10px", marginLeft: "8px" }}>MUST HAVE</span></h3>
+              <h2 className="lr-title">5. Offer Letter <span style={{ fontSize: "11px", background: "#ef4444", color: "#ffffff", padding: "2px 8px", borderRadius: "10px", marginLeft: "8px" }}>MUST HAVE</span></h2>
 
               <div className="BarrierRow" style={{ marginBottom: "14px" }}>
-                <label style={{ fontWeight: "700" }}>Letter of Offer *</label>
+                <label className="lr-label" style={{ fontWeight: "700" }}>Letter of Offer *</label>
                 <div className="ToggleGroup">
                   <button
                     type="button"
@@ -1536,7 +1535,7 @@ function EmployeRequestSave() {
 
               <div className="OfferRow">
                 <div className="OfferField">
-                  <label style={{ fontWeight: "700" }}>Role Type *</label>
+                  <label className="lr-label" style={{ fontWeight: "700" }}>Role Type *</label>
                   <select
                     value={currentCand.roleType || formData.roleType || "FT"}
                     onChange={(e) => handleCandDecision("roleType", e.target.value)}
@@ -1553,11 +1552,11 @@ function EmployeRequestSave() {
 
             {/* 6. FINANCIAL & TAX INFORMATION */}
             <div className="SectionCard">
-              <h3>6. Financial & Tax Information <span style={{ fontSize: "11px", background: "#ef4444", color: "#ffffff", padding: "2px 8px", borderRadius: "10px", marginLeft: "8px" }}>MUST HAVE</span></h3>
+              <h2 className="lr-title">6. Financial & Tax Information <span style={{ fontSize: "11px", background: "#ef4444", color: "#ffffff", padding: "2px 8px", borderRadius: "10px", marginLeft: "8px" }}>MUST HAVE</span></h2>
 
               <div className="OfferRow">
                 <div className="OfferField">
-                  <label style={{ fontWeight: "700" }}>Bank Name *</label>
+                  <label className="lr-label" style={{ fontWeight: "700" }}>Bank Name *</label>
                   <input
                     type="text"
                     placeholder="e.g. Commonwealth Bank / ANZ"
@@ -1566,7 +1565,7 @@ function EmployeRequestSave() {
                   />
                 </div>
                 <div className="OfferField">
-                  <label style={{ fontWeight: "700" }}>Bank Account Name *</label>
+                  <label className="lr-label" style={{ fontWeight: "700" }}>Bank Account Name *</label>
                   <input
                     type="text"
                     placeholder="Account Holder Name"
@@ -1578,7 +1577,7 @@ function EmployeRequestSave() {
 
               <div className="OfferRow">
                 <div className="OfferField">
-                  <label style={{ fontWeight: "700" }}>BSB *</label>
+                  <label className="lr-label" style={{ fontWeight: "700" }}>BSB *</label>
                   <input
                     type="text"
                     placeholder="6-digit BSB (e.g. 063-000)"
@@ -1587,7 +1586,7 @@ function EmployeRequestSave() {
                   />
                 </div>
                 <div className="OfferField">
-                  <label style={{ fontWeight: "700" }}>Account Number *</label>
+                  <label className="lr-label" style={{ fontWeight: "700" }}>Account Number *</label>
                   <input
                     type="text"
                     placeholder="Account Number"
@@ -1599,7 +1598,7 @@ function EmployeRequestSave() {
 
               <div className="OfferRow">
                 <div className="OfferField">
-                  <label style={{ fontWeight: "700" }}>Tax File Number (TFN) *</label>
+                  <label className="lr-label" style={{ fontWeight: "700" }}>Tax File Number (TFN) *</label>
                   <input
                     type="text"
                     placeholder="9-digit TFN"
@@ -1611,7 +1610,7 @@ function EmployeRequestSave() {
 
               <div className="OfferRow">
                 <div className="OfferField">
-                  <label style={{ fontWeight: "700" }}>Superannuation Fund Name *</label>
+                  <label className="lr-label" style={{ fontWeight: "700" }}>Superannuation Fund Name *</label>
                   <input
                     type="text"
                     placeholder="Super Fund Name"
@@ -1620,7 +1619,7 @@ function EmployeRequestSave() {
                   />
                 </div>
                 <div className="OfferField">
-                  <label style={{ fontWeight: "700" }}>Super Member Number *</label>
+                  <label className="lr-label" style={{ fontWeight: "700" }}>Super Member Number *</label>
                   <input
                     type="text"
                     placeholder="Member Number"
@@ -1632,7 +1631,7 @@ function EmployeRequestSave() {
 
               <div className="OfferRow">
                 <div className="OfferField">
-                  <label style={{ fontWeight: "600" }}>Long Service Leave ID (Optional)</label>
+                  <label className="lr-label" style={{ fontWeight: "600" }}>Long Service Leave ID (Optional)</label>
                   <input
                     type="text"
                     placeholder="LSL ID Number (Select/Optional)"
@@ -1661,7 +1660,7 @@ function EmployeRequestSave() {
             </div>
           </>
         )}
-      </div>
+        </div>
     </HrmsLeftLayout>
   );
 }
