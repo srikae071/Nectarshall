@@ -42,9 +42,9 @@ const Payroll = () => {
               ))}
             </select>
 
-            <button className="btn view-btn">📄 View</button>
+            <button className="btn view-btn">View</button>
 
-            <button className="btn download-btn">⬇ Download</button>
+            <button className="btn download-btn">Download</button>
           </div>
         </div>
 

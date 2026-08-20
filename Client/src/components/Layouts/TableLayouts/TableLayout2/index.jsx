@@ -15,7 +15,7 @@ function TableLayout2({
 
         <div className="table2-actions">
           <label className="table2-attachment-btn">
-            📎 Choose Attachment
+            Choose Attachment
             <input type="file" hidden onChange={onAttachment} />
           </label>
 

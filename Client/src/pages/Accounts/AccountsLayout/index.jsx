@@ -30,16 +30,16 @@ function AccountsLayout({ children }) {
     {
       key: "employee",
       label: "Employee",
-      icon: "👤",
+      icon: "",
       children: [
         {
           label: "PayRun",
-          icon: "📋",
+          icon: "",
           path: "/accounts/payrun",
         },
         {
           label: "Rate Card",
-          icon: "🏷️",
+          icon: "",
           path: "/accounts/employee-rate-card",
         },
       ],
@@ -47,16 +47,16 @@ function AccountsLayout({ children }) {
     {
       key: "customer",
       label: "Customer",
-      icon: "🏢",
+      icon: "",
       children: [
         {
           label: "Customer Billing",
-          icon: "💳",
+          icon: "",
           path: "/accounts/customer-billing",
         },
         {
           label: "Rate Card",
-          icon: "🏷️",
+          icon: "",
           path: "/accounts/customer-rate-card",
         },
       ],
@@ -73,7 +73,7 @@ function AccountsLayout({ children }) {
     // },
     {
       label: "Onboarding Candidates",
-      icon: "👥",
+      icon: "",
       path: "/accounts/onboarding-candidates",
     },
   ];

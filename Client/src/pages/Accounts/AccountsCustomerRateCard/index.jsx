@@ -73,7 +73,7 @@ function AccountsCustomerRateCard() {
     <div className="rateCardContainer">
       <div className="rateCardHeader">
         <div>
-          <h2>💳 Customer Billing Rate Card (GL1, GL2, GL3)</h2>
+          <h2>Customer Billing Rate Card (GL1, GL2, GL3)</h2>
           <p className="rateCardSubtext">
             Configure customer billing rates, weekly rates, meal break rates, and public holiday billing rates for GL1, GL2, and GL3 service placements.
           </p>
@@ -84,7 +84,7 @@ function AccountsCustomerRateCard() {
             ↺ Reset Defaults
           </button>
           <button className="saveRateCardBtn" onClick={handleSave}>
-            💾 Save Customer Rate Card
+            Save Customer Rate Card
           </button>
         </div>
       </div>

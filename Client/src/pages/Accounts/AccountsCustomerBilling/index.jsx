@@ -298,9 +298,9 @@ function AccountsCustomerBilling() {
     <div className="accountsParentContainer">
       <div className="accountsHeader">
         <div>
-          <h2>💳 Customer Billing Dashboard</h2>
+          <h2>Customer Billing Dashboard</h2>
           <p className="accountsSubtext">
-            Filter accepted roster shifts and adhoc billing records by Customer, Site Name, and Employee Name. Use ⚙️ Column Settings to select visible columns.
+            Filter accepted roster shifts and adhoc billing records by Customer, Site Name, and Employee Name. Use Column Settings to select visible columns.
           </p>
         </div>
 
@@ -408,7 +408,7 @@ function AccountsCustomerBilling() {
         {/* Select Customer */}
         <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
           <label style={{ fontSize: "12px", fontWeight: "700", color: "#475569" }}>
-            🏢 Customer Name:
+            Customer Name:
           </label>
           <select
             className="accountsSearchInput"
@@ -431,7 +431,7 @@ function AccountsCustomerBilling() {
         {/* Select Site Name */}
         <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
           <label style={{ fontSize: "12px", fontWeight: "700", color: "#475569" }}>
-            📍 Site Name:
+            Site Name:
           </label>
           <select
             className="accountsSearchInput"
@@ -451,7 +451,7 @@ function AccountsCustomerBilling() {
         {/* Select Employee Name */}
         <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
           <label style={{ fontSize: "12px", fontWeight: "700", color: "#475569" }}>
-            👤 Employee Name:
+            Employee Name:
           </label>
           <select
             className="accountsSearchInput"
@@ -500,25 +500,25 @@ function AccountsCustomerBilling() {
           className={`accountsTabBtn ${activeSubTab === "all" ? "active" : ""}`}
           onClick={() => setActiveSubTab("all")}
         >
-          📋 All Billing Items ({allBillingRecords.length})
+          All Billing Items ({allBillingRecords.length})
         </button>
         <button
           className={`accountsTabBtn ${activeSubTab === "roster" ? "active" : ""}`}
           onClick={() => setActiveSubTab("roster")}
         >
-          📅 Roster Shifts ({allBillingRecords.filter((r) => r.type === "roster").length})
+          Roster Shifts ({allBillingRecords.filter((r) => r.type === "roster").length})
         </button>
         <button
           className={`accountsTabBtn ${activeSubTab === "adhoc" ? "active" : ""}`}
           onClick={() => setActiveSubTab("adhoc")}
         >
-          ⚡ Adhoc Services ({allBillingRecords.filter((r) => r.type === "adhoc").length})
+          Adhoc Services ({allBillingRecords.filter((r) => r.type === "adhoc").length})
         </button>
       </div>
 
       {/* BILLING DATA TABLE */}
       {loading ? (
-        <div className="accountsLoading">⌛ Loading Customer Billing Records...</div>
+        <div className="accountsLoading">Loading Customer Billing Records...</div>
       ) : (
         <div className="accountsTableWrapper">
           <table className="accountsTable" style={{ width: "100%", tableLayout: "fixed", borderCollapse: "collapse" }}>

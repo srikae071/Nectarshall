@@ -55,7 +55,6 @@ function HomeLeaveBalance() {
           
           <div className="lr-section">
             <div className="lr-section-header">
-              <span className="lr-icon">📊</span>
               <span className="lr-section-title">BALANCE DETAILS</span>
             </div>
             

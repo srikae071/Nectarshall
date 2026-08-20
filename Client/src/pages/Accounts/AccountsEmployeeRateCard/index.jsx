@@ -73,7 +73,7 @@ function AccountsEmployeeRateCard() {
     <div className="rateCardContainer">
       <div className="rateCardHeader">
         <div>
-          <h2>🏷️ Employee Rate Card (GL1, GL2, GL3)</h2>
+          <h2>Employee Rate Card (GL1, GL2, GL3)</h2>
           <p className="rateCardSubtext">
             Configure employee hourly rates, weekly rates, meal break rates, and public holiday rates for GL1, GL2, and GL3 positions. Rates dynamically sync with PayRun wage calculations.
           </p>
@@ -84,7 +84,7 @@ function AccountsEmployeeRateCard() {
             ↺ Reset Defaults
           </button>
           <button className="saveRateCardBtn" onClick={handleSave}>
-            💾 Save Employee Rate Card
+            Save Employee Rate Card
           </button>
         </div>
       </div>

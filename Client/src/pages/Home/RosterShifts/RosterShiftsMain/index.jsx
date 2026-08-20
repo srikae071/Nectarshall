@@ -34,19 +34,19 @@ function RosterShiftsMain() {
   const getTasksForDay = (dayName) => {
     if (dayName === "Monday") {
       return [
-        { id: "mon_task1", label: "🚽 Toilet Cleaning" },
-        { id: "mon_task2", label: "📋 Task 2" },
-        { id: "mon_task3", label: "📋 Task 3" },
-        { id: "mon_task4", label: "📋 Task 4" },
-        { id: "mon_task5", label: "📋 Task 5" },
+        { id: "mon_task1", label: "Toilet Cleaning" },
+        { id: "mon_task2", label: "Task 2" },
+        { id: "mon_task3", label: "Task 3" },
+        { id: "mon_task4", label: "Task 4" },
+        { id: "mon_task5", label: "Task 5" },
       ];
     }
     return [
-      { id: `${dayName.toLowerCase()}_task1`, label: `📋 ${dayName} Task 1` },
-      { id: `${dayName.toLowerCase()}_task2`, label: `📋 ${dayName} Task 2` },
-      { id: `${dayName.toLowerCase()}_task3`, label: `📋 ${dayName} Task 3` },
-      { id: `${dayName.toLowerCase()}_task4`, label: `📋 ${dayName} Task 4` },
-      { id: `${dayName.toLowerCase()}_task5`, label: `📋 ${dayName} Task 5` },
+      { id: `${dayName.toLowerCase()}_task1`, label: `${dayName} Task 1` },
+      { id: `${dayName.toLowerCase()}_task2`, label: `${dayName} Task 2` },
+      { id: `${dayName.toLowerCase()}_task3`, label: `${dayName} Task 3` },
+      { id: `${dayName.toLowerCase()}_task4`, label: `${dayName} Task 4` },
+      { id: `${dayName.toLowerCase()}_task5`, label: `${dayName} Task 5` },
     ];
   };
 
@@ -446,13 +446,13 @@ function RosterShiftsMain() {
       >
         <td className="empNameCol">
           <span className="empNameTxt">
-            👤 {row.employeeName}{" "}
+            {row.employeeName}{" "}
             <strong className="slotBadge">({row.slotLabel})</strong>
           </span>
         </td>
 
         <td className="siteAddressCol">
-          <span className="siteAddressTxt">📍 {row.siteAddress}</span>
+          <span className="siteAddressTxt">{row.siteAddress}</span>
         </td>
 
         <td className="serviceCol">
@@ -490,7 +490,7 @@ function RosterShiftsMain() {
                 })
               }
             >
-              📝 View Scope
+              View Scope
             </button>
           </td>
         )}
@@ -592,8 +592,8 @@ function RosterShiftsMain() {
                         />
                         <span>
                           {taskLabel === "Toilet Cleaning"
-                            ? "🚽 Toilet Cleaning"
-                            : `📋 ${taskLabel}`}
+                            ? "Toilet Cleaning"
+                            : `${taskLabel}`}
                         </span>
                       </label>
                     );
@@ -613,7 +613,7 @@ function RosterShiftsMain() {
                         marginTop: "4px",
                       }}
                     >
-                      ✓ {completedCount} Task{completedCount > 1 ? "s" : ""} Checked (+{bonusPercent}% Bonus)
+                      {completedCount} Task{completedCount > 1 ? "s" : ""} Checked (+{bonusPercent}% Bonus)
                     </span>
                   ) : (
                     <span
@@ -811,7 +811,7 @@ function RosterShiftsMain() {
             return (
               <div className="opCompanyCard" key={companyName}>
                 <div className="opCompanyCardHeader">
-                  <span className="opCompanyTitle">🏢 {companyName}</span>
+                  <span className="opCompanyTitle">{companyName}</span>
                   <span className="opCompanyBadge">
                     {rows.length} Total Request{rows.length > 1 ? "s" : ""}
                   </span>
@@ -844,7 +844,7 @@ function RosterShiftsMain() {
                 {adhocRows.length > 0 && (
                   <div className="opAdhocSection">
                     <div className="opAdhocSubheader">
-                      ⚡ Adhoc Approvals ({adhocRows.length})
+                      Adhoc Approvals ({adhocRows.length})
                     </div>
                     <div className="opTableCard">
                       <table className="opApprovalTable">
@@ -879,7 +879,7 @@ function RosterShiftsMain() {
         <div className="scopeModalOverlay">
           <div className="scopeModalBox">
             <div className="scopeModalHeader">
-              <h3>📝 Scope of Work</h3>
+              <h3>Scope of Work</h3>
               <button
                 className="closeModalX"
                 onClick={() => setScopeModalData({ isOpen: false })}
@@ -890,13 +890,13 @@ function RosterShiftsMain() {
 
             <div className="scopeModalMeta">
               <div>
-                🏢 <strong>Company:</strong> {scopeModalData.companyName}
+                <strong>Company:</strong> {scopeModalData.companyName}
               </div>
               <div>
-                📍 <strong>Site:</strong> {scopeModalData.siteName}
+                <strong>Site:</strong> {scopeModalData.siteName}
               </div>
               <div>
-                👤 <strong>Employee:</strong> {scopeModalData.employeeName}
+                <strong>Employee:</strong> {scopeModalData.employeeName}
               </div>
             </div>
 

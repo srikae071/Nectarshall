@@ -378,8 +378,28 @@ const VendorPortalDashboard = () => {
           </div>
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: 20 }}>
             <svg width="200" height="200" viewBox="0 0 200 200">
-              <circle cx="100" cy="100" r="70" fill="none" stroke="#10b981" strokeWidth="18" />
-              <circle cx="100" cy="100" r="50" fill="none" stroke="#f1f5f9" strokeWidth="12" />
+              <circle 
+                cx="100" 
+                cy="100" 
+                r="70" 
+                fill="none" 
+                stroke="#10b981" 
+                strokeWidth={empHovered === 'active' ? "22" : "18"} 
+                style={{ cursor: 'pointer', transition: 'stroke-width 0.2s' }}
+                onMouseEnter={() => setEmpHovered('active')}
+                onMouseOver={() => setEmpHovered('active')}
+              />
+              <circle 
+                cx="100" 
+                cy="100" 
+                r="50" 
+                fill="none" 
+                stroke={employees.filter(e => e.status !== 'Active').length > 0 ? '#f43f5e' : '#f1f5f9'} 
+                strokeWidth={empHovered === 'inactive' ? "16" : "12"} 
+                style={{ cursor: 'pointer', transition: 'stroke-width 0.2s' }}
+                onMouseEnter={() => setEmpHovered('inactive')}
+                onMouseOver={() => setEmpHovered('inactive')}
+              />
               <text x="100" y="95" textAnchor="middle" fill="#64748b" fontSize="13" fontWeight="600" fontFamily="inherit">
                 {empHovered === 'active' ? 'Active' : 'In-Active'}
               </text>

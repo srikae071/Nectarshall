@@ -139,7 +139,6 @@ function HomeLeaveRequest() {
           {/* EMPLOYEE DETAILS SECTION */}
           <div className="lr-section">
             <div className="lr-section-header">
-              <span className="lr-icon">👤</span>
               <span className="lr-section-title">EMPLOYEE DETAILS</span>
             </div>
             <div className="lr-grid-2">
@@ -170,7 +169,6 @@ function HomeLeaveRequest() {
           {/* LEAVE DETAILS SECTION */}
           <div className="lr-section">
             <div className="lr-section-header">
-              <span className="lr-icon">📅</span>
               <span className="lr-section-title">LEAVE DETAILS</span>
             </div>
             
@@ -238,7 +236,6 @@ function HomeLeaveRequest() {
           {/* DESCRIPTION SECTION */}
           <div className="lr-section">
             <div className="lr-section-header">
-              <span className="lr-icon">📄</span>
               <span className="lr-section-title">DESCRIPTION</span>
             </div>
             
