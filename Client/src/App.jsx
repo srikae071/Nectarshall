@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
 import LeaveRequest from "./pages/LeaveRequest/LeaveRequest";
 import LeaveBalance from "./pages/LeaveBalance/LeaveBalance";
@@ -280,6 +280,8 @@ function App() {
         />
 
       <Route element={<DashboardLayout />}>
+        <Route path="/operations" element={<Navigate to="/main-dashboard" replace />} />
+        <Route path="/dashboard" element={<Navigate to="/main-dashboard" replace />} />
         <Route path="/main-dashboard" element={<MainDashboard />} />
         <Route path="/schedule" element={<Schedule />} />
         <Route path="/timesheets" element={<TimeSheat />} />

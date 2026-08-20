@@ -192,7 +192,7 @@ function Home() {
             <a
               role="button"
               tabIndex={0}
-              onClick={() => navigate("/timesheets")}
+              onClick={() => navigate("/main-dashboard")}
             >
               OPERATIONS
             </a>

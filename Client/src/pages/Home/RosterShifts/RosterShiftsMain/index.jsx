@@ -569,18 +569,32 @@ function RosterShiftsMain() {
                       <label
                         key={tIdx}
                         style={{
-                          display: "inline-flex",
+                          display: "flex",
                           alignItems: "center",
+                          justifyContent: "flex-start",
                           gap: "6px",
                           fontSize: "11.5px",
                           fontWeight: "600",
                           cursor: "pointer",
                           color: "#0f172a",
+                          whiteSpace: "nowrap",
+                          width: "100%",
+                          margin: "0",
+                          padding: "0",
                         }}
                       >
                         <input
                           type="checkbox"
                           checked={isChecked}
+                          style={{
+                            margin: "0",
+                            padding: "0",
+                            width: "14px",
+                            height: "14px",
+                            flexShrink: 0,
+                            cursor: "pointer",
+                            verticalAlign: "middle",
+                          }}
                           onChange={(e) =>
                             handleToggleTaskCompletion(
                               row.rowId,
@@ -590,7 +604,15 @@ function RosterShiftsMain() {
                             )
                           }
                         />
-                        <span>
+                        <span
+                          style={{
+                            whiteSpace: "nowrap",
+                            flexShrink: 0,
+                            lineHeight: "1.2",
+                            margin: "0",
+                            padding: "0",
+                          }}
+                        >
                           {taskLabel === "Toilet Cleaning"
                             ? "Toilet Cleaning"
                             : `${taskLabel}`}
