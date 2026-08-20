@@ -618,11 +618,11 @@ body.theme-green .MyTaskNotificationWrapper a {
   justify-content: space-between !important;
   align-items: center !important;
   padding: 10px 24px !important;
-  background-color: #0284c7 !important;
-  background: #0284c7 !important;
+  background-color: #1e293b !important;
+  background: #1e293b !important;
   height: 60px !important;
   box-sizing: border-box !important;
-  border-bottom: 1px solid #0369a1 !important;
+  border-bottom: 1px solid #334155 !important;
 }
 
 .hrmslogo {
@@ -670,7 +670,7 @@ body.theme-green .MyTaskNotificationWrapper a {
   color: #ea4104 !important;
 }
 
-/* Theme Overrides */
+/* Green Theme Overrides */
 [data-theme="green"] .hrmsnavbar,
 body.theme-green .hrmsnavbar {
   background-color: #e2f2eb !important;
@@ -683,6 +683,63 @@ body.theme-green .navbarModuleLabel,
 [data-theme="green"] .navname p,
 body.theme-green .navname p {
   color: #047857 !important;
+}
+
+/* White Theme Overrides for Navbars, Headers & Sidebars */
+[data-theme="white"] .hrmsnavbar,
+body.theme-white .hrmsnavbar,
+[data-theme="white"] .opnavbar,
+body.theme-white .opnavbar,
+[data-theme="white"] .navbar,
+body.theme-white .navbar,
+[data-theme="white"] .payroll-navbar,
+body.theme-white .payroll-navbar,
+[data-theme="white"] .patrolling-navbar,
+body.theme-white .patrolling-navbar {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+[data-theme="white"] .hrmssidebar,
+body.theme-white .hrmssidebar,
+[data-theme="white"] .operationssidebar,
+body.theme-white .operationssidebar {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  border-right: 1px solid #e2e8f0 !important;
+}
+
+[data-theme="white"] .hrmslogo,
+body.theme-white .hrmslogo,
+[data-theme="white"] .hrmsmenuHeader,
+body.theme-white .hrmsmenuHeader,
+[data-theme="white"] .menuHeader,
+body.theme-white .menuHeader,
+[data-theme="white"] .hrmssubmenuItem,
+body.theme-white .hrmssubmenuItem,
+[data-theme="white"] .submenuItem,
+body.theme-white .submenuItem,
+[data-theme="white"] .profile,
+body.theme-white .profile {
+  color: #0f172a !important;
+}
+
+[data-theme="white"] .hrmsmenuHeader:hover,
+body.theme-white .hrmsmenuHeader:hover,
+[data-theme="white"] .hrmssubmenuItem:hover,
+body.theme-white .hrmssubmenuItem:hover,
+[data-theme="white"] .hrmssubmenuItem.active,
+body.theme-white .hrmssubmenuItem.active,
+[data-theme="white"] .submenuItem:hover,
+body.theme-white .submenuItem:hover,
+[data-theme="white"] .submenuItem.active,
+body.theme-white .submenuItem.active,
+[data-theme="white"] .menuHeader:hover,
+body.theme-white .menuHeader:hover {
+  background-color: #f1f5f9 !important;
+  background: #f1f5f9 !important;
+  color: #0284c7 !important;
 }
 
 [data-theme="white"] .navbarModuleLabel,
