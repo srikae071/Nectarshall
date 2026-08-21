@@ -30,6 +30,11 @@ function Home() {
   const [pendingCount, setPendingCount] = useState(0);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
+  const username = (user?.displayName || user?.username || "").toLowerCase();
+  const role = (user?.role || "").toUpperCase();
+  const dept = (user?.department || "").toUpperCase();
+  const isAdmin = role === "ADMIN" || username.includes("sumit") || dept === "ADMIN";
+
   useEffect(() => {
     fetchPendingLeaves();
   }, [user]);
@@ -197,6 +202,17 @@ function Home() {
             </>
           )}
 
+          {hasTabAccess("CONSOLE") && (
+            <a
+              role="button"
+              tabIndex={0}
+              onClick={() => navigate("/console")}
+              style={{ fontWeight: "700" }}
+            >
+              CONSOLE
+            </a>
+          )}
+
           {hasTabAccess("CNC") && (
             <a
               role="button"
@@ -268,8 +284,6 @@ function Home() {
             </a>
           )}
 
-          <ThemeSelector />
-
           {/* PROFILE USER MENU WITH DEPARTMENT ACCESS & SWITCHER */}
           <div
             className="userProfileMenuContainer"
@@ -281,7 +295,7 @@ function Home() {
               title="User Account Options"
               style={{ cursor: "pointer", userSelect: "none" }}
             >
-              👤 {user?.username || "User"}
+              👤 {user?.displayName || user?.username || "User"}
             </div>
 
             {showProfileMenu && (
@@ -322,57 +336,61 @@ function Home() {
                   Department: <strong>{user?.department || "Operations"}</strong> ({user?.role})
                 </div>
 
-                <div
-                  style={{
-                    fontSize: "11px",
-                    fontWeight: "700",
-                    color: "#475569",
-                    marginBottom: "6px",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  Switch Profile:
-                </div>
-                <div
-                  style={{
-                    maxHeight: "140px",
-                    overflowY: "auto",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "4px",
-                    marginBottom: "10px",
-                  }}
-                >
-                  {(allProfiles || []).map((p) => {
-                    const isCurrent =
-                      (user?.username || "").toLowerCase() ===
-                      p.username.toLowerCase();
-                    return (
-                      <div
-                        key={p.username}
-                        onClick={() => handleSwitchProfile(p.username)}
-                        style={{
-                          padding: "6px 8px",
-                          borderRadius: "4px",
-                          fontSize: "12px",
-                          fontWeight: isCurrent ? "700" : "500",
-                          background: isCurrent ? "#eff6ff" : "#f8fafc",
-                          color: isCurrent ? "#2563eb" : "#334155",
-                          border: isCurrent ? "1px solid #bfdbfe" : "1px solid #e2e8f0",
-                          cursor: "pointer",
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                        }}
-                      >
-                        <span>{p.username}</span>
-                        <span style={{ fontSize: "10.5px", color: "#64748b" }}>
-                          [{p.department || "Ops"}]
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
+                {isAdmin && (
+                  <>
+                    <div
+                      style={{
+                        fontSize: "11px",
+                        fontWeight: "700",
+                        color: "#475569",
+                        marginBottom: "6px",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Switch Profile:
+                    </div>
+                    <div
+                      style={{
+                        maxHeight: "140px",
+                        overflowY: "auto",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "4px",
+                        marginBottom: "10px",
+                      }}
+                    >
+                      {(allProfiles || []).map((p) => {
+                        const isCurrent =
+                          (user?.username || "").toLowerCase() ===
+                          p.username.toLowerCase();
+                        return (
+                          <div
+                            key={p.username}
+                            onClick={() => handleSwitchProfile(p.username)}
+                            style={{
+                              padding: "6px 8px",
+                              borderRadius: "4px",
+                              fontSize: "12px",
+                              fontWeight: isCurrent ? "700" : "500",
+                              background: isCurrent ? "#eff6ff" : "#f8fafc",
+                              color: isCurrent ? "#2563eb" : "#334155",
+                              border: isCurrent ? "1px solid #bfdbfe" : "1px solid #e2e8f0",
+                              cursor: "pointer",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
+                            <span>{p.username}</span>
+                            <span style={{ fontSize: "10.5px", color: "#64748b" }}>
+                              [{p.department || "Ops"}]
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </>
+                )}
 
                 <button
                   type="button"

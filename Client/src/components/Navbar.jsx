@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import logo from "../images/logo.png";
-import ThemeSelector from "./ThemeSelector";
 import { useAuth } from "../context/AuthContext";
 
 function Navbar() {
@@ -10,6 +9,11 @@ function Navbar() {
   const { user, logout, switchProfile, allProfiles } = useAuth();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
+  const username = (user?.displayName || user?.username || "").toLowerCase();
+  const role = (user?.role || "").toUpperCase();
+  const dept = (user?.department || "").toUpperCase();
+  const isAdmin = role === "ADMIN" || username.includes("sumit") || dept === "ADMIN";
+
   const getModuleLabel = () => {
     const p = location.pathname.toLowerCase();
     if (p.includes("/accounts")) return "ACCOUNTS";
@@ -17,11 +21,19 @@ function Navbar() {
       p.includes("/operations") ||
       p.includes("/timesheets") ||
       p.includes("/roster") ||
+      p.includes("/main-dashboard") ||
       p.includes("/client/onboarding-compliance")
     )
       return "OPERATIONS";
-    if (p.includes("/hrms")) return "HRMS";
-    if (p.includes("/it")) return "IT";
+    if (p.includes("/hrms") || p.includes("/ask-for-hr") || p.includes("/onboarding") || p.includes("/offboarding")) return "HRMS";
+    if (p.includes("/it") || p.includes("/ask-for-it")) return "IT";
+    if (p.includes("/leave")) return "LEAVE MANAGEMENT";
+    if (p.includes("/exit")) return "EXIT";
+    if (p.includes("/my-tasks")) return "MY TASKS";
+    if (p.includes("/my-tickets")) return "MY TICKETS";
+    if (p.includes("/my-mails")) return "MY MAILS";
+    if (p.includes("/payroll")) return "PAYROLLS";
+    if (p.includes("/organisation-policies")) return "ORGANIZATION POLICIES";
     return "";
   };
 
@@ -84,8 +96,6 @@ function Navbar() {
           🪟 Main Window
         </button>
 
-        <ThemeSelector />
-
         <div className="userProfileMenuContainer" style={{ position: "relative" }}>
           <div
             className="profile"
@@ -93,7 +103,7 @@ function Navbar() {
             title="User Account Options"
             style={{ cursor: "pointer", userSelect: "none" }}
           >
-            👤 {user?.username || "User"}
+            👤 {user?.displayName || user?.username || "User"}
           </div>
 
           {showProfileMenu && (
@@ -179,66 +189,68 @@ function Navbar() {
               </button>
 
               {/* SWITCH ACCOUNT PROFILE */}
-              <div
-                style={{
-                  borderTop: "1px dashed #cbd5e1",
-                  paddingTop: "10px",
-                }}
-              >
+              {isAdmin && (
                 <div
                   style={{
-                    fontSize: "12px",
-                    fontWeight: "700",
-                    color: "#475569",
-                    marginBottom: "8px",
+                    borderTop: "1px dashed #cbd5e1",
+                    paddingTop: "10px",
                   }}
                 >
-                  🔄 Switch User Account:
-                </div>
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      fontWeight: "700",
+                      color: "#475569",
+                      marginBottom: "8px",
+                    }}
+                  >
+                    🔄 Switch User Account:
+                  </div>
 
-                <div
-                  style={{
-                    maxHeight: "160px",
-                    overflowY: "auto",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "4px",
-                  }}
-                >
-                  {(allProfiles || []).map((p, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => handleSwitchAccount(p.username)}
-                      style={{
-                        textAlign: "left",
-                        padding: "6px 10px",
-                        borderRadius: "6px",
-                        border: "1px solid #e2e8f0",
-                        background:
-                          user?.username?.toLowerCase() === p.username?.toLowerCase()
-                            ? "#dcfce7"
-                            : "#f8fafc",
-                        color:
-                          user?.username?.toLowerCase() === p.username?.toLowerCase()
-                            ? "#166534"
-                            : "#334155",
-                        fontWeight: "600",
-                        fontSize: "12px",
-                        cursor: "pointer",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <span>👤 {p.username}</span>
-                      <span style={{ fontSize: "10.5px", color: "#64748b" }}>
-                        [{p.department || "Ops"}]
-                      </span>
-                    </button>
-                  ))}
+                  <div
+                    style={{
+                      maxHeight: "160px",
+                      overflowY: "auto",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "4px",
+                    }}
+                  >
+                    {(allProfiles || []).map((p, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => handleSwitchAccount(p.username)}
+                        style={{
+                          textAlign: "left",
+                          padding: "6px 10px",
+                          borderRadius: "6px",
+                          border: "1px solid #e2e8f0",
+                          background:
+                            user?.username?.toLowerCase() === p.username?.toLowerCase()
+                              ? "#dcfce7"
+                              : "#f8fafc",
+                          color:
+                            user?.username?.toLowerCase() === p.username?.toLowerCase()
+                              ? "#166534"
+                              : "#334155",
+                          fontWeight: "600",
+                          fontSize: "12px",
+                          cursor: "pointer",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <span>👤 {p.username}</span>
+                        <span style={{ fontSize: "10.5px", color: "#64748b" }}>
+                          [{p.department || "Ops"}]
+                        </span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           )}
         </div>

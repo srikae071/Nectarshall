@@ -126,6 +126,21 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("authUser");
   };
 
+  const getUserDepartments = (u) => {
+    if (!u) return [];
+    const depts = new Set();
+    if (u.department) depts.add(u.department.toUpperCase());
+    if (u.role) depts.add(u.role.toUpperCase());
+
+    const extra = u.extraRoles || u.ExtaRoles || [];
+    if (Array.isArray(extra)) {
+      extra.forEach((r) => depts.add(String(r).toUpperCase()));
+    } else if (typeof extra === "string") {
+      extra.split(",").forEach((r) => depts.add(r.trim().toUpperCase()));
+    }
+    return Array.from(depts);
+  };
+
   // Check top navbar tab accessibility
   const hasTabAccess = (tabName) => {
     if (!user) return false;
@@ -136,30 +151,21 @@ export const AuthProvider = ({ children }) => {
     // Admin sees EVERYTHING
     if (role === "ADMIN" || username.includes("sumit") || dept === "ADMIN") return true;
 
+    // CONSOLE tab is ONLY visible to Admin
+    if (tabName === "CONSOLE") return false;
+
     // Common for everyone: MY TASK, MY TICKETS, MY MAILS
     if (["MY_TASK", "MY_TICKETS", "MY_MAILS"].includes(tabName)) return true;
 
-    // OPERATIONS Department -> OPERATIONS
-    if (dept.includes("OPERAT") || role.includes("OPERAT")) {
-      return ["OPERATIONS"].includes(tabName);
-    }
+    const allUserDepts = getUserDepartments(user);
 
-    // IT Department -> IT
-    if (dept.includes("IT")) {
-      return ["IT"].includes(tabName);
-    }
-
-    // HR Department -> HRMS (only HRMS + common for HR)
-    if (dept.includes("HR") || role.includes("HR")) {
-      return ["HRMS"].includes(tabName);
-    }
-
-    // ACCOUNTS / FINANCE Department -> ACCOUNTS, CNC (C&C)
-    if (dept.includes("FIN") || dept.includes("ACC") || role.includes("ACC")) {
-      return ["ACCOUNTS", "CNC"].includes(tabName);
-    }
-
-    return false;
+    return allUserDepts.some((d) => {
+      if (d.includes("OPERAT") && tabName === "OPERATIONS") return true;
+      if (d.includes("IT") && tabName === "IT") return true;
+      if ((d.includes("HR") || d.includes("HUMAN")) && tabName === "HRMS") return true;
+      if ((d.includes("FIN") || d.includes("ACC")) && (tabName === "ACCOUNTS" || tabName === "CNC")) return true;
+      return false;
+    });
   };
 
   // Check homepage tile accessibility
@@ -169,39 +175,16 @@ export const AuthProvider = ({ children }) => {
     const role = (user.role || "").toUpperCase();
     const dept = (user.department || "").toUpperCase();
 
-    // Admin sees EVERYTHING
-    if (role === "ADMIN" || username.includes("sumit") || dept === "ADMIN") return true;
+    const isAdmin = role === "ADMIN" || username.includes("sumit") || dept === "ADMIN";
 
-    // Common for everyone: Leave Management, Exit
-    if (["LEAVE_MANAGEMENT", "EXIT"].includes(tileKey)) return true;
+    // Admin sees ALL tiles including Business Engagement
+    if (isAdmin) return true;
 
-    // OPERATIONS Department -> Leave Management, Exit, Roster / Shift
-    if (dept.includes("OPERAT") || role.includes("OPERAT")) {
-      return ["ROSTER_SHIFT"].includes(tileKey);
-    }
+    // Business Engagement tile is ONLY visible to Admin
+    if (tileKey === "BUSINESS_ENGAGEMENT") return false;
 
-    // IT Department -> Leave Management, Exit, Ask for IT
-    if (dept.includes("IT")) {
-      return ["ASK_FOR_IT"].includes(tileKey);
-    }
-
-    // HR Department -> Leave Management, Exit, Ask for HR, Employe Request, Business Engagement, Organization Policies, Payrolls
-    if (dept.includes("HR") || role.includes("HR")) {
-      return [
-        "ASK_FOR_HR",
-        "EMPLOYE_REQUEST",
-        "BUSINESS_ENGAGEMENT",
-        "ORGANISATION_POLICIES",
-        "PAYROLLS",
-      ].includes(tileKey);
-    }
-
-    // ACCOUNTS / FINANCE Department -> Leave Management, Exit
-    if (dept.includes("FIN") || dept.includes("ACC") || role.includes("ACC")) {
-      return false; // Only common LEAVE_MANAGEMENT & EXIT
-    }
-
-    return false;
+    // All other tiles are visible to everyone
+    return true;
   };
 
   const hasModuleAccess = (moduleName) => {

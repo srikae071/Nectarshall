@@ -16,6 +16,12 @@ const menuData = [
     directPath: "/regular-form",
   },
   {
+    title: "Assignment Group",
+    items: [
+      { label: "All Groups", path: "/hrms/assignment-group" },
+    ],
+  },
+  {
     title: "Case Management",
     items: [
       { label: "All", path: "/hrms/hrsavescases" },
@@ -23,16 +29,6 @@ const menuData = [
       { label: "Open", path: "/hrms/open" },
       { label: "Resolved", path: "/hrms/resolved-cases" },
       { label: "Assign to Me", path: "/hrms/assigned-cases" },
-    ],
-  },
-  {
-    title: "Leave Management",
-    items: [
-      { label: "All", path: "/leave-management-all" },
-      { label: "Leave Request", path: "/leave-request" },
-      { label: "Leave Balance", path: "/leave-balance" },
-      { label: "Leave Calendar", path: "/leave-calendar" },
-      { label: "Leave Status", path: "/leave-status" },
     ],
   },
   {
@@ -108,16 +104,20 @@ const menuData = [
     ],
   },
   {
+    title: "Leave Management",
+    items: [
+      { label: "All", path: "/leave-management-all" },
+      { label: "Leave Request", path: "/leave-request" },
+      { label: "Leave Balance", path: "/leave-balance" },
+      { label: "Leave Calendar", path: "/leave-calendar" },
+      { label: "Leave Status", path: "/leave-status" },
+    ],
+  },
+  {
     title: "Training and Development",
     items: [
       { label: "All", path: "/hrms/training/all" },
       { label: "Create New", path: "/hrms/training/createnew" },
-    ],
-  },
-  {
-    title: "Assignment Group",
-    items: [
-      { label: "All Groups", path: "/hrms/assignment-group" },
     ],
   },
 ];
@@ -211,14 +211,14 @@ const DashboardNavTabs = () => {
       icon: FiFileText,
     },
     {
-      label: "Leave Management",
-      path: "/vendor-portal/leave",
-      icon: FiCalendar,
-    },
-    {
       label: "Employee Management",
       path: "/vendor-portal/employees",
       icon: FiUsers,
+    },
+    {
+      label: "Leave Management",
+      path: "/vendor-portal/leave",
+      icon: FiCalendar,
     },
     {
       label: "Training & Dev",

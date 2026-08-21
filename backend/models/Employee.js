@@ -22,6 +22,8 @@ const EmployeeSchema = new mongoose.Schema(
     sponsors: { type: String, default: "" },
     shiftStartTime: { type: String, default: "08:00" },
     shiftEndTime: { type: String, default: "20:00" },
+    extraRoles: { type: [String], default: [] },
+    ExtaRoles: { type: String, default: "" },
 
     // 3. Contact Information
     streetAddress: { type: String, default: "" },

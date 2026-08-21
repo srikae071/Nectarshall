@@ -5,6 +5,34 @@ import CncNavBar from "../CncNavBar";
 
 const menuData = [
   {
+    title: "Offboarding",
+    items: [
+      {
+        label: "Client",
+        // icon: "📁",
+        children: [
+          {
+            label: "OffBoarding Compilence",
+            path: "/onb",
+            // icon: "📄",
+          },
+        ],
+      },
+
+      {
+        label: "Supplier",
+        // icon: "📁",
+        children: [
+          {
+            label: "Offbording Compilence",
+            path: "/offboarding-supplier-form",
+            // icon: "📄",
+          },
+        ],
+      },
+    ],
+  },
+  {
     title: "Onboarding",
     items: [
       {
@@ -43,34 +71,6 @@ const menuData = [
           {
             label: "All",
             path: "/onboarding-supplier",
-            // icon: "📄",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    title: "Offboarding",
-    items: [
-      {
-        label: "Client",
-        // icon: "📁",
-        children: [
-          {
-            label: "OffBoarding Compilence",
-            path: "/onb",
-            // icon: "📄",
-          },
-        ],
-      },
-
-      {
-        label: "Supplier",
-        // icon: "📁",
-        children: [
-          {
-            label: "Offbording Compilence",
-            path: "/offboarding-supplier-form",
             // icon: "📄",
           },
         ],

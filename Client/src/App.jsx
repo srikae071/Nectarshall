@@ -19,6 +19,7 @@ import AllEmployees from "./pages/Hrms/AllEmployees/index.jsx";
 import MainEmployeesSaves from "./pages/Hrms/Employee/MainEmployeesSaves/index.jsx";
 import MyMails from "./pages/NavItems/MyMails/index.jsx";
 import TestPage from "./pages/TestPage/index.jsx";
+import Console from "./pages/Console/index.jsx";
 
 import All from "../src/pages/Hrms/Employee/ResourceRequirement/All/index.jsx";
 import EmployeeCreateNew from "../src/pages/Hrms/Employee/ResourceRequirement/EmployeeCreateNew/index.jsx";
@@ -319,6 +320,7 @@ function App() {
       <Route path="/home-leave-balance" element={<HomeLeaveBalance />} />
       <Route path="/home-leave-calendar" element={<HomeLeaveCalendar />} />
       <Route path="/my-tasks" element={<MyTasks />} />
+      <Route path="/console" element={<Console />} />
       <Route
         path="/assignment-group"
         element={
