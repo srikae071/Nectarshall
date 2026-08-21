@@ -43,37 +43,32 @@ const menuData = [
         label: "Onboarding",
         children: [
           {
-            label: "Employe",
-            children: [
-              {
-                label: "All",
-                path: "/onboarding/resonancerequirement/all",
-              },
-              {
-                label: "Create New",
-                path: "/onboarding/resonancerequirement/createnew",
-              },
-              {
-                label: "Resolve",
-                path: "/onboardingresolved",
-              },
-              {
-                label: "Employe Request",
-                path: "/onboarding/employerequest",
-              },
-              {
-                label: "Pre-Joining Compilence",
-                path: "/onboarding/prejoining",
-              },
-              {
-                label: "Interview",
-                path: "/onboarding/Interview",
-              },
-              {
-                label: "Offer Letter",
-                path: "/onboarding/Offerletter",
-              },
-            ],
+            label: "All",
+            path: "/onboarding/resonancerequirement/all",
+          },
+          {
+            label: "Create New",
+            path: "/onboarding/resonancerequirement/createnew",
+          },
+          {
+            label: "Resolve",
+            path: "/onboardingresolved",
+          },
+          {
+            label: "Employe Request",
+            path: "/onboarding/employerequest",
+          },
+          {
+            label: "Pre-Joining Compilence",
+            path: "/onboarding/prejoining",
+          },
+          {
+            label: "Interview",
+            path: "/onboarding/Interview",
+          },
+          {
+            label: "Offer Letter",
+            path: "/onboarding/Offerletter",
           },
         ],
       },
@@ -81,25 +76,32 @@ const menuData = [
         label: "Offboarding",
         children: [
           {
-            label: "Employe",
-            children: [
-              {
-                label: "All",
-                path: "/offboarding-employes-all",
-              },
-              {
-                label: "Create New",
-                path: "/offboarding/createnew",
-              },
-              {
-                label: "Closed",
-                path: "/offboarding-closed",
-              },
-              // {
-              //   label: "Employe Request",
-              //   path: "/offboarding/employerequest",
-              // },
-            ],
+            label: "All",
+            path: "/offboarding-employes-all",
+          },
+          {
+            label: "Create New",
+            path: "/offboarding/createnew",
+          },
+          {
+            label: "Open",
+            path: "/offboarding-open",
+          },
+          {
+            label: "Resolved",
+            path: "/offboarding-resolved",
+          },
+          {
+            label: "Closed",
+            path: "/offboarding-closed",
+          },
+          {
+            label: "Work In Progress",
+            path: "/offboarding-wip",
+          },
+          {
+            label: "Pending",
+            path: "/offboarding-pending",
           },
         ],
       },

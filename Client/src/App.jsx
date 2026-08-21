@@ -338,6 +338,16 @@ function App() {
       <Route path="/hrms/employee/:id" element={<MainEmployeesSaves />} />
       <Route path="/it-all" element={<ItNavMain />} />
       <Route path="/requests-offboarding-all" element={<RequestsOffboardingAll />} />
+      <Route path="/requests-offboarding-open" element={<RequestsOffboardingAll />} />
+      <Route path="/requests-offboarding-resolved" element={<RequestsOffboardingAll />} />
+      <Route path="/requests-offboarding-closed" element={<RequestsOffboardingAll />} />
+      <Route path="/requests-offboarding-wip" element={<RequestsOffboardingAll />} />
+      <Route path="/requests-offboarding-pending" element={<RequestsOffboardingAll />} />
+      <Route path="/offboarding/open" element={<RequestsOffboardingAll />} />
+      <Route path="/offboarding/resolved" element={<RequestsOffboardingAll />} />
+      <Route path="/offboarding/closed" element={<RequestsOffboardingAll />} />
+      <Route path="/offboarding/work-in-progress" element={<RequestsOffboardingAll />} />
+      <Route path="/offboarding/pending" element={<RequestsOffboardingAll />} />
       <Route path="/it/create-new" element={<ITCreateNew />} />
       <Route path="/it/open" element={<ItOpen />} />
       <Route path="/it/resolved" element={<ItResolved />} />
@@ -409,6 +419,26 @@ function App() {
       />
       <Route
         path="/offboarding-employes-all"
+        element={<OffBoardingEmployesAll />}
+      />
+      <Route
+        path="/offboarding-open"
+        element={<OffBoardingEmployesAll />}
+      />
+      <Route
+        path="/offboarding-resolved"
+        element={<OffBoardingEmployesAll />}
+      />
+      <Route
+        path="/offboarding-closed"
+        element={<OffBoardingEmployesAll />}
+      />
+      <Route
+        path="/offboarding-wip"
+        element={<OffBoardingEmployesAll />}
+      />
+      <Route
+        path="/offboarding-pending"
         element={<OffBoardingEmployesAll />}
       />
       <Route path="/offboarding-saves/:id" element={<OffBoardingSaves />} />

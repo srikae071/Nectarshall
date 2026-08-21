@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from "react";
 
 import { useNavigate, useLocation } from "react-router-dom";
 import "./index.css";
-// import HrmsNavbar from "../HrmsNavbar";
 import ItNavbar from "../../IT/ItNavBar";
 
 const menuData = [
@@ -42,15 +41,15 @@ const menuData = [
         title: "Offboarding Request",
         items: [
           { label: "All", path: "/requests-offboarding-all" },
-          { label: "Create New", path: "/Requests/open-tasks" },
-          { label: "Open", path: "/offboarding/open" },
-          { label: "Resolved", path: "/offboarding/resolved" },
-          { label: "Closed", path: "/Requests/closed-tasks" },
+          { label: "Create New", path: "/it/create-new" },
+          { label: "Open", path: "/requests-offboarding-open" },
+          { label: "Resolved", path: "/requests-offboarding-resolved" },
+          { label: "Closed", path: "/requests-offboarding-closed" },
           {
             label: "Work In Progress",
-            path: "/offboarding/work-in-progress",
+            path: "/requests-offboarding-wip",
           },
-          { label: "Pending", path: "/offboarding/pending" },
+          { label: "Pending", path: "/requests-offboarding-pending" },
         ],
       },
     ],
@@ -74,10 +73,10 @@ const MenuItem = ({ item, level = 0, expandedMenus, setExpandedMenus }) => {
   };
 
   const isActive = checkActive(item);
-
   const itemKey = item.label + level;
 
-  const isExpanded = expandedMenus[itemKey] ?? false;
+  // Auto-expand active submenus so navigation doesn't collapse accordions
+  const isExpanded = expandedMenus[itemKey] ?? isActive;
 
   const handleClick = (e) => {
     e.stopPropagation();
@@ -96,12 +95,10 @@ const MenuItem = ({ item, level = 0, expandedMenus, setExpandedMenus }) => {
       <div
         className={`hrmssubmenuItem ${isActive ? "active" : ""}`}
         style={{ paddingLeft: `${20 + level * 15}px` }}
-        // onClick={handleClick}
         onClick={(e) => handleClick(e)}
       >
         <div style={{ display: "flex", alignItems: "center" }}>
           <span style={{ marginRight: "2px" }}>{item.icon || "•"}</span>
-
           <span>{item.label}</span>
         </div>
 
@@ -124,22 +121,12 @@ const MenuItem = ({ item, level = 0, expandedMenus, setExpandedMenus }) => {
     </div>
   );
 };
+
 /* ================= MAIN LAYOUT ================= */
 function ItLeftSide({ children }) {
-  // const [openIndex, setOpenIndex] = useState(0);
-
-  // const toggle = (index) => {
-  //   setOpenIndex(openIndex === index ? null : index);
-  // };
-
-  // useEffect(() => {
-  //   setOpenMenus({
-  //     0: true,
-  //   });
-  // }, [location.pathname]);
-
   const [openMenus, setOpenMenus] = useState({
     0: true,
+    1: true,
   });
   const [expandedMenus, setExpandedMenus] = useState({});
 
@@ -162,8 +149,6 @@ function ItLeftSide({ children }) {
   const resize = (e) => {
     if (isResizing.current) {
       const newWidth = e.clientX;
-
-      // limits (important)
       if (newWidth > 180 && newWidth < 400) {
         setSidebarWidth(newWidth);
       }
@@ -182,14 +167,12 @@ function ItLeftSide({ children }) {
         {/* SIDEBAR */}
         <div
           className="hrmssidebar"
-          className="hrmssidebar"
           style={{ width: sidebarWidth }}
         >
           {menuData.map((menu, index) => (
             <div key={index} className="menuBlock">
               <div className="hrmsmenuHeader" onClick={() => toggle(index)}>
                 <span>{menu.title}</span>
-
                 <span>{openMenus[index] ? "-" : "+"}</span>
               </div>
               {openMenus[index] && (
@@ -228,4 +211,5 @@ function ItLeftSide({ children }) {
     </div>
   );
 }
+
 export default ItLeftSide;

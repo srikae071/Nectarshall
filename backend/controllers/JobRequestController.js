@@ -420,11 +420,15 @@ exports.createITTask = async (req, res) => {
       nextNumber = parseInt(lastTask.taskId.replace("TSK", "")) + 1;
     }
 
-    request.taskId = `TSK${String(nextNumber).padStart(3, "0")}`;
+    if (!request.taskId) {
+      request.taskId = `TSK${String(nextNumber).padStart(3, "0")}`;
+    }
 
     request.taskType = "IT Clearance";
 
-    request.taskStatus = "Open";
+    if (!request.taskStatus) {
+      request.taskStatus = "Open";
+    }
 
     await request.save();
 

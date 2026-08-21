@@ -22,8 +22,35 @@ function HRSaves() {
     status: "",
     subStatus: "",
     assignmentGroup: "",
+    assignTo: "",
     workNotes: "",
   });
+
+  const [employeeList, setEmployeeList] = useState([]);
+
+  useEffect(() => {
+    fetchApiData("/api/employees")
+      .then((res) => setEmployeeList(res.data || []))
+      .catch((err) => console.log(err));
+  }, []);
+
+  const getAssignToOptions = (selectedGroup) => {
+    if (!selectedGroup) return employeeList;
+    const groupUpper = selectedGroup.trim().toUpperCase();
+
+    const filtered = employeeList.filter((emp) => {
+      const deptUpper = (emp.department || emp.dept || emp.designation || "").trim().toUpperCase();
+      if (groupUpper === "HR") return deptUpper.includes("HR");
+      if (groupUpper === "IT") return deptUpper.includes("IT");
+      if (groupUpper === "OPERATIONS") return deptUpper.includes("OPERAT");
+      if (groupUpper === "ACCOUNTS") return deptUpper.includes("ACC") || deptUpper.includes("FIN");
+      if (groupUpper === "CNC" || groupUpper === "C&C") return deptUpper.includes("CNC") || deptUpper.includes("COMPLIANCE");
+      if (groupUpper === "PATROLLING" || groupUpper === "PETROLINK") return deptUpper.includes("PATROL") || deptUpper.includes("SECURITY");
+      return deptUpper.includes(groupUpper);
+    });
+
+    return filtered.length > 0 ? filtered : employeeList;
+  };
 
   useEffect(() => {
     const fetchRequest = async () => {
@@ -191,7 +218,21 @@ function HRSaves() {
 
           <div className="CreateField">
             <label>Assign To</label>
-            <input name="assignTo" />
+            <select
+              name="assignTo"
+              value={formData.assignTo || ""}
+              onChange={handleChange}
+            >
+              <option value="">Select Assignee</option>
+              {getAssignToOptions(formData.assignmentGroup).map((emp, i) => {
+                const name = emp.displayName || emp.employeeName || `${emp.firstName || ""} ${emp.lastName || ""}`.trim();
+                return (
+                  <option key={i} value={name}>
+                    {name} [{emp.department || "Dept"}]
+                  </option>
+                );
+              })}
+            </select>
           </div>
 
           <div className="CreateField">

@@ -11,12 +11,16 @@ function TaskSaves() {
     taskId: "",
     caseId: "",
     requesterName: "",
+    resignationDate: "",
+    lastWorkingDay: "",
+    resignationReason: "",
     laptopRecord: "",
     laptopRecovered: "",
     laptopWorkingCondition: "",
     dataBackup: "",
     emailIdReceived: "",
     taskStatus: "",
+    status: "",
   });
 
   useEffect(() => {
@@ -26,7 +30,11 @@ function TaskSaves() {
   const fetchTask = async () => {
     try {
       const response = await fetchApiData(`/api/jobrequests/${id}`);
-      setFormData(response.data);
+      const data = response.data || {};
+      setFormData({
+        ...data,
+        taskStatus: data.taskStatus || data.ItTAskStatus || "Open",
+      });
     } catch (err) {
       console.log(err);
     }
@@ -41,9 +49,30 @@ function TaskSaves() {
 
   const handleSave = async () => {
     try {
-      await sendApiData(`/api/jobrequests/${id}`, formData, "put");
-      alert("IT Offboarding Clearance Task Updated Successfully!");
-      navigate("/requests-offboarding-all");
+      const currentTaskStatus = formData.taskStatus || "Work In Progress";
+      const updatedData = {
+        ...formData,
+        taskStatus: currentTaskStatus,
+        ItTAskStatus: currentTaskStatus,
+      };
+
+      await sendApiData(`/api/jobrequests/${id}`, updatedData, "put");
+      alert(`IT Offboarding Clearance Task Status updated to "${currentTaskStatus}"!`);
+
+      const statusLower = currentTaskStatus.toLowerCase();
+      if (statusLower.includes("wip") || statusLower.includes("work in progress")) {
+        navigate("/requests-offboarding-wip");
+      } else if (statusLower.includes("open")) {
+        navigate("/requests-offboarding-open");
+      } else if (statusLower.includes("closed")) {
+        navigate("/requests-offboarding-closed");
+      } else if (statusLower.includes("resolved")) {
+        navigate("/requests-offboarding-resolved");
+      } else if (statusLower.includes("pending")) {
+        navigate("/requests-offboarding-pending");
+      } else {
+        navigate("/requests-offboarding-all");
+      }
     } catch (err) {
       console.log(err);
       alert("Error updating IT Clearance Task");
@@ -54,12 +83,13 @@ function TaskSaves() {
     <ItLeftSide>
       <div className="ITSContainer">
         <div className="ITSCard">
-          <h2 className="ITSHeading">IT Recovery & Offboarding Clearance</h2>
+          <h2 className="ITSHeading">IT Recovery & Offboarding Clearance Details</h2>
 
+          {/* HEADER DETAILS SECTION */}
           <div className="ITSRow">
             <div className="ITSField ITSTaskIdField">
-              <label>Task / Case ID</label>
-              <input value={formData.taskId || formData.caseId || ""} readOnly />
+              <label>Case / Task ID</label>
+              <input value={formData.caseId || formData.taskId || ""} readOnly />
             </div>
 
             <div className="ITSField">
@@ -67,6 +97,51 @@ function TaskSaves() {
               <input value={formData.requesterName || formData.requester || ""} readOnly />
             </div>
           </div>
+
+          <div className="ITSRow">
+            <div className="ITSField">
+              <label>Date of Resignation</label>
+              <input
+                value={
+                  formData.resignationDate
+                    ? new Date(formData.resignationDate).toLocaleDateString()
+                    : "N/A"
+                }
+                readOnly
+              />
+            </div>
+
+            <div className="ITSField">
+              <label>Last Working Day</label>
+              <input
+                value={
+                  formData.lastWorkingDay
+                    ? new Date(formData.lastWorkingDay).toLocaleDateString()
+                    : "N/A"
+                }
+                readOnly
+              />
+            </div>
+          </div>
+
+          <div className="ITSRow">
+            <div className="ITSField">
+              <label>Resignation Reason</label>
+              <input value={formData.resignationReason || formData.description || "N/A"} readOnly />
+            </div>
+
+            <div className="ITSField">
+              <label>Offboarding Status</label>
+              <input value={formData.status || "Approved"} readOnly />
+            </div>
+          </div>
+
+          <hr style={{ margin: "20px 0", border: "none", borderTop: "1px dashed #cbd5e1" }} />
+
+          {/* IT CLEARANCE FORM SECTION */}
+          <h3 style={{ fontSize: "16px", fontWeight: "700", color: "#1e293b", marginBottom: "14px" }}>
+            IT Clearance Form Controls
+          </h3>
 
           <div className="ITSRow">
             <div className="ITSField">
@@ -133,10 +208,9 @@ function TaskSaves() {
               <label>Task Status</label>
               <select
                 name="taskStatus"
-                value={formData.taskStatus || ""}
+                value={formData.taskStatus || "Open"}
                 onChange={handleChange}
               >
-                <option value="">Select Status</option>
                 <option value="Open">Open</option>
                 <option value="Work In Progress">Work In Progress</option>
                 <option value="Pending">Pending</option>
