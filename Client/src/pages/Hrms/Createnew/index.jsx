@@ -3,13 +3,17 @@ import axios from "axios";
 import RegularForm from "../../../components/Layouts/FormLayouts/RegularForm";
 import HrmsLeftLayout from "../Hrmsleftlayout";
 import { sendApiData } from "../../../utils/apiClient";
+import { useAuth } from "../../../context/AuthContext";
 
 import "./index.css";
 
 function CreateCase() {
+  const { user } = useAuth();
+  const currentUserName = user?.displayName || user?.username || "Employee";
+
   const [formData, setFormData] = useState({
     caseId: "",
-    requesterName: "",
+    requesterName: currentUserName,
     department: "",
     status: "",
     subStatus: "",
@@ -66,8 +70,10 @@ function CreateCase() {
           <input
             className="form-input"
             name="requesterName"
-            value={formData.requesterName}
-            onChange={handleChange}
+            value={currentUserName || formData.requesterName}
+            readOnly
+            disabled
+            style={{ background: "#f1f5f9", cursor: "not-allowed" }}
           />
         </div>
 

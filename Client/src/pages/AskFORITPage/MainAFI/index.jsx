@@ -7,11 +7,15 @@ import "./index.css";
 import "../../../styles/SharedFormStyle.css";
 
 import { fetchApiData, sendApiData } from "../../../utils/apiClient";
+import { useAuth } from "../../../context/AuthContext";
 
 function MainAFI() {
+  const { user } = useAuth();
+  const currentUserName = user?.displayName || user?.username || "Employee";
+
   const [formData, setFormData] = useState({
-    requester: "",
-    requesterFor: "",
+    requester: currentUserName,
+    requesterFor: "Sumit",
     category: "",
     subCategory: "",
     urgency: "",
@@ -105,18 +109,22 @@ function MainAFI() {
               <input
                 className="lr-input"
                 name="requester"
-                value={formData.requester}
-                onChange={handleChange}
+                value={currentUserName || formData.requester}
+                readOnly
+                disabled
+                style={{ background: "#f1f5f9", cursor: "not-allowed" }}
               />
             </div>
 
             <div className="lr-field">
-              <label className="lr-label">Requester For</label>
+              <label className="lr-label">Requested For</label>
               <input
                 className="lr-input"
                 name="requesterFor"
-                value={formData.requesterFor}
-                onChange={handleChange}
+                value="Sumit"
+                readOnly
+                disabled
+                style={{ background: "#f1f5f9", cursor: "not-allowed" }}
               />
             </div>
           </div>

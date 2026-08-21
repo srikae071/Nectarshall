@@ -3,18 +3,22 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { sendApiData } from "../../../../utils/apiClient";
 import { useEffect } from "react";
+import { useAuth } from "../../../../context/AuthContext";
 import BusinessEngagementNavBar from "../../CncRightSide/BusinessEngagementNav";
 import TableLayout2 from "../../../../components/Layouts/TableLayouts/TableLayout2";
 
 import "../../../../styles/SharedFormStyle.css";
 
 function BusinessEngagement() {
+  const { user } = useAuth();
+  const currentUserName = user?.displayName || user?.username || "Employee";
+
   const [formData, setFormData] = useState({
     businessId: "",
     clientId: "",
 
-    requester: "",
-    requesterFor: "",
+    requester: currentUserName,
+    requesterFor: "Sumit",
 
     type: "",
     companyName: "",
@@ -154,8 +158,10 @@ function BusinessEngagement() {
           <input
             className="table2-input lr-input"
             name="requester"
-            value={formData.requester}
-            onChange={handleChange}
+            value={currentUserName || formData.requester}
+            readOnly
+            disabled
+            style={{ background: "#f1f5f9", cursor: "not-allowed" }}
           />
         </div>
 
@@ -165,8 +171,10 @@ function BusinessEngagement() {
           <input
             className="table2-input lr-input"
             name="requesterFor"
-            value={formData.requesterFor}
-            onChange={handleChange}
+            value="Sumit"
+            readOnly
+            disabled
+            style={{ background: "#f1f5f9", cursor: "not-allowed" }}
           />
         </div>
 

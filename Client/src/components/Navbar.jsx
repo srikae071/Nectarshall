@@ -7,7 +7,7 @@ import { useAuth } from "../context/AuthContext";
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout, allProfiles } = useAuth();
+  const { user, logout, switchProfile, allProfiles } = useAuth();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const getModuleLabel = () => {
@@ -34,9 +34,8 @@ function Navbar() {
   };
 
   const handleSwitchAccount = (profileUsername) => {
-    logout();
+    switchProfile(profileUsername);
     setShowProfileMenu(false);
-    navigate(`/login?username=${encodeURIComponent(profileUsername)}`);
   };
 
   return (
@@ -228,13 +227,13 @@ function Navbar() {
                         fontSize: "12px",
                         cursor: "pointer",
                         display: "flex",
-                        justify: "space-between",
+                        justifyContent: "space-between",
                         alignItems: "center",
                       }}
                     >
                       <span>👤 {p.username}</span>
-                      <span style={{ fontSize: "10px", color: "#64748b" }}>
-                        ({p.role || "Employee"})
+                      <span style={{ fontSize: "10.5px", color: "#64748b" }}>
+                        [{p.department || "Ops"}]
                       </span>
                     </button>
                   ))}

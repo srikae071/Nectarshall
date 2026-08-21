@@ -5,11 +5,15 @@ import { useEffect } from "react";
 import AshrNavBar from "../AshrNavBar";
 import "../../../styles/SharedFormStyle.css";
 import { fetchApiData, sendApiData } from "../../../utils/apiClient";
+import { useAuth } from "../../../context/AuthContext";
 
 function AskForHrMainPage() {
+  const { user } = useAuth();
+  const currentUserName = user?.displayName || user?.username || "Employee";
+
   const [formData, setFormData] = useState({
-    requester: "",
-    requesterFor: "",
+    requester: currentUserName,
+    requesterFor: "Sumit",
     category: "",
     subCategory: "",
     urgency: "",
@@ -91,12 +95,14 @@ function AskForHrMainPage() {
           {/* ROW 1 */}
           <div className="lr-grid-2">
             <div className="lr-field">
-              <label className="lr-label">Requested</label>
+              <label className="lr-label">Requester</label>
               <input
                 className="lr-input"
                 name="requester"
-                value={formData.requester}
-                onChange={handleChange}
+                value={currentUserName || formData.requester}
+                readOnly
+                disabled
+                style={{ background: "#f1f5f9", cursor: "not-allowed" }}
               />
             </div>
 
@@ -105,8 +111,10 @@ function AskForHrMainPage() {
               <input
                 className="lr-input"
                 name="requesterFor"
-                value={formData.requesterFor}
-                onChange={handleChange}
+                value="Sumit"
+                readOnly
+                disabled
+                style={{ background: "#f1f5f9", cursor: "not-allowed" }}
               />
             </div>
           </div>

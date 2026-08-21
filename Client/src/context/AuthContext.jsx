@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
 import { fetchApiData } from "../utils/apiClient";
 
 const AuthContext = createContext(null);
@@ -11,44 +11,21 @@ export const DEFAULT_PASSWORDS = [
   "ENHANCE",
 ];
 
-export const USER_CREDENTIALS = {
-  sumit: {
-    username: "Sumit",
-    passwordMatches: DEFAULT_PASSWORDS,
-    role: "ADMIN",
-    displayName: "Sumit (Admin)",
-    allowedModules: ["ALL"],
-  },
-  sumith: {
-    username: "Sumit",
-    passwordMatches: DEFAULT_PASSWORDS,
-    role: "ADMIN",
-    displayName: "Sumit (Admin)",
-    allowedModules: ["ALL"],
-  },
-  srikar: {
-    username: "Srikar",
-    passwordMatches: DEFAULT_PASSWORDS,
-    role: "HRMS",
-    displayName: "Srikar (HRMS)",
-    allowedModules: ["HRMS", "MY_TASK", "MY_TICKETS", "ALL"],
-  },
-  karan: {
-    username: "Karan",
-    passwordMatches: DEFAULT_PASSWORDS,
-    role: "IT_OPERATIONS",
-    displayName: "Karan (IT & Operations)",
-    allowedModules: ["IT", "OPERATIONS", "MY_TASK", "MY_TICKETS", "ALL"],
-  },
+// Core Admin account
+const ADMIN_PROFILE = {
+  username: "Sumit",
+  displayName: "Sumit",
+  role: "ADMIN",
+  department: "Admin",
 };
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     try {
       const saved = localStorage.getItem("authUser");
-      return saved ? JSON.parse(saved) : null;
+      return saved ? JSON.parse(saved) : ADMIN_PROFILE;
     } catch (e) {
-      return null;
+      return ADMIN_PROFILE;
     }
   });
 
@@ -77,83 +54,71 @@ export const AuthProvider = ({ children }) => {
     }
   }, [user]);
 
-  const login = (inputUsername, inputPassword) => {
-    const cleanUser = (inputUsername || "").trim().toLowerCase();
-    const cleanPass = (inputPassword || "").trim();
+  // Compile list of profiles derived ONLY from Core Admin + Active Employees in backend Employee table
+  const allProfiles = useMemo(() => {
+    const list = [ADMIN_PROFILE];
 
-    // 1. Check static Admin/Role accounts (Sumit, Srikar, Karan)
-    const matchedKey = Object.keys(USER_CREDENTIALS).find(
-      (key) => key === cleanUser,
+    // Filter only ACTIVE employees from the Employee table
+    const activeEmps = (employees || []).filter(
+      (emp) => emp.status !== "Inactive" && emp.status !== "inactive"
     );
 
-    if (matchedKey) {
-      const account = USER_CREDENTIALS[matchedKey];
-      const isPassValid = account.passwordMatches.some(
-        (p) => p.toLowerCase() === cleanPass.toLowerCase(),
-      );
-
-      if (!isPassValid) {
-        return { success: false, message: "Invalid Password" };
+    activeEmps.forEach((emp) => {
+      const empName = (emp.displayName || emp.employeeName || "").trim();
+      if (
+        empName &&
+        !list.some((p) => p.username.toLowerCase() === empName.toLowerCase())
+      ) {
+        const empDept = emp.department || emp.dept || emp.designation || "Operations";
+        list.push({
+          username: empName,
+          displayName: empName,
+          role: emp.designation || emp.jobTitle || "EMPLOYEE",
+          department: empDept,
+        });
       }
-
-      const userData = {
-        username: account.username,
-        role: account.role,
-        displayName: account.displayName,
-        allowedModules: account.allowedModules,
-      };
-
-      setUser(userData);
-      return { success: true, user: userData };
-    }
-
-    // 2. Check dynamic Employee profiles (Rahul, etc.)
-    const matchedEmp = employees.find((emp) => {
-      const dName = (emp.displayName || "").trim().toLowerCase();
-      const eName = (emp.employeeName || "").trim().toLowerCase();
-      return dName === cleanUser || eName === cleanUser;
     });
 
-    if (matchedEmp) {
-      const isPassValid = DEFAULT_PASSWORDS.some(
-        (p) => p.toLowerCase() === cleanPass.toLowerCase(),
-      );
+    return list;
+  }, [employees]);
 
-      if (!isPassValid) {
-        return { success: false, message: "Invalid Password (Default: enhance123)" };
-      }
-
-      const empName = matchedEmp.displayName || matchedEmp.employeeName || inputUsername;
-      const userData = {
-        username: empName,
-        role: matchedEmp.designation || matchedEmp.jobTitle || "EMPLOYEE",
-        displayName: empName,
-        allowedModules: ["ALL"],
-      };
-
-      setUser(userData);
-      return { success: true, user: userData };
+  const switchProfile = (profileUsername) => {
+    const matched = allProfiles.find(
+      (p) => p.username.toLowerCase() === (profileUsername || "").trim().toLowerCase()
+    );
+    if (matched) {
+      setUser({
+        username: matched.username,
+        displayName: matched.displayName,
+        role: matched.role,
+        department: matched.department,
+      });
+      return matched;
     }
+    const defaultUser = {
+      username: profileUsername,
+      displayName: profileUsername,
+      role: "EMPLOYEE",
+      department: "Operations",
+    };
+    setUser(defaultUser);
+    return defaultUser;
+  };
 
-    // 3. Fallback: If user enters any name with password enhance123, allow login as Employee
+  const login = (inputUsername, inputPassword) => {
+    const cleanUser = (inputUsername || "").trim();
+    const cleanPass = (inputPassword || "").trim();
+
     const isPassValid = DEFAULT_PASSWORDS.some(
-      (p) => p.toLowerCase() === cleanPass.toLowerCase(),
+      (p) => p.toLowerCase() === cleanPass.toLowerCase()
     );
 
-    if (isPassValid && inputUsername.trim()) {
-      const formattedName = inputUsername.trim();
-      const userData = {
-        username: formattedName,
-        role: "EMPLOYEE",
-        displayName: formattedName,
-        allowedModules: ["ALL"],
-      };
-
-      setUser(userData);
-      return { success: true, user: userData };
+    if (!isPassValid) {
+      return { success: false, message: "Invalid Password" };
     }
 
-    return { success: false, message: "Invalid Username or Password." };
+    const userData = switchProfile(cleanUser);
+    return { success: true, user: userData };
   };
 
   const logout = () => {
@@ -161,23 +126,88 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("authUser");
   };
 
-  const hasModuleAccess = (moduleName) => {
+  // Check top navbar tab accessibility
+  const hasTabAccess = (tabName) => {
     if (!user) return false;
-    if (!user.allowedModules || user.allowedModules.includes("ALL")) return true;
-    return user.allowedModules.includes(moduleName);
+    const username = (user.username || "").toLowerCase();
+    const role = (user.role || "").toUpperCase();
+    const dept = (user.department || "").toUpperCase();
+
+    // Admin sees EVERYTHING
+    if (role === "ADMIN" || username.includes("sumit") || dept === "ADMIN") return true;
+
+    // Common for everyone: MY TASK, MY TICKETS, MY MAILS
+    if (["MY_TASK", "MY_TICKETS", "MY_MAILS"].includes(tabName)) return true;
+
+    // OPERATIONS Department -> OPERATIONS
+    if (dept.includes("OPERAT") || role.includes("OPERAT")) {
+      return ["OPERATIONS"].includes(tabName);
+    }
+
+    // IT Department -> IT
+    if (dept.includes("IT")) {
+      return ["IT"].includes(tabName);
+    }
+
+    // HR Department -> HRMS (only HRMS + common for HR)
+    if (dept.includes("HR") || role.includes("HR")) {
+      return ["HRMS"].includes(tabName);
+    }
+
+    // ACCOUNTS / FINANCE Department -> ACCOUNTS, CNC (C&C)
+    if (dept.includes("FIN") || dept.includes("ACC") || role.includes("ACC")) {
+      return ["ACCOUNTS", "CNC"].includes(tabName);
+    }
+
+    return false;
   };
 
-  // Compile list of all available profile options
-  const allProfiles = [
-    { username: "Sumit", displayName: "Sumit (Admin)", role: "ADMIN" },
-    { username: "Srikar", displayName: "Srikar (HRMS)", role: "HRMS" },
-    { username: "Karan", displayName: "Karan (IT & Operations)", role: "IT_OPERATIONS" },
-    ...employees.map((emp) => ({
-      username: emp.displayName || emp.employeeName,
-      displayName: `${emp.displayName || emp.employeeName} (Employee)`,
-      role: emp.designation || emp.jobTitle || "EMPLOYEE",
-    })),
-  ];
+  // Check homepage tile accessibility
+  const hasTileAccess = (tileKey) => {
+    if (!user) return false;
+    const username = (user.username || "").toLowerCase();
+    const role = (user.role || "").toUpperCase();
+    const dept = (user.department || "").toUpperCase();
+
+    // Admin sees EVERYTHING
+    if (role === "ADMIN" || username.includes("sumit") || dept === "ADMIN") return true;
+
+    // Common for everyone: Leave Management, Exit
+    if (["LEAVE_MANAGEMENT", "EXIT"].includes(tileKey)) return true;
+
+    // OPERATIONS Department -> Leave Management, Exit, Roster / Shift
+    if (dept.includes("OPERAT") || role.includes("OPERAT")) {
+      return ["ROSTER_SHIFT"].includes(tileKey);
+    }
+
+    // IT Department -> Leave Management, Exit, Ask for IT
+    if (dept.includes("IT")) {
+      return ["ASK_FOR_IT"].includes(tileKey);
+    }
+
+    // HR Department -> Leave Management, Exit, Ask for HR, Employe Request, Business Engagement, Organization Policies, Payrolls
+    if (dept.includes("HR") || role.includes("HR")) {
+      return [
+        "ASK_FOR_HR",
+        "EMPLOYE_REQUEST",
+        "BUSINESS_ENGAGEMENT",
+        "ORGANISATION_POLICIES",
+        "PAYROLLS",
+      ].includes(tileKey);
+    }
+
+    // ACCOUNTS / FINANCE Department -> Leave Management, Exit
+    if (dept.includes("FIN") || dept.includes("ACC") || role.includes("ACC")) {
+      return false; // Only common LEAVE_MANAGEMENT & EXIT
+    }
+
+    return false;
+  };
+
+  const hasModuleAccess = (moduleName) => {
+    if (moduleName === "ALL") return hasTabAccess("ADMIN");
+    return hasTabAccess(moduleName);
+  };
 
   return (
     <AuthContext.Provider
@@ -185,6 +215,9 @@ export const AuthProvider = ({ children }) => {
         user,
         login,
         logout,
+        switchProfile,
+        hasTabAccess,
+        hasTileAccess,
         hasModuleAccess,
         isAuthenticated: !!user,
         employees,

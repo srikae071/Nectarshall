@@ -2,14 +2,18 @@ import { useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
+import { useAuth } from "../../../../../context/AuthContext";
 import ItLeftside from "../../ItLeftSide";
 
 import "./index.css";
 
 function ITCreateCase() {
+  const { user } = useAuth();
+  const currentUserName = user?.displayName || user?.username || "Employee";
+
   const [formData, setFormData] = useState({
     caseId: "",
-    requesterName: "",
+    requesterName: currentUserName,
     department: "",
     status: "",
     subStatus: "",
@@ -127,8 +131,10 @@ function ITCreateCase() {
             <label>Requester Name</label>
             <input
               name="requesterName"
-              value={formData.requesterName}
-              onChange={handleChange}
+              value={currentUserName || formData.requesterName}
+              readOnly
+              disabled
+              style={{ background: "#f1f5f9", cursor: "not-allowed" }}
             />
           </div>
 

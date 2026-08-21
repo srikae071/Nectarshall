@@ -1,11 +1,15 @@
 import { useState } from "react";
 import axios from "axios";
+import { useAuth } from "../../../../../../context/AuthContext";
 
 import Hrmsleftlayout from "../../../../Hrmsleftlayout";
 
 import "./index.css";
 
 function OnBoardingResonanceRequirementsCreateNew() {
+  const { user } = useAuth();
+  const currentUserName = user?.displayName || user?.username || "Employee";
+
   const [showPreliminary, setShowPreliminary] = useState(false);
   const [showBarriers, setShowBarriers] = useState(false);
   const [showQualifications, setShowQualifications] = useState(false);
@@ -13,7 +17,7 @@ function OnBoardingResonanceRequirementsCreateNew() {
   const [showCandidatesList, setShowCandidatesList] = useState(false);
   const [formData, setFormData] = useState({
     caseId: "",
-    requesterName: "",
+    requesterName: currentUserName,
     department: "",
     impact: "",
     urgency: "",
@@ -246,8 +250,10 @@ function OnBoardingResonanceRequirementsCreateNew() {
             <label>Requester Name</label>
             <input
               name="requesterName"
-              value={formData.requesterName}
-              onChange={handleChange}
+              value={currentUserName || formData.requesterName}
+              readOnly
+              disabled
+              style={{ background: "#f1f5f9", cursor: "not-allowed" }}
             />
           </div>
 

@@ -1,13 +1,18 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../../context/AuthContext";
+import { sendApiData } from "../../../../utils/apiClient";
 import ResonanceNav from "../ExitNav";
 import "./index.css";
 import "../../../../styles/SharedFormStyle.css";
 
 function Exit() {
+  const { user } = useAuth();
+  const currentUserName = user?.displayName || user?.username || "Employee";
+
   const [formData, setFormData] = useState({
-    requesterName: "",
+    requesterName: currentUserName,
     resignationDate: "",
     lastWorkingDay: "",
     resignationReason: "",
@@ -79,20 +84,20 @@ function Exit() {
 
   const handleSave = async () => {
     try {
-      const response = await axios.post(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests",
-        {
-          ...formData,
-          category: "Offboarding",
-          status: "Open",
-          requestType: "Resignation",
-        },
-      );
+      const payload = {
+        ...formData,
+        requester: currentUserName,
+        requesterName: currentUserName,
+        requesterFor: "Sumit",
+        category: "Offboarding",
+        status: "Open",
+        requestType: "Resignation",
+      };
+
+      const response = await sendApiData("/api/jobrequests", payload);
 
       console.log(response.data);
-
       alert("Offboarding Request Saved Successfully");
-
       navigate("/");
     } catch (error) {
       console.error(error);
@@ -112,8 +117,10 @@ function Exit() {
               <input
                 className="lr-input"
                 name="requesterName"
-                value={formData.requesterName}
-                onChange={handleChange}
+                value={currentUserName || formData.requesterName}
+                readOnly
+                disabled
+                style={{ background: "#f1f5f9", cursor: "not-allowed" }}
               />
             </div>
 

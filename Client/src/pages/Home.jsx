@@ -19,17 +19,29 @@ import { useAuth } from "../context/AuthContext";
 
 function Home() {
   const navigate = useNavigate();
-  const { user, logout, hasModuleAccess } = useAuth();
+  const {
+    user,
+    logout,
+    switchProfile,
+    allProfiles,
+    hasTabAccess,
+    hasTileAccess,
+  } = useAuth();
   const [pendingCount, setPendingCount] = useState(0);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   useEffect(() => {
     fetchPendingLeaves();
-  }, []);
+  }, [user]);
 
   const handleLogout = () => {
     logout();
     navigate("/login");
+  };
+
+  const handleSwitchProfile = (pUsername) => {
+    switchProfile(pUsername);
+    setShowProfileMenu(false);
   };
 
   const fetchPendingLeaves = async () => {
@@ -39,18 +51,54 @@ function Home() {
         fetchApiData("/api/jobrequests"),
       ]);
 
-      const pendingLeaves = leaveResponse.data.filter(
-        (item) => item.status === "Pending",
-      ).length;
+      const username = (user?.displayName || user?.username || "").toLowerCase();
+      const role = (user?.role || "").toUpperCase();
+      const dept = (user?.department || "").toUpperCase();
+      const isAdmin = role === "ADMIN" || username.includes("sumit") || dept === "ADMIN";
 
-      const pendingOffboarding = jobResponse.data.filter(
-        (item) => item.category === "Offboarding" && item.status === "Open",
-      ).length;
+      const leavesList = leaveResponse.data || [];
+      const jobList = jobResponse.data || [];
+
+      let pendingLeaves = 0;
+      let pendingOffboarding = 0;
+
+      if (isAdmin) {
+        pendingLeaves = leavesList.filter((item) => item.status === "Pending").length;
+        pendingOffboarding = jobList.filter(
+          (item) =>
+            (item.category === "Offboarding" || item.category === "Exit") &&
+            (item.status === "Open" || item.status === "Pending")
+        ).length;
+      } else if (username) {
+        pendingLeaves = leavesList.filter((item) => {
+          const r1 = (item.requester || item.employeeName || "").toLowerCase();
+          const r2 = (item.requesterFor || "").toLowerCase();
+          const isMatch =
+            r1.includes(username) ||
+            username.includes(r1 && r1.length > 2 ? r1 : "___never___") ||
+            r2.includes(username);
+          return isMatch && item.status === "Pending";
+        }).length;
+
+        pendingOffboarding = jobList.filter((item) => {
+          const r1 = (
+            item.requester ||
+            item.requesterName ||
+            item.employeeName ||
+            ""
+          ).toLowerCase();
+          const r2 = (item.requesterFor || "").toLowerCase();
+          const isMatch =
+            r1.includes(username) ||
+            username.includes(r1 && r1.length > 2 ? r1 : "___never___") ||
+            r2.includes(username);
+          const isOff = item.category === "Offboarding" || item.category === "Exit";
+          const isPending = item.status === "Open" || item.status === "Pending";
+          return isMatch && isOff && isPending;
+        }).length;
+      }
 
       setPendingCount(pendingLeaves + pendingOffboarding);
-
-      console.log("Pending Leaves:", pendingLeaves);
-      console.log("Pending Offboarding:", pendingOffboarding);
     } catch (error) {
       console.log(error);
     }
@@ -58,90 +106,71 @@ function Home() {
 
   const allServices = [
     {
+      key: "LEAVE_MANAGEMENT",
       title: "Leaves Management",
       desc: "Smart Leave Management for Modern Teams",
       img: leaveImg,
       route: "/home-leave-request",
-      module: "COMMON",
     },
     {
+      key: "PAYROLLS",
       title: "Payrolls",
       desc: "Reliable & Accurate Payroll Management",
       img: payrollImg,
       route: "/payroll",
-      module: "HRMS",
     },
     {
+      key: "ROSTER_SHIFT",
       title: "Roster / Shift",
       desc: "Plan Shifts Smarter and Faster",
       img: rosterImg,
       route: "/roster-shifts",
-      module: "OPERATIONS",
     },
     {
+      key: "ORGANISATION_POLICIES",
       title: "Organization Policies",
       desc: "Clear policies for a stronger organization",
       img: orgImg,
       route: "/organisation-policies",
-      module: "COMMON",
     },
     {
+      key: "ASK_FOR_IT",
       title: "Ask for IT",
       desc: "Report technical issues instantly",
       img: askItImg,
       route: "/ask-for-it",
-      module: "IT",
     },
     {
+      key: "ASK_FOR_HR",
       title: "Ask for HR",
       desc: "A simple way to communicate HR issues",
       img: askHrImg,
       route: "/ask-for-hr",
-      module: "HRMS",
     },
-    // ss
-
     {
+      key: "EMPLOYE_REQUEST",
       title: "Employe Request",
       desc: "A simple way to communicate HR issues",
       img: empreq,
       route: "/Resonancereq",
-      module: "HRMS",
     },
     {
+      key: "EXIT",
       title: "Exit",
       desc: "A simple way to communicate HR issues",
       img: offboarding,
       route: "/exit",
-      module: "HRMS",
     },
     {
+      key: "BUSINESS_ENGAGEMENT",
       title: "Business Engagement",
       desc: "A simple way to communicate HR issues",
       img: busineseng,
       route: "/business-engagement",
-      module: "CNC",
     },
-    /* {
-      title: "Assignment Group",
-      desc: "Centralized ticket routing for IT, HR, and Accounts tables",
-      img: orgImg,
-      route: "/assignment-group",
-      module: "COMMON",
-    }, */
   ];
 
-  const visibleServices = allServices.filter((item) => {
-    if (!user) return true;
-    if (user.role === "ADMIN") return true;
-    if (user.role === "HRMS") {
-      return ["HRMS", "COMMON"].includes(item.module);
-    }
-    if (user.role === "IT_OPERATIONS") {
-      return ["IT", "OPERATIONS", "COMMON"].includes(item.module);
-    }
-    return true;
-  });
+  const visibleServices = allServices.filter((item) => hasTileAccess(item.key));
 
   return (
     <div>
@@ -151,11 +180,13 @@ function Home() {
         </div>
 
         <div className="nav-links">
-          {hasModuleAccess("ALL") && (
+          {hasTabAccess("ACCOUNTS") && (
             <>
-              <a role="button" tabIndex={0} onClick={() => navigate("/test")}>
-                test
-              </a>
+              {hasTabAccess("ADMIN") && (
+                <a role="button" tabIndex={0} onClick={() => navigate("/test")}>
+                  test
+                </a>
+              )}
               <a
                 role="button"
                 tabIndex={0}
@@ -165,7 +196,8 @@ function Home() {
               </a>
             </>
           )}
-          {(hasModuleAccess("ALL") || hasModuleAccess("CNC")) && (
+
+          {hasTabAccess("CNC") && (
             <a
               role="button"
               tabIndex={0}
@@ -174,12 +206,14 @@ function Home() {
               C&C
             </a>
           )}
-          {(hasModuleAccess("ALL") || hasModuleAccess("IT")) && (
+
+          {hasTabAccess("IT") && (
             <a role="button" tabIndex={0} onClick={() => navigate("/it/open")}>
               IT
             </a>
           )}
-          {(hasModuleAccess("ALL") || hasModuleAccess("PATROLLING")) && (
+
+          {hasTabAccess("PATROLLING") && (
             <a
               role="button"
               tabIndex={0}
@@ -188,7 +222,8 @@ function Home() {
               PATROLLING
             </a>
           )}
-          {(hasModuleAccess("ALL") || hasModuleAccess("OPERATIONS")) && (
+
+          {hasTabAccess("OPERATIONS") && (
             <a
               role="button"
               tabIndex={0}
@@ -197,7 +232,8 @@ function Home() {
               OPERATIONS
             </a>
           )}
-          {(hasModuleAccess("ALL") || hasModuleAccess("HRMS")) && (
+
+          {hasTabAccess("HRMS") && (
             <a
               role="button"
               tabIndex={0}
@@ -207,32 +243,34 @@ function Home() {
             </a>
           )}
 
-          {/* MY TASK IS VISIBLE FOR EVERYONE */}
-          <div
-            className="MyTaskNotificationWrapper"
-            role="button"
-            tabIndex={0}
-            onClick={() => navigate("/my-tasks")}
-          >
-            <a>MY TASK</a>
-            <span className="MyTaskNotificationBadge">{pendingCount}</span>
-          </div>
+          {/* COMMON FOR EVERYONE */}
+          {hasTabAccess("MY_TASK") && (
+            <div
+              className="MyTaskNotificationWrapper"
+              role="button"
+              tabIndex={0}
+              onClick={() => navigate("/my-tasks")}
+            >
+              <a>MY TASK</a>
+              <span className="MyTaskNotificationBadge">{pendingCount}</span>
+            </div>
+          )}
 
-          <a role="button" tabIndex={0} onClick={() => navigate("/my-tickets")}>
-            MY TICKETS
-          </a>
+          {hasTabAccess("MY_TICKETS") && (
+            <a role="button" tabIndex={0} onClick={() => navigate("/my-tickets")}>
+              MY TICKETS
+            </a>
+          )}
 
-          {/* <a role="button" tabIndex={0} onClick={() => navigate("/assignment-group")}>
-            ASSIGNMENT GROUP
-          </a> */}
-
-          <a role="button" tabIndex={0} onClick={() => navigate("/my-mails")}>
-            MY MAILS
-          </a>
+          {hasTabAccess("MY_MAILS") && (
+            <a role="button" tabIndex={0} onClick={() => navigate("/my-mails")}>
+              MY MAILS
+            </a>
+          )}
 
           <ThemeSelector />
 
-          {/* PROFILE USER MENU WITH LOGOUT */}
+          {/* PROFILE USER MENU WITH DEPARTMENT ACCESS & SWITCHER */}
           <div
             className="userProfileMenuContainer"
             style={{ position: "relative" }}
@@ -258,7 +296,7 @@ function Home() {
                   borderRadius: "8px",
                   boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
                   padding: "12px 14px",
-                  width: "210px",
+                  width: "240px",
                   zIndex: 9999,
                   color: "#0f172a",
                 }}
@@ -268,8 +306,8 @@ function Home() {
                     fontWeight: "700",
                     fontSize: "14px",
                     borderBottom: "1px solid #e2e8f0",
-                    paddingBottom: "8px",
-                    marginBottom: "8px",
+                    paddingBottom: "6px",
+                    marginBottom: "4px",
                   }}
                 >
                   {user?.displayName || user?.username}
@@ -278,10 +316,62 @@ function Home() {
                   style={{
                     fontSize: "12px",
                     color: "#64748b",
-                    marginBottom: "12px",
+                    marginBottom: "10px",
                   }}
                 >
-                  Role: <strong>{user?.role}</strong>
+                  Department: <strong>{user?.department || "Operations"}</strong> ({user?.role})
+                </div>
+
+                <div
+                  style={{
+                    fontSize: "11px",
+                    fontWeight: "700",
+                    color: "#475569",
+                    marginBottom: "6px",
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Switch Profile:
+                </div>
+                <div
+                  style={{
+                    maxHeight: "140px",
+                    overflowY: "auto",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "4px",
+                    marginBottom: "10px",
+                  }}
+                >
+                  {(allProfiles || []).map((p) => {
+                    const isCurrent =
+                      (user?.username || "").toLowerCase() ===
+                      p.username.toLowerCase();
+                    return (
+                      <div
+                        key={p.username}
+                        onClick={() => handleSwitchProfile(p.username)}
+                        style={{
+                          padding: "6px 8px",
+                          borderRadius: "4px",
+                          fontSize: "12px",
+                          fontWeight: isCurrent ? "700" : "500",
+                          background: isCurrent ? "#eff6ff" : "#f8fafc",
+                          color: isCurrent ? "#2563eb" : "#334155",
+                          border: isCurrent ? "1px solid #bfdbfe" : "1px solid #e2e8f0",
+                          cursor: "pointer",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <span>{p.username}</span>
+                        <span style={{ fontSize: "10.5px", color: "#64748b" }}>
+                          [{p.department || "Ops"}]
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
 
                 <button
@@ -334,7 +424,7 @@ function Home() {
         </div>
       </div>
       <div className="navbarbgc">
-        <img src={corosolimg} className="hero-img" />
+        <img src={corosolimg} className="hero-img" alt="carousel" />
         <div className="hero-content">
           <div className="search-box">
             <input placeholder="What are you looking for?" />
@@ -343,30 +433,6 @@ function Home() {
         </div>
       </div>
 
-      {/* <div className="services">
-        {services.map((item, index) => (
-          <div
-            className="card"
-            key={index}
-            onClick={() => {
-              if (item.title === "Leaves Management") {
-                console.log("Navigating to Leave Request");
-                navigate("/leave-request");
-              } else if (item.title === "Payrolls") {
-                console.log("Navigating to Payroll");
-                navigate("/payroll");
-              }
-            }}
-          >
-            <div
-              className="card-img"
-              style={{ backgroundImage: `url(${item.img})` }}
-            ></div>
-            <h3>{item.title}</h3>
-            <p>{item.desc}</p>
-          </div>
-        ))}
-      </div> */}
       <div className="HomeServices">
         {visibleServices.map((item, index) => (
           <div
@@ -378,11 +444,8 @@ function Home() {
               className="HomeCardImage"
               style={{ backgroundImage: `url(${item.img})` }}
             />
-
-            <div className="HomeCardContent">
-              <h3 className="HomeCardTitle">{item.title}</h3>
-              <p className="HomeCardDescription">{item.desc}</p>
-            </div>
+            <h3>{item.title}</h3>
+            <p>{item.desc}</p>
           </div>
         ))}
       </div>

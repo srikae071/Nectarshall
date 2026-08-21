@@ -21,7 +21,7 @@ function OprationsClientOnbTab() {
   const allColumns = [
     { key: "clientId", label: "Client ID" },
     { key: "requester", label: "Requester Name" },
-    { key: "requesterFor", label: "Requester For" },
+    { key: "requesterFor", label: "Requested For" },
     { key: "status", label: "Status" },
     { key: "abn", label: "ABN" },
     { key: "companyName", label: "Company Name" },

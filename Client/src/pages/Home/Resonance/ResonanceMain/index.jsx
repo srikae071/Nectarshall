@@ -1,16 +1,21 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../../context/AuthContext";
 import ResonanceNav from "../ResonanceNav/index.jsx";
 import "./index.css";
 
 import { sendApiData } from "../../../../utils/apiClient";
 
 function ResonanceMain() {
+  const { user } = useAuth();
+  const currentUserName = user?.displayName || user?.username || "Employee";
+
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    requester: "",
-    requesterFor: "",
+    requesterName: currentUserName,
+    requester: currentUserName,
+    requesterFor: "Sumit",
     category: "",
     subCategory: "",
     urgency: "",
@@ -65,8 +70,10 @@ function ResonanceMain() {
             <label>Requester</label>
             <input
               name="requesterName"
-              value={formData.requesterName}
-              onChange={handleChange}
+              value={currentUserName || formData.requesterName}
+              readOnly
+              disabled
+              style={{ background: "#f1f5f9", cursor: "not-allowed" }}
             />
           </div>
 

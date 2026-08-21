@@ -9,19 +9,29 @@ import {
 } from "../../utils/mailService";
 import Hrmsleftlayout from "../Hrms/Hrmsleftlayout";
 import "./LeaveRequest.css";
-import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useAuth } from "../../context/AuthContext";
 
 function LeaveRequest() {
+  const { user } = useAuth();
+  const currentUserName = user?.displayName || user?.username || "Employee";
+
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [halfDay, setHalfDay] = useState(false);
   const [description, setDescription] = useState("");
-  const [requester, setRequester] = useState("");
-  const [requesterFor, setRequesterFor] = useState("");
+  const [requester, setRequester] = useState(currentUserName);
+  const [requesterFor, setRequesterFor] = useState("Sumit");
   const [leaveType, setLeaveType] = useState("");
   const [employeeList, setEmployeeList] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (currentUserName) {
+      setRequester(currentUserName);
+    }
+    setRequesterFor("Sumit");
+  }, [currentUserName]);
 
   useEffect(() => {
     fetchApiData("/api/employees")
@@ -158,21 +168,23 @@ function LeaveRequest() {
                   type="text"
                   className="lr-input"
                   placeholder="Enter requester"
-                  list="employeeDatalist"
-                  value={requester}
-                  onChange={(e) => setRequester(e.target.value)}
+                  value={currentUserName || requester}
+                  readOnly
+                  disabled
+                  style={{ background: "#f1f5f9", cursor: "not-allowed" }}
                 />
               </div>
 
               <div className="lr-field">
-                <label className="lr-label">Requester For</label>
+                <label className="lr-label">Requested For</label>
                 <input
                   type="text"
                   className="lr-input"
-                  placeholder="Search employee"
-                  list="employeeDatalist"
-                  value={requesterFor}
-                  onChange={(e) => setRequesterFor(e.target.value)}
+                  placeholder="Admin"
+                  value="Sumit"
+                  readOnly
+                  disabled
+                  style={{ background: "#f1f5f9", cursor: "not-allowed" }}
                 />
               </div>
 
