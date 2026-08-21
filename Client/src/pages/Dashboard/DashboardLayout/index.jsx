@@ -2,11 +2,11 @@ import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { fetchApiData, extractArrayData } from "../../../utils/apiClient";
-import { FiFileText, FiBarChart2, FiShield, FiUsers, FiCalendar } from "react-icons/fi";
-
 import "./index.css";
 import DashbordNavbar from "../DashbordNavbar/index.jsx";
 import { EmployeeContext } from "../DashboardRightLayout/EmployeeContext.js";
+
+import { FiFileText, FiBarChart2, FiShield, FiUsers, FiCalendar, FiGrid } from "react-icons/fi";
 
 const OperationsNavTabs = () => {
   const navigate = useNavigate();
@@ -19,21 +19,16 @@ const OperationsNavTabs = () => {
 
   if (!isDashboardRoute) return null;
 
-  const isActive = (p) => {
-    if (p === "/timesheets") return path.startsWith("/timesheets") || path.startsWith("/schedule");
-    if (p === "/reports") return path.startsWith("/reports");
-    if (p === "/incidents") return path.startsWith("/incidents");
-    if (p === "/Operations-Complience/All") return path.includes("Complience") || path.includes("onboarding-client");
-    if (p === "/roster") return path.startsWith("/roster");
-    return false;
-  };
+  const searchParams = new URLSearchParams(location.search);
+  const activeTab = searchParams.get("tab") || "Overview";
 
   const navItems = [
-    { label: "Timesheets", path: "/timesheets", icon: FiFileText },
-    { label: "Reports", path: "/reports", icon: FiBarChart2 },
-    { label: "Incidents", path: "/incidents", icon: FiShield },
-    { label: "Onboarding Candidate", path: "/Operations-Complience/All", icon: FiUsers },
-    { label: "Roster", path: "/roster", icon: FiCalendar },
+    { label: "Overview", tab: "Overview", icon: FiGrid },
+    { label: "Timesheets", tab: "Timesheets", icon: FiFileText },
+    { label: "Reports", tab: "Reports", icon: FiBarChart2 },
+    { label: "Incidents", tab: "Incidents", icon: FiShield },
+    { label: "Onboarding Candidate", tab: "Onboarding Candidate", icon: FiUsers },
+    { label: "Roster", tab: "Roster", icon: FiCalendar },
   ];
 
   return (
@@ -41,49 +36,50 @@ const OperationsNavTabs = () => {
       style={{
         display: "flex",
         alignItems: "center",
-        justifyContent: "space-between",
-        padding: "0 40px",
-        height: "56px",
-        background: "#ffffff",
-        borderBottom: "1px solid #e2e8f0",
-        boxShadow: "0 1px 3px rgba(0,0,0,0.03)",
+        justifyContent: "center",
+        padding: "16px 24px",
+        background: "#f8fafc",
         width: "100%",
         boxSizing: "border-box",
       }}
     >
-      {/* Left Title */}
-      <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
-        <span
-          onClick={() => navigate("/main-dashboard")}
-          style={{ cursor: "pointer", color: "#0f172a", fontSize: "16px", fontWeight: 700 }}
-        >
-          Operations
-        </span>
-      </div>
-
-      {/* Nav Tabs with Icons */}
-      <div style={{ display: "flex", gap: "36px", alignItems: "center" }}>
+      <div 
+        style={{ 
+          display: "flex", 
+          gap: "8px", 
+          alignItems: "center", 
+          flexWrap: "nowrap",
+          background: "#ffffff",
+          border: "1px solid #e2e8f0",
+          borderRadius: "16px",
+          padding: "6px",
+          boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.05)"
+        }}
+      >
         {navItems.map((item) => {
-          const active = isActive(item.path);
+          const active = activeTab === item.tab;
           const Icon = item.icon;
           return (
             <div
-              key={item.path}
-              onClick={() => navigate(item.path)}
+              key={item.tab}
+              onClick={() => navigate(`/main-dashboard?tab=${item.tab}`)}
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: "8px",
+                gap: "10px",
                 cursor: "pointer",
                 fontSize: "14.5px",
-                fontWeight: active ? 600 : 500,
-                color: active ? "#2563eb" : "#64748b",
-                borderBottom: active ? "2.5px solid #2563eb" : "2.5px solid transparent",
-                padding: "16px 4px 14px 4px",
+                fontWeight: active ? 700 : 500,
+                color: active ? "#2563eb" : "#475569",
+                backgroundColor: active ? "#eff6ff" : "transparent",
+                borderRadius: "12px",
+                padding: "8px 18px",
                 transition: "all 0.15s ease-in-out",
+                whiteSpace: "nowrap",
+                flexShrink: 0
               }}
             >
-              <Icon size={16} style={{ color: active ? "#2563eb" : "#64748b" }} />
+              <Icon size={18} style={{ color: active ? "#2563eb" : "#64748b" }} />
               <span>{item.label}</span>
             </div>
           );
