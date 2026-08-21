@@ -1,9 +1,7 @@
 import MyTasksNavBar from "./MyTaskNavvar";
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { fetchApiData, sendApiData } from "../../utils/apiClient";
 import { useAuth } from "../../context/AuthContext";
-
 import "./index.css";
 
 function ApprovalTable() {
@@ -32,11 +30,9 @@ function ApprovalTable() {
       );
       const { username, isAdmin } = getAuthDetails();
       if (isAdmin) {
-        // Admin sees all open/pending offboardings for approval
-        setOffboardingData(list.filter((item) => item.status === "Open" || item.status === "Pending"));
+        setOffboardingData(list.filter((item) => item.status === "Open" || item.status === "Pending" || item.status === "Approved"));
       } else if (username) {
         const u = username.toLowerCase();
-        // Employee sees all their own offboarding requests (Pending, Approved, Rejected)
         setOffboardingData(
           list.filter((item) => {
             const r1 = (item.requester || item.requesterName || item.employeeName || "").toLowerCase();
@@ -124,6 +120,30 @@ function ApprovalTable() {
     }
   };
 
+  const handleClearanceStatusUpdate = async (id, fieldName, newStatus) => {
+    try {
+      const payload = {
+        [fieldName]: newStatus,
+      };
+
+      if (fieldName === "itClearanceStatus") {
+        payload.ItTAskStatus = newStatus;
+        payload.itStatus = newStatus;
+        payload.taskStatus = newStatus;
+      } else if (fieldName === "financeClearanceStatus") {
+        payload.financeStatus = newStatus;
+      } else if (fieldName === "adminClearanceStatus") {
+        payload.adminStatus = newStatus;
+      }
+
+      await sendApiData(`/api/jobrequests/${id}`, payload, "put");
+      fetchOffboarding();
+    } catch (error) {
+      console.log(error);
+      alert("Error updating clearance status");
+    }
+  };
+
   const handleResetLeaves = async () => {
     try {
       await sendApiData(`/api/leaves/reset-all`, {}, "put");
@@ -133,6 +153,23 @@ function ApprovalTable() {
       console.log(error);
       alert("Error resetting leave balances");
     }
+  };
+
+  const getStatusBadgeStyle = (statusVal) => {
+    const s = (statusVal || "Open").toLowerCase();
+    if (s.includes("approved") || s.includes("resolved") || s.includes("closed")) {
+      return { bg: "#dcfce7", color: "#166534" };
+    }
+    if (s.includes("rejected") || s.includes("deleted")) {
+      return { bg: "#fee2e2", color: "#991b1b" };
+    }
+    if (s.includes("progress") || s.includes("wip")) {
+      return { bg: "#dbeafe", color: "#1e40af" };
+    }
+    if (s.includes("pending")) {
+      return { bg: "#ffedd5", color: "#c2410c" };
+    }
+    return { bg: "#fef3c7", color: "#92400e" };
   };
 
   const { isAdmin } = getAuthDetails();
@@ -145,7 +182,7 @@ function ApprovalTable() {
         <div
           style={{
             display: "flex",
-            justify: "space-between",
+            justifyContent: "space-between",
             alignItems: "center",
             marginBottom: "15px",
             flexWrap: "wrap",
@@ -153,7 +190,7 @@ function ApprovalTable() {
           }}
         >
           <h2 className="approval-title" style={{ margin: 0 }}>
-            {isAdmin ? "Request Approval List (Admin)" : "My Pending Tasks & Requests"}
+            {isAdmin ? "Request Approval & Clearance Management (Admin)" : "My Pending Tasks & Clearance Status"}
           </h2>
           {isAdmin && (
             <button
@@ -228,10 +265,10 @@ function ApprovalTable() {
                           </td>
                           <td className="MyTaskTableCell MyTaskCenter">
                             <button className="delete-btn" onClick={() => rejectLeave(item._id)}>
-                              Delete
+                              Reject
                             </button>
                           </td>
-                          <td className="MyTaskTableCell MyTaskCenter">
+                          <td className="MyTaskTableCell">
                             <input type="text" placeholder="Comment..." className="comment-input" />
                           </td>
                         </>
@@ -273,11 +310,11 @@ function ApprovalTable() {
           </div>
         )}
 
-        {/* OFFBOARDING / EXIT REQUESTS TABLE */}
+        {/* OFFBOARDING / EXIT REQUESTS TABLE WITH SEPARATE CLEARANCE STATUSES */}
         {offboardingData.length > 0 ? (
           <>
-            <h2 className="approval-title" style={{ marginTop: "20px" }}>
-              Offboarding Employee Request
+            <h2 className="approval-title" style={{ marginTop: "24px" }}>
+              Offboarding Exit & Task Clearance Requests
             </h2>
 
             <div className="table-wrapper">
@@ -289,90 +326,140 @@ function ApprovalTable() {
                     <th className="MyTaskTableHeader">Resignation Date</th>
                     <th className="MyTaskTableHeader">Last Working Day</th>
                     <th className="MyTaskTableHeader">Resignation Reason</th>
-                    {isAdmin ? (
-                      <>
-                        <th className="MyTaskTableHeader">Confirm Date</th>
-                        <th className="MyTaskTableHeader">Approve</th>
-                        <th className="MyTaskTableHeader">Delete</th>
-                        <th className="MyTaskTableHeader">Comment</th>
-                      </>
-                    ) : (
-                      <th className="MyTaskTableHeader">Approval Status</th>
-                    )}
+                    <th className="MyTaskTableHeader">Approval Status</th>
+                    <th className="MyTaskTableHeader">💻 IT Clearance</th>
+                    <th className="MyTaskTableHeader">💰 Finance Clearance</th>
+                    <th className="MyTaskTableHeader">🏢 Admin Clearance</th>
+                    {isAdmin && <th className="MyTaskTableHeader">Actions</th>}
                   </tr>
                 </thead>
 
                 <tbody>
-                  {offboardingData.map((item, idx) => (
-                    <tr className="MyTaskTableRow" key={item._id || idx}>
-                      <td className="MyTaskTableCell">
-                        {item.caseId || (item._id ? `OFF-${item._id.slice(-5).toUpperCase()}` : `OFF-00${idx + 1}`)}
-                      </td>
+                  {offboardingData.map((item, idx) => {
+                    const itStatusVal = item.itClearanceStatus || item.ItTAskStatus || item.itStatus || item.taskStatus || "Open";
+                    const finStatusVal = item.financeClearanceStatus || item.financeStatus || "Open";
+                    const admStatusVal = item.adminClearanceStatus || item.adminStatus || "Open";
 
-                      <td className="MyTaskTableCell">
-                        {item.requesterName || item.requester || user?.displayName || user?.username}
-                      </td>
+                    const itBadge = getStatusBadgeStyle(itStatusVal);
+                    const finBadge = getStatusBadgeStyle(finStatusVal);
+                    const admBadge = getStatusBadgeStyle(admStatusVal);
+                    const appBadge = getStatusBadgeStyle(item.status);
 
-                      <td className="MyTaskTableCell">
-                        {item.resignationDate ? new Date(item.resignationDate).toLocaleDateString() : "-"}
-                      </td>
+                    return (
+                      <tr className="MyTaskTableRow" key={item._id || idx}>
+                        <td className="MyTaskTableCell">
+                          <strong>{item.caseId || `OFF-${item._id.slice(-5).toUpperCase()}`}</strong>
+                        </td>
 
-                      <td className="MyTaskTableCell">
-                        {item.lastWorkingDay ? new Date(item.lastWorkingDay).toLocaleDateString() : "-"}
-                      </td>
+                        <td className="MyTaskTableCell">
+                          {item.requesterName || item.requester || user?.displayName || user?.username}
+                        </td>
 
-                      <td className="MyTaskTableCell">{item.resignationReason || item.description || "-"}</td>
+                        <td className="MyTaskTableCell">
+                          {item.resignationDate ? new Date(item.resignationDate).toLocaleDateString() : "-"}
+                        </td>
 
-                      {isAdmin ? (
-                        <>
-                          <td className="MyTaskTableCell">
-                            <input type="date" className="confirm-date" />
-                          </td>
+                        <td className="MyTaskTableCell">
+                          {item.lastWorkingDay ? new Date(item.lastWorkingDay).toLocaleDateString() : "-"}
+                        </td>
 
-                          <td className="MyTaskTableCell MyTaskCenter">
-                            <button className="approve-btn" onClick={() => approveOffboarding(item._id)}>
-                              Approve
-                            </button>
-                          </td>
+                        <td className="MyTaskTableCell">{item.resignationReason || item.description || "-"}</td>
 
-                          <td className="MyTaskTableCell MyTaskCenter">
-                            <button className="delete-btn" onClick={() => deleteOffboarding(item._id)}>
-                              Delete
-                            </button>
-                          </td>
-
-                          <td className="MyTaskTableCell">
-                            <input type="text" placeholder="Comment..." className="comment-input" />
-                          </td>
-                        </>
-                      ) : (
+                        {/* APPROVAL STATUS */}
                         <td className="MyTaskTableCell MyTaskCenter">
                           <span
                             style={{
-                              padding: "4px 12px",
+                              padding: "4px 10px",
                               borderRadius: "12px",
                               fontWeight: "700",
                               fontSize: "12px",
-                              background:
-                                item.status === "Approved"
-                                  ? "#dcfce7"
-                                  : item.status === "Rejected" || item.status === "Deleted"
-                                  ? "#fee2e2"
-                                  : "#fef3c7",
-                              color:
-                                item.status === "Approved"
-                                  ? "#166534"
-                                  : item.status === "Rejected" || item.status === "Deleted"
-                                  ? "#991b1b"
-                                  : "#92400e",
+                              background: appBadge.bg,
+                              color: appBadge.color,
                             }}
                           >
                             {item.status === "Open" ? "Pending" : item.status || "Pending"}
                           </span>
                         </td>
-                      )}
-                    </tr>
-                  ))}
+
+                        {/* IT CLEARANCE STATUS */}
+                        <td className="MyTaskTableCell MyTaskCenter">
+                          {isAdmin ? (
+                            <select
+                              value={itStatusVal}
+                              onChange={(e) => handleClearanceStatusUpdate(item._id, "itClearanceStatus", e.target.value)}
+                              style={{ padding: "4px 8px", borderRadius: "6px", fontSize: "12px", fontWeight: "600", border: "1px solid #cbd5e1" }}
+                            >
+                              <option value="Open">Open</option>
+                              <option value="Work In Progress">Work In Progress</option>
+                              <option value="Pending">Pending</option>
+                              <option value="Resolved">Resolved</option>
+                              <option value="Closed">Closed</option>
+                            </select>
+                          ) : (
+                            <span style={{ padding: "4px 10px", borderRadius: "12px", fontWeight: "700", fontSize: "12px", background: itBadge.bg, color: itBadge.color }}>
+                              {itStatusVal}
+                            </span>
+                          )}
+                        </td>
+
+                        {/* FINANCE CLEARANCE STATUS */}
+                        <td className="MyTaskTableCell MyTaskCenter">
+                          {isAdmin ? (
+                            <select
+                              value={finStatusVal}
+                              onChange={(e) => handleClearanceStatusUpdate(item._id, "financeClearanceStatus", e.target.value)}
+                              style={{ padding: "4px 8px", borderRadius: "6px", fontSize: "12px", fontWeight: "600", border: "1px solid #cbd5e1" }}
+                            >
+                              <option value="Open">Open</option>
+                              <option value="Work In Progress">Work In Progress</option>
+                              <option value="Pending">Pending</option>
+                              <option value="Resolved">Resolved</option>
+                              <option value="Closed">Closed</option>
+                            </select>
+                          ) : (
+                            <span style={{ padding: "4px 10px", borderRadius: "12px", fontWeight: "700", fontSize: "12px", background: finBadge.bg, color: finBadge.color }}>
+                              {finStatusVal}
+                            </span>
+                          )}
+                        </td>
+
+                        {/* ADMIN CLEARANCE STATUS */}
+                        <td className="MyTaskTableCell MyTaskCenter">
+                          {isAdmin ? (
+                            <select
+                              value={admStatusVal}
+                              onChange={(e) => handleClearanceStatusUpdate(item._id, "adminClearanceStatus", e.target.value)}
+                              style={{ padding: "4px 8px", borderRadius: "6px", fontSize: "12px", fontWeight: "600", border: "1px solid #cbd5e1" }}
+                            >
+                              <option value="Open">Open</option>
+                              <option value="Work In Progress">Work In Progress</option>
+                              <option value="Pending">Pending</option>
+                              <option value="Resolved">Resolved</option>
+                              <option value="Closed">Closed</option>
+                            </select>
+                          ) : (
+                            <span style={{ padding: "4px 10px", borderRadius: "12px", fontWeight: "700", fontSize: "12px", background: admBadge.bg, color: admBadge.color }}>
+                              {admStatusVal}
+                            </span>
+                          )}
+                        </td>
+
+                        {/* ADMIN ACTIONS */}
+                        {isAdmin && (
+                          <td className="MyTaskTableCell MyTaskCenter">
+                            <div style={{ display: "flex", gap: "6px" }}>
+                              <button className="approve-btn" onClick={() => approveOffboarding(item._id)} style={{ padding: "4px 8px", fontSize: "11.5px" }}>
+                                Approve
+                              </button>
+                              <button className="delete-btn" onClick={() => deleteOffboarding(item._id)} style={{ padding: "4px 8px", fontSize: "11.5px" }}>
+                                Reject
+                              </button>
+                            </div>
+                          </td>
+                        )}
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

@@ -33,7 +33,10 @@ function TaskSaves() {
       const data = response.data || {};
       setFormData({
         ...data,
-        taskStatus: data.taskStatus || data.ItTAskStatus || "Open",
+        taskStatus: data.taskStatus || data.itClearanceStatus || data.ItTAskStatus || "Open",
+        itClearanceStatus: data.itClearanceStatus || data.ItTAskStatus || data.taskStatus || "Open",
+        financeClearanceStatus: data.financeClearanceStatus || data.financeStatus || "Open",
+        adminClearanceStatus: data.adminClearanceStatus || data.adminStatus || "Open",
       });
     } catch (err) {
       console.log(err);
@@ -54,6 +57,8 @@ function TaskSaves() {
         ...formData,
         taskStatus: currentTaskStatus,
         ItTAskStatus: currentTaskStatus,
+        itClearanceStatus: currentTaskStatus,
+        itStatus: currentTaskStatus,
       };
 
       await sendApiData(`/api/jobrequests/${id}`, updatedData, "put");

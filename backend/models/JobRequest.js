@@ -198,6 +198,22 @@ const JobRequestSchema = new mongoose.Schema(
     emailIdReceived: String,
     ItTAskStatus: String,
 
+    itClearanceStatus: {
+      type: String,
+      default: "Open",
+    },
+    financeClearanceStatus: {
+      type: String,
+      default: "Open",
+    },
+    adminClearanceStatus: {
+      type: String,
+      default: "Open",
+    },
+    itStatus: String,
+    financeStatus: String,
+    adminStatus: String,
+
     onboardingTaskId: {
       type: String,
       default: "",
