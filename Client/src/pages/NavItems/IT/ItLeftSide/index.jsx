@@ -41,7 +41,7 @@ const menuData = [
       {
         title: "Offboarding Request",
         items: [
-          { label: "All", path: "/it-all" },
+          { label: "All", path: "/requests-offboarding-all" },
           { label: "Create New", path: "/Requests/open-tasks" },
           { label: "Open", path: "/offboarding/open" },
           { label: "Resolved", path: "/offboarding/resolved" },

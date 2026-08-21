@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import ItLeftSide from "../../../ItLeftSide";
+import { fetchApiData, sendApiData } from "../../../../../../utils/apiClient";
 import "./index.css";
 
 function TaskSaves() {
@@ -10,21 +9,23 @@ function TaskSaves() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     taskId: "",
+    caseId: "",
+    requesterName: "",
+    laptopRecord: "",
     laptopRecovered: "",
     laptopWorkingCondition: "",
+    dataBackup: "",
+    emailIdReceived: "",
     taskStatus: "",
   });
 
   useEffect(() => {
     fetchTask();
-  }, []);
+  }, [id]);
 
   const fetchTask = async () => {
     try {
-      const response = await axios.get(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
-      );
-
+      const response = await fetchApiData(`/api/jobrequests/${id}`);
       setFormData(response.data);
     } catch (err) {
       console.log(err);
@@ -40,16 +41,12 @@ function TaskSaves() {
 
   const handleSave = async () => {
     try {
-      await axios.put(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
-        formData,
-      );
-      navigate("/");
-      alert("IT Updated Successfully");
-
-      fetchTask();
+      await sendApiData(`/api/jobrequests/${id}`, formData, "put");
+      alert("IT Offboarding Clearance Task Updated Successfully!");
+      navigate("/requests-offboarding-all");
     } catch (err) {
       console.log(err);
+      alert("Error updating IT Clearance Task");
     }
   };
 
@@ -57,23 +54,33 @@ function TaskSaves() {
     <ItLeftSide>
       <div className="ITSContainer">
         <div className="ITSCard">
-          <h2 className="ITSHeading">IT Recovery</h2>
+          <h2 className="ITSHeading">IT Recovery & Offboarding Clearance</h2>
 
           <div className="ITSRow">
             <div className="ITSField ITSTaskIdField">
-              <label>Task ID</label>
-              <input value={formData.taskId || ""} readOnly />
+              <label>Task / Case ID</label>
+              <input value={formData.taskId || formData.caseId || ""} readOnly />
+            </div>
+
+            <div className="ITSField">
+              <label>Requester Name</label>
+              <input value={formData.requesterName || formData.requester || ""} readOnly />
             </div>
           </div>
 
           <div className="ITSRow">
             <div className="ITSField">
-              <label>Laptop Recovered</label>
-
+              <label>Laptop Record / Recovered</label>
               <select
                 name="laptopRecovered"
-                value={formData.laptopRecovered || ""}
-                onChange={handleChange}
+                value={formData.laptopRecovered || formData.laptopRecord || ""}
+                onChange={(e) => {
+                  setFormData({
+                    ...formData,
+                    laptopRecovered: e.target.value,
+                    laptopRecord: e.target.value,
+                  });
+                }}
               >
                 <option value="">Select</option>
                 <option value="Yes">Yes</option>
@@ -83,7 +90,6 @@ function TaskSaves() {
 
             <div className="ITSField">
               <label>Laptop Working Condition</label>
-
               <select
                 name="laptopWorkingCondition"
                 value={formData.laptopWorkingCondition || ""}
@@ -94,28 +100,56 @@ function TaskSaves() {
                 <option value="No">No</option>
               </select>
             </div>
+          </div>
+
+          <div className="ITSRow">
+            <div className="ITSField">
+              <label>Data Backup</label>
+              <select
+                name="dataBackup"
+                value={formData.dataBackup || ""}
+                onChange={handleChange}
+              >
+                <option value="">Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+
+            <div className="ITSField">
+              <label>Email ID Received</label>
+              <select
+                name="emailIdReceived"
+                value={formData.emailIdReceived || ""}
+                onChange={handleChange}
+              >
+                <option value="">Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
 
             <div className="ITSField">
               <label>Task Status</label>
-
               <select
                 name="taskStatus"
                 value={formData.taskStatus || ""}
                 onChange={handleChange}
               >
-                <option value="">Select</option>
+                <option value="">Select Status</option>
                 <option value="Open">Open</option>
-                <option value="Closed">Closed</option>
+                <option value="Work In Progress">Work In Progress</option>
                 <option value="Pending">Pending</option>
                 <option value="Assigned to me">Assigned to me</option>
                 <option value="Resolved">Resolved</option>
+                <option value="Closed">Closed</option>
               </select>
             </div>
           </div>
 
           <div className="ITSFooter">
             <button className="ITSButton" onClick={handleSave}>
-              Save
+              Save IT Clearance Task
             </button>
           </div>
         </div>

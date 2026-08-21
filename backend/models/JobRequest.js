@@ -182,14 +182,20 @@ const JobRequestSchema = new mongoose.Schema(
     lastWorkingDay: Date,
     resignationReason: String,
 
+    requester: String,
+    requesterFor: String,
+
     taskType: String,
     taskStatus: {
       type: String,
       default: "Open",
     },
     taskId: String,
+    laptopRecord: String,
     laptopRecovered: String,
     laptopWorkingCondition: String,
+    dataBackup: String,
+    emailIdReceived: String,
     ItTAskStatus: String,
 
     onboardingTaskId: {
