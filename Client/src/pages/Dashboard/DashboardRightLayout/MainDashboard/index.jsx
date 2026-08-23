@@ -6,20 +6,76 @@ import { EmployeeContext } from "../EmployeeContext.js";
 import { fetchApiData, extractArrayData } from "../../../../utils/apiClient";
 import "./index.css";
 
+// Reusable Table Toolbar Component
+const TableToolbar = ({ searchVal, setSearchVal, filteredCount, totalCount, currentPage, pageSize, onPageChange }) => {
+  return (
+    <div className="table-toolbar">
+      <div className="toolbar-left">
+        <div className="search-input-wrapper">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input 
+            type="text" 
+            placeholder="Search records..." 
+            value={searchVal} 
+            onChange={(e) => setSearchVal(e.target.value)}
+            className="toolbar-search-input"
+          />
+        </div>
+        <span className="toolbar-count">
+          Showing <strong>{filteredCount}</strong> of <strong>{totalCount}</strong> records
+        </span>
+      </div>
+      <div className="toolbar-right">
+        <div className="pagination-controls">
+          <button 
+            disabled={currentPage === 1} 
+            onClick={() => onPageChange(currentPage - 1)}
+            className="pagination-btn"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <span className="page-indicator">
+            Page <strong>{currentPage}</strong> of <strong>{Math.ceil(totalCount / pageSize) || 1}</strong>
+          </span>
+          <button 
+            disabled={currentPage * pageSize >= totalCount} 
+            onClick={() => onPageChange(currentPage + 1)}
+            className="pagination-btn"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 function MainDashboard() {
   const context = useContext(EmployeeContext);
+
   const navigate = useNavigate();
   const location = useLocation();
 
   const [apiCustomers, setApiCustomers] = useState([]);
   const [selectedCust, setSelectedCust] = useState("All Customers");
-  const [activeView, setActiveView] = useState("dashboard"); // "dashboard", "total-sites", "active-sites", "total-employees", "clocked-in"
+  const [selectedSiteName, setSelectedSiteName] = useState("");
+  const [isCustDropdownOpen, setIsCustDropdownOpen] = useState(false);
+  const [activeView, setActiveView] = useState("dashboard"); // "dashboard", "total-sites", "active-sites", "total-employees", "clocked-in", "site-schedule"
   
+  // Pagination and Search State
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 15;
+
   const searchParams = new URLSearchParams(location.search);
   const activeTab = searchParams.get("tab") || "Overview";
 
   const [currentDateStr, setCurrentDateStr] = useState("");
   const [currentDayStr, setCurrentDayStr] = useState("");
+  const [greeting, setGreeting] = useState("Good morning");
+  const [dateRangeStr, setDateRangeStr] = useState("");
 
   useEffect(() => {
     const today = new Date();
@@ -28,7 +84,32 @@ function MainDashboard() {
     
     const dayOptions = { weekday: "long" };
     setCurrentDayStr(today.toLocaleDateString("en-GB", dayOptions));
+
+    const hour = today.getHours();
+    if (hour < 12) setGreeting("Good morning");
+    else if (hour < 17) setGreeting("Good afternoon");
+    else setGreeting("Good evening");
+
+    const lastWeek = new Date();
+    lastWeek.setDate(today.getDate() - 7);
+    const rangeOptions = { day: "numeric", month: "short" };
+    setDateRangeStr(`${lastWeek.toLocaleDateString("en-GB", rangeOptions)} - ${today.toLocaleDateString("en-GB", rangeOptions)}`);
   }, []);
+
+  useEffect(() => {
+    if (!isCustDropdownOpen) return;
+
+    const handleClickOutside = (event) => {
+      const trigger = document.querySelector(".custom-select-trigger");
+      const options = document.querySelector(".custom-select-options");
+      if (trigger && !trigger.contains(event.target) && options && !options.contains(event.target)) {
+        setIsCustDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isCustDropdownOpen]);
 
   useEffect(() => {
     const fetchCandidates = async () => {
@@ -60,34 +141,34 @@ function MainDashboard() {
   const fallbackData = useMemo(() => {
     return {
       "All Customers": [
-        { siteName: "Noida", count: 9, totalEmployees: 240, clockedIn: 185, percentage: 37.5, color: "#2563eb", address: "Sector 62, Noida, UP", active: true },
-        { siteName: "Delhi", count: 7, totalEmployees: 200, clockedIn: 142, percentage: 29.2, color: "#10b981", address: "Okhla Phase 3, New Delhi", active: true },
-        { siteName: "Gurugram", count: 5, totalEmployees: 160, clockedIn: 105, percentage: 20.8, color: "#8b5cf6", address: "Cyber City, Phase 2, Gurugram", active: true },
-        { siteName: "Bangalore", count: 3, totalEmployees: 120, clockedIn: 74, percentage: 12.5, color: "#f97316", address: "Whitefield, Bangalore, Karnataka", active: true }
+        { siteName: "Noida", count: 9, totalEmployees: 26, clockedIn: 21, percentage: 43.3, color: "#2563eb", address: "Sector 62, Noida, UP - 201301", active: true },
+        { siteName: "Delhi", count: 7, totalEmployees: 14, clockedIn: 10, percentage: 23.3, color: "#10b981", address: "Okhla Phase 3, New Delhi - 110020", active: true },
+        { siteName: "Gurugram", count: 5, totalEmployees: 10, clockedIn: 7, percentage: 16.7, color: "#8b5cf6", address: "Cyber City, Phase 2, Gurugram - 122002", active: true },
+        { siteName: "Bangalore", count: 3, totalEmployees: 10, clockedIn: 6, percentage: 16.7, color: "#f97316", address: "Whitefield, Bangalore, Karnataka - 560066", active: true }
       ],
       Dell: [
-        { siteName: "Noida", count: 2, totalEmployees: 50, clockedIn: 40, percentage: 40, color: "#2563eb", address: "Sector 62, Noida, UP", active: true },
-        { siteName: "Delhi", count: 1, totalEmployees: 30, clockedIn: 25, percentage: 30, color: "#10b981", address: "Okhla Phase 3, New Delhi", active: true },
-        { siteName: "Gurugram", count: 1, totalEmployees: 20, clockedIn: 15, percentage: 20, color: "#8b5cf6", address: "Cyber City, Phase 2, Gurugram", active: true },
-        { siteName: "Bangalore", count: 1, totalEmployees: 16, clockedIn: 12, percentage: 10, color: "#f97316", address: "Whitefield, Bangalore, Karnataka", active: true }
+        { siteName: "Noida", count: 2, totalEmployees: 5, clockedIn: 4, percentage: 41.7, color: "#2563eb", address: "Sector 62, Noida, UP - 201301", active: true },
+        { siteName: "Delhi", count: 1, totalEmployees: 3, clockedIn: 2, percentage: 25.0, color: "#10b981", address: "Okhla Phase 3, New Delhi - 110020", active: true },
+        { siteName: "Gurugram", count: 1, totalEmployees: 2, clockedIn: 1, percentage: 16.7, color: "#8b5cf6", address: "Cyber City, Phase 2, Gurugram - 122002", active: true },
+        { siteName: "Bangalore", count: 1, totalEmployees: 2, clockedIn: 1, percentage: 16.7, color: "#f97316", address: "Whitefield, Bangalore, Karnataka - 560066", active: true }
       ],
       Microsoft: [
-        { siteName: "Noida", count: 1, totalEmployees: 40, clockedIn: 35, percentage: 25, color: "#2563eb", address: "Sector 144, Noida, UP", active: true },
-        { siteName: "Delhi", count: 2, totalEmployees: 60, clockedIn: 50, percentage: 40, color: "#10b981", address: "Connaught Place, New Delhi", active: true },
-        { siteName: "Gurugram", count: 1, totalEmployees: 25, clockedIn: 20, percentage: 15, color: "#8b5cf6", address: "Golf Course Road, Gurugram", active: true },
-        { siteName: "Bangalore", count: 2, totalEmployees: 30, clockedIn: 26, percentage: 20, color: "#f97316", address: "Outer Ring Road, Bangalore", active: true }
+        { siteName: "Noida", count: 1, totalEmployees: 6, clockedIn: 5, percentage: 40.0, color: "#2563eb", address: "Sector 144, Noida, UP - 201306", active: true },
+        { siteName: "Delhi", count: 2, totalEmployees: 4, clockedIn: 3, percentage: 26.7, color: "#10b981", address: "Connaught Place, New Delhi - 110001", active: true },
+        { siteName: "Gurugram", count: 1, totalEmployees: 2, clockedIn: 2, percentage: 13.3, color: "#8b5cf6", address: "Golf Course Road, Gurugram - 122003", active: true },
+        { siteName: "Bangalore", count: 2, totalEmployees: 3, clockedIn: 2, percentage: 20.0, color: "#f97316", address: "Outer Ring Road, Bangalore - 560103", active: true }
       ],
       Google: [
-        { siteName: "Noida", count: 3, totalEmployees: 80, clockedIn: 70, percentage: 45, color: "#2563eb", address: "Sector 135, Noida, UP", active: true },
-        { siteName: "Delhi", count: 1, totalEmployees: 40, clockedIn: 32, percentage: 25, color: "#10b981", address: "Dwarka Sector 21, New Delhi", active: true },
-        { siteName: "Gurugram", count: 2, totalEmployees: 30, clockedIn: 24, percentage: 20, color: "#8b5cf6", address: "Sector 48, Gurugram", active: true },
-        { siteName: "Bangalore", count: 1, totalEmployees: 15, clockedIn: 12, percentage: 10, color: "#f97316", address: "RMZ Infinity, Bangalore", active: true }
+        { siteName: "Noida", count: 3, totalEmployees: 7, clockedIn: 6, percentage: 46.7, color: "#2563eb", address: "Sector 135, Noida, UP - 201304", active: true },
+        { siteName: "Delhi", count: 1, totalEmployees: 3, clockedIn: 2, percentage: 20.0, color: "#10b981", address: "Dwarka Sector 21, New Delhi - 110077", active: true },
+        { siteName: "Gurugram", count: 2, totalEmployees: 3, clockedIn: 2, percentage: 20.0, color: "#8b5cf6", address: "Sector 48, Gurugram - 122018", active: true },
+        { siteName: "Bangalore", count: 1, totalEmployees: 2, clockedIn: 1, percentage: 13.3, color: "#f97316", address: "RMZ Infinity, Bangalore - 560016", active: true }
       ],
       Amazon: [
-        { siteName: "Noida", count: 2, totalEmployees: 70, clockedIn: 58, percentage: 35, color: "#2563eb", address: "Sector 125, Noida, UP", active: true },
-        { siteName: "Delhi", count: 2, totalEmployees: 50, clockedIn: 42, percentage: 30, color: "#10b981", address: "Jasola Vihar, New Delhi", active: true },
-        { siteName: "Gurugram", count: 1, totalEmployees: 30, clockedIn: 24, percentage: 20, color: "#8b5cf6", address: "Sohna Road, Gurugram", active: true },
-        { siteName: "Bangalore", count: 1, totalEmployees: 25, clockedIn: 21, percentage: 15, color: "#f97316", address: "Manyata Tech Park, Bangalore", active: true }
+        { siteName: "Noida", count: 2, totalEmployees: 8, clockedIn: 6, percentage: 44.4, color: "#2563eb", address: "Sector 125, Noida, UP - 201313", active: true },
+        { siteName: "Delhi", count: 2, totalEmployees: 4, clockedIn: 3, percentage: 22.2, color: "#10b981", address: "Jasola Vihar, New Delhi - 110025", active: true },
+        { siteName: "Gurugram", count: 1, totalEmployees: 3, clockedIn: 2, percentage: 16.7, color: "#8b5cf6", address: "Sohna Road, Gurugram - 122018", active: true },
+        { siteName: "Bangalore", count: 1, totalEmployees: 3, clockedIn: 2, percentage: 16.7, color: "#f97316", address: "Manyata Tech Park, Bangalore - 560045", active: true }
       ]
     };
   }, []);
@@ -98,9 +179,8 @@ function MainDashboard() {
 
   // Dynamic values
   const totalSites = useMemo(() => {
-    if (selectedCust === "All Customers") return 24;
     return currentCustData.reduce((sum, item) => sum + item.count, 0);
-  }, [selectedCust, currentCustData]);
+  }, [currentCustData]);
 
   const activeSites = useMemo(() => {
     if (selectedCust === "All Customers") return 16;
@@ -108,23 +188,18 @@ function MainDashboard() {
   }, [selectedCust, currentCustData]);
 
   const totalEmployees = useMemo(() => {
-    if (selectedCust === "All Customers") return 611;
     return currentCustData.reduce((sum, item) => sum + item.totalEmployees, 0);
-  }, [selectedCust, currentCustData]);
+  }, [currentCustData]);
 
   const clockedIn = useMemo(() => {
-    if (selectedCust === "All Customers") return 506;
     return currentCustData.reduce((sum, item) => sum + item.clockedIn, 0);
-  }, [selectedCust, currentCustData]);
+  }, [currentCustData]);
 
   const handleSiteClick = (siteName, customerName) => {
     const targetCust = customerName || selectedCust;
-    navigate("/employe-sites", {
-      state: {
-        requester: targetCust === "All Customers" ? "Dell" : targetCust,
-        siteName: siteName
-      }
-    });
+    setSelectedCust(targetCust);
+    setSelectedSiteName(siteName);
+    setActiveView("site-schedule");
   };
 
   const donutSectors = useMemo(() => {
@@ -175,8 +250,15 @@ function MainDashboard() {
       "Peter Parker", "Bruce Wayne", "Clark Kent", "Diana Prince", "Tony Stark"
     ];
     let nameIdx = 0;
-    currentCustData.forEach((site) => {
-      const custName = site.customer || selectedCust;
+
+    const sourceData = selectedCust === "All Customers"
+      ? ["Dell", "Microsoft", "Google", "Amazon"].flatMap(cust => 
+          (fallbackData[cust] || []).map(site => ({ ...site, customer: cust }))
+        )
+      : currentCustData.map(site => ({ ...site, customer: selectedCust }));
+
+    sourceData.forEach((site) => {
+      const custName = site.customer;
       for (let i = 0; i < site.totalEmployees; i++) {
         const empName = names[nameIdx % names.length] + ` (${(nameIdx + 1).toString().padStart(3, "0")})`;
         const isClockedIn = i < site.clockedIn;
@@ -185,8 +267,11 @@ function MainDashboard() {
           name: empName,
           customer: custName,
           siteName: site.siteName,
+          address: site.address,
           role: i % 2 === 0 ? "Security Guard" : "Supervisor",
           shiftTime: i % 2 === 0 ? "07:00 - 15:00" : "15:00 - 23:00",
+          startTime: i % 2 === 0 ? "07:00 AM" : "03:00 PM",
+          endTime: i % 2 === 0 ? "03:00 PM" : "11:00 PM",
           clockedIn: isClockedIn,
           actualClockIn: isClockedIn ? "07:02" : "-",
           actualClockOut: "-",
@@ -196,7 +281,62 @@ function MainDashboard() {
       }
     });
     return list;
-  }, [currentCustData, selectedCust]);
+  }, [currentCustData, selectedCust, fallbackData]);
+
+  const siteEmployees = useMemo(() => {
+    return employeesList.filter(emp => {
+      const matchSite = emp.siteName === selectedSiteName;
+      const matchCust = selectedCust === "All Customers" ? true : emp.customer === selectedCust;
+      return matchSite && matchCust;
+    });
+  }, [employeesList, selectedSiteName, selectedCust]);
+
+  const expandSites = (sites) => {
+    const expanded = [];
+    sites.forEach(site => {
+      const count = site.count || 1;
+      for (let i = 0; i < count; i++) {
+        const baseEmp = Math.floor(site.totalEmployees / count);
+        const extraEmp = i < (site.totalEmployees % count) ? 1 : 0;
+        const siteEmp = baseEmp + extraEmp;
+
+        const baseClock = Math.floor(site.clockedIn / count);
+        const extraClock = i < (site.clockedIn % count) ? 1 : 0;
+        const siteClock = baseClock + extraClock;
+
+        expanded.push({
+          ...site,
+          siteName: count > 1 ? `${site.siteName} Site ${i + 1}` : site.siteName,
+          count: 1,
+          totalEmployees: siteEmp,
+          clockedIn: siteClock,
+          active: siteClock > 0
+        });
+      }
+    });
+    return expanded;
+  };
+
+  // Filtered and Paginated Employees
+  const filteredEmployees = useMemo(() => {
+    const query = searchQuery.toLowerCase();
+    return employeesList.filter(emp => 
+      emp.name.toLowerCase().includes(query) || 
+      emp.siteName.toLowerCase().includes(query) || 
+      emp.customer.toLowerCase().includes(query) || 
+      emp.role.toLowerCase().includes(query)
+    );
+  }, [employeesList, searchQuery]);
+
+  const paginatedEmployees = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return filteredEmployees.slice(start, start + PAGE_SIZE);
+  }, [filteredEmployees, currentPage]);
+
+  // Reset pagination when search or customer changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedCust, activeTab]);
 
   return (
     <div className="dashboard-root">
@@ -207,17 +347,31 @@ function MainDashboard() {
           <div className="customer-selector-card">
             <label className="selector-label">Select Customer</label>
             <div className="select-wrapper">
-              <select
-                value={selectedCust}
-                onChange={(e) => setSelectedCust(e.target.value)}
-                className="customer-dropdown"
+              <div 
+                className={`custom-select-trigger ${isCustDropdownOpen ? "open" : ""}`} 
+                onClick={() => setIsCustDropdownOpen(!isCustDropdownOpen)}
               >
-                {apiCustomers.map((cust) => (
-                  <option key={cust} value={cust}>
-                    {cust}
-                  </option>
-                ))}
-              </select>
+                {selectedCust}
+                <svg className="dropdown-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
+              {isCustDropdownOpen && (
+                <div className="custom-select-options">
+                  {apiCustomers.map((cust) => (
+                    <div 
+                      key={cust} 
+                      className={`custom-option ${selectedCust === cust ? "selected" : ""}`}
+                      onClick={() => {
+                        setSelectedCust(cust);
+                        setIsCustDropdownOpen(false);
+                      }}
+                    >
+                      {cust}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
@@ -236,7 +390,7 @@ function MainDashboard() {
                 </svg>
               </div>
               <div className="welcome-text-info">
-                <h2>Good morning! 👋</h2>
+                <h2>{greeting}! 👋</h2>
                 <p>Here's what's happening across all locations today.</p>
                 <div className="live-pill">
                   <span className="live-dot"></span>
@@ -397,6 +551,7 @@ function MainDashboard() {
                       strokeDashoffset={sector.strokeDashoffset}
                       transform={`rotate(${sector.rotation} 150 150)`}
                       className="donut-segment"
+                      onClick={() => handleSiteClick(sector.siteName, sector.customer)}
                     />
                   ))}
                   {donutSectors.map((sector, index) => {
@@ -416,10 +571,10 @@ function MainDashboard() {
                       </text>
                     );
                   })}
-                  <text x="150" y="145" textAnchor="middle" className="donut-center-val font-number">
+                  <text x="150" y="140" textAnchor="middle" className="donut-center-val font-number">
                     {totalSites}
                   </text>
-                  <text x="150" y="175" textAnchor="middle" className="donut-center-lbl">
+                  <text x="150" y="160" textAnchor="middle" className="donut-center-lbl">
                     Total Sites
                   </text>
                 </svg>
@@ -469,16 +624,29 @@ function MainDashboard() {
                         <span className="site-name">
                           {site.siteName} {site.customer && <span className="site-cust-tag">({site.customer})</span>}
                         </span>
-                        <span className="site-sub-count-badge font-number">{site.count} {site.count > 1 ? "Sites" : "Site"}</span>
+                        <div className="site-status-row">
+                          <span className={`status-chip ${site.active ? "chip-success" : "chip-warning"}`}>
+                            {site.active ? "Active" : "Inactive"}
+                          </span>
+                          <span className="site-sub-count-badge font-number">{site.count} {site.count > 1 ? "Sites" : "Site"}</span>
+                        </div>
                       </div>
                     </div>
 
                     <div className="site-item-right">
                       <div className="clock-in-info">
                         <span className="clock-label">Clocked In</span>
-                        <span className="clock-count-val">
-                          <strong className="font-dark font-number">{site.clockedIn}</strong> <span className="font-divider">/</span> <span className="font-total font-number">{site.totalEmployees}</span>
-                        </span>
+                        <div className="clock-progress-wrapper">
+                          <div className="clock-progress-bar">
+                            <div 
+                              className="clock-progress-fill" 
+                              style={{ width: `${(site.clockedIn / site.totalEmployees) * 100}%`, backgroundColor: site.color }}
+                            ></div>
+                          </div>
+                          <span className="clock-count-val">
+                            <strong className="font-dark font-number">{site.clockedIn}</strong> <span className="font-divider">/</span> <span className="font-total font-number">{site.totalEmployees}</span>
+                          </span>
+                        </div>
                       </div>
                       <div className="arrow-icon">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -495,214 +663,394 @@ function MainDashboard() {
       )}
 
       {/* TIMESHEETS ANALYTICAL OVERVIEW VIEW */}
-      {activeTab === "Timesheets" && activeView === "dashboard" && (
-        <div className="ts-page animate-fade-in">
+      {activeTab === "Timesheets" && activeView === "dashboard" && (() => {
+        // Per-customer timesheet data
+        const tsData = {
+          "All Customers": {
+            totalHours: 5480, approvedLogs: 384, pendingLogs: 48, disputedLogs: 5,
+            locations: [
+              { name: "Noida",     hrs: 1920, pct: 35.0, color: "#2563eb", clockedIn: 21 },
+              { name: "Delhi",     hrs: 1600, pct: 29.2, color: "#10b981", clockedIn: 10 },
+              { name: "Gurugram",  hrs: 1280, pct: 23.4, color: "#8b5cf6", clockedIn: 7  },
+              { name: "Bangalore", hrs:  680, pct: 12.4, color: "#f97316", clockedIn: 6  },
+            ],
+            trend: [120, 88, 76, 84, 72, 80, 72],
+          },
+          Dell: {
+            totalHours: 640, approvedLogs: 42, pendingLogs: 5, disputedLogs: 1,
+            locations: [
+              { name: "Noida",     hrs: 270, pct: 42.2, color: "#2563eb", clockedIn: 4 },
+              { name: "Delhi",     hrs: 160, pct: 25.0, color: "#10b981", clockedIn: 2 },
+              { name: "Gurugram",  hrs: 110, pct: 17.2, color: "#8b5cf6", clockedIn: 1 },
+              { name: "Bangalore", hrs: 100, pct: 15.6, color: "#f97316", clockedIn: 1 },
+            ],
+            trend: [60, 55, 48, 52, 44, 50, 44],
+          },
+          Microsoft: {
+            totalHours: 960, approvedLogs: 68, pendingLogs: 9, disputedLogs: 1,
+            locations: [
+              { name: "Noida",     hrs: 384, pct: 40.0, color: "#2563eb", clockedIn: 5 },
+              { name: "Delhi",     hrs: 256, pct: 26.7, color: "#10b981", clockedIn: 3 },
+              { name: "Gurugram",  hrs: 128, pct: 13.3, color: "#8b5cf6", clockedIn: 2 },
+              { name: "Bangalore", hrs: 192, pct: 20.0, color: "#f97316", clockedIn: 2 },
+            ],
+            trend: [90, 75, 68, 74, 62, 70, 62],
+          },
+          Google: {
+            totalHours: 1200, approvedLogs: 85, pendingLogs: 12, disputedLogs: 2,
+            locations: [
+              { name: "Noida",     hrs: 560, pct: 46.7, color: "#2563eb", clockedIn: 6 },
+              { name: "Delhi",     hrs: 240, pct: 20.0, color: "#10b981", clockedIn: 2 },
+              { name: "Gurugram",  hrs: 240, pct: 20.0, color: "#8b5cf6", clockedIn: 2 },
+              { name: "Bangalore", hrs: 160, pct: 13.3, color: "#f97316", clockedIn: 1 },
+            ],
+            trend: [130, 110, 95, 100, 88, 95, 88],
+          },
+          Amazon: {
+            totalHours: 1280, approvedLogs: 94, pendingLogs: 11, disputedLogs: 1,
+            locations: [
+              { name: "Noida",     hrs: 568, pct: 44.4, color: "#2563eb", clockedIn: 6 },
+              { name: "Delhi",     hrs: 284, pct: 22.2, color: "#10b981", clockedIn: 3 },
+              { name: "Gurugram",  hrs: 213, pct: 16.7, color: "#8b5cf6", clockedIn: 2 },
+              { name: "Bangalore", hrs: 215, pct: 16.7, color: "#f97316", clockedIn: 2 },
+            ],
+            trend: [100, 85, 72, 80, 68, 76, 68],
+          },
+        };
 
-          {/* ── KPI CARDS ── */}
-          <div className="ts-kpi-row">
-            {/* Total Hours */}
-            <div className="ts-kpi-card">
-              <div className="ts-kpi-icon ts-kpi-icon-blue">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              </div>
-              <div className="ts-kpi-body">
-                <span className="ts-kpi-label">Total Hours Logged</span>
-                <div className="ts-kpi-value-row">
-                  <span className="ts-kpi-num">5,480</span>
-                  <span className="ts-kpi-unit">hrs</span>
+        const td = tsData[selectedCust] || tsData["All Customers"];
+        const totalHrs = td.totalHours;
+
+        // Build donut sectors for hours-by-location
+        const circ = 314.16; // 2πr for r=50
+        let accOffset = 0;
+        const donutLocs = td.locations.map(loc => {
+          const dash = (loc.pct / 100) * circ;
+          const offset = -accOffset;
+          accOffset += dash;
+          return { ...loc, dash, offset };
+        });
+
+        // Trend points
+        const trendMax = Math.max(...td.trend) + 20;
+        const trendPoints = td.trend.map((v, i) => {
+          const x = 60 + i * 80;
+          const y = 140 - (v / trendMax) * 130;
+          return [x, y];
+        });
+        const polyStr = trendPoints.map(([x, y]) => `${x},${y}`).join(" ");
+        const areaStr = `M${trendPoints[0][0]},${trendPoints[0][1]} ` +
+          trendPoints.slice(1).map(([x, y]) => `L${x},${y}`).join(" ") +
+          ` L${trendPoints[trendPoints.length-1][0]},160 L${trendPoints[0][0]},160 Z`;
+
+        return (
+          <div className="ts-page animate-fade-in">
+
+            {/* ── KPI CARDS ── */}
+            <div className="ts-kpi-row">
+              <div className="ts-kpi-card" style={{ cursor: "pointer" }} onClick={() => setActiveView("timesheet-detail")}>
+                <div className="ts-kpi-icon ts-kpi-icon-blue">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 </div>
-                <span className="ts-kpi-desc">All locations combined</span>
+                <div className="ts-kpi-body">
+                  <span className="ts-kpi-label">Total Hours Logged</span>
+                  <div className="ts-kpi-value-row">
+                    <span className="ts-kpi-num">{totalHrs.toLocaleString()}</span>
+                    <span className="ts-kpi-unit">hrs</span>
+                  </div>
+                  <span className="ts-kpi-desc">{selectedCust === "All Customers" ? "All locations combined" : selectedCust}</span>
+                </div>
+                <div className="ts-kpi-bar ts-kpi-bar-blue"></div>
               </div>
-              <div className="ts-kpi-bar ts-kpi-bar-blue"></div>
+
+              <div className="ts-kpi-card" style={{ cursor: "pointer" }} onClick={() => setActiveView("timesheet-detail")}>
+                <div className="ts-kpi-icon ts-kpi-icon-green">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/></svg>
+                </div>
+                <div className="ts-kpi-body">
+                  <span className="ts-kpi-label">Approved Logs</span>
+                  <div className="ts-kpi-value-row">
+                    <span className="ts-kpi-num">{td.approvedLogs}</span>
+                    <span className="ts-kpi-unit">Logs</span>
+                  </div>
+                  <span className="ts-kpi-desc">This week</span>
+                </div>
+                <div className="ts-kpi-bar ts-kpi-bar-green"></div>
+              </div>
+
+              <div className="ts-kpi-card" style={{ cursor: "pointer" }} onClick={() => setActiveView("timesheet-detail")}>
+                <div className="ts-kpi-icon ts-kpi-icon-purple">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <div className="ts-kpi-body">
+                  <span className="ts-kpi-label">Pending Approval</span>
+                  <div className="ts-kpi-value-row">
+                    <span className="ts-kpi-num">{td.pendingLogs}</span>
+                    <span className="ts-kpi-unit">Logs</span>
+                  </div>
+                  <span className="ts-kpi-desc">Awaiting review</span>
+                </div>
+                <div className="ts-kpi-bar ts-kpi-bar-purple"></div>
+              </div>
+
+              <div className="ts-kpi-card" style={{ cursor: "pointer" }} onClick={() => setActiveView("timesheet-detail")}>
+                <div className="ts-kpi-icon ts-kpi-icon-orange">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="2" strokeLinecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </div>
+                <div className="ts-kpi-body">
+                  <span className="ts-kpi-label">Disputed Hours</span>
+                  <div className="ts-kpi-value-row">
+                    <span className="ts-kpi-num">{td.disputedLogs}</span>
+                    <span className="ts-kpi-unit">Logs</span>
+                  </div>
+                  <span className="ts-kpi-desc">Requires attention</span>
+                </div>
+                <div className="ts-kpi-bar ts-kpi-bar-orange"></div>
+              </div>
             </div>
 
-            {/* Approved */}
-            <div className="ts-kpi-card">
-              <div className="ts-kpi-icon ts-kpi-icon-green">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="9 15 11 17 15 13"/></svg>
-              </div>
-              <div className="ts-kpi-body">
-                <span className="ts-kpi-label">Approved Logs</span>
-                <div className="ts-kpi-value-row">
-                  <span className="ts-kpi-num">384</span>
-                  <span className="ts-kpi-unit">Logs</span>
+            {/* ── CHARTS ROW ── */}
+            <div className="ts-charts-grid">
+
+              {/* Dynamic Hours Logged Trend */}
+              <div className="ts-chart-card">
+                <div className="ts-chart-header">
+                  <div className="ts-chart-title-row">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    <span className="ts-chart-title">Hours Logged Trend — {selectedCust}</span>
+                  </div>
+                  <span className="ts-period-badge">{dateRangeStr || "Last 7 Days"}</span>
                 </div>
-                <span className="ts-kpi-desc">This week</span>
-              </div>
-              <div className="ts-kpi-bar ts-kpi-bar-green"></div>
-            </div>
-
-            {/* Pending */}
-            <div className="ts-kpi-card">
-              <div className="ts-kpi-icon ts-kpi-icon-purple">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              </div>
-              <div className="ts-kpi-body">
-                <span className="ts-kpi-label">Pending Approval</span>
-                <div className="ts-kpi-value-row">
-                  <span className="ts-kpi-num">48</span>
-                  <span className="ts-kpi-unit">Logs</span>
-                </div>
-                <span className="ts-kpi-desc">Awaiting review</span>
-              </div>
-              <div className="ts-kpi-bar ts-kpi-bar-purple"></div>
-            </div>
-
-            {/* Disputed */}
-            <div className="ts-kpi-card">
-              <div className="ts-kpi-icon ts-kpi-icon-orange">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="2" strokeLinecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-              </div>
-              <div className="ts-kpi-body">
-                <span className="ts-kpi-label">Disputed Hours</span>
-                <div className="ts-kpi-value-row">
-                  <span className="ts-kpi-num">5</span>
-                  <span className="ts-kpi-unit">Logs</span>
-                </div>
-                <span className="ts-kpi-desc">Requires attention</span>
-              </div>
-              <div className="ts-kpi-bar ts-kpi-bar-orange"></div>
-            </div>
-          </div>
-
-          {/* ── CHARTS ROW ── */}
-          <div className="ts-charts-grid">
-
-            {/* Hours Logged Trend (SVG area chart) */}
-            <div className="ts-chart-card">
-              <div className="ts-chart-header">
-                <div className="ts-chart-title-row">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                  <span className="ts-chart-title">Hours Logged Trend</span>
-                </div>
-                <span className="ts-period-badge">Last 7 Days</span>
-              </div>
-              <svg width="100%" height="160" viewBox="0 0 560 160" preserveAspectRatio="none">
-                {/* Grid lines */}
-                {[0,40,80,120,160].map((y, i) => (
-                  <line key={i} x1="40" y1={y} x2="560" y2={y} stroke="#f1f5f9" strokeWidth="1"/>
-                ))}
-                {/* Y labels */}
-                {["8K","6K","4K","2K","0"].map((l, i) => (
-                  <text key={i} x="32" y={i * 40 + 6} textAnchor="end" fontSize="10" fill="#94a3b8">{l}</text>
-                ))}
-                {/* Area fill */}
-                <defs>
-                  <linearGradient id="tsGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#2563eb" stopOpacity="0.18"/>
-                    <stop offset="100%" stopColor="#2563eb" stopOpacity="0.01"/>
-                  </linearGradient>
-                </defs>
-                <path d="M60,120 L140,88 L220,76 L300,84 L380,72 L460,80 L540,72 L540,160 L60,160 Z" fill="url(#tsGrad)"/>
-                {/* Line */}
-                <polyline points="60,120 140,88 220,76 300,84 380,72 460,80 540,72" fill="none" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                {/* Dots */}
-                {[[60,120],[140,88],[220,76],[300,84],[380,72],[460,80],[540,72]].map(([cx,cy],i) => (
-                  <circle key={i} cx={cx} cy={cy} r="4" fill="#fff" stroke="#2563eb" strokeWidth="2.5"/>
-                ))}
-                {/* X labels */}
-                {["15 Aug","16 Aug","17 Aug","18 Aug","19 Aug","20 Aug","21 Aug"].map((l, i) => (
-                  <text key={i} x={60 + i * 80} y="156" textAnchor="middle" fontSize="10" fill="#94a3b8">{l}</text>
-                ))}
-              </svg>
-            </div>
-
-            {/* Hours by Location (donut) */}
-            <div className="ts-chart-card ts-donut-card">
-              <div className="ts-chart-header">
-                <div className="ts-chart-title-row">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  <span className="ts-chart-title">Hours by Location</span>
-                </div>
-              </div>
-              <div className="ts-donut-wrap">
-                {/* Donut */}
-                <svg width="140" height="140" viewBox="0 0 140 140">
-                  {/* Noida 35% – blue */}
-                  <circle cx="70" cy="70" r="50" fill="transparent" stroke="#2563eb" strokeWidth="24"
-                    strokeDasharray="110 204.16" strokeDashoffset="0" transform="rotate(-90 70 70)"/>
-                  {/* Delhi 29.2% – green */}
-                  <circle cx="70" cy="70" r="50" fill="transparent" stroke="#10b981" strokeWidth="24"
-                    strokeDasharray="91.7 222.46" strokeDashoffset="-110" transform="rotate(-90 70 70)"/>
-                  {/* Gurugram 23.4% – purple */}
-                  <circle cx="70" cy="70" r="50" fill="transparent" stroke="#8b5cf6" strokeWidth="24"
-                    strokeDasharray="73.5 240.66" strokeDashoffset="-201.7" transform="rotate(-90 70 70)"/>
-                  {/* Bangalore 17.5% – orange */}
-                  <circle cx="70" cy="70" r="50" fill="transparent" stroke="#f97316" strokeWidth="24"
-                    strokeDasharray="55 259.16" strokeDashoffset="-275.2" transform="rotate(-90 70 70)"/>
-                  <text x="70" y="66" textAnchor="middle" fontSize="17" fontWeight="800" fill="#0f172a" className="font-number">5,480</text>
-                  <text x="70" y="80" textAnchor="middle" fontSize="9" fontWeight="600" fill="#64748b">Total Hrs</text>
-                </svg>
-
-                {/* Legend */}
-                <div className="ts-donut-legend">
-                  {[
-                    { name:"Noida",     hrs:"1,920 hrs", pct:"35.0%", color:"#2563eb"  },
-                    { name:"Delhi",     hrs:"1,600 hrs", pct:"29.2%", color:"#10b981"  },
-                    { name:"Gurugram",  hrs:"1,280 hrs", pct:"23.4%", color:"#8b5cf6"  },
-                    { name:"Bangalore", hrs:"960 hrs",   pct:"17.5%", color:"#f97316"  },
-                  ].map((loc) => (
-                    <div key={loc.name} className="ts-legend-row">
-                      <span className="ts-legend-dot" style={{background: loc.color}}></span>
-                      <span className="ts-legend-name">{loc.name}</span>
-                      <span className="ts-legend-hrs">{loc.hrs}</span>
-                      <span className="ts-legend-pct">{loc.pct}</span>
-                    </div>
+                <svg width="100%" height="160" viewBox="0 0 560 160" preserveAspectRatio="none">
+                  {[0,40,80,120,160].map((y, i) => (
+                    <line key={i} x1="40" y1={y} x2="560" y2={y} stroke="#f1f5f9" strokeWidth="1"/>
                   ))}
+                  {["Hi","","Mid","","Lo"].map((l, i) => (
+                    <text key={i} x="32" y={i * 40 + 6} textAnchor="end" fontSize="10" fill="#94a3b8">{l}</text>
+                  ))}
+                  <defs>
+                    <linearGradient id="tsGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#2563eb" stopOpacity="0.18"/>
+                      <stop offset="100%" stopColor="#2563eb" stopOpacity="0.01"/>
+                    </linearGradient>
+                  </defs>
+                  <path d={areaStr} fill="url(#tsGrad)"/>
+                  <polyline points={polyStr} fill="none" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  {trendPoints.map(([cx, cy], i) => (
+                    <circle key={i} cx={cx} cy={cy} r="4" fill="#fff" stroke="#2563eb" strokeWidth="2.5"/>
+                  ))}
+                  {["15 Aug","16 Aug","17 Aug","18 Aug","19 Aug","20 Aug","21 Aug"].map((l, i) => (
+                    <text key={i} x={60 + i * 80} y="156" textAnchor="middle" fontSize="10" fill="#94a3b8">{l}</text>
+                  ))}
+                </svg>
+              </div>
+
+              {/* Clickable + Hoverable Hours by Location donut */}
+              <div className="ts-chart-card ts-donut-card">
+                <div className="ts-chart-header">
+                  <div className="ts-chart-title-row">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span className="ts-chart-title">Hours by Location</span>
+                  </div>
+                  <span style={{ fontSize: "11px", color: "#94a3b8" }}>Click a segment to view details</span>
+                </div>
+                <div className="ts-donut-wrap">
+                  <svg width="140" height="140" viewBox="0 0 140 140">
+                    {donutLocs.map((loc, i) => (
+                      <circle
+                        key={i}
+                        cx="70" cy="70" r="50"
+                        fill="transparent"
+                        stroke={loc.color}
+                        strokeWidth="24"
+                        strokeDasharray={`${loc.dash} ${circ - loc.dash}`}
+                        strokeDashoffset={loc.offset}
+                        transform="rotate(-90 70 70)"
+                        className="donut-segment"
+                        onClick={() => {
+                          setSelectedSiteName(loc.name);
+                          setActiveView("timesheet-detail");
+                        }}
+                        style={{ cursor: "pointer" }}
+                      />
+                    ))}
+                    <text x="70" y="66" textAnchor="middle" fontSize="17" fontWeight="800" fill="#0f172a" className="font-number">
+                      {totalHrs >= 1000 ? `${(totalHrs/1000).toFixed(1)}K` : totalHrs}
+                    </text>
+                    <text x="70" y="80" textAnchor="middle" fontSize="9" fontWeight="600" fill="#64748b">Total Hrs</text>
+                  </svg>
+
+                  <div className="ts-donut-legend">
+                    {donutLocs.map((loc) => (
+                      <div
+                        key={loc.name}
+                        className="ts-legend-row"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          setSelectedSiteName(loc.name);
+                          setActiveView("timesheet-detail");
+                        }}
+                      >
+                        <span className="ts-legend-dot" style={{ background: loc.color }}></span>
+                        <span className="ts-legend-name">{loc.name}</span>
+                        <span className="ts-legend-hrs">{loc.hrs.toLocaleString()} hrs</span>
+                        <span className="ts-legend-pct">{loc.pct.toFixed(1)}%</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* ── LOCATION PERFORMANCE TABLE ── */}
-          <div className="ts-table-card">
-            <div className="ts-table-header">
-              <div className="ts-chart-title-row">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-                <span className="ts-chart-title">Location Performance Overview</span>
+            {/* ── LOCATION PERFORMANCE TABLE ── */}
+            <div className="ts-table-card">
+              <div className="ts-table-header">
+                <div className="ts-chart-title-row">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                  <span className="ts-chart-title">Location Performance Overview — {selectedCust}</span>
+                </div>
               </div>
+              <div className="detail-table-wrapper">
+                <table className="detail-table ts-perf-table">
+                  <thead>
+                    <tr>
+                      <th>Location</th>
+                      <th>Total Approved Hours</th>
+                      <th>Assigned Supervisors</th>
+                      <th>Clocked In</th>
+                      <th>Approval Ratio</th>
+                      <th>Operational Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {td.locations.map((row, i) => (
+                      <tr
+                        key={row.name}
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          setSelectedSiteName(row.name);
+                          setActiveView("timesheet-detail");
+                        }}
+                      >
+                        <td>
+                          <div className="ts-loc-cell">
+                            <span className="ts-loc-icon" style={{ borderColor: row.color, color: row.color }}>
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                            </span>
+                            <span className="fw-semibold">{row.name}</span>
+                          </div>
+                        </td>
+                        <td className="font-number fw-bold">{row.hrs.toLocaleString()} hrs</td>
+                        <td className="text-secondary">Supervisor {String(i+1).padStart(2,"0")}</td>
+                        <td className="text-secondary">{row.clockedIn} Staff</td>
+                        <td>
+                          <div className="ts-ratio-cell">
+                            <div className="ts-ratio-bar">
+                              <div className="ts-ratio-fill" style={{ width: `${row.pct}%`, background: row.color }}></div>
+                            </div>
+                            <span className="ts-ratio-pct">{row.pct.toFixed(1)}%</span>
+                          </div>
+                        </td>
+                        <td>
+                          <span className="badge-pill bg-success-pill">Synchronized</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        );
+      })()}
+
+      {/* TIMESHEET DETAIL VIEW */}
+      {activeView === "timesheet-detail" && (() => {
+        const tsData = {
+          "All Customers": {
+            totalHours: 5480, approvedLogs: 384, pendingLogs: 48, disputedLogs: 5,
+            locations: [
+              { name: "Noida",     hrs: 1920, pct: 35.0, color: "#2563eb", clockedIn: 21 },
+              { name: "Delhi",     hrs: 1600, pct: 29.2, color: "#10b981", clockedIn: 10 },
+              { name: "Gurugram",  hrs: 1280, pct: 23.4, color: "#8b5cf6", clockedIn: 7  },
+              { name: "Bangalore", hrs:  680, pct: 12.4, color: "#f97316", clockedIn: 6  },
+            ],
+          },
+          Dell: { totalHours: 640, approvedLogs: 42, pendingLogs: 5, disputedLogs: 1, locations: [ { name: "Noida", hrs: 270, pct: 42.2, color: "#2563eb", clockedIn: 4 }, { name: "Delhi", hrs: 160, pct: 25.0, color: "#10b981", clockedIn: 2 }, { name: "Gurugram", hrs: 110, pct: 17.2, color: "#8b5cf6", clockedIn: 1 }, { name: "Bangalore", hrs: 100, pct: 15.6, color: "#f97316", clockedIn: 1 } ] },
+          Microsoft: { totalHours: 960, approvedLogs: 68, pendingLogs: 9, disputedLogs: 1, locations: [ { name: "Noida", hrs: 384, pct: 40.0, color: "#2563eb", clockedIn: 5 }, { name: "Delhi", hrs: 256, pct: 26.7, color: "#10b981", clockedIn: 3 }, { name: "Gurugram", hrs: 128, pct: 13.3, color: "#8b5cf6", clockedIn: 2 }, { name: "Bangalore", hrs: 192, pct: 20.0, color: "#f97316", clockedIn: 2 } ] },
+          Google: { totalHours: 1200, approvedLogs: 85, pendingLogs: 12, disputedLogs: 2, locations: [ { name: "Noida", hrs: 560, pct: 46.7, color: "#2563eb", clockedIn: 6 }, { name: "Delhi", hrs: 240, pct: 20.0, color: "#10b981", clockedIn: 2 }, { name: "Gurugram", hrs: 240, pct: 20.0, color: "#8b5cf6", clockedIn: 2 }, { name: "Bangalore", hrs: 160, pct: 13.3, color: "#f97316", clockedIn: 1 } ] },
+          Amazon: { totalHours: 1280, approvedLogs: 94, pendingLogs: 11, disputedLogs: 1, locations: [ { name: "Noida", hrs: 568, pct: 44.4, color: "#2563eb", clockedIn: 6 }, { name: "Delhi", hrs: 284, pct: 22.2, color: "#10b981", clockedIn: 3 }, { name: "Gurugram", hrs: 213, pct: 16.7, color: "#8b5cf6", clockedIn: 2 }, { name: "Bangalore", hrs: 215, pct: 16.7, color: "#f97316", clockedIn: 2 } ] },
+        };
+        const td = tsData[selectedCust] || tsData["All Customers"];
+        const filteredLocs = selectedSiteName
+          ? td.locations.filter(l => l.name === selectedSiteName)
+          : td.locations;
+        const names = ["Erin Gilmore","Alex Rivera","Jordan Smith","Taylor Swift","Chris Evans","Morgan Freeman","Jamie Lannister","Sarah Connor","John Doe","Jane Foster","Peter Parker","Bruce Wayne","Clark Kent","Diana Prince","Tony Stark"];
+        const pinMap = {
+          Noida: "201301", Delhi: "110001", Gurugram: "122001", Bangalore: "560001",
+        };
+        const rows = [];
+        let idx = 0;
+        filteredLocs.forEach((loc, li) => {
+          const count = loc.clockedIn;
+          const hrsPerEmp = Math.round(loc.hrs / Math.max(count, 1));
+          const pin = pinMap[loc.name] || "000000";
+          for (let i = 0; i < count; i++) {
+            rows.push({
+              id: `TS-${1000 + idx}`,
+              name: names[idx % names.length],
+              customer: selectedCust === "All Customers" ? ["Dell","Microsoft","Google","Amazon"][li % 4] : selectedCust,
+              site: loc.name,
+              pin,
+              role: i % 2 === 0 ? "Security Guard" : "Supervisor",
+              start: i % 2 === 0 ? "07:00 AM" : "03:00 PM",
+              end: i % 2 === 0 ? "03:00 PM" : "11:00 PM",
+              hrs: hrsPerEmp,
+              status: i % 5 === 4 ? "Pending" : "Approved",
+            });
+            idx++;
+          }
+        });
+        return (
+          <div className="detail-view-card animate-fade-in">
+            <div className="detail-view-header">
+              <h3 className="detail-view-title">
+                Timesheet Details — {selectedCust}{selectedSiteName ? ` / ${selectedSiteName}` : ""}
+              </h3>
             </div>
             <div className="detail-table-wrapper">
-              <table className="detail-table ts-perf-table">
+              <table className="detail-table">
                 <thead>
                   <tr>
-                    <th>Location</th>
-                    <th>Total Approved Hours</th>
-                    <th>Assigned Supervisors</th>
-                    <th>Recent Submissions</th>
-                    <th>Approval Ratio</th>
-                    <th>Operational Status</th>
+                    <th>Log ID</th>
+                    <th>Employee Name</th>
+                    <th>Customer</th>
+                    <th>Site / Location</th>
+                    <th>PIN Code</th>
+                    <th>Role</th>
+                    <th>Shift Start</th>
+                    <th>Shift End</th>
+                    <th>Hours Logged</th>
+                    <th>Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {[
-                    { name:"Noida",     color:"#2563eb", hrs:"1,920 hrs", submissions: currentCustData[0]?.clockedIn ?? 185 },
-                    { name:"Delhi",     color:"#10b981", hrs:"1,600 hrs", submissions: currentCustData[1]?.clockedIn ?? 142 },
-                    { name:"Gurugram",  color:"#8b5cf6", hrs:"1,280 hrs", submissions: currentCustData[2]?.clockedIn ?? 105 },
-                    { name:"Bangalore", color:"#f97316", hrs:"960 hrs",   submissions: currentCustData[3]?.clockedIn ?? 74  },
-                  ].map((row, i) => (
-                    <tr key={row.name}>
+                  {rows.map((r, i) => (
+                    <tr key={i}>
+                      <td className="text-secondary font-mono">{r.id}</td>
+                      <td className="fw-semibold">{r.name}</td>
+                      <td>{r.customer}</td>
+                      <td>{r.site}</td>
+                      <td className="font-number text-secondary">{r.pin}</td>
+                      <td>{r.role}</td>
+                      <td className="font-number fw-bold">{r.start}</td>
+                      <td className="font-number fw-bold">{r.end}</td>
+                      <td className="font-number fw-bold">{r.hrs} hrs</td>
                       <td>
-                        <div className="ts-loc-cell">
-                          <span className="ts-loc-icon" style={{borderColor: row.color, color: row.color}}>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
-                          </span>
-                          <span className="fw-semibold">{row.name}</span>
-                        </div>
-                      </td>
-                      <td className="font-number fw-bold">{row.hrs}</td>
-                      <td className="text-secondary">Supervisor {String(i+1).padStart(2,"0")}</td>
-                      <td className="text-secondary">{row.submissions} Submissions</td>
-                      <td>
-                        <div className="ts-ratio-cell">
-                          <div className="ts-ratio-bar">
-                            <div className="ts-ratio-fill" style={{width:"100%", background: row.color}}></div>
-                          </div>
-                          <span className="ts-ratio-pct">100%</span>
-                        </div>
-                      </td>
-                      <td>
-                        <span className="badge-pill bg-success-pill">Synchronized</span>
+                        <span className={`badge-pill ${r.status === "Approved" ? "bg-success-pill" : "bg-warning-pill"}`}>
+                          {r.status}
+                        </span>
                       </td>
                     </tr>
                   ))}
@@ -710,9 +1058,10 @@ function MainDashboard() {
               </table>
             </div>
           </div>
+        );
+      })()}
 
-        </div>
-      )}
+
 
       {/* REPORTS ANALYTICAL OVERVIEW VIEW */}
       {activeTab === "Reports" && activeView === "dashboard" && (
@@ -1039,7 +1388,7 @@ function MainDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {currentCustData.map((site, index) => (
+                {expandSites(currentCustData).map((site, index) => (
                   <tr key={index}>
                     <td className="fw-semibold">{site.siteName}</td>
                     {selectedCust === "All Customers" && <td>{site.customer}</td>}
@@ -1047,7 +1396,9 @@ function MainDashboard() {
                     <td className="font-number">{site.count}</td>
                     <td className="font-number">{site.totalEmployees}</td>
                     <td>
-                      <span className="badge-pill bg-success-pill">Active</span>
+                      <span className={`badge-pill ${site.active ? "bg-success-pill" : "bg-warning-pill"}`}>
+                        {site.active ? "Active" : "Inactive"}
+                      </span>
                     </td>
                     <td>
                       <button className="view-link-btn" onClick={() => handleSiteClick(site.siteName, site.customer)}>
@@ -1082,23 +1433,26 @@ function MainDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {currentCustData.filter(site => site.clockedIn > 0).map((site, index) => (
-                  <tr key={index}>
-                    <td className="fw-semibold">{site.siteName}</td>
-                    {selectedCust === "All Customers" && <td>{site.customer}</td>}
-                    <td className="text-secondary">{site.address || "Sector 62, Noida"}</td>
-                    <td>07:00 - 15:00 (Day shift)</td>
-                    <td className="fw-bold font-green font-number">{site.clockedIn}/{site.totalEmployees}</td>
-                    <td>
-                      <span className="badge-pill bg-blue-pill">Roster Running</span>
-                    </td>
-                    <td>
-                      <button className="view-link-btn" onClick={() => handleSiteClick(site.siteName, site.customer)}>
-                        Roster View
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {expandSites(currentCustData)
+                  .filter(site => site.clockedIn > 0)
+                  .slice(0, activeSites)
+                  .map((site, index) => (
+                    <tr key={index}>
+                      <td className="fw-semibold">{site.siteName}</td>
+                      {selectedCust === "All Customers" && <td>{site.customer || "All Customers"}</td>}
+                      <td className="text-secondary">{site.address || "Sector 62, Noida"}</td>
+                      <td>07:00 - 15:00 (Day shift)</td>
+                      <td className="fw-bold font-green font-number">{site.clockedIn}/{site.totalEmployees}</td>
+                      <td>
+                        <span className="badge-pill bg-blue-pill">Roster Running</span>
+                      </td>
+                      <td>
+                        <button className="view-link-btn" onClick={() => handleSiteClick(site.siteName, site.customer)}>
+                          Roster View
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>
@@ -1176,6 +1530,53 @@ function MainDashboard() {
                     <td className="fw-bold font-green font-number">{emp.actualClockIn}</td>
                     <td>
                       <span className="badge-pill bg-success-pill">{emp.coordinatorVerify}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* SITE SCHEDULE DETAILS VIEW */}
+      {activeView === "site-schedule" && (
+        <div className="detail-view-card">
+          <div className="detail-view-header">
+            <h3 className="detail-view-title">
+              Site Schedule Details for {selectedSiteName} ({selectedCust === "All Customers" ? "All Customers" : selectedCust})
+            </h3>
+          </div>
+          <div className="detail-table-wrapper">
+            <table className="detail-table">
+              <thead>
+                <tr>
+                  <th>Employee ID</th>
+                  <th>Name</th>
+                  <th>Customer</th>
+                  <th>Site Name</th>
+                  <th>Site Address & PIN Code</th>
+                  <th>Assigned Role</th>
+                  <th>Scheduled Start Time</th>
+                  <th>Scheduled End Time</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {siteEmployees.map((emp, index) => (
+                  <tr key={index}>
+                    <td className="text-secondary font-mono">{emp.id}</td>
+                    <td className="fw-semibold">{emp.name}</td>
+                    <td>{emp.customer}</td>
+                    <td>{emp.siteName}</td>
+                    <td className="text-secondary">{emp.address}</td>
+                    <td>{emp.role}</td>
+                    <td className="fw-bold font-number">{emp.startTime}</td>
+                    <td className="fw-bold font-number">{emp.endTime}</td>
+                    <td>
+                      <span className={`badge-pill ${emp.clockedIn ? "bg-success-pill" : "bg-warning-pill"}`}>
+                        {emp.clockedIn ? "Clocked In" : "Offline"}
+                      </span>
                     </td>
                   </tr>
                 ))}

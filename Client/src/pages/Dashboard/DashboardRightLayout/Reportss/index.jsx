@@ -5,6 +5,42 @@ function Reportss() {
     <div className="reportsPageLayout">
       <div className="reportsMain">
         <div className="reportsContainer">
+          
+          {/* ANALYTICS OVERVIEW SECTION */}
+          <div className="reports-analytics-section">
+            <h2 className="analytics-title">Reports Analytics Overview (All Customers)</h2>
+            <div className="analytics-grid">
+              <div className="analytics-card">
+                <div className="card-icon blue"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+                <div className="card-content">
+                  <span className="card-label">Compliance Score</span>
+                  <span className="card-value">96.4%</span>
+                </div>
+              </div>
+              <div className="analytics-card">
+                <div className="card-icon green"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+                <div className="card-content">
+                  <span className="card-label">Average Attendance</span>
+                  <span className="card-value">98.2%</span>
+                </div>
+              </div>
+              <div className="analytics-card">
+                <div className="card-icon purple"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+                <div className="card-content">
+                  <span className="card-label">Roster SLA Breach</span>
+                  <span className="card-value">0.5%</span>
+                </div>
+              </div>
+              <div className="analytics-card">
+                <div className="card-icon orange"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+                <div className="card-content">
+                  <span className="card-label">Guard Audit Score</span>
+                  <span className="card-value">95%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* TOP TABS */}
           <div className="tabs">
             <button className="activeTab">Site Reports</button>

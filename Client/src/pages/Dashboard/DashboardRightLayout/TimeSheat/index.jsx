@@ -366,33 +366,18 @@ function TimesheetPage() {
         </p>
       </div>
 
-      {/* FILTER BAR */}
-      <div className="filterBar" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
-          <div className="filterGroup">
-            <label>SELECT CUSTOMER:</label>
-            <select
-              value={selectedCustomer}
-              onChange={(e) => setSelectedCustomer(e.target.value)}
-            >
-              {customerOptions.map((cust) => (
-                <option key={cust} value={cust}>
-                  {cust}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="filterGroup searchBox">
-            <label>SEARCH:</label>
-            <input
-              type="text"
-              placeholder="Search by employee, customer, position..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-        </div>
+          <div className="filterBar" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
+              <div className="filterGroup searchBox">
+                <label>SEARCH:</label>
+                <input
+                  type="text"
+                  placeholder="Search by employee, customer, position..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+            </div>
 
         <button
           type="button"
