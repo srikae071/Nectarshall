@@ -270,93 +270,24 @@ function EmployeRequestSave() {
   };
   const handleSendEmail = async () => {
     try {
-      await sendApiData(
+      // First save candidate list and current form state to backend
+      await sendApiData(`/api/jobrequests/${id}`, formData, "put");
+      
+      // Send candidate emails for all candidate email IDs
+      const res = await sendApiData(
         `/api/jobrequests/send-email/${formData.caseId}`,
         {}
       );
 
-      alert("Email Sent Successfully");
+      const msg = res?.data?.message || "Emails Sent Successfully to Candidate(s)";
+      alert(msg);
     } catch (error) {
       console.log(error.response?.data);
-      console.log(error.response?.status);
-      // console.log(error);
+      alert(error.response?.data?.message || "Error sending candidate emails");
     }
   };
-  // const handleFinalSave = async () => {
-  //   if (!formData.firstName) {
-  //     alert("First Name is mandatory");
-  //     return;
-  //   }
-
-  //   if (!formData.lastName) {
-  //     alert("Last Name is mandatory");
-  //     return;
-  //   }
-
-  //   if (!formData.email) {
-  //     alert("Email is mandatory");
-  //     return;
-  //   }
-
-  //   if (!formData.contactNumber) {
-  //     alert("Contact Number is mandatory");
-  //     return;
-  //   }
-
-  //   let nextStatus = formData.status || "Open";
-
-  //   if (formData.interview === "PASS") {
-  //     nextStatus = "Interview";
-  //   }
-
-  //   if (formData.interview === "FAIL") {
-  //     nextStatus = "Closed";
-  //   }
-
-  //   try {
-  //     // Update Job Request
-  //     await axios.put(
-  //       `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
-  //       {
-  //         ...formData,
-  //         status: nextStatus,
-  //       },
-  //     );
-
-  //     // Send Candidate Form 2 email only when PASS
-  //     if (formData.interview === "PASS") {
-  //       await axios.post(
-  //         `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/send-candidate-form2/${formData.caseId}`,
-  //       );
-  //     }
-
-  //     alert("Request Updated Successfully");
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
 
   const handleFinalSave = async () => {
-    if (!formData.firstName) {
-      alert("First Name is mandatory");
-      return;
-    }
-
-    if (!formData.lastName) {
-      alert("Last Name is mandatory");
-      return;
-    }
-
-    if (!formData.email) {
-      alert("Email is mandatory");
-      return;
-    }
-
-    if (!formData.contactNumber) {
-      alert("Contact Number is mandatory");
-      return;
-    }
-
     let nextStatus = formData.status || "Open";
     if (formData.interview === "PASS") {
       nextStatus = "OfferLetter";
@@ -375,15 +306,10 @@ function EmployeRequestSave() {
         "put"
       );
 
-      // if (formData.interview === "PASS") {
-      //   await axios.post(
-      //     `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/send-candidate-form2/${formData.caseId}`,
-      //   );
-      // }
-
       alert("Request Updated Successfully");
     } catch (error) {
       console.log(error);
+      alert("Error saving request");
     }
   };
 
@@ -420,8 +346,17 @@ function EmployeRequestSave() {
   const checkIsSubmitted = (cand) => {
     if (!cand) return false;
     if (cand.submitted === true) return true;
-    if (cand.modernSlaveryCandidateForm || cand.legalBarrierCandidateForm || cand.bankName || cand.taxFileNumber) return true;
-    if ((cand.candidateId === "CND-001" || !cand.candidateId) && (formData.candidateCompleted || formData.modernSlaveryCandidateForm || formData.bankName)) return true;
+    if (
+      cand.securityLicenceCandidateForm ||
+      cand.modernSlaveryCandidateForm ||
+      cand.legalBarrierCandidateForm ||
+      cand.bankName ||
+      cand.taxFileNumber
+    ) return true;
+    if (
+      (cand.candidateId === "CND-001" || !cand.candidateId) &&
+      (formData.candidateCompleted || formData.securityLicenceCandidateForm || formData.modernSlaveryCandidateForm || formData.bankName)
+    ) return true;
     return false;
   };
 
@@ -457,106 +392,62 @@ function EmployeRequestSave() {
           <div className="lr-grid-2">
             <div className="lr-field">
               <label className="lr-label">Case Id *</label>
-              <input className="lr-input" name="CaseId" value={formData.caseId} readOnly />
+              <input className="lr-input" name="caseId" value={formData.caseId || ""} readOnly />
             </div>
             <div className="lr-field">
               <label className="lr-label">Requester Name</label>
-              <input className="lr-input" value={formData.requesterName} readOnly />
+              <input className="lr-input" value={formData.requesterName || ""} readOnly />
             </div>
+          </div>
 
+          <div className="lr-grid-2">
             <div className="lr-field">
               <label className="lr-label">Department</label>
               <input
+                className="lr-input"
                 name="department"
-                value={formData.department}
+                value={formData.department || ""}
                 readOnly
                 type="text"
                 autoComplete="off"
               />
             </div>
-          </div>
-
-          <div className="lr-grid-2">
             <div className="lr-field">
-              <label className="lr-label">SkillSet *</label>
+              <label className="lr-label">SkillSet</label>
               <input
-                name="Slillset"
-                value={formData.skillSet}
-                onChange={handleChange}
-              />
-            </div>
-
-            <div className="lr-field">
-              <label className="lr-label">Urgency*</label>
-              <input
-                name="Urgency"
-                value={formData.urgency}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="lr-field">
-              <label className="lr-label">First Name*</label>
-              <input
-                name="firstName"
-                value={formData.firstName}
+                className="lr-input"
+                name="skillSet"
+                value={formData.skillSet || ""}
                 onChange={handleChange}
               />
             </div>
           </div>
+
           <div className="lr-grid-2">
             <div className="lr-field">
-              <label className="lr-label">Last Name *</label>
+              <label className="lr-label">Urgency</label>
               <input
-                name="lastName"
-                value={formData.lastName}
+                className="lr-input"
+                name="urgency"
+                value={formData.urgency || ""}
                 onChange={handleChange}
               />
             </div>
-
-            <div className="lr-field">
-              <label className="lr-label">Preferd Name*</label>
-              <input
-                name="preferredName"
-                value={formData.preferredName}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="lr-field">
-              <label className="lr-label">Primary Email *</label>
-              <input
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-          <div className="lr-grid-2">
-            <div className="lr-field">
-              <label className="lr-label">Contact Number *</label>
-              <input
-                name="contactNumber"
-                value={formData.contactNumber}
-                onChange={handleChange}
-              />
-            </div>
-
             <div className="lr-field">
               <label className="lr-label">Status *</label>
-
               <select
                 name="status"
-                value={formData.status}
+                value={formData.status || "Open"}
                 onChange={handleChange}
                 className="EmployeeSaveStatusDropdown lr-input"
               >
-                <option value="">Select Status</option>
                 <option value="Open">Open</option>
                 <option value="Work In Progress">Work In Progress</option>
                 <option value="Offer Letter">Offer Letter</option>
                 <option value="Pre Joining Compliance">
                   Pre Joining Compliance
                 </option>
-                <option value="Interview">Interwiew</option>
+                <option value="Interview">Interview</option>
               </select>
             </div>
           </div>
@@ -578,7 +469,7 @@ function EmployeRequestSave() {
                     border: "1px solid #cbd5e1",
                     marginBottom: "12px",
                     display: "grid",
-                    gridTemplateColumns: "130px 1fr 1fr 1fr 1fr 44px",
+                    gridTemplateColumns: "130px 1fr 1fr 1fr 1fr 120px 44px",
                     gap: "12px",
                     alignItems: "flex-end",
                     boxSizing: "border-box",
@@ -685,6 +576,29 @@ function EmployeRequestSave() {
                         boxSizing: "border-box",
                       }}
                     />
+                  </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                    <label className="lr-label" style={{ fontSize: "12px", fontWeight: "700", color: "#334155", whiteSpace: "nowrap" }}>Status</label>
+                    <span
+                      style={{
+                        height: "38px",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        padding: "0 10px",
+                        borderRadius: "6px",
+                        fontSize: "12px",
+                        fontWeight: "700",
+                        background: checkIsSubmitted(cand) ? "#dcfce7" : "#fee2e2",
+                        color: checkIsSubmitted(cand) ? "#15803d" : "#dc2626",
+                        border: checkIsSubmitted(cand) ? "1px solid #bbf7d0" : "1px solid #fecaca",
+                        whiteSpace: "nowrap",
+                        boxSizing: "border-box",
+                      }}
+                    >
+                      {checkIsSubmitted(cand) ? "Submitted" : "Not Submitted"}
+                    </span>
                   </div>
 
                   <button
@@ -805,7 +719,7 @@ function EmployeRequestSave() {
                         }}
                       >
                         <span>{cand.candidateId || `CND-${String(idx + 1).padStart(3, "0")}`}</span>
-                        <span>({cand.name || "Candidate"})</span>
+                        <span>({`${cand.firstName || ""} ${cand.lastName || ""}`.trim() || cand.name || "Candidate"})</span>
                         <span
                           style={{
                             fontSize: "11px",

@@ -68,9 +68,7 @@
   display: flex;
   flex-direction: column;
   overflow: auto;
-  background-color: #e9e5e5;
-
-  /* min-height: 100vh; */
+  background-color: #f8fafc;
 }
 
 .hrmssubmenuItem.active {
