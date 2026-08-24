@@ -449,7 +449,7 @@ function EmployeRequestSave() {
         navigate("/onboarding/prejoining");
       } else if (nextNorm === "resolved") {
         alert("Status changed to Resolved!");
-        navigate("/onboarding/employerequest");
+        navigate("/onboardingresolved");
       } else {
         if (!allCandSubmitted && (normStatus === "open" || normStatus === "workinprogress")) {
           alert("Data submitted successfully! Case remains in Open / All until all candidates submit Step 1 (Barriers of Employment).");
@@ -537,7 +537,21 @@ function EmployeRequestSave() {
               <label className="lr-label">Status *</label>
               <select
                 name="status"
-                value={formData.status || "Open"}
+                value={
+                  normStatus === "prejoiningcompliance" || normStatus === "prejoining"
+                    ? "Pre Joining Compliance"
+                    : normStatus === "offerletter"
+                    ? "Offer Letter"
+                    : normStatus === "workinprogress"
+                    ? "Work In Progress"
+                    : normStatus === "interview"
+                    ? "Interview"
+                    : normStatus === "resolved"
+                    ? "Resolved"
+                    : normStatus === "closed"
+                    ? "Closed"
+                    : formData.status || "Open"
+                }
                 onChange={handleChange}
                 className="EmployeeSaveStatusDropdown lr-input"
               >
@@ -545,9 +559,7 @@ function EmployeRequestSave() {
                 <option value="Work In Progress">Work In Progress</option>
                 <option value="Interview">Interview</option>
                 <option value="Offer Letter">Offer Letter</option>
-                <option value="Pre Joining Compliance">
-                  Pre Joining Compliance
-                </option>
+                <option value="Pre Joining Compliance">Pre Joining Compliance</option>
                 <option value="Resolved">Resolved</option>
                 <option value="Closed">Closed</option>
               </select>

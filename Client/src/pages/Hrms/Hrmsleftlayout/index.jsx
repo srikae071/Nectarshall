@@ -122,6 +122,30 @@ const menuData = [
   },
 ];
 
+const isPathMatchingMenuItem = (menuItemPath, currentPath, searchStr = "") => {
+  if (!menuItemPath || !currentPath) return false;
+  if (menuItemPath === currentPath) return true;
+
+  const query = new URLSearchParams(searchStr);
+  const source = query.get("source");
+
+  // Detail page route alias matching for Onboarding
+  if (currentPath.startsWith("/employee-request-save")) {
+    if (source === "all") {
+      return menuItemPath === "/onboarding/resonancerequirement/all";
+    }
+    return menuItemPath === "/onboarding/employerequest";
+  }
+
+  if (menuItemPath.startsWith("/onboarding/Offerletter") && currentPath.startsWith("/offerlettersaves")) return true;
+  if (menuItemPath === "/onboarding/Interview" && currentPath.startsWith("/OnBoardingInterviewSaves")) return true;
+  if (menuItemPath === "/onboarding/prejoining" && currentPath.startsWith("/OnBoardingPreJoiningSaves")) return true;
+  if (menuItemPath === "/onboardingresolved" && currentPath.startsWith("/OnBoardingResolvedSaves")) return true;
+  if (menuItemPath === "/onboarding/resonancerequirement/all" && currentPath.startsWith("/onboarding-saves")) return true;
+
+  return false;
+};
+
 /* ================= REUSABLE MENU ITEM ================= */
 const MenuItem = ({ item, level = 0, expandedMenus, setExpandedMenus }) => {
   const navigate = useNavigate();
@@ -130,7 +154,7 @@ const MenuItem = ({ item, level = 0, expandedMenus, setExpandedMenus }) => {
   const hasChildren = item.children && item.children.length > 0;
 
   const checkActive = (menuItem) => {
-    if (menuItem.path && menuItem.path === location.pathname) return true;
+    if (menuItem.path && isPathMatchingMenuItem(menuItem.path, location.pathname, location.search)) return true;
 
     if (menuItem.children) {
       return menuItem.children.some((child) => checkActive(child));
@@ -294,7 +318,7 @@ function HrmsLeftLayout({ children }) {
     if (!currentPath || currentPath === "/") return;
 
     const itemMatchesPath = (item) => {
-      if (item.path && item.path === currentPath) return true;
+      if (item.path && isPathMatchingMenuItem(item.path, currentPath, location.search)) return true;
       if (item.children) {
         return item.children.some((child) => itemMatchesPath(child));
       }

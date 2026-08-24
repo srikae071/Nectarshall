@@ -29,7 +29,7 @@ function OnBoardingResonanceRequirementsAll() {
   const navigate = useNavigate();
 
   const handleRowClick = (item) => {
-    navigate(`/employee-request-save/${item._id}`);
+    navigate(`/employee-request-save/${item._id}?source=all`);
   };
 
   return (

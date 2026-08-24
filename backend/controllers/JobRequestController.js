@@ -138,17 +138,44 @@ exports.updateJobRequestByCaseId = async (req, res) => {
     if (req.body.offerStatus) {
       request.offerLetterResult = req.body.offerStatus;
     }
+    if (req.body.bankAccount) {
+      request.accountNumber = req.body.bankAccount;
+      request.bankAccountName = req.body.bankAccount;
+    }
+    if (req.body.taxFileNumber) {
+      request.tfn = req.body.taxFileNumber;
+    }
+    if (req.body.superFundName) {
+      request.superFund = req.body.superFundName;
+    }
+    if (req.body.superMemberNumber) {
+      request.superMemberNum = req.body.superMemberNumber;
+    }
 
     if (Array.isArray(request.candidates) && request.candidates.length > 0) {
       request.candidates.forEach((cand) => {
         if (req.body.offerStatus) cand.offerLetterResult = req.body.offerStatus;
         if (req.body.bankName) cand.bankName = req.body.bankName;
-        if (req.body.bankAccount) cand.bankAccountName = req.body.bankAccount;
+        if (req.body.bankAccount) {
+          cand.bankAccountName = req.body.bankAccount;
+          cand.accountNumber = req.body.bankAccount;
+          cand.bankAccount = req.body.bankAccount;
+        }
         if (req.body.bsb) cand.bsb = req.body.bsb;
-        if (req.body.taxFileNumber) cand.tfn = req.body.taxFileNumber;
-        if (req.body.superFundName) cand.superFund = req.body.superFundName;
-        if (req.body.superMemberNumber) cand.superMemberNum = req.body.superMemberNumber;
+        if (req.body.taxFileNumber) {
+          cand.tfn = req.body.taxFileNumber;
+          cand.taxFileNumber = req.body.taxFileNumber;
+        }
+        if (req.body.superFundName) {
+          cand.superFund = req.body.superFundName;
+          cand.superFundName = req.body.superFundName;
+        }
+        if (req.body.superMemberNumber) {
+          cand.superMemberNum = req.body.superMemberNumber;
+          cand.superMemberNumber = req.body.superMemberNumber;
+        }
         if (req.body.longServiceLeaveId) cand.longServiceLeaveId = req.body.longServiceLeaveId;
+        cand.submitted = true;
       });
       request.markModified("candidates");
     }
