@@ -119,7 +119,7 @@ function AllEmployees() {
                           {index + 1}
                         </td>
                         <td style={{ fontWeight: "700", color: "#047857" }}>
-                          👤 {dispName}
+                          {dispName}
                         </td>
                         <td>{emp.jobTitle || "-"}</td>
                         <td>{emp.department || "-"}</td>

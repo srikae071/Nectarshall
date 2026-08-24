@@ -72,15 +72,7 @@ const VendorPortalLayout = ({ children }) => {
 
       {/* Main Content */}
       <div className="vendor-main-content">
-        <div className="vendor-top-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 40px', height: '56px', width: '100%', boxSizing: 'border-box', background: '#ffffff', borderBottom: '1px solid #e2e8f0' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
-            <span 
-              onClick={() => navigate('/regular-form')}
-              style={{ fontSize: '16px', fontWeight: 700, color: '#0f172a', cursor: 'pointer' }}
-            >
-              Nectershell
-            </span>
-          </div>
+        <div className="vendor-top-header" style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', padding: '0 40px', height: '56px', width: '100%', boxSizing: 'border-box', background: '#ffffff', borderBottom: '1px solid #e2e8f0' }}>
 
           <div style={{ display: 'flex', gap: '36px', alignItems: 'center' }}>
             <div 

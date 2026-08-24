@@ -45,7 +45,7 @@ function PatrollingLeftLayout({ children }) {
             }`}
             onClick={() => navigate("/PatrollingMainDashboard")}
           >
-            📊 Dashboard
+            Dashboard
           </div>
 
           {/* SCHEDULE (TOGGLE) */}
@@ -57,7 +57,7 @@ function PatrollingLeftLayout({ children }) {
                 setManualToggle(false);
               }}
             >
-              <span>📅 Schedule</span>
+              <span>Schedule</span>
               <span>{openSchedule ? "-" : "+"}</span>
             </div>
 
@@ -136,7 +136,7 @@ function PatrollingLeftLayout({ children }) {
             }`}
             onClick={() => navigate("/PatrollingTimesheets")}
           >
-            ⏱️ Timesheets
+            Timesheets
           </div>
           <div
             className={`submenuItem ${
@@ -144,7 +144,7 @@ function PatrollingLeftLayout({ children }) {
             }`}
             onClick={() => navigate("/PatrollingReports")}
           >
-            📊 Reports
+            Reports
           </div>
           <div
             className={`submenuItem ${
@@ -152,7 +152,7 @@ function PatrollingLeftLayout({ children }) {
             }`}
             onClick={() => navigate("/PatrollingIncidents")}
           >
-            📌 Incidents
+            Incidents
           </div>
         </div>
 

@@ -12,7 +12,7 @@ function CandiateFormNav() {
         <div className="navname">#</div>
       </div>
 
-      <div className="profile">👤</div>
+      <div className="profile"></div>
     </div>
   );
 }

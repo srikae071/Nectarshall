@@ -232,7 +232,7 @@ const DashboardNavTabs = () => {
       style={{
         display: "flex",
         alignItems: "center",
-        justifyContent: "space-between",
+        justifyContent: "flex-start",
         padding: "0 40px",
         height: "56px",
         background: "#ffffff",
@@ -242,27 +242,7 @@ const DashboardNavTabs = () => {
         boxSizing: "border-box",
       }}
     >
-      {/* Left Title */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "10px",
-          flexShrink: 0,
-        }}
-      >
-        <span
-          onClick={() => navigate("/regular-form")}
-          style={{
-            cursor: "pointer",
-            color: "#0f172a",
-            fontSize: "16px",
-            fontWeight: 700,
-          }}
-        >
-          Nectershell
-        </span>
-      </div>
+
 
       {/* Nav Tabs with Icons */}
       <div style={{ display: "flex", gap: "36px", alignItems: "center" }}>

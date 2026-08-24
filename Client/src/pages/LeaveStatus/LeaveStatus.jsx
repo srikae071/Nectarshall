@@ -170,7 +170,7 @@ function LeaveStatus() {
                         paddingBottom: "6px",
                       }}
                     >
-                      ⚙️ Display Columns:
+                      Display Columns:
                     </div>
 
                     {Object.entries({

@@ -133,7 +133,7 @@ function LoginPage() {
 
         <div className="loginHintBox" style={{ marginTop: "20px", textAlign: "left" }}>
           <p className="hintTitle" style={{ fontWeight: "700", marginBottom: "8px", fontSize: "13px" }}>
-            👤 Select User Account Profile:
+            Select User Account Profile:
           </p>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
             {(allProfiles || []).map((p, idx) => (
@@ -152,7 +152,7 @@ function LoginPage() {
                   cursor: "pointer",
                 }}
               >
-                👤 {p.username}
+                {p.username}
               </button>
             ))}
           </div>

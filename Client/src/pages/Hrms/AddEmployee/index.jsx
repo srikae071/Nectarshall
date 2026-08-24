@@ -109,7 +109,7 @@ function AddEmployee() {
       >
         {/* SECTION 1: IDENTITY */}
         <div className="section-header-row">
-          <h3 className="section-title">👤 Identity</h3>
+          <h3 className="section-title">Identity</h3>
         </div>
 
         <div className="form-row">

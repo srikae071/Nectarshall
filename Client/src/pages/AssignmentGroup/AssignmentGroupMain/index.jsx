@@ -363,15 +363,15 @@ function AssignmentGroupMain() {
                     {columns.id && <td className="asgIdCell">{t.id}</td>}
                     {columns.requester && (
                       <td>
-                        <strong>👤 {t.requester}</strong>
+                        <strong>{t.requester}</strong>
                       </td>
                     )}
                     {columns.assignmentGroup && (
                       <td>
                         <span className={`asgGroupPill ${t.assignmentGroup.toLowerCase()}`}>
-                          {t.assignmentGroup === "IT" && "💻 IT Department"}
-                          {t.assignmentGroup === "HR" && "👥 HR Department"}
-                          {t.assignmentGroup === "Accounts" && "💰 Accounts Department"}
+                          {t.assignmentGroup === "IT" && "IT Department"}
+                          {t.assignmentGroup === "HR" && "HR Department"}
+                          {t.assignmentGroup === "Accounts" && "Accounts Department"}
                         </span>
                       </td>
                     )}
@@ -388,7 +388,7 @@ function AssignmentGroupMain() {
                         </span>
                       </td>
                     )}
-                    {columns.assignedTo && <td>👤 {t.assignedTo}</td>}
+                    {columns.assignedTo && <td>{t.assignedTo}</td>}
                     {columns.createdDate && <td>{t.createdDate}</td>}
                     {columns.status && (
                       <td>

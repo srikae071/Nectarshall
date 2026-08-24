@@ -633,7 +633,7 @@ const VendorCaseManagement = () => {
                       paddingBottom: "6px",
                     }}
                   >
-                    ⚙️ Settings
+                    Settings
                   </div>
 
                   {ALL_CASE_COLUMNS.map(col => (

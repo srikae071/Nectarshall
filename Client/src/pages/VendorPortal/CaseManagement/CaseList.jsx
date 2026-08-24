@@ -489,7 +489,7 @@ const CaseList = () => {
                   color: "#0f172a",
                 }}
               >
-                ⚙️ Settings
+                Settings
               </h3>
               <button
                 style={{

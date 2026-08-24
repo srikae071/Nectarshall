@@ -79,17 +79,17 @@ function VendorDashboardPage() {
 
           <div className="vendorPlaceholderGrid">
             <div className="vendorPlaceholderCard">
-              <h4>📄 Contract Deliverables</h4>
+              <h4>Contract Deliverables</h4>
               <p>View & submit scheduled contract tasks and deliverables.</p>
             </div>
 
             <div className="vendorPlaceholderCard">
-              <h4>🧾 Invoicing & Payments</h4>
+              <h4>Invoicing & Payments</h4>
               <p>Track purchase orders, billing cycles, and invoice statuses.</p>
             </div>
 
             <div className="vendorPlaceholderCard">
-              <h4>📂 Compliance Documents</h4>
+              <h4>Compliance Documents</h4>
               <p>Upload ABN, ACN, insurance policies and compliance files.</p>
             </div>
           </div>

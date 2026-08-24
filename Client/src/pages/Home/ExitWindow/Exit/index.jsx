@@ -111,6 +111,8 @@ function Exit() {
         <div className="lr-card">
           <h2 className="lr-title">Exit</h2>
           
+          <div className="section-header">EMPLOYEE DETAILS</div>
+          
           <div className="lr-grid-2">
             <div className="lr-field">
               <label className="lr-label">Requester</label>
@@ -196,7 +198,7 @@ function Exit() {
               Cancel
             </button>
 
-            <button type="button" className="CreateBtn btn-save" onClick={handleSave}>
+            <button type="button" className="CreateBtn btn-submit" onClick={handleSave}>
               Save
             </button>
 

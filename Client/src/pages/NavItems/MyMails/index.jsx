@@ -73,7 +73,7 @@ function MyMails() {
             className="composeBtn"
             onClick={() => setShowComposeModal(true)}
           >
-            ✏️ Compose Mail
+            Compose Mail
           </button>
 
           <div className="myMailsNavList">
@@ -84,7 +84,7 @@ function MyMails() {
                 setSelectedMail(null);
               }}
             >
-              📥 Inbox <span className="mailBadge">{userMails.length}</span>
+              Inbox <span className="mailBadge">{userMails.length}</span>
             </button>
             <button
               className={`mailNavTab ${activeTab === "sent" ? "active" : ""}`}
@@ -93,7 +93,7 @@ function MyMails() {
                 setSelectedMail(null);
               }}
             >
-              📤 Sent Items
+              Sent Items
             </button>
             <button
               className={`mailNavTab ${activeTab === "drafts" ? "active" : ""}`}
@@ -102,15 +102,15 @@ function MyMails() {
                 setSelectedMail(null);
               }}
             >
-              📝 Drafts
+              Drafts
             </button>
           </div>
 
           <div className="userMailboxInfo">
             <p className="mailboxUserLabel">Mailbox Portal for:</p>
-            <p className="mailboxUserName">👤 {currentUserName}</p>
+            <p className="mailboxUserName">{currentUserName}</p>
             <p className="mailboxUserEmail" style={{ fontSize: "11px", color: "#64748b", margin: "2px 0 0 0" }}>
-              ✉️ {currentUserEmail}
+              {currentUserEmail}
             </p>
           </div>
         </div>

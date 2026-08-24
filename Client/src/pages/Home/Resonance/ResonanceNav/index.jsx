@@ -14,7 +14,7 @@ function AskForItNavBar() {
         </div>
       </div>
 
-      <div className="profile">👤</div>
+      <div className="profile"></div>
     </div>
   );
 }

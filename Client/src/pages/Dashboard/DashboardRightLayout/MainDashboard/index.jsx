@@ -338,6 +338,11 @@ function MainDashboard() {
     setCurrentPage(1);
   }, [searchQuery, selectedCust, activeTab]);
 
+  // Reset activeView to dashboard when the top tab is switched
+  useEffect(() => {
+    setActiveView("dashboard");
+  }, [activeTab]);
+
   return (
     <div className="dashboard-root">
 

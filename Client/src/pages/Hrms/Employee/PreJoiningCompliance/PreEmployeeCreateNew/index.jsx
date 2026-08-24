@@ -40,8 +40,8 @@ function PreEmployeeCreateNew() {
           <textarea className="full" placeholder="Description"></textarea>
 
           <div className="footerBtns">
-            <button className="saveBtn">💾 Save</button>
-            <button className="cancelBtn">✕ Cancel</button>
+            <button className="saveBtn">Save</button>
+            <button className="cancelBtn">Cancel</button>
           </div>
         </div>
       </div>

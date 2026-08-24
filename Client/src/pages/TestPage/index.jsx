@@ -138,9 +138,9 @@ function TestPage() {
     } else if (cmd === "mails") {
       newLogs.push("> SATELLITE COMMS: 12 ENCRYPTED MAILS IN BUFFER. ALL CIPHERS VERIFIED.");
     } else if (cmd === "hack") {
-      newLogs.push("> ⚠️ HACK PROTOCOL ENGAGED... BYPASSING MAINFRAME... ACCESS GRANTED.");
+      newLogs.push(">  HACK PROTOCOL ENGAGED... BYPASSING MAINFRAME... ACCESS GRANTED.");
     } else if (cmd === "override") {
-      newLogs.push("> ⚡ SECURITY OVERDRIVE ACTIVATED :: ADMIN FULL ACCESS AUTHORIZED.");
+      newLogs.push(">  SECURITY OVERDRIVE ACTIVATED :: ADMIN FULL ACCESS AUTHORIZED.");
     } else if (cmd === "clear") {
       setTerminalLogs([`> [${timestamp}] TERMINAL BUFFER FLUSHED.`]);
       setTerminalInput("");
@@ -166,7 +166,7 @@ function TestPage() {
       {/* TOP CYBER HUD HEADER */}
       <div className="cyberHeader">
         <div className="cyberLogoSection">
-          <div className="cyberGlowBadge">⚡ CONTROL CENTER</div>
+          <div className="cyberGlowBadge"> CONTROL CENTER</div>
           <h2>QUANTUM COMMAND TERMINAL</h2>
           <span className="cyberSubtext">
             SYSTEM NODE: ACCOUNT_CENTER_X99 // CLASSIFIED ADMIN MATRIX
@@ -180,9 +180,9 @@ function TestPage() {
               SECURITY OVERDRIVE: {securityLevel}
             </span>
           </div>
-          <div className="cyberClockDisplay">🕒 {currentTime}</div>
+          <div className="cyberClockDisplay"> {currentTime}</div>
           <button className="cyberExitBtn" onClick={() => navigate("/")}>
-            ✖ EXIT COMMAND TERMINAL
+             EXIT COMMAND TERMINAL
           </button>
         </div>
       </div>
@@ -193,37 +193,37 @@ function TestPage() {
           className={`cyberTabBtn ${activeTab === "command" ? "active" : ""}`}
           onClick={() => setActiveTab("command")}
         >
-          ⚡ CENTRAL COMMAND
+           CENTRAL COMMAND
         </button>
         <button
           className={`cyberTabBtn ${activeTab === "tickets" ? "active" : ""}`}
           onClick={() => setActiveTab("tickets")}
         >
-          📁 TASKS & TICKETS MATRIX
+           TASKS & TICKETS MATRIX
         </button>
         <button
           className={`cyberTabBtn ${activeTab === "mails" ? "active" : ""}`}
           onClick={() => setActiveTab("mails")}
         >
-          ✉️ ENCRYPTED MAILS RELAY
+           ENCRYPTED MAILS RELAY
         </button>
         <button
           className={`cyberTabBtn ${activeTab === "payroll" ? "active" : ""}`}
           onClick={() => setActiveTab("payroll")}
         >
-          📊 PAYROLL QUANTUM TERMINAL
+           PAYROLL QUANTUM TERMINAL
         </button>
         <button
           className={`cyberTabBtn ${activeTab === "leave" ? "active" : ""}`}
           onClick={() => setActiveTab("leave")}
         >
-          🌴 LEAVE MANAGEMENT NODE
+           LEAVE MANAGEMENT NODE
         </button>
         <button
           className={`cyberTabBtn ${activeTab === "settings" ? "active" : ""}`}
           onClick={() => setActiveTab("settings")}
         >
-          ⚙️ MATRIX SETTINGS
+           MATRIX SETTINGS
         </button>
       </div>
 
@@ -235,7 +235,7 @@ function TestPage() {
             {/* LEFT COL: TERMINAL STREAM */}
             <div className="cyberCard">
               <div className="cyberCardHeader">
-                <h3>🖥️ LIVE SYSTEM DIAGNOSTIC TERMINAL</h3>
+                <h3> LIVE SYSTEM DIAGNOSTIC TERMINAL</h3>
                 <span className="cyberBadgeCyan">REAL-TIME STREAM</span>
               </div>
               <div className="terminalBox">
@@ -265,7 +265,7 @@ function TestPage() {
             <div className="cyberFlexCol">
               <div className="cyberCard">
                 <div className="cyberCardHeader">
-                  <h3>📊 SYSTEM PERFORMANCE MATRIX</h3>
+                  <h3> SYSTEM PERFORMANCE MATRIX</h3>
                   <span className="cyberBadgeGreen">100% HEALTH</span>
                 </div>
                 <div className="metricsGrid">
@@ -295,7 +295,7 @@ function TestPage() {
               {/* LIVE SECURITY ALERTS */}
               <div className="cyberCard">
                 <div className="cyberCardHeader">
-                  <h3>🚨 REAL-TIME SYSTEM ALERTS</h3>
+                  <h3> REAL-TIME SYSTEM ALERTS</h3>
                   <button
                     className="cyberActionBtnSmall"
                     onClick={() =>
@@ -331,7 +331,7 @@ function TestPage() {
         {activeTab === "tickets" && (
           <div className="cyberCard">
             <div className="cyberCardHeader">
-              <h3>📁 TASKS & TICKETS DISPATCH MATRIX</h3>
+              <h3> TASKS & TICKETS DISPATCH MATRIX</h3>
               <div style={{ display: "flex", gap: "10px" }}>
                 <select
                   className="cyberSelect"
@@ -347,7 +347,7 @@ function TestPage() {
                   className="cyberActionBtn"
                   onClick={() => alert("Simulated Ticket Override Dispatched!")}
                 >
-                  ⚡ DISPATCH OVERRIDE
+                   DISPATCH OVERRIDE
                 </button>
               </div>
             </div>
@@ -374,14 +374,14 @@ function TestPage() {
                   .map((row) => (
                     <tr key={row.id}>
                       <td className="cyanText fontBold">{row.id}</td>
-                      <td>👤 {row.requester}</td>
+                      <td> {row.requester}</td>
                       <td>{row.category}</td>
                       <td>
                         <span className={`priorityTag ${row.priority.toLowerCase()}`}>
                           {row.priority}
                         </span>
                       </td>
-                      <td>📡 {row.node}</td>
+                      <td> {row.node}</td>
                       <td>
                         <span className="cyberBadgeGreen">{row.status}</span>
                       </td>
@@ -404,7 +404,7 @@ function TestPage() {
         {activeTab === "mails" && (
           <div className="cyberCard">
             <div className="cyberCardHeader">
-              <h3>✉️ ENCRYPTED SATELLITE MAILS RELAY</h3>
+              <h3> ENCRYPTED SATELLITE MAILS RELAY</h3>
               <div style={{ display: "flex", gap: "10px" }}>
                 <select
                   className="cyberSelect"
@@ -419,7 +419,7 @@ function TestPage() {
                   className="cyberActionBtn"
                   onClick={() => alert("Satellite Communications Buffer Flushed!")}
                 >
-                  📡 FLUSH COMMS BUFFER
+                   FLUSH COMMS BUFFER
                 </button>
               </div>
             </div>
@@ -431,7 +431,7 @@ function TestPage() {
               ].map((mail) => (
                 <div key={mail.id} className="mailRow">
                   <div className="mailLeft">
-                    <span className="mailIcon">🔒</span>
+                    <span className="mailIcon"></span>
                     <div>
                       <div className="mailSender">{mail.sender}</div>
                       <div className="mailSubject">{mail.subject}</div>
@@ -452,7 +452,7 @@ function TestPage() {
           <div className="cyberGrid2Col">
             <div className="cyberCard">
               <div className="cyberCardHeader">
-                <h3>📊 QUANTUM PAYROLL LEDGER TERMINAL</h3>
+                <h3> QUANTUM PAYROLL LEDGER TERMINAL</h3>
                 <select
                   className="cyberSelect"
                   value={selectedBatch}
@@ -478,20 +478,20 @@ function TestPage() {
                 </div>
                 <div className="payrollRowInfo">
                   <span>AUDIT STATUS:</span>
-                  <strong className="greenText">✓ 100% VERIFIED BY QUANTUM CORE</strong>
+                  <strong className="greenText"> 100% VERIFIED BY QUANTUM CORE</strong>
                 </div>
               </div>
               <button
                 className="cyberActionBtnFull"
                 onClick={() => alert(`Payroll ${selectedBatch} Executed Successfully!`)}
               >
-                ⚡ AUTHORIZE & EXECUTE PAYROLL BATCH
+                 AUTHORIZE & EXECUTE PAYROLL BATCH
               </button>
             </div>
 
             <div className="cyberCard">
               <div className="cyberCardHeader">
-                <h3>👥 WORKER WAGE CALCULATION SUMMARY</h3>
+                <h3> WORKER WAGE CALCULATION SUMMARY</h3>
               </div>
               <table className="cyberTable">
                 <thead>
@@ -504,19 +504,19 @@ function TestPage() {
                 </thead>
                 <tbody>
                   <tr>
-                    <td className="greenText fontBold">👤 Karan M.</td>
+                    <td className="greenText fontBold"> Karan M.</td>
                     <td>Orange Ltd & Apple Inc</td>
                     <td>17 hrs</td>
                     <td className="cyanText fontBold">$674.22</td>
                   </tr>
                   <tr>
-                    <td className="greenText fontBold">👤 Rahul S.</td>
+                    <td className="greenText fontBold"> Rahul S.</td>
                     <td>Dell Logistics</td>
                     <td>40 hrs</td>
                     <td className="cyanText fontBold">$1,586.40</td>
                   </tr>
                   <tr>
-                    <td className="greenText fontBold">👤 Sumit P.</td>
+                    <td className="greenText fontBold"> Sumit P.</td>
                     <td>Alpha Tech Solutions</td>
                     <td>38 hrs</td>
                     <td className="cyanText fontBold">$1,507.08</td>
@@ -531,7 +531,7 @@ function TestPage() {
         {activeTab === "leave" && (
           <div className="cyberCard">
             <div className="cyberCardHeader">
-              <h3>🌴 LEAVE MANAGEMENT CONTROL NODE</h3>
+              <h3> LEAVE MANAGEMENT CONTROL NODE</h3>
               <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
                 <label className="cyberToggleLabel">
                   <input
@@ -545,7 +545,7 @@ function TestPage() {
                   className="cyberActionBtn"
                   onClick={() => alert("Synchronized Leave Status across all worker profiles!")}
                 >
-                  🔄 RE-SYNC LEAVES
+                   RE-SYNC LEAVES
                 </button>
               </div>
             </div>
@@ -567,10 +567,10 @@ function TestPage() {
                   { emp: "Karan M.", type: "Casual Leave", start: "2026-08-15", end: "2026-08-16", status: "APPROVED" },
                 ].map((row, idx) => (
                   <tr key={idx}>
-                    <td className="fontBold greenText">👤 {row.emp}</td>
-                    <td>🌴 {row.type}</td>
-                    <td>📅 {row.start}</td>
-                    <td>📅 {row.end}</td>
+                    <td className="fontBold greenText"> {row.emp}</td>
+                    <td> {row.type}</td>
+                    <td> {row.start}</td>
+                    <td> {row.end}</td>
                     <td>
                       <span className={row.status === "APPROVED" ? "cyberBadgeGreen" : "cyberBadgeOrange"}>
                         {row.status}
@@ -596,7 +596,7 @@ function TestPage() {
           <div className="cyberGrid2Col">
             <div className="cyberCard">
               <div className="cyberCardHeader">
-                <h3>⚙️ SECURITY MATRIX CONFIGURATION</h3>
+                <h3> SECURITY MATRIX CONFIGURATION</h3>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "16px", padding: "10px 0" }}>
                 <div>
@@ -614,7 +614,7 @@ function TestPage() {
                 <div>
                   <label className="cyberLabel">CENTRAL ACCOUNT CENTER SYNC</label>
                   <div style={{ fontSize: "13px", color: "#00ff66", fontWeight: "700" }}>
-                    ✓ FRONTEND & BACKEND NODES 100% SYNCHRONIZED
+                     FRONTEND & BACKEND NODES 100% SYNCHRONIZED
                   </div>
                 </div>
               </div>
@@ -622,7 +622,7 @@ function TestPage() {
 
             <div className="cyberCard">
               <div className="cyberCardHeader">
-                <h3>🛠️ DUMMY CONTROL CENTER CREDENTIALS</h3>
+                <h3> DUMMY CONTROL CENTER CREDENTIALS</h3>
               </div>
               <div style={{ fontSize: "13px", color: "#94a3b8", lineHeight: "1.6" }}>
                 This Classified Command Control Terminal is a standalone demonstration page representing the central account management, ticket dispatch, payroll ledger, and leave node operations.
@@ -632,7 +632,7 @@ function TestPage() {
                 style={{ marginTop: "20px" }}
                 onClick={() => alert("Cyber Matrix Configuration Saved Successfully!")}
               >
-                💾 SAVE MATRIX SETTINGS
+                 SAVE MATRIX SETTINGS
               </button>
             </div>
           </div>
@@ -643,3 +643,4 @@ function TestPage() {
 }
 
 export default TestPage;
+

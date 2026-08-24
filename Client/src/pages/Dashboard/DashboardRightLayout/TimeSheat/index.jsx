@@ -534,7 +534,7 @@ function TimesheetPage() {
 
               <div className="notesModalBody">
                 <div className="notesBox">
-                  <h4>📅 Shift Schedule Times</h4>
+                  <h4>Shift Schedule Times</h4>
                   <div className="notesGrid">
                     <p><strong>Shift Start Time:</strong> {r.shiftStartTime}</p>
                     <p><strong>Shift End Time:</strong> {r.shiftEndTime}</p>
@@ -543,7 +543,7 @@ function TimesheetPage() {
                 </div>
 
                 <div className="notesBox">
-                  <h4>👤 Actual Employee Logged Times</h4>
+                  <h4>Actual Employee Logged Times</h4>
                   <div className="notesGrid">
                     <p><strong>Actual Start Time:</strong> {r.actualStartTime}</p>
                     <p><strong>Actual End Time:</strong> {r.actualEndTime}</p>
@@ -552,7 +552,7 @@ function TimesheetPage() {
                 </div>
 
                 <div className="notesDiffHighlight">
-                  <h4>⏱️ Time Differences & Extra Time Breakdown</h4>
+                  <h4>Time Differences & Extra Time Breakdown</h4>
                   <div className="diffRow">
                     <span><strong>Start Time Difference:</strong></span>
                     <span className="diffBadge">{diffs.startVarianceText}</span>

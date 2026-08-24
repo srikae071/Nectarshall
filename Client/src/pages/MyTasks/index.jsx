@@ -327,9 +327,9 @@ function ApprovalTable() {
                     <th className="MyTaskTableHeader">Last Working Day</th>
                     <th className="MyTaskTableHeader">Resignation Reason</th>
                     <th className="MyTaskTableHeader">Approval Status</th>
-                    <th className="MyTaskTableHeader">💻 IT Clearance</th>
-                    <th className="MyTaskTableHeader">💰 Finance Clearance</th>
-                    <th className="MyTaskTableHeader">🏢 Admin Clearance</th>
+                    <th className="MyTaskTableHeader">IT Clearance</th>
+                    <th className="MyTaskTableHeader">Finance Clearance</th>
+                    <th className="MyTaskTableHeader">Admin Clearance</th>
                     {isAdmin && <th className="MyTaskTableHeader">Actions</th>}
                   </tr>
                 </thead>

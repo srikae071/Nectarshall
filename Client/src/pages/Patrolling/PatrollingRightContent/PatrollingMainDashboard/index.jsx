@@ -55,7 +55,7 @@ function PatrollingMainDashboard() {
                     <td>{r.end}</td>
                     <td>{r.start}</td>
                     <td>{r.end}</td>
-                    <td>⚠️</td>
+                    <td>-</td>
                   </tr>
                 ))}
               </tbody>

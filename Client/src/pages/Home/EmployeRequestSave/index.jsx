@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { fetchApiData, sendApiData } from "../../../utils/apiClient";
-import HrmsLeftLayout from "../../Hrms/Hrmsleftlayout";
+import AskhrNavBar from "../../AskForHrPage/AshrNavBar";
 import axios from "axios";
 import "../../../styles/SharedFormStyle.css";
 
@@ -425,9 +425,14 @@ function EmployeRequestSave() {
   const isCurrentCandSubmitted = checkIsSubmitted(currentCand);
 
   return (
-    <HrmsLeftLayout>
+    <>
+      <AskhrNavBar />
+
       <div className="lr-page">
-        <div className="SectionCard">
+        <div className="lr-card">
+          <h2 className="lr-title">Create New Case</h2>
+          <div className="section-header">EMPLOYEE DETAILS</div>
+
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
             <h2 style={{ margin: 0 }}>1. Preliminary Information</h2>
             <button
@@ -559,7 +564,7 @@ function EmployeRequestSave() {
           {showCandidatesList && formData.candidates && formData.candidates.length > 0 && (
             <div style={{ marginTop: "18px", marginBottom: "18px", borderTop: "1px dashed #cbd5e1", paddingTop: "14px" }}>
               <h4 style={{ margin: "0 0 12px 0", fontSize: "14px", fontWeight: "700", color: "#0f172a" }}>
-                👥 Candidate / Employee List
+                Candidate / Employee List
               </h4>
 
               {formData.candidates.map((cand, candIdx) => (
@@ -661,7 +666,7 @@ function EmployeRequestSave() {
                       boxSizing: "border-box",
                     }}
                   >
-                    🗑️
+                    ✕
                   </button>
                 </div>
               ))}
@@ -693,12 +698,12 @@ function EmployeRequestSave() {
           {/* <button className="CreateBtn" onClick={handlePreliminarySave}>
             Save & Continue
           </button> */}
-          <div className="SectionActions">
-            <button className="CreateBtn" onClick={handleSendEmail}>
+          <div className="lr-actions">
+            <button type="button" className="lr-btn-cancel" onClick={handleSendEmail}>
               Send Email
             </button>
 
-            <button className="CreateBtn" onClick={handleFinalSave}>
+            <button type="button" className="lr-btn-submit btn-primary-dark" onClick={handleFinalSave}>
               Save & Continue
             </button>
           </div>
@@ -710,7 +715,7 @@ function EmployeRequestSave() {
             {candidateList.length > 0 && (
               <div style={{ background: "#ffffff", padding: "16px 20px", borderRadius: "10px", border: "1px solid #e2e8f0", marginBottom: "20px", boxShadow: "0 2px 6px rgba(0,0,0,0.03)" }}>
                 <div style={{ fontSize: "13px", fontWeight: "700", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "10px" }}>
-                  📂 Candidate Onboarding Forms ({candidateList.length}):
+                  Candidate Onboarding Forms ({candidateList.length}):
                 </div>
                 <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
                   {candidateList.map((cand, idx) => {
@@ -736,7 +741,7 @@ function EmployeRequestSave() {
                           transition: "all 0.2s ease",
                         }}
                       >
-                        <span>👤 {cand.candidateId || `CND-${String(idx + 1).padStart(3, "0")}`}</span>
+                        <span>{cand.candidateId || `CND-${String(idx + 1).padStart(3, "0")}`}</span>
                         <span>({cand.name || "Candidate"})</span>
                         <span
                           style={{
@@ -775,7 +780,7 @@ function EmployeRequestSave() {
                   boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                 }}
               >
-                <span style={{ fontSize: "28px" }}>⚠️</span>
+
                 <div>
                   <div style={{ fontSize: "16px", fontWeight: "800", marginBottom: "4px" }}>
                     Candidate still did not submit the data.
@@ -787,8 +792,8 @@ function EmployeRequestSave() {
               </div>
             ) : (
               <>
-            <div className="SectionCard">
-              <h2 className="lr-title">2. Barriers To Employment (Self Declaration) - {currentCand.candidateId || "CND-001"} ({currentCand.name || "Candidate"})</h2>
+            <div className="lr-section">
+              <h3 className="lr-section-title">2. Barriers To Employment (Self Declaration) - {currentCand.candidateId || "CND-001"} ({currentCand.name || "Candidate"})</h3>
 
               {/* Modern Slavery */}
               <div className="BarrierRow">
@@ -966,8 +971,8 @@ function EmployeRequestSave() {
                 </div>
               </div>
             </div>            
-            <div className="SectionCard">
-              <h2 className="lr-title">3. Qualifications & Licences - {currentCand.candidateId || "CND-001"}</h2>
+            <div className="lr-section">
+              <h3 className="lr-section-title">3. Qualifications & Licences - {currentCand.candidateId || "CND-001"}</h3>
 
               {/* Security Licence */}
               <div className="QualificationCard">
@@ -1454,8 +1459,8 @@ function EmployeRequestSave() {
 
 
             {showReferenceSection && (
-              <div className="SectionCard">
-                <h2 className="lr-title">4. References</h2>
+              <div className="lr-section">
+                <h3 className="lr-section-title">4. References</h3>
 
                 <div className="BarrierRow">
                   <label className="lr-label">Interview *</label>
@@ -1500,8 +1505,8 @@ function EmployeRequestSave() {
             )}
 
             {/* 5. OFFER LETTER SECTION */}
-            <div className="SectionCard">
-              <h2 className="lr-title">5. Offer Letter <span style={{ fontSize: "11px", background: "#ef4444", color: "#ffffff", padding: "2px 8px", borderRadius: "10px", marginLeft: "8px" }}>MUST HAVE</span></h2>
+            <div className="lr-section">
+              <h3 className="lr-section-title">5. Offer Letter <span style={{ fontSize: "11px", background: "#ef4444", color: "#ffffff", padding: "2px 8px", borderRadius: "10px", marginLeft: "8px" }}>MUST HAVE</span></h3>
 
               <div className="BarrierRow" style={{ marginBottom: "14px" }}>
                 <label className="lr-label" style={{ fontWeight: "700" }}>Letter of Offer *</label>
@@ -1551,8 +1556,8 @@ function EmployeRequestSave() {
             </div>
 
             {/* 6. FINANCIAL & TAX INFORMATION */}
-            <div className="SectionCard">
-              <h2 className="lr-title">6. Financial & Tax Information <span style={{ fontSize: "11px", background: "#ef4444", color: "#ffffff", padding: "2px 8px", borderRadius: "10px", marginLeft: "8px" }}>MUST HAVE</span></h2>
+            <div className="lr-section">
+              <h3 className="lr-section-title">6. Financial & Tax Information <span style={{ fontSize: "11px", background: "#ef4444", color: "#ffffff", padding: "2px 8px", borderRadius: "10px", marginLeft: "8px" }}>MUST HAVE</span></h3>
 
               <div className="OfferRow">
                 <div className="OfferField">
@@ -1643,25 +1648,25 @@ function EmployeRequestSave() {
             </div>
             </>
             )}
-            <div className="CreateFooter">
+            <div className="lr-actions">
               <button
                 type="button"
-                className="CreateBtn btn-cancel"
+                className="lr-btn-cancel"
                 onClick={() => setFormData({})}
               >
                 Cancel
               </button>
-              <button type="button" className="CreateBtn btn-save" onClick={handleFinalSave}>
+              <button type="button" className="lr-btn-submit btn-primary-dark" onClick={handleFinalSave}>
                 Save
               </button>
-              <button type="button" className="CreateBtn btn-submit" onClick={handleFinalSave}>
+              <button type="button" className="lr-btn-submit btn-primary-dark" onClick={handleFinalSave}>
                 Submit
               </button>
             </div>
           </>
         )}
         </div>
-    </HrmsLeftLayout>
+    </>
   );
 }
 export default EmployeRequestSave;

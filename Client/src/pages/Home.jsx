@@ -141,21 +141,18 @@ function Home() {
     {
       key: "ASK_FOR_IT",
       title: "Ask for IT",
-      desc: "Report technical issues instantly",
       img: askItImg,
       route: "/ask-for-it",
     },
     {
       key: "ASK_FOR_HR",
       title: "Ask for HR",
-      desc: "A simple way to communicate HR issues",
       img: askHrImg,
       route: "/ask-for-hr",
     },
     {
       key: "EMPLOYE_REQUEST",
       title: "Employe Request",
-      desc: "A simple way to communicate HR issues",
       img: empreq,
       route: "/Resonancereq",
     },
@@ -416,7 +413,7 @@ function Home() {
                     gap: "6px",
                   }}
                 >
-                  🪟 Main Window
+                  Main Window
                 </button>
 
                 <button
@@ -434,7 +431,7 @@ function Home() {
                     fontSize: "13px",
                   }}
                 >
-                  🚪 Logout
+                  Logout
                 </button>
               </div>
             )}

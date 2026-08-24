@@ -54,10 +54,6 @@ const Payroll = () => {
             <button className="btn download-btn">Download</button>
           </div>
         </div>
-
-        <footer className="footer">
-          © Copyright 2023 Enhance Services - All Rights Reserved.
-        </footer>
       </div>
     </PayrolLayout>
   );

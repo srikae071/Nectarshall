@@ -752,7 +752,7 @@ function AccountsParent() {
                                       color: "#0f172a",
                                     }}
                                   >
-                                    👤 {workerGroup.empName} - Weekly
+                                    {workerGroup.empName} - Weekly
                                     Multi-Company Pay Summary
                                   </h4>
                                   <p

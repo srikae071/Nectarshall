@@ -5,7 +5,6 @@ import { sendApiData } from "../../../../utils/apiClient";
 import { useEffect } from "react";
 import { useAuth } from "../../../../context/AuthContext";
 import BusinessEngagementNavBar from "../../CncRightSide/BusinessEngagementNav";
-import TableLayout2 from "../../../../components/Layouts/TableLayouts/TableLayout2";
 
 import "../../../../styles/SharedFormStyle.css";
 
@@ -144,131 +143,179 @@ function BusinessEngagement() {
     <>
       <BusinessEngagementNavBar />
 
-      <TableLayout2
-        title="Business Engagement"
-        onSave={handleSave}
-        onCancel={() => {}}
-        onAttachment={handleAttachment}
-        // attachmentName={formData.attachment}
-        attachmentName={formData.attachment?.fileName}
-      >
-        <div className="table2-field">
-          <label className="table2-label">Requester</label>
+      <div className="lr-page">
+        <div className="lr-card">
+          <h2 className="lr-title">Business Engagement</h2>
 
-          <input
-            className="table2-input lr-input"
-            name="requester"
-            value={currentUserName || formData.requester}
-            readOnly
-            disabled
-            style={{ background: "#f1f5f9", cursor: "not-allowed" }}
-          />
+          <div className="section-header">EMPLOYEE DETAILS</div>
+
+          {/* ROW 1 */}
+          <div className="lr-grid-2">
+            <div className="lr-field">
+              <label className="lr-label">Requester</label>
+              <input
+                className="lr-input"
+                name="requester"
+                value={currentUserName || formData.requester}
+                readOnly
+                disabled
+                style={{ background: "#f1f5f9", cursor: "not-allowed" }}
+              />
+            </div>
+
+            <div className="lr-field">
+              <label className="lr-label">Requested For</label>
+              <input
+                className="lr-input"
+                name="requesterFor"
+                value="Sumit"
+                readOnly
+                disabled
+                style={{ background: "#f1f5f9", cursor: "not-allowed" }}
+              />
+            </div>
+          </div>
+
+          {/* ROW 2 */}
+          <div className="lr-grid-2">
+            <div className="lr-field">
+              <label className="lr-label">Company Name</label>
+              <input
+                className="lr-input"
+                name="companyName"
+                value={formData.companyName}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="lr-field">
+              <label className="lr-label">ABN</label>
+              <input
+                className="lr-input"
+                name="abn"
+                maxLength={11}
+                value={formData.abn}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
+          {/* ROW 3 */}
+          <div className="lr-grid-2">
+            <div className="lr-field">
+              <label className="lr-label">ACN</label>
+              <input
+                className="lr-input"
+                name="acn"
+                value={formData.acn}
+                maxLength={9}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="lr-field">
+              <label className="lr-label">Company Address</label>
+              <input
+                className="lr-input"
+                name="companyAddress"
+                value={formData.companyAddress}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
+          {/* ROW 4 */}
+          <div className="lr-grid-2">
+            <div className="lr-field">
+              <label className="lr-label">Managing Agent Name</label>
+              <input
+                className="lr-input"
+                name="managingAgentName"
+                value={formData.managingAgentName}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="lr-field">
+              <label className="lr-label">Managing Agent Email</label>
+              <input
+                className="lr-input"
+                name="managingAgentEmail"
+                value={formData.managingAgentEmail}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
+          {/* DESCRIPTION */}
+          <div className="lr-field" style={{ marginTop: "12px" }}>
+            <label className="lr-label">Description</label>
+            <textarea
+              className="lr-textarea"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              placeholder="Enter detailed description..."
+            />
+          </div>
+
+          {/* ACTIONS */}
+          <div className="lr-actions" style={{ alignItems: "center" }}>
+            <label
+              className="lr-btn-cancel"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                height: "38px",
+                boxSizing: "border-box",
+              }}
+            >
+              Choose Attachment
+              <input type="file" hidden onChange={handleAttachment} />
+            </label>
+
+            {formData.attachment?.fileName && (
+              <span style={{ fontSize: "13px", color: "#475569", marginLeft: "8px" }}>
+                {formData.attachment.fileName}
+              </span>
+            )}
+
+            <div style={{ flexGrow: 1 }} />
+
+            <button
+              type="button"
+              className="lr-btn-cancel"
+              onClick={() =>
+                setFormData((prev) => ({
+                  ...prev,
+                  companyName: "",
+                  abn: "",
+                  acn: "",
+                  companyAddress: "",
+                  companyPhone: "",
+                  managingAgentName: "",
+                  managingAgentEmail: "",
+                  shortDescription: "",
+                  description: "",
+                  attachment: { fileName: "", filePath: "" },
+                }))
+              }
+            >
+              Cancel
+            </button>
+
+            <button type="button" className="lr-btn-submit" onClick={handleSave}>
+              Save
+            </button>
+
+            <button type="button" className="lr-btn-submit" onClick={handleSave}>
+              Submit
+            </button>
+          </div>
         </div>
-
-        <div className="table2-field">
-          <label className="table2-label">Requested For</label>
-
-          <input
-            className="table2-input lr-input"
-            name="requesterFor"
-            value="Sumit"
-            readOnly
-            disabled
-            style={{ background: "#f1f5f9", cursor: "not-allowed" }}
-          />
-        </div>
-
-        <div className="table2-field">
-          <label className="table2-label">Company Name</label>
-
-          <input
-            className="table2-input lr-input"
-            name="companyName"
-            value={formData.companyName}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="table2-field">
-          <label className="table2-label">ABN</label>
-
-          <input
-            className="table2-input lr-input"
-            name="abn"
-            maxLength={11}
-            value={formData.abn}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="table2-field">
-          <label className="table2-label">ACN</label>
-
-          <input
-            className="table2-input lr-input"
-            name="acn"
-            value={formData.acn}
-            maxLength={9}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="table2-field">
-          <label className="table2-label">Company Address</label>
-
-          <input
-            className="table2-input lr-input"
-            name="companyAddress"
-            value={formData.companyAddress}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="table2-field">
-          <label className="table2-label">Managing Agent Name</label>
-
-          <input
-            className="table2-input lr-input"
-            name="managingAgentName"
-            value={formData.managingAgentName}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="table2-field">
-          <label className="table2-label">Managing Agent Email</label>
-
-          <input
-            className="table2-input lr-input"
-            name="managingAgentEmail"
-            value={formData.managingAgentEmail}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="table2-full">
-          <label className="table2-label">Short Description</label>
-
-          <textarea
-            className="table2-textarea lr-textarea"
-            name="shortDescription"
-            value={formData.shortDescription}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div className="table2-full">
-          <label className="table2-label">Description</label>
-
-          <textarea
-            className="table2-textarea lr-textarea"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            placeholder="Enter detailed description..."
-          />
-        </div>
-      </TableLayout2>
+      </div>
     </>
   );
 }

@@ -1676,9 +1676,9 @@ function OnBoardingSaves() {
                   {entries.map((entry, idx) => (
                     <tr key={idx} style={{ borderBottom: "1px solid #f1f5f9" }}>
                       <td style={{ padding: "12px 16px", fontWeight: "600", color: "#64748b" }}>{entry.serialNo || idx + 1}</td>
-                      <td style={{ padding: "12px 16px", whiteSpace: "nowrap", color: "#047857", fontWeight: "600" }}>📅 {entry.timestamp}</td>
+                      <td style={{ padding: "12px 16px", whiteSpace: "nowrap", color: "#047857", fontWeight: "600" }}>{entry.timestamp}</td>
                       <td style={{ padding: "12px 16px", color: "#334155" }}>{entry.summary}</td>
-                      <td style={{ padding: "12px 16px", color: "#0f172a", fontWeight: "600" }}>👤 {entry.changedBy || "Admin"}</td>
+                      <td style={{ padding: "12px 16px", color: "#0f172a", fontWeight: "600" }}>{entry.changedBy || "Admin"}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -292,7 +292,7 @@ const VendorPortalDashboard = () => {
                       paddingBottom: "6px",
                     }}
                   >
-                    ⚙️ Settings
+                    Settings
                   </div>
 
                   {ALL_EMP_COLUMNS.map(col => (

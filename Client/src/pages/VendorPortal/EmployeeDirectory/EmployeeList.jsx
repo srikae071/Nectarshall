@@ -202,7 +202,7 @@ const EmployeeList = () => {
           sub: "Positions currently open",
           color: "#3b82f6",
           bg: "#eff6ff",
-          emoji: "📂",
+          emoji: "",
         },
         {
           title: "INTERVIEW",
@@ -210,7 +210,7 @@ const EmployeeList = () => {
           sub: "Scheduled interviews",
           color: "#8b5cf6",
           bg: "#f5f3ff",
-          emoji: "🎙️",
+          emoji: "",
         },
         {
           title: "PRE-JOINING",
@@ -218,7 +218,7 @@ const EmployeeList = () => {
           sub: "Awaiting joining formalities",
           color: "#f59e0b",
           bg: "#fef3c7",
-          emoji: "📋",
+          emoji: "",
         },
         {
           title: "RESOLVE",
@@ -547,7 +547,7 @@ const EmployeeList = () => {
                       paddingBottom: "6px",
                     }}
                   >
-                    ⚙️ Settings
+                    Settings
                   </div>
 
                   {ALL_EMP_COLUMNS.map(col => (

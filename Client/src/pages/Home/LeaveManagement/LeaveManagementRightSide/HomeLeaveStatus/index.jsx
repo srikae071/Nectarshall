@@ -136,7 +136,7 @@ function HomeLeaveStatus() {
                       paddingBottom: "6px",
                     }}
                   >
-                    ⚙️ Display Columns:
+                    Display Columns:
                   </div>
 
                   {Object.entries({
@@ -199,7 +199,7 @@ function HomeLeaveStatus() {
                   data.map((item) => (
                     <tr key={item._id}>
                       {columns.leaveNumber && <td>{item.leaveNumber || "N/A"}</td>}
-                      {columns.requester && <td>👤 {item.requester || "Self"}</td>}
+                      {columns.requester && <td>{item.requester || "Self"}</td>}
                       {columns.leaveType && <td>{item.leaveType}</td>}
                       {columns.startDate && <td>{item.startDate}</td>}
                       {columns.endDate && <td>{item.endDate}</td>}

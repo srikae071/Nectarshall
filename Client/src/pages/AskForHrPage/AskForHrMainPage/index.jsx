@@ -92,6 +92,8 @@ function AskForHrMainPage() {
         <div className="lr-card">
           <h2 className="lr-title">Create New Case</h2>
 
+          <div className="section-header">EMPLOYEE DETAILS</div>
+
           {/* ROW 1 */}
           <div className="lr-grid-2">
             <div className="lr-field">
@@ -172,15 +174,6 @@ function AskForHrMainPage() {
           </div>
 
           {/* TEXTAREAS */}
-          <div className="lr-field">
-            <label className="lr-label">Short Description</label>
-            <textarea
-              className="lr-textarea"
-              name="shortDescription"
-              value={formData.shortDescription}
-              onChange={handleChange}
-            ></textarea>
-          </div>
 
           <div className="lr-field">
             <label className="lr-label">Description</label>

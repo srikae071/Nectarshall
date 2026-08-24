@@ -456,7 +456,7 @@ function OnBoardingResonanceRequirementsCreateNew() {
             {showCandidatesList && formData.candidates && formData.candidates.length > 0 && (
               <div style={{ marginTop: "18px", marginBottom: "18px", borderTop: "1px dashed #cbd5e1", paddingTop: "14px" }}>
                 <h4 style={{ margin: "0 0 12px 0", fontSize: "14px", fontWeight: "700", color: "#0f172a" }}>
-                  👥 Candidate / Employee List
+                  Candidate / Employee List
                 </h4>
 
                 {formData.candidates.map((cand, candIdx) => (
@@ -558,7 +558,7 @@ function OnBoardingResonanceRequirementsCreateNew() {
                         boxSizing: "border-box",
                       }}
                     >
-                      🗑️
+                      
                     </button>
                   </div>
                 ))}

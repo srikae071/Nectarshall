@@ -19,9 +19,9 @@ function OfferLetter() {
 
           <div className="actions">
             <button className="upload-btn">
-              <span className="icon">📁</span> Upload
+              <span className="icon"></span> Upload
             </button>
-            <button className="cancel-btn">✕ Cancel</button>
+            <button className="cancel-btn">Cancel</button>
           </div>
         </div>
 

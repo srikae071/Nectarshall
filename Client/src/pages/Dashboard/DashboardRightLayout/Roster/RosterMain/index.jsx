@@ -1737,7 +1737,7 @@ function RosterMain() {
                   <option value="">-- Select Employee --</option>
                   {rawEmployeeOptions.map((emp, i) => (
                     <option key={i} value={emp}>
-                      👤 {emp}
+                      {emp}
                     </option>
                   ))}
                 </select>
