@@ -78,6 +78,7 @@ function AllEmployees() {
                 <tr>
                   <th>#</th>
                   <th>Display Name</th>
+                  <th>Role Level</th>
                   <th>Job Title</th>
                   <th>Department</th>
                   <th>Employee ID</th>
@@ -90,7 +91,7 @@ function AllEmployees() {
                 {filteredEmployees.length === 0 ? (
                   <tr>
                     <td
-                      colSpan={8}
+                      colSpan={9}
                       style={{
                         textAlign: "center",
                         padding: "30px",
@@ -108,6 +109,8 @@ function AllEmployees() {
                       `${emp.firstName || ""} ${emp.lastName || ""}`.trim() ||
                       "Unnamed Employee";
 
+                    const roleLevel = emp.subRole || (emp.role === "ADMIN" || emp.department === "Admin" ? "Admin" : `${emp.department || "HR"} Manager`);
+
                     return (
                       <tr
                         key={emp._id || index}
@@ -120,6 +123,20 @@ function AllEmployees() {
                         </td>
                         <td style={{ fontWeight: "700", color: "#047857" }}>
                           {dispName}
+                        </td>
+                        <td>
+                          <span
+                            style={{
+                              fontSize: "11px",
+                              fontWeight: "700",
+                              padding: "3px 8px",
+                              borderRadius: "10px",
+                              background: roleLevel.includes("Manager") || roleLevel === "Admin" ? "#e0f2fe" : "#fef3c7",
+                              color: roleLevel.includes("Manager") || roleLevel === "Admin" ? "#0369a1" : "#b45309",
+                            }}
+                          >
+                            {roleLevel}
+                          </span>
                         </td>
                         <td>{emp.jobTitle || "-"}</td>
                         <td>{emp.department || "-"}</td>

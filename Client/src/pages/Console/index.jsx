@@ -78,8 +78,11 @@ function Console() {
     }
   };
 
+  const [modalSubRole, setModalSubRole] = useState("");
+
   const openRoleModal = (emp) => {
     setSelectedEmp(emp);
+    setModalSubRole(emp.subRole || "");
     let roles = [];
     if (Array.isArray(emp.extraRoles)) {
       roles = [...emp.extraRoles];
@@ -87,6 +90,9 @@ function Console() {
       roles = emp.extraRoles.split(",").map((s) => s.trim());
     } else if (typeof emp.ExtaRoles === "string" && emp.ExtaRoles.trim() !== "") {
       roles = emp.ExtaRoles.split(",").map((s) => s.trim());
+    }
+    if (emp.role === "ADMIN" || emp.department === "Admin") {
+      if (!roles.includes("Admin")) roles.push("Admin");
     }
     setModalExtraRoles(roles);
   };
@@ -102,14 +108,17 @@ function Console() {
   const handleSaveRoles = async () => {
     if (!selectedEmp) return;
     try {
+      const isAdminSelected = modalExtraRoles.includes("Admin");
       const payload = {
         ...selectedEmp,
         extraRoles: modalExtraRoles,
         ExtaRoles: modalExtraRoles.join(", "),
+        subRole: modalSubRole,
+        ...(isAdminSelected ? { role: "ADMIN", department: "Admin" } : {}),
       };
 
       await sendApiData(`/api/employees/${selectedEmp._id}`, payload, "put");
-      alert(`Extra roles updated for ${selectedEmp.displayName || selectedEmp.employeeName}!`);
+      alert(`Roles & Access rights updated for ${selectedEmp.displayName || selectedEmp.employeeName}!`);
       setSelectedEmp(null);
       fetchEmployees();
     } catch (err) {
@@ -424,37 +433,89 @@ function Console() {
         </div>
       </div>
 
-      {/* ASSIGN EXTRA ROLES MODAL */}
+      {/* ASSIGN EXTRA ROLES & SUB-ROLES MODAL */}
       {selectedEmp && (
         <div className="consoleModalBackdrop">
-          <div className="consoleModalCard">
-            <h3>Assign Extra Roles for {selectedEmp.displayName || selectedEmp.employeeName}</h3>
+          <div className="consoleModalCard" style={{ maxWidth: "560px" }}>
+            <h3>Assign Roles & Access Rights for {selectedEmp.displayName || selectedEmp.employeeName}</h3>
             <p style={{ fontSize: "13px", color: "#64748b", marginBottom: "16px" }}>
               Primary Department: <strong>{selectedEmp.department || "Operations"}</strong>
             </p>
 
+            {/* 1. ADMIN ROLE BLOCKER */}
+            <div style={{ marginBottom: "18px", background: "#fef2f2", border: "1px solid #fca5a5", borderRadius: "8px", padding: "12px 16px" }}>
+              <label style={{ fontWeight: "700", color: "#991b1b", display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }}>
+                <input
+                  type="checkbox"
+                  checked={modalExtraRoles.includes("Admin")}
+                  onChange={() => handleCheckboxToggle("Admin")}
+                  style={{ width: "18px", height: "18px", accentColor: "#dc2626" }}
+                />
+                <span>Make System Admin (Full Admin Access across all modules & console)</span>
+              </label>
+            </div>
+
+            {/* 2. SELECT EXTRA DEPARTMENT ROLES & SUB-ROLES */}
             <div style={{ marginBottom: "20px" }}>
               <label style={{ fontWeight: "700", display: "block", marginBottom: "10px" }}>
-                Select Extra Department Roles (Multiple Selection Allowed):
+                Select Department Access & Role Level (Multiple Selection Allowed):
               </label>
 
-              <div className="checkboxGrid">
-                {ALL_ROLES.map((rName) => (
-                  <label key={rName} className="roleCheckboxLabel">
-                    <input
-                      type="checkbox"
-                      checked={modalExtraRoles.includes(rName)}
-                      onChange={() => handleCheckboxToggle(rName)}
-                    />
-                    <span>{rName}</span>
-                  </label>
-                ))}
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                {ALL_ROLES.map((rName) => {
+                  const isChecked = modalExtraRoles.includes(rName) || modalExtraRoles.some(r => r.startsWith(rName));
+                  const deptKey = rName === "C&C" ? "CNC" : rName;
+
+                  return (
+                    <div
+                      key={rName}
+                      style={{
+                        background: "#f8fafc",
+                        border: "1px solid #e2e8f0",
+                        borderRadius: "8px",
+                        padding: "10px 14px",
+                        display: "flex",
+                        alignItems: "center",
+                        justify: "space-between",
+                      }}
+                    >
+                      <label style={{ fontWeight: "700", display: "flex", alignItems: "center", gap: "10px", cursor: "pointer", fontSize: "14px", color: "#1e293b" }}>
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => handleCheckboxToggle(rName)}
+                          style={{ width: "16px", height: "16px" }}
+                        />
+                        <span>{rName}</span>
+                      </label>
+
+                      {isChecked && (
+                        <select
+                          value={modalSubRole && (modalSubRole.includes(deptKey) || modalSubRole.includes(rName)) ? modalSubRole : `${deptKey} Manager`}
+                          onChange={(e) => setModalSubRole(e.target.value)}
+                          style={{
+                            padding: "6px 12px",
+                            borderRadius: "6px",
+                            border: "1px solid #cbd5e1",
+                            fontSize: "13px",
+                            fontWeight: "600",
+                            background: "#ffffff",
+                            color: "#0f172a",
+                          }}
+                        >
+                          <option value={`${deptKey} Manager`}>{deptKey} Manager</option>
+                          <option value={`${deptKey} Coordinator`}>{deptKey} Coordinator</option>
+                        </select>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
             <div className="modalFooter">
               <button className="saveRolesBtn" onClick={handleSaveRoles}>
-                Save Extra Roles
+                Save Roles & Permissions
               </button>
               <button className="cancelModalBtn" onClick={() => setSelectedEmp(null)}>
                 Cancel

@@ -9,6 +9,7 @@ import {
 } from "react-icons/fi";
 import "./index.css";
 import HrmsNavbar from "../HrmsNavbar";
+import { useAuth } from "../../../context/AuthContext";
 
 const menuData = [
   {
@@ -309,6 +310,7 @@ const DashboardNavTabs = () => {
 function HrmsLeftLayout({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { hasHrOnboardingAccess, hasHrOffboardingAccess } = useAuth();
   const [openMenus, setOpenMenus] = useState({});
   const [expandedMenus, setExpandedMenus] = useState({});
 
@@ -410,14 +412,20 @@ function HrmsLeftLayout({ children }) {
                   </div>
                   {openMenus[index] && (
                     <div className="submenu">
-                      {menu.items.map((item, i) => (
-                        <MenuItem
-                          key={i}
-                          item={item}
-                          expandedMenus={expandedMenus}
-                          setExpandedMenus={setExpandedMenus}
-                        />
-                      ))}
+                      {menu.items
+                        .filter((item) => {
+                          if (item.label === "Onboarding" && !hasHrOnboardingAccess) return false;
+                          if (item.label === "Offboarding" && !hasHrOffboardingAccess) return false;
+                          return true;
+                        })
+                        .map((item, i) => (
+                          <MenuItem
+                            key={i}
+                            item={item}
+                            expandedMenus={expandedMenus}
+                            setExpandedMenus={setExpandedMenus}
+                          />
+                        ))}
                     </div>
                   )}
                 </>

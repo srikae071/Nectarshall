@@ -22,6 +22,7 @@ function AddEmployee() {
     jobTitle: "",
     companyName: "",
     department: "",
+    subRole: "",
     employeeId: "",
     employeeType: "Full-Time",
     employeeHireDate: "",
@@ -71,6 +72,7 @@ function AddEmployee() {
     }
 
     try {
+      const isAdmin = formData.department === "Admin" || formData.subRole === "Admin";
       const payload = {
         ...formData,
         accountActive: formData.accountActive,
@@ -79,6 +81,8 @@ function AddEmployee() {
         employeeHireDate: formData.employeeHireDate || null,
         employeeName: formData.displayName,
         place: formData.officeLocation,
+        subRole: formData.subRole || `${formData.department || "HR"} Manager`,
+        ...(isAdmin ? { role: "ADMIN", extraRoles: ["Admin"] } : {}),
       };
 
       await sendApiData("POST", "/api/employees/create", payload);
@@ -210,20 +214,91 @@ function AddEmployee() {
         </div>
 
         <div className="form-row">
-          <label className="form-label">Department</label>
+          <label className="form-label">Department *</label>
           <select
             className="form-input"
             name="department"
             value={formData.department}
-            onChange={handleChange}
+            onChange={(e) => {
+              const dept = e.target.value;
+              let defaultSub = "";
+              if (dept === "HR") defaultSub = "HR Manager";
+              else if (dept === "Operations") defaultSub = "Operations Manager";
+              else if (dept === "Accounts") defaultSub = "Accounts Manager";
+              else if (dept === "IT") defaultSub = "IT Manager";
+              else if (dept === "CNC") defaultSub = "CNC Manager";
+              else if (dept === "Patrolling") defaultSub = "Patrolling Manager";
+              else if (dept === "Admin") defaultSub = "Admin";
+
+              setFormData({
+                ...formData,
+                department: dept,
+                subRole: defaultSub,
+              });
+            }}
           >
             <option value="">Select Department</option>
+            <option value="Admin">Admin (Full System Admin)</option>
             <option value="HR">HR</option>
             <option value="Operations">Operations</option>
+            <option value="Accounts">Accounts</option>
             <option value="IT">IT</option>
+            <option value="CNC">CNC</option>
             <option value="Patrolling">Patrolling</option>
           </select>
         </div>
+
+        {formData.department && (
+          <div className="form-row">
+            <label className="form-label">Role Level / Sub-Role *</label>
+            <select
+              className="form-input"
+              name="subRole"
+              value={formData.subRole}
+              onChange={handleChange}
+            >
+              {formData.department === "Admin" && (
+                <option value="Admin">Admin</option>
+              )}
+              {formData.department === "HR" && (
+                <>
+                  <option value="HR Manager">HR Manager</option>
+                  <option value="HR Coordinator">HR Coordinator</option>
+                </>
+              )}
+              {formData.department === "Operations" && (
+                <>
+                  <option value="Operations Manager">Operations Manager</option>
+                  <option value="Operations Coordinator">Operations Coordinator</option>
+                </>
+              )}
+              {formData.department === "Accounts" && (
+                <>
+                  <option value="Accounts Manager">Accounts Manager</option>
+                  <option value="Accounts Coordinator">Accounts Coordinator</option>
+                </>
+              )}
+              {formData.department === "IT" && (
+                <>
+                  <option value="IT Manager">IT Manager</option>
+                  <option value="IT Coordinator">IT Coordinator</option>
+                </>
+              )}
+              {formData.department === "CNC" && (
+                <>
+                  <option value="CNC Manager">CNC Manager</option>
+                  <option value="CNC Coordinator">CNC Coordinator</option>
+                </>
+              )}
+              {formData.department === "Patrolling" && (
+                <>
+                  <option value="Patrolling Manager">Patrolling Manager</option>
+                  <option value="Patrolling Coordinator">Patrolling Coordinator</option>
+                </>
+              )}
+            </select>
+          </div>
+        )}
 
         <div className="form-row">
           <label className="form-label">Employee ID</label>

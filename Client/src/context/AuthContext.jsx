@@ -75,6 +75,8 @@ export const AuthProvider = ({ children }) => {
           displayName: empName,
           role: emp.designation || emp.jobTitle || "EMPLOYEE",
           department: empDept,
+          subRole: emp.subRole || "",
+          extraRoles: emp.extraRoles || [],
         });
       }
     });
@@ -92,6 +94,8 @@ export const AuthProvider = ({ children }) => {
         displayName: matched.displayName,
         role: matched.role,
         department: matched.department,
+        subRole: matched.subRole || "",
+        extraRoles: matched.extraRoles || [],
       });
       return matched;
     }
@@ -100,6 +104,8 @@ export const AuthProvider = ({ children }) => {
       displayName: profileUsername,
       role: "EMPLOYEE",
       department: "Operations",
+      subRole: "",
+      extraRoles: [],
     };
     setUser(defaultUser);
     return defaultUser;
@@ -126,6 +132,40 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("authUser");
   };
 
+  const checkIsAdmin = (u = user) => {
+    if (!u) return false;
+    const username = (u.username || u.displayName || "").toLowerCase();
+    const role = (u.role || "").toUpperCase();
+    const dept = (u.department || "").toUpperCase();
+    const subRole = (u.subRole || "").toUpperCase();
+    const extra = u.extraRoles || u.ExtaRoles || [];
+
+    let extraList = [];
+    if (Array.isArray(extra)) extraList = extra.map((r) => String(r).toUpperCase());
+    else if (typeof extra === "string") extraList = extra.split(",").map((r) => r.trim().toUpperCase());
+
+    return (
+      role === "ADMIN" ||
+      dept === "ADMIN" ||
+      subRole === "ADMIN" ||
+      username.includes("sumit") ||
+      extraList.includes("ADMIN")
+    );
+  };
+
+  const getSubRole = (u = user) => {
+    if (!u) return "";
+    if (checkIsAdmin(u)) return "Admin";
+    if (u.subRole && u.subRole.trim()) return u.subRole.trim();
+    const dept = u.department || "HR";
+    return `${dept} Manager`;
+  };
+
+  const hasHrOnboardingAccess = checkIsAdmin() || getSubRole() !== "HR Coordinator";
+  const hasHrOffboardingAccess = checkIsAdmin() || getSubRole() !== "HR Coordinator";
+  const hasOpsOnboardingClientAccess = checkIsAdmin() || getSubRole() !== "Operations Coordinator";
+  const hasAccountsOnboardingCandidateAccess = checkIsAdmin() || getSubRole() !== "Accounts Coordinator";
+
   const getUserDepartments = (u) => {
     if (!u) return [];
     const depts = new Set();
@@ -144,12 +184,9 @@ export const AuthProvider = ({ children }) => {
   // Check top navbar tab accessibility
   const hasTabAccess = (tabName) => {
     if (!user) return false;
-    const username = (user.username || "").toLowerCase();
-    const role = (user.role || "").toUpperCase();
-    const dept = (user.department || "").toUpperCase();
 
     // Admin sees EVERYTHING
-    if (role === "ADMIN" || username.includes("sumit") || dept === "ADMIN") return true;
+    if (checkIsAdmin(user)) return true;
 
     // CONSOLE tab is ONLY visible to Admin
     if (tabName === "CONSOLE") return false;
@@ -171,11 +208,8 @@ export const AuthProvider = ({ children }) => {
   // Check homepage tile accessibility
   const hasTileAccess = (tileKey) => {
     if (!user) return false;
-    const username = (user.username || "").toLowerCase();
-    const role = (user.role || "").toUpperCase();
-    const dept = (user.department || "").toUpperCase();
 
-    const isAdmin = role === "ADMIN" || username.includes("sumit") || dept === "ADMIN";
+    const isAdmin = checkIsAdmin(user);
 
     // Admin sees ALL tiles including Business Engagement
     if (isAdmin) return true;
@@ -202,6 +236,12 @@ export const AuthProvider = ({ children }) => {
         hasTabAccess,
         hasTileAccess,
         hasModuleAccess,
+        checkIsAdmin,
+        getSubRole,
+        hasHrOnboardingAccess,
+        hasHrOffboardingAccess,
+        hasOpsOnboardingClientAccess,
+        hasAccountsOnboardingCandidateAccess,
         isAuthenticated: !!user,
         employees,
         allProfiles,

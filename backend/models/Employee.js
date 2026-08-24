@@ -24,6 +24,7 @@ const EmployeeSchema = new mongoose.Schema(
     shiftEndTime: { type: String, default: "20:00" },
     extraRoles: { type: [String], default: [] },
     ExtaRoles: { type: String, default: "" },
+    subRole: { type: String, default: "" },
 
     // 3. Contact Information
     streetAddress: { type: String, default: "" },
