@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { fetchApiData, sendApiData } from "../../../utils/apiClient";
 import Hrmsleftlayout from "../../Hrms/Hrmsleftlayout";
 import axios from "axios";
 import "../../../styles/SharedFormStyle.css";
 
 function EmployeRequestSave() {
+  const navigate = useNavigate();
   const [showFullForm, setShowFullForm] = useState(false);
   const [showCandidatesList, setShowCandidatesList] = useState(false);
   const [activeCandTabIdx, setActiveCandTabIdx] = useState(0);
@@ -344,24 +345,107 @@ function EmployeRequestSave() {
         ];
 
   const checkIsSubmitted = (cand) => {
-    if (!cand) return false;
+    if (!cand || typeof cand !== "object") return false;
+
     if (cand.submitted === true) return true;
-    if (
+
+    const hasCandidateFormResponses = Boolean(
       cand.securityLicenceCandidateForm ||
       cand.modernSlaveryCandidateForm ||
       cand.legalBarrierCandidateForm ||
+      cand.medicalLimitationsCandidateForm ||
+      cand.workRightsCandidateForm ||
+      cand.drivingLicenceCandidateForm ||
+      cand.firstAidCandidateForm ||
+      cand.cprCandidateForm ||
+      cand.workingWithChildrenCandidateForm ||
+      cand.trafficManagementCandidateForm ||
+      cand.whiteCardCandidateForm ||
+      cand.yellowCardCandidateForm ||
       cand.bankName ||
+      cand.bankAccount ||
       cand.taxFileNumber
-    ) return true;
-    if (
-      (cand.candidateId === "CND-001" || !cand.candidateId) &&
-      (formData.candidateCompleted || formData.securityLicenceCandidateForm || formData.modernSlaveryCandidateForm || formData.bankName)
-    ) return true;
-    return false;
+    );
+
+    return hasCandidateFormResponses;
   };
 
   const currentCand = candidateList[activeCandTabIdx] || candidateList[0];
   const isCurrentCandSubmitted = checkIsSubmitted(currentCand);
+
+  const currentStatus = formData.status || "Open";
+  const normStatus = currentStatus.toLowerCase().replace(/[\s\-_]/g, "");
+
+  const showReferencesSection = ["interview", "offerletter", "prejoiningcompliance", "resolved"].includes(normStatus);
+  const showOfferLetterSection = ["offerletter", "prejoiningcompliance", "resolved"].includes(normStatus);
+  const showFinancialSection = ["prejoiningcompliance", "resolved"].includes(normStatus);
+
+  const handleSubmit = async () => {
+    let currentSt = formData.status || "Open";
+    let nextSt = currentSt;
+
+    const allCandSubmitted = Array.isArray(formData.candidates) && formData.candidates.length > 0
+      ? formData.candidates.every(c => checkIsSubmitted(c))
+      : checkIsSubmitted(currentCand);
+
+    if (normStatus === "open" || normStatus === "workinprogress" || !normStatus) {
+      if (allCandSubmitted) {
+        nextSt = "Interview";
+      } else {
+        nextSt = "Open";
+      }
+    } else if (normStatus === "interview") {
+      if (formData.interview === "PASS") {
+        nextSt = "Offer Letter";
+      }
+    } else if (normStatus === "offerletter") {
+      if ((currentCand.offerLetterResult || formData.offerLetterResult) === "ACCEPT" || (currentCand.offerLetterResult || formData.offerLetterResult) === "PASS") {
+        nextSt = "Pre Joining Compliance";
+        try {
+          await sendApiData(
+            `/api/jobrequests/send-candidate-form2/${formData.caseId}`,
+            {}
+          );
+        } catch (e) {
+          console.log("Candidate form 2 email error:", e);
+        }
+      }
+    } else if (normStatus === "prejoiningcompliance") {
+      nextSt = "Resolved";
+    }
+
+    try {
+      const updatedForm = { ...formData, status: nextSt };
+      await sendApiData(`/api/jobrequests/${id}`, updatedForm, "put");
+      setFormData(updatedForm);
+
+      const nextNorm = nextSt.toLowerCase().replace(/[\s\-_]/g, "");
+      const currNorm = currentSt.toLowerCase().replace(/[\s\-_]/g, "");
+
+      if (nextNorm === "interview" && currNorm !== "interview") {
+        alert("Status changed to Interview! Located under HRMS Onboarding -> Interview.");
+        navigate("/onboarding/Interview");
+      } else if (nextNorm === "offerletter" && currNorm !== "offerletter") {
+        alert("Status changed to Offer Letter! Located under HRMS Onboarding -> Offer Letter.");
+        navigate("/onboarding/Offerletter/");
+      } else if (nextNorm === "prejoiningcompliance" && currNorm !== "prejoiningcompliance") {
+        alert("Status changed to Pre-Joining Compliance! Candidate Form 2 Email Sent.");
+        navigate("/onboarding/prejoining");
+      } else if (nextNorm === "resolved") {
+        alert("Status changed to Resolved!");
+        navigate("/onboarding/employerequest");
+      } else {
+        if (!allCandSubmitted && (normStatus === "open" || normStatus === "workinprogress")) {
+          alert("Data submitted successfully! Case remains in Open / All until all candidates submit Step 1 (Barriers of Employment).");
+        } else {
+          alert("Submitted & Updated Successfully.");
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Error submitting request");
+    }
+  };
 
   return (
     <Hrmsleftlayout>
@@ -370,7 +454,7 @@ function EmployeRequestSave() {
           <div className="section-header">EMPLOYEE DETAILS</div>
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
-            <h2 style={{ margin: 0 }}>1. Preliminary Information</h2>
+            <h2 style={{ margin: 0, fontSize: "16px", fontWeight: "700", color: "#0f172a" }}>1. Preliminary Information</h2>
             <button
               type="button"
               onClick={handleAddCandidate}
@@ -443,11 +527,13 @@ function EmployeRequestSave() {
               >
                 <option value="Open">Open</option>
                 <option value="Work In Progress">Work In Progress</option>
+                <option value="Interview">Interview</option>
                 <option value="Offer Letter">Offer Letter</option>
                 <option value="Pre Joining Compliance">
                   Pre Joining Compliance
                 </option>
-                <option value="Interview">Interview</option>
+                <option value="Resolved">Resolved</option>
+                <option value="Closed">Closed</option>
               </select>
             </div>
           </div>
@@ -675,23 +761,29 @@ function EmployeRequestSave() {
           {/* <button className="CreateBtn" onClick={handlePreliminarySave}>
             Save & Continue
           </button> */}
-          <div className="lr-actions">
-            <button type="button" className="lr-btn-cancel" onClick={handleSendEmail}>
-              Send Email
-            </button>
+          {normStatus !== "resolved" && (
+            <div className="lr-actions">
+              <button type="button" className="lr-btn-cancel" onClick={handleSendEmail}>
+                Send Email
+              </button>
+              <button type="button" className="lr-btn-cancel" onClick={() => setFormData({})}>
+                Cancel
+              </button>
 
-            <button type="button" className="lr-btn-submit btn-primary-dark" onClick={handleFinalSave}>
-              Save & Continue
-            </button>
-          </div>
+              <button type="button" className="lr-btn-submit btn-primary-dark" onClick={handleSubmit}>
+                Submit
+              </button>
+            </div>
+          )}
         </div>
 
         {showFullForm && (
           <>
             {/* CANDIDATE SELECTOR TABS BAR */}
             {candidateList.length > 0 && (
-              <div style={{ background: "#ffffff", padding: "16px 20px", borderRadius: "10px", border: "1px solid #e2e8f0", marginBottom: "20px", boxShadow: "0 2px 6px rgba(0,0,0,0.03)" }}>
-                <div style={{ fontSize: "13px", fontWeight: "700", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "10px" }}>
+              <div className="lr-card" style={{ marginTop: "24px" }}>
+                <div className="section-header">CANDIDATE ONBOARDING FORMS</div>
+                <div style={{ fontSize: "13px", fontWeight: "700", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "12px" }}>
                   Candidate Onboarding Forms ({candidateList.length}):
                 </div>
                 <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
@@ -730,7 +822,7 @@ function EmployeRequestSave() {
                             fontWeight: "700",
                           }}
                         >
-                          {isSubmitted ? "Submitted" : "Pending"}
+                          {isSubmitted ? "Submitted" : "Not Submitted"}
                         </span>
                       </button>
                     );
@@ -741,10 +833,12 @@ function EmployeRequestSave() {
 
             {!isCurrentCandSubmitted ? (
               <div
+                className="lr-card"
                 style={{
+                  marginTop: "24px",
                   background: "#fffbe6",
                   border: "1px solid #ffe58f",
-                  borderRadius: "10px",
+                  borderRadius: "8px",
                   padding: "24px 28px",
                   color: "#d48806",
                   fontWeight: "700",
@@ -752,25 +846,23 @@ function EmployeRequestSave() {
                   display: "flex",
                   alignItems: "center",
                   gap: "14px",
-                  marginTop: "16px",
-                  marginBottom: "24px",
                   boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                 }}
               >
-
                 <div>
                   <div style={{ fontSize: "16px", fontWeight: "800", marginBottom: "4px" }}>
                     Candidate still did not submit the data.
                   </div>
                   <div style={{ fontSize: "13.5px", color: "#8c6b00", fontWeight: "500" }}>
-                    Candidate <strong>{currentCand.candidateId || `CND-${String(activeCandTabIdx + 1).padStart(3, "0")}`} ({currentCand.name || "Candidate"})</strong> has not submitted their onboarding form response yet.
+                    Candidate <strong>{currentCand.candidateId || `CND-${String(activeCandTabIdx + 1).padStart(3, "0")}`} ({`${currentCand.firstName || ""} ${currentCand.lastName || ""}`.trim() || currentCand.name || "Candidate"})</strong> has not submitted their onboarding form response yet.
                   </div>
                 </div>
               </div>
             ) : (
               <>
-            <div className="lr-section">
-              <h3 className="lr-section-title">2. Barriers To Employment (Self Declaration) - {currentCand.candidateId || "CND-001"} ({currentCand.name || "Candidate"})</h3>
+            <div className="lr-card" style={{ marginTop: "24px" }}>
+              <div className="section-header">BARRIERS TO EMPLOYMENT & QUALIFICATIONS</div>
+              <h3 className="lr-section-title">2. Barriers To Employment (Self Declaration) - {currentCand.candidateId || "CND-001"} ({`${currentCand.firstName || ""} ${currentCand.lastName || ""}`.trim() || currentCand.name || "Candidate"})</h3>
 
               {/* Modern Slavery */}
               <div className="BarrierRow">
@@ -948,8 +1040,9 @@ function EmployeRequestSave() {
                 </div>
               </div>
             </div>            
-            <div className="lr-section">
-              <h3 className="lr-section-title">3. Qualifications & Licences - {currentCand.candidateId || "CND-001"}</h3>
+            <div className="lr-card" style={{ marginTop: "24px" }}>
+              <div className="section-header">QUALIFICATIONS & LICENCES</div>
+              <h3 className="lr-section-title">3. Qualifications & Licences - {currentCand.candidateId || "CND-001"} ({`${currentCand.firstName || ""} ${currentCand.lastName || ""}`.trim() || currentCand.name || "Candidate"})</h3>
 
               {/* Security Licence */}
               <div className="QualificationCard">
@@ -1427,16 +1520,12 @@ function EmployeRequestSave() {
                 </div>
               </div>
 
-              <div className="SectionActions">
-                <button className="CreateBtn" onClick={handleQualificationSave}>
-                  Save Qualifications
-                </button>
-              </div>
             </div>
 
 
             {showReferenceSection && (
-              <div className="lr-section">
+              <div className="lr-card" style={{ marginTop: "24px" }}>
+                <div className="section-header">REFERENCES & INTERVIEW</div>
                 <h3 className="lr-section-title">4. References</h3>
 
                 <div className="BarrierRow">
@@ -1482,164 +1571,203 @@ function EmployeRequestSave() {
             )}
 
             {/* 5. OFFER LETTER SECTION */}
-            <div className="lr-section">
-              <h3 className="lr-section-title">5. Offer Letter <span style={{ fontSize: "11px", background: "#ef4444", color: "#ffffff", padding: "2px 8px", borderRadius: "10px", marginLeft: "8px" }}>MUST HAVE</span></h3>
+            {showOfferLetterSection && (
+              <div className="lr-card" style={{ marginTop: "24px" }}>
+                <div className="section-header">OFFER LETTER & ROLE TYPE</div>
+                <h3 className="lr-section-title">5. Offer Letter <span style={{ fontSize: "11px", background: "#ef4444", color: "#ffffff", padding: "2px 8px", borderRadius: "10px", marginLeft: "8px" }}>MUST HAVE</span></h3>
 
-              <div className="BarrierRow" style={{ marginBottom: "14px" }}>
-                <label className="lr-label" style={{ fontWeight: "700" }}>Letter of Offer *</label>
-                <div className="ToggleGroup">
+                <div className="BarrierRow" style={{ marginBottom: "14px" }}>
+                  <label className="lr-label" style={{ fontWeight: "700" }}>Letter of Offer *</label>
+                  <div className="ToggleGroup">
+                    <button
+                      type="button"
+                      className={
+                        (currentCand.offerLetterResult || formData.offerLetterResult) === "ACCEPT" ||
+                        (currentCand.offerLetterResult || formData.offerLetterResult) === "PASS"
+                          ? "ToggleActive"
+                          : "ToggleBtn"
+                      }
+                      onClick={() => handleCandDecision("offerLetterResult", "ACCEPT")}
+                    >
+                      ACCEPT
+                    </button>
+                    <button
+                      type="button"
+                      className={
+                        (currentCand.offerLetterResult || formData.offerLetterResult) === "REJECT" ||
+                        (currentCand.offerLetterResult || formData.offerLetterResult) === "FAIL"
+                          ? "ToggleFail"
+                          : "ToggleBtn"
+                      }
+                      onClick={() => handleCandDecision("offerLetterResult", "REJECT")}
+                    >
+                      REJECT
+                    </button>
+                  </div>
+                </div>
+
+                <div className="OfferRow">
+                  <div className="OfferField">
+                    <label className="lr-label" style={{ fontWeight: "700" }}>Role Type *</label>
+                    <select
+                      value={currentCand.roleType || formData.roleType || "FT"}
+                      onChange={(e) => handleCandDecision("roleType", e.target.value)}
+                      style={{ padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px" }}
+                    >
+                      <option value="FT">Full Time (FT)</option>
+                      <option value="PT">Part Time (PT)</option>
+                      <option value="CS">Casual (CS)</option>
+                      <option value="Oth">Other (Oth)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style={{ marginTop: "16px", paddingTop: "14px", borderTop: "1px dashed #cbd5e1", display: "flex", justifyContent: "flex-end" }}>
                   <button
                     type="button"
-                    className={
-                      (currentCand.offerLetterResult || formData.offerLetterResult) === "ACCEPT" ||
-                      (currentCand.offerLetterResult || formData.offerLetterResult) === "PASS"
-                        ? "ToggleActive"
-                        : "ToggleBtn"
-                    }
-                    onClick={() => handleCandDecision("offerLetterResult", "ACCEPT")}
+                    onClick={async () => {
+                      try {
+                        await sendApiData(`/api/jobrequests/send-candidate-form2/${formData.caseId}`, {});
+                        alert(`Candidate Form 2 Email Sent Successfully to ${currentCand.email || "candidates"}`);
+                      } catch (err) {
+                        alert("Error sending Candidate Form 2 Email");
+                      }
+                    }}
+                    style={{
+                      background: "#0284c7",
+                      color: "#ffffff",
+                      border: "none",
+                      borderRadius: "6px",
+                      padding: "8px 18px",
+                      fontWeight: "700",
+                      cursor: "pointer",
+                      fontSize: "13px",
+                    }}
                   >
-                    ACCEPT
-                  </button>
-                  <button
-                    type="button"
-                    className={
-                      (currentCand.offerLetterResult || formData.offerLetterResult) === "REJECT" ||
-                      (currentCand.offerLetterResult || formData.offerLetterResult) === "FAIL"
-                        ? "ToggleFail"
-                        : "ToggleBtn"
-                    }
-                    onClick={() => handleCandDecision("offerLetterResult", "REJECT")}
-                  >
-                    REJECT
+                    Send Candidate Form 2 Email ({currentCand.candidateId || "CND-001"})
                   </button>
                 </div>
               </div>
-
-              <div className="OfferRow">
-                <div className="OfferField">
-                  <label className="lr-label" style={{ fontWeight: "700" }}>Role Type *</label>
-                  <select
-                    value={currentCand.roleType || formData.roleType || "FT"}
-                    onChange={(e) => handleCandDecision("roleType", e.target.value)}
-                    style={{ padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: "6px" }}
-                  >
-                    <option value="FT">Full Time (FT)</option>
-                    <option value="PT">Part Time (PT)</option>
-                    <option value="CS">Casual (CS)</option>
-                    <option value="Oth">Other (Oth)</option>
-                  </select>
-                </div>
-              </div>
-            </div>
+            )}
 
             {/* 6. FINANCIAL & TAX INFORMATION */}
-            <div className="lr-section">
-              <h3 className="lr-section-title">6. Financial & Tax Information <span style={{ fontSize: "11px", background: "#ef4444", color: "#ffffff", padding: "2px 8px", borderRadius: "10px", marginLeft: "8px" }}>MUST HAVE</span></h3>
+            {showFinancialSection && (
+              <div className="lr-card" style={{ marginTop: "24px" }}>
+                <div className="section-header">FINANCIAL & TAX INFORMATION</div>
+                <h3 className="lr-section-title">6. Financial & Tax Information <span style={{ fontSize: "11px", background: "#ef4444", color: "#ffffff", padding: "2px 8px", borderRadius: "10px", marginLeft: "8px" }}>MUST HAVE</span></h3>
 
-              <div className="OfferRow">
-                <div className="OfferField">
-                  <label className="lr-label" style={{ fontWeight: "700" }}>Bank Name *</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Commonwealth Bank / ANZ"
-                    value={currentCand.bankName || formData.bankName || ""}
-                    onChange={(e) => handleCandDecision("bankName", e.target.value)}
-                  />
+                <div className="lr-grid-2">
+                  <div className="lr-field">
+                    <label className="lr-label">Bank Name *</label>
+                    <input
+                      className="lr-input"
+                      type="text"
+                      placeholder="e.g. Commonwealth Bank / ANZ"
+                      value={currentCand.bankName || formData.bankName || ""}
+                      onChange={(e) => handleCandDecision("bankName", e.target.value)}
+                    />
+                  </div>
+                  <div className="lr-field">
+                    <label className="lr-label">Bank Account Name *</label>
+                    <input
+                      className="lr-input"
+                      type="text"
+                      placeholder="Account Holder Name"
+                      value={currentCand.bankAccountName || formData.bankAccountName || ""}
+                      onChange={(e) => handleCandDecision("bankAccountName", e.target.value)}
+                    />
+                  </div>
                 </div>
-                <div className="OfferField">
-                  <label className="lr-label" style={{ fontWeight: "700" }}>Bank Account Name *</label>
-                  <input
-                    type="text"
-                    placeholder="Account Holder Name"
-                    value={currentCand.bankAccountName || formData.bankAccountName || ""}
-                    onChange={(e) => handleCandDecision("bankAccountName", e.target.value)}
-                  />
+
+                <div className="lr-grid-2">
+                  <div className="lr-field">
+                    <label className="lr-label">BSB *</label>
+                    <input
+                      className="lr-input"
+                      type="text"
+                      placeholder="6-digit BSB (e.g. 063-000)"
+                      value={currentCand.bsb || formData.bsb || ""}
+                      onChange={(e) => handleCandDecision("bsb", e.target.value)}
+                    />
+                  </div>
+                  <div className="lr-field">
+                    <label className="lr-label">Account Number *</label>
+                    <input
+                      className="lr-input"
+                      type="text"
+                      placeholder="Account Number"
+                      value={currentCand.accountNumber || formData.accountNumber || ""}
+                      onChange={(e) => handleCandDecision("accountNumber", e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="lr-grid-2">
+                  <div className="lr-field">
+                    <label className="lr-label">Tax File Number (TFN) *</label>
+                    <input
+                      className="lr-input"
+                      type="text"
+                      placeholder="9-digit TFN"
+                      value={currentCand.tfn || formData.tfn || ""}
+                      onChange={(e) => handleCandDecision("tfn", e.target.value)}
+                    />
+                  </div>
+                  <div className="lr-field">
+                    <label className="lr-label">Superannuation Fund Name *</label>
+                    <input
+                      className="lr-input"
+                      type="text"
+                      placeholder="Super Fund Name"
+                      value={currentCand.superFund || formData.superFund || ""}
+                      onChange={(e) => handleCandDecision("superFund", e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="lr-grid-2">
+                  <div className="lr-field">
+                    <label className="lr-label">Super Member Number *</label>
+                    <input
+                      className="lr-input"
+                      type="text"
+                      placeholder="Member Number"
+                      value={currentCand.superMemberNum || formData.superMemberNum || ""}
+                      onChange={(e) => handleCandDecision("superMemberNum", e.target.value)}
+                    />
+                  </div>
+                  <div className="lr-field">
+                    <label className="lr-label">Long Service Leave ID (Optional)</label>
+                    <input
+                      className="lr-input"
+                      type="text"
+                      placeholder="LSL ID Number (Optional)"
+                      value={currentCand.longServiceLeaveId || formData.longServiceLeaveId || ""}
+                      onChange={(e) => handleCandDecision("longServiceLeaveId", e.target.value)}
+                    />
+                  </div>
                 </div>
               </div>
-
-              <div className="OfferRow">
-                <div className="OfferField">
-                  <label className="lr-label" style={{ fontWeight: "700" }}>BSB *</label>
-                  <input
-                    type="text"
-                    placeholder="6-digit BSB (e.g. 063-000)"
-                    value={currentCand.bsb || formData.bsb || ""}
-                    onChange={(e) => handleCandDecision("bsb", e.target.value)}
-                  />
-                </div>
-                <div className="OfferField">
-                  <label className="lr-label" style={{ fontWeight: "700" }}>Account Number *</label>
-                  <input
-                    type="text"
-                    placeholder="Account Number"
-                    value={currentCand.accountNumber || formData.accountNumber || ""}
-                    onChange={(e) => handleCandDecision("accountNumber", e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="OfferRow">
-                <div className="OfferField">
-                  <label className="lr-label" style={{ fontWeight: "700" }}>Tax File Number (TFN) *</label>
-                  <input
-                    type="text"
-                    placeholder="9-digit TFN"
-                    value={currentCand.tfn || formData.tfn || ""}
-                    onChange={(e) => handleCandDecision("tfn", e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="OfferRow">
-                <div className="OfferField">
-                  <label className="lr-label" style={{ fontWeight: "700" }}>Superannuation Fund Name *</label>
-                  <input
-                    type="text"
-                    placeholder="Super Fund Name"
-                    value={currentCand.superFund || formData.superFund || ""}
-                    onChange={(e) => handleCandDecision("superFund", e.target.value)}
-                  />
-                </div>
-                <div className="OfferField">
-                  <label className="lr-label" style={{ fontWeight: "700" }}>Super Member Number *</label>
-                  <input
-                    type="text"
-                    placeholder="Member Number"
-                    value={currentCand.superMemberNum || formData.superMemberNum || ""}
-                    onChange={(e) => handleCandDecision("superMemberNum", e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="OfferRow">
-                <div className="OfferField">
-                  <label className="lr-label" style={{ fontWeight: "600" }}>Long Service Leave ID (Optional)</label>
-                  <input
-                    type="text"
-                    placeholder="LSL ID Number (Select/Optional)"
-                    value={currentCand.longServiceLeaveId || formData.longServiceLeaveId || ""}
-                    onChange={(e) => handleCandDecision("longServiceLeaveId", e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
+            )}
             </>
             )}
-            <div className="lr-actions">
-              <button
-                type="button"
-                className="lr-btn-cancel"
-                onClick={() => setFormData({})}
-              >
-                Cancel
-              </button>
-              <button type="button" className="lr-btn-submit btn-primary-dark" onClick={handleFinalSave}>
-                Save
-              </button>
-              <button type="button" className="lr-btn-submit btn-primary-dark" onClick={handleFinalSave}>
-                Submit
-              </button>
-            </div>
+            {normStatus !== "resolved" && (
+              <div className="lr-actions">
+                <button type="button" className="lr-btn-cancel" onClick={handleSendEmail}>
+                  Send Email
+                </button>
+                <button
+                  type="button"
+                  className="lr-btn-cancel"
+                  onClick={() => setFormData({})}
+                >
+                  Cancel
+                </button>
+                <button type="button" className="lr-btn-submit btn-primary-dark" onClick={handleSubmit}>
+                  Submit
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>
