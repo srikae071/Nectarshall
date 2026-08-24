@@ -52,6 +52,35 @@ const TableToolbar = ({ searchVal, setSearchVal, filteredCount, totalCount, curr
   );
 };
 
+const incidentLogs = [
+  { id: "INC-38902", location: "Noida Site A", type: "Unauthorized Entry Attempt", loggedBy: "Guard 012", priority: "High", status: "Resolved", action: "Access Denied & Logged", loggedOn: "24 Aug 2026, 10:15 AM" },
+  { id: "INC-38905", location: "Gurugram Cybercity", type: "Intruder Warning Trigger", loggedBy: "Guard 009", priority: "Medium", status: "Resolved", action: "Perimeter search cleared", loggedOn: "24 Aug 2026, 09:42 AM" },
+  { id: "INC-38911", location: "Delhi Okhla", type: "Asset Check Audit Warning", loggedBy: "Supervisor 01", priority: "High", status: "Open", action: "Inventory discrepancy check", loggedOn: "24 Aug 2026, 08:30 AM" },
+  { id: "INC-38918", location: "Noida Site B", type: "Emergency Exit Alarm", loggedBy: "Guard 015", priority: "Critical", status: "Open", action: "Alarm reset & area secured", loggedOn: "24 Aug 2026, 07:55 AM" },
+  { id: "INC-38921", location: "Mumbai Office", type: "CCTV Offline Alert", loggedBy: "Tech Team", priority: "Medium", status: "Open", action: "Network issue identified", loggedOn: "24 Aug 2026, 07:20 AM" },
+  { id: "INC-38924", location: "Bangalore Whitefield", type: "Visitor Access Exception", loggedBy: "Guard 021", priority: "Low", status: "Closed", action: "Visitor record verified", loggedOn: "23 Aug 2026, 06:44 PM" },
+  { id: "INC-38927", location: "Delhi Dwarka", type: "Fire Panel Notification", loggedBy: "Guard 006", priority: "Critical", status: "Open", action: "Facilities team notified", loggedOn: "23 Aug 2026, 05:18 PM" },
+  { id: "INC-38930", location: "Gurugram Site C", type: "Perimeter Sensor Alert", loggedBy: "Guard 018", priority: "High", status: "Resolved", action: "Sensor recalibrated", loggedOn: "23 Aug 2026, 03:05 PM" },
+  { id: "INC-38934", location: "Noida Site A", type: "Key Register Mismatch", loggedBy: "Supervisor 02", priority: "Medium", status: "Open", action: "Key register under review", loggedOn: "23 Aug 2026, 01:36 PM" },
+  { id: "INC-38939", location: "Mumbai Office", type: "Loading Bay Obstruction", loggedBy: "Guard 011", priority: "Low", status: "Closed", action: "Obstruction removed", loggedOn: "23 Aug 2026, 11:12 AM" },
+  { id: "INC-38943", location: "Bangalore Whitefield", type: "Tailgating Alert", loggedBy: "Guard 024", priority: "High", status: "Resolved", action: "Access review completed", loggedOn: "23 Aug 2026, 09:48 AM" },
+  { id: "INC-38947", location: "Delhi Okhla", type: "First Aid Cabinet Check", loggedBy: "Supervisor 01", priority: "Low", status: "Closed", action: "Supplies replenished", loggedOn: "22 Aug 2026, 04:25 PM" },
+  ...Array.from({ length: 22 }, (_, index) => {
+    const isOpen = index < 13;
+    const isResolved = index >= 13 && index < 21;
+    return {
+      id: `INC-${38950 + index}`,
+      location: ["Noida Site B", "Delhi Dwarka", "Gurugram Site C", "Mumbai Office"][index % 4],
+      type: ["Access Control Alert", "Perimeter Sensor Alert", "CCTV Offline Alert", "Visitor Access Exception"][index % 4],
+      loggedBy: `Guard ${String(26 + index).padStart(3, "0")}`,
+      priority: index < 4 || (index >= 13 && index < 16) ? "High" : index >= 4 && index < 7 ? "Critical" : index >= 7 && index < 20 ? "Medium" : "Low",
+      status: isOpen ? "Open" : isResolved ? "Resolved" : "Closed",
+      action: isOpen ? "Assigned for review" : isResolved ? "Issue verified and resolved" : "Follow-up completed",
+      loggedOn: `${23 - Math.floor(index / 8)} Aug 2026, ${String(12 - (index % 6)).padStart(2, "0")}:${String((index * 7) % 60).padStart(2, "0")} ${index % 2 ? "AM" : "PM"}`,
+    };
+  }),
+];
+
 function MainDashboard() {
   const context = useContext(EmployeeContext);
 
@@ -63,6 +92,16 @@ function MainDashboard() {
   const [selectedSiteName, setSelectedSiteName] = useState("");
   const [isCustDropdownOpen, setIsCustDropdownOpen] = useState(false);
   const [activeView, setActiveView] = useState("dashboard"); // "dashboard", "total-sites", "active-sites", "total-employees", "clocked-in", "site-schedule"
+  const [incidentStatusFilter, setIncidentStatusFilter] = useState("All");
+  const [incidentPriorityFilter, setIncidentPriorityFilter] = useState("All");
+  const [rosterStatusFilter, setRosterStatusFilter] = useState("All");
+  const [rosterDetailType, setRosterDetailType] = useState("");
+  const [selectedRosterEmployee, setSelectedRosterEmployee] = useState(null);
+  const [hoveredRosterBar, setHoveredRosterBar] = useState("");
+  const [incidentDetailType, setIncidentDetailType] = useState("");
+  const [hoveredIncidentStatus, setHoveredIncidentStatus] = useState("");
+  const [hoveredIncidentPriority, setHoveredIncidentPriority] = useState("");
+  const [incidentMenuId, setIncidentMenuId] = useState("");
   
   // Pagination and Search State
   const [searchQuery, setSearchQuery] = useState("");
@@ -112,30 +151,27 @@ function MainDashboard() {
   }, [isCustDropdownOpen]);
 
   useEffect(() => {
-    const fetchCandidates = async () => {
+    const loadCustomers = async () => {
       try {
         const response = await fetchApiData("/api/BoardingCandidates");
-        const allCandidates = extractArrayData(response.data);
+        const candidates = extractArrayData(response.data);
+        const requesters = candidates
+          .map((item) => item.requester || item.companyName || item.clientName || item.customerName)
+          .filter(Boolean)
+          .map((name) => String(name).trim())
+          .filter(Boolean);
 
-        const boarded = allCandidates.filter((item) => {
-          const s = String(item.status || item.approvalStatus || "").trim().toLowerCase();
-          return (
-            s === "on boarded" ||
-            s === "onboarded" ||
-            s === "boarded" ||
-            item.isBoarded === true
-          );
-        });
-
-        const requesters = [...new Set(boarded.map((item) => item.requester).filter(Boolean))];
-        const merged = ["All Customers", ...new Set([...requesters, "Dell", "Microsoft", "Google", "Amazon"])];
-        setApiCustomers(merged);
-      } catch (err) {
-        console.error("Error fetching candidates for dashboard:", err);
+        setApiCustomers([
+          "All Customers",
+          ...new Set([...requesters, "Dell", "Microsoft", "Google", "Amazon"]),
+        ]);
+      } catch (error) {
+        console.error("Error loading dashboard customers:", error);
         setApiCustomers(["All Customers", "Dell", "Microsoft", "Google", "Amazon"]);
       }
     };
-    fetchCandidates();
+
+    loadCustomers();
   }, []);
 
   const fallbackData = useMemo(() => {
@@ -333,15 +369,246 @@ function MainDashboard() {
     return filteredEmployees.slice(start, start + PAGE_SIZE);
   }, [filteredEmployees, currentPage]);
 
+  const customerIncidentLogs = useMemo(() => {
+    const customers = ["Dell", "Microsoft", "Google", "Amazon"];
+    const customerSites = {
+      Dell: ["Noida Site A", "Delhi Okhla", "Gurugram Cybercity"],
+      Microsoft: ["Noida Sector 144", "Delhi Connaught Place", "Bangalore ORR"],
+      Google: ["Noida Sector 135", "Delhi Dwarka", "Gurugram Site C"],
+      Amazon: ["Noida Site B", "Mumbai Office", "Bangalore Whitefield"],
+    };
+
+    return Array.from({ length: 60 }, (_, index) => {
+      const template = incidentLogs[index % incidentLogs.length];
+      const customer = customers[index % customers.length];
+      const statusCycle = ["Open", "Resolved", "Open", "Closed", "Resolved"];
+      const priorityCycle = ["Critical", "High", "Medium", "Low", "High", "Medium"];
+      const dayOffset = index % 7;
+
+      return {
+        ...template,
+        id: `INC-${39001 + index}`,
+        customer,
+        location: customerSites[customer][index % customerSites[customer].length],
+        status: statusCycle[index % statusCycle.length],
+        priority: priorityCycle[index % priorityCycle.length],
+        loggedBy: `Guard ${String(101 + index).padStart(3, "0")}`,
+        loggedOn: `${24 - dayOffset} Aug 2026, ${String(8 + (index % 10)).padStart(2, "0")}:${String((index * 7) % 60).padStart(2, "0")} ${index % 2 ? "PM" : "AM"}`,
+        trendDay: dayOffset,
+      };
+    }).filter((incident) => selectedCust === "All Customers" || incident.customer === selectedCust);
+  }, [selectedCust]);
+
+  const incidentKpis = useMemo(() => ({
+    total: customerIncidentLogs.length,
+    open: customerIncidentLogs.filter((incident) => incident.status === "Open").length,
+    resolved: customerIncidentLogs.filter((incident) => incident.status === "Resolved").length,
+    closed: customerIncidentLogs.filter((incident) => incident.status === "Closed").length,
+    highPending: customerIncidentLogs.filter(
+      (incident) => incident.priority === "High" && incident.status === "Open",
+    ).length,
+  }), [customerIncidentLogs]);
+
+  const incidentStatusData = useMemo(() => [
+    { label: "Open", value: incidentKpis.open, color: "#2878f0" },
+    { label: "Resolved", value: incidentKpis.resolved, color: "#65c995" },
+    { label: "Closed", value: incidentKpis.closed, color: "#b8c2d2" },
+  ], [incidentKpis]);
+
+  const incidentDonutSegments = useMemo(() => {
+    const circumference = 2 * Math.PI * 48;
+    let offset = 0;
+    return incidentStatusData.map((item) => {
+      const dash = incidentKpis.total ? (item.value / incidentKpis.total) * circumference : 0;
+      const segment = { ...item, circumference, dash, offset: -offset };
+      offset += dash;
+      return segment;
+    });
+  }, [incidentStatusData, incidentKpis.total]);
+
+  const incidentPriorityData = useMemo(() => [
+    { label: "Critical", value: customerIncidentLogs.filter((incident) => incident.priority === "Critical").length, color: "#ef4444" },
+    { label: "High", value: customerIncidentLogs.filter((incident) => incident.priority === "High").length, color: "#f97316" },
+    { label: "Medium", value: customerIncidentLogs.filter((incident) => incident.priority === "Medium").length, color: "#fbbf24" },
+    { label: "Low", value: customerIncidentLogs.filter((incident) => incident.priority === "Low").length, color: "#48b982" },
+  ], [customerIncidentLogs]);
+
+  const incidentTrendData = useMemo(() => Array.from({ length: 7 }, (_, day) => ({
+    label: `${18 + day} Aug`,
+    value: customerIncidentLogs.filter((incident) => incident.trendDay === 6 - day).length,
+  })), [customerIncidentLogs]);
+
+  const incidentTrendPoints = useMemo(() => {
+    const maxValue = Math.max(...incidentTrendData.map((item) => item.value), 1);
+    return incidentTrendData.map((item, index) => ({
+      ...item,
+      x: 42 + index * 93,
+      y: 185 - (item.value / maxValue) * 145,
+    }));
+  }, [incidentTrendData]);
+
+  const incidentTrendPath = incidentTrendPoints.map((point, index) => `${index === 0 ? "M" : "L"}${point.x} ${point.y}`).join(" ");
+
+  const filteredIncidentLogs = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    return customerIncidentLogs.filter((incident) => {
+      const matchesQuery = !query || Object.values(incident).some((value) => String(value).toLowerCase().includes(query));
+      const matchesStatus = incidentStatusFilter === "All" || incident.status === incidentStatusFilter;
+      const matchesPriority = incidentPriorityFilter === "All" || incident.priority === incidentPriorityFilter;
+      return matchesQuery && matchesStatus && matchesPriority;
+    });
+  }, [customerIncidentLogs, searchQuery, incidentStatusFilter, incidentPriorityFilter]);
+
+  const incidentPageSize = 6;
+  const paginatedIncidentLogs = useMemo(() => {
+    const start = (currentPage - 1) * incidentPageSize;
+    return filteredIncidentLogs.slice(start, start + incidentPageSize);
+  }, [filteredIncidentLogs, currentPage]);
+
+  const openIncidentDetails = (type, value = "All") => {
+    setIncidentDetailType(type === "status" ? `${type}:${value}` : type === "priority" ? `${type}:${value}` : type);
+    setIncidentStatusFilter(type === "status" ? value : type === "highPending" ? "Open" : "All");
+    setIncidentPriorityFilter(type === "priority" ? value : type === "highPending" ? "High" : "All");
+    setSearchQuery("");
+    setActiveView("incident-detail");
+  };
+
+  const incidentDetailLogs = useMemo(() => {
+    if (!incidentDetailType || incidentDetailType === "total") return customerIncidentLogs;
+    if (incidentDetailType === "highPending") {
+      return customerIncidentLogs.filter((incident) => incident.status === "Open" && incident.priority === "High");
+    }
+    const [type, value] = incidentDetailType.split(":");
+    return customerIncidentLogs.filter((incident) => incident[type] === value);
+  }, [customerIncidentLogs, incidentDetailType]);
+
+  const incidentDetailTitle = incidentDetailType === "total"
+    ? "Total Cases"
+    : incidentDetailType === "highPending"
+      ? "High Priority Pending"
+      : incidentDetailType
+        ? `${incidentDetailType.split(":")[1]} Cases`
+        : "Incident Cases";
+
+  const rosterEmployees = useMemo(() => {
+    const rosterSourceData = selectedCust === "All Customers"
+      ? ["Dell", "Microsoft", "Google", "Amazon"].flatMap((customer) =>
+          (fallbackData[customer] || []).map((site) => ({ ...site, customer })),
+        )
+      : (fallbackData[selectedCust] || []).map((site) => ({
+          ...site,
+          customer: selectedCust,
+        }));
+
+    const customerEmployees = [];
+    let employeeIndex = 0;
+
+    rosterSourceData.forEach((site) => {
+      for (let siteEmployeeIndex = 0; siteEmployeeIndex < site.totalEmployees; siteEmployeeIndex += 1) {
+        const name = [
+          "Erin Gilmore", "Alex Rivera", "Jordan Smith", "Taylor Swift", "Chris Evans",
+          "Morgan Freeman", "Jamie Lannister", "Sarah Connor", "John Doe", "Jane Foster",
+          "Peter Parker", "Bruce Wayne", "Clark Kent", "Diana Prince", "Tony Stark",
+        ][employeeIndex % 15];
+
+        customerEmployees.push({
+          id: `ROSTER-${employeeIndex + 1}`,
+          name: `${name} (${String(employeeIndex + 1).padStart(3, "0")})`,
+          customer: site.customer,
+          siteName: site.siteName,
+          address: site.address,
+        });
+        employeeIndex += 1;
+      }
+    });
+
+    return customerEmployees.map((employee, index) => {
+      const shifts = 8 + (index % 8);
+      const declined = index % 6 === 0 ? 2 : index % 4 === 0 ? 1 : 0;
+      const pending = index % 5 === 0 ? 2 : index % 3 === 0 ? 1 : 0;
+      const accepted = Math.max(shifts - declined - pending, 0);
+      const daily = 6 + (index % 5);
+      const weekly = daily * 4 + (index % 3);
+      const overDaily = daily > 8;
+      const overWeekly = weekly > 38;
+
+      return {
+        ...employee,
+        location: employee.siteName,
+        shifts,
+        accepted,
+        declined,
+        pending,
+        daily,
+        weekly,
+        status: overDaily || overWeekly ? "Hours exceeded" : pending > 0 ? "Pending review" : "On track",
+      };
+    });
+  }, [fallbackData, selectedCust]);
+
+  const filteredRosterEmployees = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    return rosterEmployees.filter((employee) => {
+      const matchesQuery = !query || Object.values(employee).some((value) => String(value).toLowerCase().includes(query));
+      const matchesStatus = rosterStatusFilter === "All"
+        || (rosterStatusFilter === "Alerts" ? employee.daily > 8 || employee.weekly > 38 : employee.status === rosterStatusFilter);
+      return matchesQuery && matchesStatus;
+    });
+  }, [rosterEmployees, searchQuery, rosterStatusFilter]);
+
+  const rosterPageSize = 6;
+  const paginatedRosterEmployees = useMemo(() => {
+    const start = (currentPage - 1) * rosterPageSize;
+    return filteredRosterEmployees.slice(start, start + rosterPageSize);
+  }, [filteredRosterEmployees, currentPage]);
+
+  const rosterKpis = useMemo(() => ({
+    totalShifts: rosterEmployees.reduce((total, employee) => total + employee.shifts, 0),
+    acceptedShifts: rosterEmployees.reduce((total, employee) => total + employee.accepted, 0),
+    declinedShifts: rosterEmployees.reduce((total, employee) => total + employee.declined, 0),
+    openShifts: rosterEmployees.reduce((total, employee) => total + employee.pending, 0),
+    scheduledHours: rosterEmployees.reduce((total, employee) => total + employee.weekly, 0),
+  }), [rosterEmployees]);
+  const rosterStatusTotal = rosterKpis.acceptedShifts + rosterKpis.declinedShifts + rosterKpis.openShifts;
+
+  const openRosterKpiDetails = (detailType) => {
+    setRosterDetailType(detailType);
+    setSelectedRosterEmployee(null);
+    setActiveView("roster-detail");
+  };
+
+  const openRosterEmployeeDetails = (employee) => {
+    setSelectedRosterEmployee(employee);
+    setRosterDetailType("");
+    setActiveView("roster-employee-detail");
+  };
+
+  const rosterDetailConfig = {
+    totalShifts: { title: "Total Shifts", value: (employee) => employee.shifts, description: "Scheduled shifts by employee" },
+    acceptedShifts: { title: "Accepted Shifts", value: (employee) => employee.accepted, description: "Employees with accepted shifts" },
+    declinedShifts: { title: "Declined Shifts", value: (employee) => employee.declined, description: "Employees with declined shifts" },
+    openShifts: { title: "Open / Unassigned", value: (employee) => employee.pending, description: "Employees with open or pending shifts" },
+    scheduledHours: { title: "Total Scheduled Hours", value: (employee) => employee.weekly, description: "Daily and weekly hours by employee" },
+  };
+
+  const activeRosterDetail = rosterDetailConfig[rosterDetailType];
+  const rosterDetailEmployees = activeRosterDetail
+    ? rosterEmployees.filter((employee) => rosterDetailType === "totalShifts" || activeRosterDetail.value(employee) > 0)
+    : [];
+
   // Reset pagination when search or customer changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedCust, activeTab]);
+  }, [searchQuery, selectedCust, activeTab, incidentStatusFilter, incidentPriorityFilter, rosterStatusFilter, incidentDetailType]);
 
   // Reset activeView to dashboard when the top tab is switched
   useEffect(() => {
     setActiveView("dashboard");
   }, [activeTab]);
+
+  const backButtonLabel = activeTab === "Overview"
+    ? "Back to Overview"
+    : `Back to ${activeTab}`;
 
   return (
     <div className="dashboard-root">
@@ -430,7 +697,7 @@ function MainDashboard() {
               <line x1="19" y1="12" x2="5" y2="12" />
               <polyline points="12 19 5 12 12 5" />
             </svg>
-            Back to Overview
+            {backButtonLabel}
           </button>
         </div>
       )}
@@ -1168,68 +1435,153 @@ function MainDashboard() {
 
       {/* INCIDENTS ANALYTICAL OVERVIEW VIEW */}
       {activeTab === "Incidents" && activeView === "dashboard" && (
-        <div className="detail-view-card animate-fade-in">
-          <div className="detail-view-header">
-            <h3 className="detail-view-title">Incidents Tracker Overview ({selectedCust})</h3>
+        <div className="incident-dashboard animate-fade-in">
+          <div className="incident-kpi-grid">
+            <div className="incident-kpi-card incident-kpi-clickable" role="button" tabIndex="0" onClick={() => openIncidentDetails("total")} onKeyDown={(event) => event.key === "Enter" && openIncidentDetails("total")}>
+              <div className="incident-kpi-icon incident-icon-blue">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M8 8h8M8 12h8M8 16h5" /></svg>
+              </div>
+              <span className="incident-kpi-label">Total Cases</span>
+              <strong className="incident-kpi-value">{incidentKpis.total}</strong>
+              <span className="incident-kpi-sub">All incidents</span>
+              <span className="incident-sparkline incident-sparkline-blue">↗︎</span>
+            </div>
+            <div className="incident-kpi-card incident-kpi-clickable" role="button" tabIndex="0" onClick={() => openIncidentDetails("status", "Open")} onKeyDown={(event) => event.key === "Enter" && openIncidentDetails("status", "Open")}>
+              <div className="incident-kpi-icon incident-icon-purple">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 6v6l4 2" /><circle cx="12" cy="12" r="9" /></svg>
+              </div>
+              <span className="incident-kpi-label">Open Cases</span>
+              <strong className="incident-kpi-value">{incidentKpis.open}</strong>
+              <span className="incident-kpi-sub">Active incidents</span>
+              <span className="incident-sparkline incident-sparkline-purple">↗︎</span>
+            </div>
+            <div className="incident-kpi-card incident-kpi-clickable" role="button" tabIndex="0" onClick={() => openIncidentDetails("status", "Resolved")} onKeyDown={(event) => event.key === "Enter" && openIncidentDetails("status", "Resolved")}>
+              <div className="incident-kpi-icon incident-icon-green">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 4 4L19 6" /><circle cx="12" cy="12" r="9" /></svg>
+              </div>
+              <span className="incident-kpi-label">Resolved Cases</span>
+              <strong className="incident-kpi-value">{incidentKpis.resolved}</strong>
+              <span className="incident-kpi-sub">Successfully resolved</span>
+              <span className="incident-sparkline incident-sparkline-green">↗︎</span>
+            </div>
+            <div className="incident-kpi-card incident-kpi-clickable" role="button" tabIndex="0" onClick={() => openIncidentDetails("status", "Closed")} onKeyDown={(event) => event.key === "Enter" && openIncidentDetails("status", "Closed")}>
+              <div className="incident-kpi-icon incident-icon-slate">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M8 8h8M8 12h5M8 16h8" /></svg>
+              </div>
+              <span className="incident-kpi-label">Closed Cases</span>
+              <strong className="incident-kpi-value">{incidentKpis.closed}</strong>
+              <span className="incident-kpi-sub">Closed this period</span>
+              <span className="incident-sparkline incident-sparkline-blue">↗︎</span>
+            </div>
+            <div className="incident-kpi-card incident-kpi-clickable" role="button" tabIndex="0" onClick={() => openIncidentDetails("highPending")} onKeyDown={(event) => event.key === "Enter" && openIncidentDetails("highPending")}>
+              <div className="incident-kpi-icon incident-icon-red">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.3 3.4 2.5 17a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 3.4a2 2 0 0 0-3.4 0Z" /><path d="M12 9v4M12 17h.01" /></svg>
+              </div>
+              <span className="incident-kpi-label">High Priority Pending</span>
+              <strong className="incident-kpi-value">{incidentKpis.highPending}</strong>
+              <span className="incident-kpi-sub">Requires attention</span>
+              <span className="incident-sparkline incident-sparkline-red">↗︎</span>
+            </div>
           </div>
 
-          <div className="metrics-row mini-metrics">
-            <div className="metric-card">
-              <span className="metric-label">Total Logs (24h)</span>
-              <span className="metric-value font-number text-primary">12 Cases</span>
-            </div>
-            <div className="metric-card">
-              <span className="metric-label">Mitigated</span>
-              <span className="metric-value font-number font-green">10 Cases</span>
-            </div>
-            <div className="metric-card">
-              <span className="metric-label">Under Investigation</span>
-              <span className="metric-value font-number text-warning">2 Cases</span>
-            </div>
-            <div className="metric-card">
-              <span className="metric-label">Critical Severity</span>
-              <span className="metric-value font-number text-danger">0 Cases</span>
-            </div>
+          <div className="incident-chart-grid">
+            <section className="incident-chart-card">
+              <div className="incident-section-heading">
+                <h3>Incidents Trend</h3>
+                <span>Last 7 Days</span>
+              </div>
+              <svg className="incident-trend-chart" viewBox="0 0 620 220" role="img" aria-label="Incidents trend over the last seven days">
+                <g className="incident-grid-lines">
+                  <line x1="42" y1="25" x2="600" y2="25" /><line x1="42" y1="65" x2="600" y2="65" /><line x1="42" y1="105" x2="600" y2="105" /><line x1="42" y1="145" x2="600" y2="145" /><line x1="42" y1="185" x2="600" y2="185" />
+                </g>
+                <g className="incident-axis-labels"><text x="12" y="29">20</text><text x="18" y="69">15</text><text x="18" y="109">10</text><text x="22" y="149">5</text><text x="25" y="189">0</text></g>
+                <path className="incident-trend-area" d={`${incidentTrendPath} L600 185 L42 185 Z`} />
+                <path className="incident-trend-line" d={incidentTrendPath} />
+                {incidentTrendPoints.map((point) => <g key={point.label}><circle cx={point.x} cy={point.y} r="4" className="incident-trend-point" /><title>{`${point.label}: ${point.value} incidents (${selectedCust})`}</title></g>)}
+                <g className="incident-x-labels">{incidentTrendPoints.map((point) => <text key={point.label} x={point.x - 12} y="210">{point.label}</text>)}</g>
+              </svg>
+            </section>
+
+            <section className="incident-chart-card incident-status-card">
+              <div className="incident-section-heading"><h3>Incidents by Status</h3></div>
+              <div className="incident-donut-layout">
+                <div className="incident-donut" aria-label={`${incidentKpis.total} incidents`}>
+                  <svg viewBox="0 0 128 128" aria-hidden="true">
+                    {incidentDonutSegments.map((segment) => <circle key={segment.label} className={`incident-donut-segment ${hoveredIncidentStatus === segment.label ? "active" : ""}`} cx="64" cy="64" r="48" fill="none" stroke={segment.color} strokeWidth="22" strokeDasharray={`${segment.dash} ${segment.circumference - segment.dash}`} strokeDashoffset={segment.offset} transform="rotate(-90 64 64)" onMouseEnter={() => setHoveredIncidentStatus(segment.label)} onMouseLeave={() => setHoveredIncidentStatus("")} onClick={() => openIncidentDetails("status", segment.label)} />)}
+                  </svg>
+                  <div><strong>{incidentKpis.total}</strong><span>Total</span></div>
+                  {hoveredIncidentStatus && <span className="incident-donut-tooltip">{hoveredIncidentStatus}: {incidentStatusData.find((item) => item.label === hoveredIncidentStatus)?.value || 0} cases</span>}
+                </div>
+                <div className="incident-legend">
+                  {incidentStatusData.map((item) => <div className={`incident-legend-clickable ${hoveredIncidentStatus === item.label ? "active" : ""}`} key={item.label} role="button" tabIndex="0" onMouseEnter={() => setHoveredIncidentStatus(item.label)} onMouseLeave={() => setHoveredIncidentStatus("")} onFocus={() => setHoveredIncidentStatus(item.label)} onBlur={() => setHoveredIncidentStatus("")} onClick={() => openIncidentDetails("status", item.label)} onKeyDown={(event) => event.key === "Enter" && openIncidentDetails("status", item.label)}><i className="incident-legend-dot" style={{ background: item.color }} /><span>{item.label}</span><strong>{item.value} <small>({incidentKpis.total ? ((item.value / incidentKpis.total) * 100).toFixed(1) : 0}%)</small></strong></div>)}
+                </div>
+              </div>
+            </section>
           </div>
 
+          <section className="incident-chart-card incident-priority-card">
+            <div className="incident-section-heading"><h3>Incidents by Priority</h3></div>
+            <div className="incident-priority-chart" role="img" aria-label="Incidents by priority">
+              <div className="incident-priority-axis"><span>30</span><span>20</span><span>10</span><span>0</span></div>
+              {incidentPriorityData.map((item) => (
+                <div className={`incident-priority-column incident-priority-clickable ${hoveredIncidentPriority === item.label ? "active" : ""}`} key={item.label} role="button" tabIndex="0" onMouseEnter={() => setHoveredIncidentPriority(item.label)} onMouseLeave={() => setHoveredIncidentPriority("")} onFocus={() => setHoveredIncidentPriority(item.label)} onBlur={() => setHoveredIncidentPriority("")} onClick={() => openIncidentDetails("priority", item.label)} onKeyDown={(event) => event.key === "Enter" && openIncidentDetails("priority", item.label)}>
+                  <strong>{item.value}</strong><div style={{ height: `${(item.value / Math.max(...incidentPriorityData.map((priority) => priority.value), 1)) * 82}%`, backgroundColor: item.color }} /><span>{item.label}</span>{hoveredIncidentPriority === item.label && <span className="incident-priority-tooltip">{item.label}: {item.value} cases</span>}
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="incident-logs-card">
+            <div className="incident-logs-header">
+              <h3>Incident Logs <span>({selectedCust})</span></h3>
+              <div className="incident-log-tools">
+                <div className="incident-search">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></svg>
+                  <input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search incident..." aria-label="Search incidents" />
+                </div>
+                <select value={incidentStatusFilter} onChange={(event) => setIncidentStatusFilter(event.target.value)} aria-label="Filter incidents by status">
+                  <option value="All">All statuses</option><option value="Open">Open</option><option value="Investigating">Investigating</option><option value="Resolved">Resolved</option><option value="Closed">Closed</option>
+                </select>
+                <select value={incidentPriorityFilter} onChange={(event) => setIncidentPriorityFilter(event.target.value)} aria-label="Filter incidents by priority">
+                  <option value="All">All priorities</option><option value="Critical">Critical</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option>
+                </select>
+              </div>
+            </div>
+            <div className="incident-table-wrap">
+              <table className="incident-log-table">
+                <thead><tr><th>Incident ID</th><th>Location</th><th>Incident Type</th><th>Logged By</th><th>Priority</th><th>Status</th><th>Action Taken</th><th>Logged On</th><th aria-label="More actions" /></tr></thead>
+                <tbody>
+                  {paginatedIncidentLogs.map((incident) => (
+                    <tr key={incident.id}>
+                      <td className="incident-id">{incident.id}</td><td className="incident-location">{incident.location}</td><td>{incident.type}</td><td>{incident.loggedBy}</td>
+                      <td><span className={`incident-badge incident-priority-${incident.priority.toLowerCase()}`}>{incident.priority}</span></td>
+                      <td><span className={`incident-badge incident-status-${incident.status.toLowerCase()}`}>{incident.status}</span></td><td>{incident.action}</td><td className="incident-date">{incident.loggedOn}</td><td className="incident-more"><button onClick={() => setIncidentMenuId(incidentMenuId === incident.id ? "" : incident.id)} aria-label={`Actions for ${incident.id}`}>⋮</button>{incidentMenuId === incident.id && <div className="incident-action-menu"><button onClick={() => openIncidentDetails("status", incident.status)}>View {incident.status}</button><button onClick={() => openIncidentDetails("priority", incident.priority)}>View {incident.priority}</button></div>}</td>
+                    </tr>
+                  ))}
+                  {paginatedIncidentLogs.length === 0 && <tr><td colSpan="9" className="incident-empty">No incidents match the selected filters.</td></tr>}
+                </tbody>
+              </table>
+            </div>
+            <div className="incident-logs-footer">
+              <span>Showing <strong>{paginatedIncidentLogs.length}</strong> of <strong>{filteredIncidentLogs.length}</strong> incidents</span>
+              <div className="incident-pagination"><button disabled={currentPage === 1} onClick={() => setCurrentPage((page) => page - 1)} aria-label="Previous page">‹</button><span>Page {currentPage} of {Math.max(1, Math.ceil(filteredIncidentLogs.length / incidentPageSize))}</span><button disabled={currentPage >= Math.ceil(filteredIncidentLogs.length / incidentPageSize)} onClick={() => setCurrentPage((page) => page + 1)} aria-label="Next page">›</button></div>
+            </div>
+          </section>
+        </div>
+      )}
+
+      {activeTab === "Incidents" && activeView === "incident-detail" && (
+        <div className="detail-view-card incident-detail-card animate-fade-in">
+          <div className="detail-view-header incident-detail-header">
+            <div>
+              <h3 className="detail-view-title">{incidentDetailTitle} ({selectedCust})</h3>
+              <span className="incident-detail-description">Filtered from the current 60-record incident dataset.</span>
+            </div>
+          </div>
           <div className="detail-table-wrapper">
-            <table className="detail-table">
-              <thead>
-                <tr>
-                  <th>Incident Log ID</th>
-                  <th>Location</th>
-                  <th>Incident Type</th>
-                  <th>Logged By</th>
-                  <th>Action Taken</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="font-mono">INC-38902</td>
-                  <td className="fw-semibold">Noida Site A</td>
-                  <td>Unauthorized Entry Attempt</td>
-                  <td>Guard 012</td>
-                  <td>Access Denied & Logged</td>
-                  <td><span className="badge-pill bg-success-pill">Resolved</span></td>
-                </tr>
-                <tr>
-                  <td className="font-mono">INC-38905</td>
-                  <td className="fw-semibold">Gurugram Cybercity</td>
-                  <td>Intruder Warning Trigger</td>
-                  <td>Guard 009</td>
-                  <td>Perimeter search cleared</td>
-                  <td><span className="badge-pill bg-success-pill">Resolved</span></td>
-                </tr>
-                <tr>
-                  <td className="font-mono">INC-38911</td>
-                  <td className="fw-semibold">Delhi Okhla</td>
-                  <td>Asset Check Audit Warning</td>
-                  <td>Supervisor 01</td>
-                  <td>Inventory discrepancy check</td>
-                  <td><span className="badge-pill bg-warning-pill">Investigating</span></td>
-                </tr>
-              </tbody>
+            <table className="detail-table incident-detail-table">
+              <thead><tr><th>Incident ID</th><th>Customer</th><th>Location</th><th>Incident Type</th><th>Priority</th><th>Status</th><th>Logged On</th><th>Action Taken</th></tr></thead>
+              <tbody>{incidentDetailLogs.map((incident) => <tr key={incident.id}><td className="font-mono">{incident.id}</td><td className="fw-semibold">{incident.customer}</td><td>{incident.location}</td><td>{incident.type}</td><td><span className={`incident-badge incident-priority-${incident.priority.toLowerCase()}`}>{incident.priority}</span></td><td><span className={`incident-badge incident-status-${incident.status.toLowerCase()}`}>{incident.status}</span></td><td>{incident.loggedOn}</td><td>{incident.action}</td></tr>)}{incidentDetailLogs.length === 0 && <tr><td colSpan="8" className="incident-empty">No incidents match this view.</td></tr>}</tbody>
             </table>
           </div>
         </div>
@@ -1306,69 +1658,113 @@ function MainDashboard() {
 
       {/* ROSTER ANALYTICAL OVERVIEW VIEW */}
       {activeTab === "Roster" && activeView === "dashboard" && (
-        <div className="detail-view-card animate-fade-in">
-          <div className="detail-view-header">
-            <h3 className="detail-view-title">Roster Operations Overview ({selectedCust})</h3>
+        <div className="roster-dashboard animate-fade-in">
+          <div className="roster-kpi-grid">
+             <div className="roster-kpi-card roster-kpi-clickable" role="button" tabIndex="0" onClick={() => openRosterKpiDetails("totalShifts")} onKeyDown={(event) => event.key === "Enter" && openRosterKpiDetails("totalShifts")}><div className="roster-kpi-icon roster-icon-blue"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M8 2v4M16 2v4M3 10h18" /></svg></div><span>Total Shifts</span><strong>{rosterKpis.totalShifts}</strong><small>Scheduled shifts</small></div>
+             <div className="roster-kpi-card roster-kpi-clickable" role="button" tabIndex="0" onClick={() => openRosterKpiDetails("acceptedShifts")} onKeyDown={(event) => event.key === "Enter" && openRosterKpiDetails("acceptedShifts")}><div className="roster-kpi-icon roster-icon-green"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 4 4L19 6" /><circle cx="12" cy="12" r="9" /></svg></div><span>Accepted Shifts</span><strong>{rosterKpis.acceptedShifts}</strong><small>Accepted across employees</small></div>
+             <div className="roster-kpi-card roster-kpi-clickable" role="button" tabIndex="0" onClick={() => openRosterKpiDetails("declinedShifts")} onKeyDown={(event) => event.key === "Enter" && openRosterKpiDetails("declinedShifts")}><div className="roster-kpi-icon roster-icon-red"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d="m15 9-6 6M9 9l6 6" /></svg></div><span>Declined Shifts</span><strong>{rosterKpis.declinedShifts}</strong><small>Declined across employees</small></div>
+             <div className="roster-kpi-card roster-kpi-clickable" role="button" tabIndex="0" onClick={() => openRosterKpiDetails("openShifts")} onKeyDown={(event) => event.key === "Enter" && openRosterKpiDetails("openShifts")}><div className="roster-kpi-icon roster-icon-orange"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 6v6l4 2" /><circle cx="12" cy="12" r="9" /></svg></div><span>Open / Unassigned</span><strong>{rosterKpis.openShifts}</strong><small>Needs assignment</small></div>
+             <div className="roster-kpi-card roster-kpi-clickable" role="button" tabIndex="0" onClick={() => openRosterKpiDetails("scheduledHours")} onKeyDown={(event) => event.key === "Enter" && openRosterKpiDetails("scheduledHours")}><div className="roster-kpi-icon roster-icon-purple"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg></div><span>Total Scheduled Hours</span><strong>{rosterKpis.scheduledHours}</strong><small>Weekly hours across employees</small></div>
+           </div>
+
+          <div className="roster-chart-grid">
+            <section className="roster-chart-card">
+              <div className="roster-chart-heading"><div><h3>Weekly Hours Overview</h3><span>Maximum 38h per employee</span></div><span className="roster-limit-badge">Max 38h</span></div>
+              <div className="roster-scroll-area">
+                <div className="roster-week-chart">
+                  <div className="roster-chart-axis"><span>45h</span><span>38h</span><span>30h</span><span>15h</span><span>0h</span></div>
+                  {rosterEmployees.map((employee) => {
+                    const barKey = `weekly-${employee.name}`;
+                    const exceeded = Math.max(employee.weekly - 38, 0);
+                    return <div className={`roster-employee-bar roster-bar-clickable ${hoveredRosterBar === barKey ? "roster-bar-highlight" : ""}`} key={employee.name} role="button" tabIndex="0" aria-label={`View weekly hours for ${employee.name}`} onMouseEnter={() => setHoveredRosterBar(barKey)} onMouseLeave={() => setHoveredRosterBar("")} onFocus={() => setHoveredRosterBar(barKey)} onBlur={() => setHoveredRosterBar("")} onClick={() => openRosterEmployeeDetails(employee)} onKeyDown={(event) => event.key === "Enter" && openRosterEmployeeDetails(employee)}><strong className={exceeded > 0 ? "roster-exceeded" : ""}>{exceeded > 0 ? `+${exceeded}h` : `${employee.weekly}h`}</strong><div className="roster-bar-track"><div className={`roster-bar-fill ${exceeded > 0 ? "roster-bar-danger" : ""}`} style={{ height: `${Math.min((employee.weekly / 45) * 100, 100)}%` }} /></div><span>{employee.name.split(" ")[0]}</span>{hoveredRosterBar === barKey && <div className="roster-bar-tooltip"><strong>{employee.name}</strong><span>Actual: {employee.weekly}h</span><span>Limit: 38h</span><span>{exceeded > 0 ? `Exceeded: ${exceeded}h` : "Within limit"}</span></div>}</div>;
+                  })}
+                </div>
+              </div>
+              <div className="roster-chart-note"><span className="roster-chart-dot" />Weekly limit: 38 hours <b>Scroll horizontally to view more employees</b></div>
+            </section>
+
+            <section className="roster-chart-card">
+              <div className="roster-chart-heading"><div><h3>Daily Hours Monitoring</h3><span>Maximum 8h per employee</span></div><span className="roster-limit-badge">Max 8h</span></div>
+              <div className="roster-scroll-area">
+                <div className="roster-week-chart roster-daily-chart">
+                  <div className="roster-chart-axis"><span>12h</span><span>8h</span><span>6h</span><span>3h</span><span>0h</span></div>
+                  {rosterEmployees.map((employee) => {
+                    const barKey = `daily-${employee.name}`;
+                    const exceeded = Math.max(employee.daily - 8, 0);
+                    return <div className={`roster-employee-bar roster-bar-clickable ${hoveredRosterBar === barKey ? "roster-bar-highlight" : ""}`} key={employee.name} role="button" tabIndex="0" aria-label={`View daily hours for ${employee.name}`} onMouseEnter={() => setHoveredRosterBar(barKey)} onMouseLeave={() => setHoveredRosterBar("")} onFocus={() => setHoveredRosterBar(barKey)} onBlur={() => setHoveredRosterBar("")} onClick={() => openRosterEmployeeDetails(employee)} onKeyDown={(event) => event.key === "Enter" && openRosterEmployeeDetails(employee)}><strong className={exceeded > 0 ? "roster-exceeded" : ""}>{exceeded > 0 ? `+${exceeded}h` : `${employee.daily}h`}</strong><div className="roster-bar-track"><div className={`roster-bar-fill roster-bar-daily ${exceeded > 0 ? "roster-bar-danger" : ""}`} style={{ height: `${Math.min((employee.daily / 12) * 100, 100)}%` }} /></div><span>{employee.name.split(" ")[0]}</span>{hoveredRosterBar === barKey && <div className="roster-bar-tooltip"><strong>{employee.name}</strong><span>Actual: {employee.daily}h</span><span>Limit: 8h</span><span>{exceeded > 0 ? `Exceeded: ${exceeded}h` : "Within limit"}</span></div>}</div>;
+                  })}
+                </div>
+              </div>
+              <div className="roster-chart-note"><span className="roster-chart-dot roster-dot-daily" />Daily limit: 8 hours <b>Red values show the exact exceeded amount</b></div>
+            </section>
           </div>
 
-          <div className="metrics-row mini-metrics">
-            <div className="metric-card">
-              <span className="metric-label">Shift Coverage</span>
-              <span className="metric-value font-number font-green">94.8% Covered</span>
-            </div>
-            <div className="metric-card">
-              <span className="metric-label">Assigned Shifts</span>
-              <span className="metric-value font-number text-primary">142 Shifts</span>
-            </div>
-            <div className="metric-card">
-              <span className="metric-label">Open Shifts Alert</span>
-              <span className="metric-value font-number text-danger">8 Unassigned</span>
-            </div>
-            <div className="metric-card">
-              <span className="metric-label">Standby Guards Ready</span>
-              <span className="metric-value font-number text-purple">15 Staff</span>
+          <section className="roster-chart-card roster-status-card">
+            <div className="roster-chart-heading"><div><h3>Shift Status Overview</h3><span>Current roster distribution</span></div></div>
+            <div className="roster-status-content"><div className="roster-status-bar"><span style={{ width: `${(rosterKpis.acceptedShifts / rosterStatusTotal) * 100}%`, background: "#48b982" }} /><span style={{ width: `${(rosterKpis.declinedShifts / rosterStatusTotal) * 100}%`, background: "#f97316" }} /><span style={{ width: `${(rosterKpis.openShifts / rosterStatusTotal) * 100}%`, background: "#94a3b8" }} /></div><div className="roster-status-legend"><span><i className="roster-legend-green" />Accepted <b>{rosterKpis.acceptedShifts}</b></span><span><i className="roster-legend-orange" />Declined <b>{rosterKpis.declinedShifts}</b></span><span><i className="roster-legend-slate" />Open / Pending <b>{rosterKpis.openShifts}</b></span></div></div>
+          </section>
+
+          <section className="roster-table-card">
+            <div className="roster-table-header"><div><h3>Employee Roster</h3><span>{selectedCust} · hours and shift allocation</span></div><div className="roster-table-tools"><div className="roster-table-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></svg><input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search employee..." aria-label="Search employees" /></div><select value={rosterStatusFilter} onChange={(event) => setRosterStatusFilter(event.target.value)} aria-label="Filter roster employees"><option value="All">All statuses</option><option value="On track">On track</option><option value="Alerts">Hours alerts</option><option value="Pending review">Pending review</option></select></div></div>
+            <div className="roster-table-wrap"><table className="roster-table"><thead><tr><th>Employee</th><th>Location</th><th>Shifts</th><th>Accepted / Declined / Pending</th><th>Daily Hours</th><th>Weekly Hours</th><th>Remaining Hours</th><th>Status / Alert</th></tr></thead><tbody>{paginatedRosterEmployees.map((employee) => <tr key={employee.name} className="roster-row-clickable" role="button" tabIndex="0" onClick={() => openRosterEmployeeDetails(employee)} onKeyDown={(event) => event.key === "Enter" && openRosterEmployeeDetails(employee)}><td className="roster-employee-name">{employee.name}</td><td>{employee.location}</td><td className="roster-number">{employee.shifts}</td><td><span className="roster-count-green">{employee.accepted}</span><span className="roster-count-divider"> / </span><span className="roster-count-red">{employee.declined}</span><span className="roster-count-divider"> / </span><span className="roster-count-muted">{employee.pending}</span></td><td className={employee.daily > 8 ? "roster-hours-danger" : "roster-number"}>{employee.daily > 8 ? `${employee.daily}h (+${employee.daily - 8}h)` : `${employee.daily}h / 8h`}</td><td className={employee.weekly > 38 ? "roster-hours-danger" : "roster-number"}>{employee.weekly > 38 ? `${employee.weekly}h (+${employee.weekly - 38}h)` : `${employee.weekly}h / 38h`}</td><td className={employee.weekly > 38 ? "roster-hours-danger" : "roster-number"}>{38 - employee.weekly}h</td><td><span className={`roster-status-badge ${employee.status === "On track" ? "roster-status-ok" : employee.status === "Pending review" ? "roster-status-pending" : "roster-status-alert"}`}>{employee.status}</span></td></tr>)}{paginatedRosterEmployees.length === 0 && <tr><td colSpan="8" className="roster-empty">No employees match the selected filters.</td></tr>}</tbody></table></div>
+            <div className="roster-table-footer"><span>Showing <b>{paginatedRosterEmployees.length}</b> of <b>{filteredRosterEmployees.length}</b> employees</span><div className="roster-pagination"><button disabled={currentPage === 1} onClick={() => setCurrentPage((page) => page - 1)} aria-label="Previous page">‹</button><span>Page {currentPage} of {Math.max(1, Math.ceil(filteredRosterEmployees.length / rosterPageSize))}</span><button disabled={currentPage >= Math.ceil(filteredRosterEmployees.length / rosterPageSize)} onClick={() => setCurrentPage((page) => page + 1)} aria-label="Next page">›</button></div></div>
+          </section>
+        </div>
+      )}
+
+      {/* ROSTER KPI DETAIL VIEW */}
+      {activeTab === "Roster" && activeView === "roster-detail" && activeRosterDetail && (
+        <div className="detail-view-card roster-detail-card animate-fade-in">
+            <div className="detail-view-header roster-detail-header">
+            <div>
+              <h3 className="detail-view-title">{activeRosterDetail.title} ({selectedCust})</h3>
+              <span className="roster-detail-description">{activeRosterDetail.description} from the current dummy roster.</span>
             </div>
           </div>
-
           <div className="detail-table-wrapper">
-            <table className="detail-table">
-              <thead>
-                <tr>
-                  <th>Shift ID</th>
-                  <th>Location Code</th>
-                  <th>Shift Schedule Timing</th>
-                  <th>Guard Assigned</th>
-                  <th>Clock status</th>
-                  <th>Shift Priority</th>
-                </tr>
-              </thead>
+            <table className="detail-table roster-detail-table">
+              <thead><tr><th>Employee</th><th>Location</th><th>{activeRosterDetail.title}</th><th>Daily Hours</th><th>Weekly Hours</th><th>Accepted</th><th>Declined</th><th>Pending</th><th>Status</th><th>Action</th></tr></thead>
               <tbody>
-                <tr>
-                  <td className="font-mono">SFT-902</td>
-                  <td className="fw-semibold">Noida Site-A</td>
-                  <td>07:00 AM - 03:00 PM</td>
-                  <td>Rahul Sharma (Guard 01)</td>
-                  <td><span className="badge-pill bg-success-pill">Clocked In</span></td>
-                  <td>High</td>
-                </tr>
-                <tr>
-                  <td className="font-mono">SFT-903</td>
-                  <td className="fw-semibold">Delhi Site-B</td>
-                  <td>03:00 PM - 11:00 PM</td>
-                  <td>Arjun Singh (Guard 02)</td>
-                  <td><span className="badge-pill bg-blue-pill">Scheduled</span></td>
-                  <td>Medium</td>
-                </tr>
-                <tr>
-                  <td className="font-mono">SFT-904</td>
-                  <td className="fw-semibold">Gurugram Site-C</td>
-                  <td>11:00 PM - 07:00 AM</td>
-                  <td className="text-danger fw-bold">UNASSIGNED (Assign Guard)</td>
-                  <td><span className="badge-pill bg-warning-pill">Unfilled</span></td>
-                  <td>Critical</td>
-                </tr>
+                {rosterDetailEmployees.map((employee) => (
+                  <tr key={employee.name}>
+                    <td className="fw-semibold">{employee.name}</td>
+                    <td>{employee.location}</td>
+                    <td className="font-number">{activeRosterDetail.value(employee)}{rosterDetailType === "scheduledHours" ? "h" : ""}</td>
+                    <td className={employee.daily > 8 ? "roster-hours-danger" : "font-number"}>{employee.daily}h / 8h</td>
+                    <td className={employee.weekly > 38 ? "roster-hours-danger" : "font-number"}>{employee.weekly}h / 38h</td>
+                    <td className="roster-count-green">{employee.accepted}</td>
+                    <td className="roster-count-red">{employee.declined}</td>
+                    <td className="roster-count-muted">{employee.pending}</td>
+                    <td><span className={`roster-status-badge ${employee.status === "On track" ? "roster-status-ok" : employee.status === "Pending review" ? "roster-status-pending" : "roster-status-alert"}`}>{employee.status}</span></td>
+                    <td><button className="roster-link-button" onClick={() => openRosterEmployeeDetails(employee)}>View employee</button></td>
+                  </tr>
+                ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* ROSTER EMPLOYEE DETAIL VIEW */}
+      {activeTab === "Roster" && activeView === "roster-employee-detail" && selectedRosterEmployee && (
+        <div className="detail-view-card roster-detail-card animate-fade-in">
+            <div className="detail-view-header roster-detail-header">
+            <div>
+              <h3 className="detail-view-title">Employee Roster Details ({selectedCust})</h3>
+              <span className="roster-detail-description">Dummy roster record for {selectedRosterEmployee.name}</span>
+            </div>
+          </div>
+          <div className="roster-employee-detail-grid">
+            <div><span>Employee</span><strong>{selectedRosterEmployee.name}</strong></div>
+            <div><span>Location</span><strong>{selectedRosterEmployee.location}</strong></div>
+            <div><span>Shifts</span><strong>{selectedRosterEmployee.shifts}</strong></div>
+            <div><span>Accepted</span><strong className="roster-detail-value-green">{selectedRosterEmployee.accepted}</strong></div>
+            <div><span>Declined</span><strong className="roster-detail-value-red">{selectedRosterEmployee.declined}</strong></div>
+            <div><span>Pending</span><strong>{selectedRosterEmployee.pending}</strong></div>
+            <div><span>Daily Hours</span><strong className={selectedRosterEmployee.daily > 8 ? "roster-detail-value-red" : ""}>{selectedRosterEmployee.daily}h / 8h</strong></div>
+            <div><span>Weekly Hours</span><strong className={selectedRosterEmployee.weekly > 38 ? "roster-detail-value-red" : ""}>{selectedRosterEmployee.weekly}h / 38h</strong></div>
+            <div><span>Remaining Hours</span><strong className={selectedRosterEmployee.weekly > 38 ? "roster-detail-value-red" : ""}>{38 - selectedRosterEmployee.weekly}h</strong></div>
+            <div><span>Status</span><strong><span className={`roster-status-badge ${selectedRosterEmployee.status === "On track" ? "roster-status-ok" : selectedRosterEmployee.status === "Pending review" ? "roster-status-pending" : "roster-status-alert"}`}>{selectedRosterEmployee.status}</span></strong></div>
           </div>
         </div>
       )}

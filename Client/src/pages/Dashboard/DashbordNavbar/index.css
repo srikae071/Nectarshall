@@ -2,8 +2,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 40px;
+  padding: 10px 24px;
   background-color: #1e293b !important;
+  background: #1e293b !important;
+  height: 60px;
+  box-sizing: border-box;
+  border-bottom: 1px solid #334155;
 }
 
 .oplogo {
@@ -14,8 +18,10 @@
 }
 .oplogoimage {
   width: 92px;
-  height: 44px;
-  margin-bottom: -16px;
+  height: 38px;
+  object-fit: contain;
+  flex-shrink: 0;
+  margin-bottom: 0;
 }
 .operationslogoname {
   margin-top: -13px;

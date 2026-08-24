@@ -1288,3 +1288,94 @@
 @media (max-width: 600px) {
   .rep-kpi-row { grid-template-columns: 1fr; }
 }
+
+/* Incident dashboard */
+.incident-dashboard,
+.roster-dashboard { display: flex; flex-direction: column; gap: 14px; }
+
+.incident-kpi-grid,
+.roster-kpi-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+
+.incident-kpi-card,
+.incident-chart-card,
+.incident-logs-card,
+.roster-kpi-card,
+.roster-chart-card,
+.roster-table-card {
+  background: #fff;
+  border: 1px solid #e5eaf2;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.035);
+}
+
+.incident-kpi-card,
+.roster-kpi-card { position: relative; min-height: 136px; padding: 14px 16px 12px; overflow: hidden; }
+.incident-kpi-clickable,
+.roster-kpi-clickable { cursor: pointer; transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+.incident-kpi-clickable:hover,
+.incident-kpi-clickable:focus-visible,
+.roster-kpi-clickable:hover,
+.roster-kpi-clickable:focus-visible { border-color: #93b4f8; box-shadow: 0 10px 22px rgba(37,99,235,.12); outline: 0; transform: translateY(-2px); }
+
+.incident-kpi-icon,
+.roster-kpi-icon { display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; margin-bottom: 11px; border-radius: 9px; }
+.incident-icon-blue,.roster-icon-blue { color: #2563eb; background: #eaf2ff; }
+.incident-icon-purple,.roster-icon-purple { color: #8b5cf6; background: #f1eaff; }
+.incident-icon-green,.roster-icon-green { color: #10b981; background: #e7f8f0; }
+.incident-icon-slate { color: #64748b; background: #edf2f8; }
+.incident-icon-red,.roster-icon-red { color: #f43f5e; background: #ffebef; }
+.roster-icon-orange { color: #f97316; background: #fff0e1; }
+
+.incident-kpi-label,.roster-kpi-card > span { display: block; color: #475569; font-size: 11px; font-weight: 600; }
+.incident-kpi-value,.roster-kpi-card > strong { display: block; margin-top: 2px; color: #17233b; font-size: 24px; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.incident-kpi-sub,.roster-kpi-card > small { display: block; margin-top: 4px; color: #94a3b8; font-size: 10px; font-weight: 500; }
+.incident-sparkline { position: absolute; right: 14px; bottom: 12px; font-size: 23px; line-height: 1; transform: rotate(-18deg); }
+.incident-sparkline-blue { color: #3b82f6; }.incident-sparkline-purple { color: #a855f7; }.incident-sparkline-green { color: #10b981; }.incident-sparkline-red { color: #f43f5e; }
+
+.incident-chart-grid,.roster-chart-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.incident-chart-card,.roster-chart-card { min-width: 0; padding: 12px 14px; }
+.incident-section-heading,.roster-chart-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.incident-section-heading h3,.roster-chart-heading h3,.roster-table-header h3 { margin: 0; color: #1e293b; font-size: 12px; font-weight: 700; }
+.incident-section-heading span,.roster-chart-heading span,.roster-table-header span { display: block; margin-top: 3px; color: #94a3b8; font-size: 10px; font-weight: 500; }
+.incident-trend-chart { display: block; width: 100%; height: 190px; }
+.incident-grid-lines line { stroke: #edf1f7; stroke-width: 1; }.incident-axis-labels text,.incident-x-labels text { fill: #94a3b8; font-size: 9px; }
+.incident-trend-area { fill: rgba(59,130,246,.08); }.incident-trend-line { fill: none; stroke: #2878f0; stroke-width: 2.5; }.incident-trend-point { fill: #2878f0; stroke: #fff; stroke-width: 2; }
+
+.incident-status-card { display: flex; flex-direction: column; }
+.incident-donut-layout { display: flex; align-items: center; justify-content: center; gap: clamp(20px,7vw,70px); min-height: 190px; }
+.incident-donut { position: relative; display: flex; align-items: center; justify-content: center; width: 128px; height: 128px; flex-shrink: 0; border-radius: 50%; background: #f1f5f9; }
+.incident-donut svg { width: 128px; height: 128px; overflow: visible; }
+.incident-donut-segment { cursor: pointer; transition: stroke-width .15s ease, opacity .15s ease; }.incident-donut-segment:hover,.incident-donut-segment.active { opacity: .82; stroke-width: 27; }
+.incident-donut > div { position: absolute; display: flex; flex-direction: column; align-items: center; pointer-events: none; }.incident-donut strong { color: #1e293b; font-size: 25px; line-height: 1; }.incident-donut span { margin-top: 4px; color: #94a3b8; font-size: 9px; }
+.incident-donut-tooltip,.incident-priority-tooltip { position: absolute; z-index: 5; padding: 7px 9px; border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; box-shadow: 0 8px 18px rgba(15,23,42,.16); color: #0f172a !important; font-size: 11px !important; font-weight: 700; white-space: nowrap; pointer-events: none; }
+.incident-donut-tooltip { top: -7px; left: 100%; }
+.incident-legend { display: flex; min-width: 160px; flex-direction: column; gap: 15px; }.incident-legend > div { display: grid; grid-template-columns: 8px 1fr auto; align-items: center; gap: 8px; padding: 4px 6px; color: #64748b; font-size: 10px; }
+.incident-legend-clickable { cursor: pointer; transition: background .15s ease, transform .15s ease; }.incident-legend-clickable:hover,.incident-legend-clickable:focus-visible,.incident-legend-clickable.active { border-radius: 6px; background: #eff6ff; outline: 0; transform: translateX(2px); }
+.incident-legend strong { color: #1e293b; font-size: 10px; }.incident-legend small { color: #94a3b8; font-size: 9px; font-weight: 500; }.incident-legend-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+.incident-priority-card { padding-bottom: 10px; }.incident-priority-chart { display: grid; grid-template-columns: 28px repeat(4,1fr); align-items: end; height: 112px; gap: 18px; padding-right: 14px; border-bottom: 1px solid #edf1f7; background: repeating-linear-gradient(to bottom,transparent 0,transparent 27px,#f1f4f8 28px); }
+.incident-priority-axis { display: flex; height: 100%; flex-direction: column; justify-content: space-between; padding-bottom: 17px; color: #94a3b8; font-size: 8px; text-align: right; }.incident-priority-column { display: flex; position: relative; height: 100%; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; }.incident-priority-column strong { color: #1e293b; font-size: 9px; }.incident-priority-column div { width: min(106px,80%); min-height: 8px; border-radius: 2px 2px 0 0; }.incident-priority-column span { margin-top: 1px; color: #64748b; font-size: 9px; }.incident-priority-clickable { cursor: pointer; transition: background .15s ease, transform .15s ease; }.incident-priority-clickable:hover,.incident-priority-clickable:focus-visible,.incident-priority-clickable.active { border-radius: 6px; background: #f8fbff; outline: 0; transform: translateY(-2px); }.incident-priority-tooltip { bottom: 25px; left: 50%; transform: translateX(-50%); }
+
+.incident-logs-card { overflow: hidden; }.incident-logs-header,.roster-table-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 14px; border-bottom: 1px solid #edf1f7; }.incident-logs-header h3 { margin: 0; color: #1e293b; font-size: 18px; font-weight: 700; }.incident-logs-header h3 span { color: #64748b; font-size: 16px; font-weight: 600; }.incident-log-tools,.roster-table-tools { display: flex; align-items: center; gap: 8px; }
+.incident-search,.incident-log-tools select,.roster-table-search,.roster-table-tools select { display: flex; height: 29px; align-items: center; border: 1px solid #dbe3ee; border-radius: 6px; background: #fff; color: #64748b; font-size: 13px; }.incident-search,.roster-table-search { width: 175px; gap: 6px; padding: 0 8px; }.incident-search input,.roster-table-search input { width: 100%; border: 0; outline: 0; color: #334155; font: inherit; }.incident-log-tools select,.roster-table-tools select { padding: 0 7px; outline: 0; }
+.incident-table-wrap,.roster-table-wrap { overflow-x: auto; }.incident-log-table,.roster-table { width: 100%; min-width: 920px; border-collapse: collapse; text-align: left; }.incident-log-table th,.roster-table th { padding: 8px 10px; background: #fbfcfe; border-bottom: 1px solid #e8edf4; color: #64748b; font-size: 11px; font-weight: 700; letter-spacing: .25px; text-transform: uppercase; white-space: nowrap; }.incident-log-table td,.roster-table td { padding: 9px 10px; border-bottom: 1px solid #f0f3f7; color: #64748b; font-size: 13px; white-space: nowrap; }.incident-log-table tbody tr:hover,.roster-table tbody tr:hover { background: #f8fbff; }.incident-log-table tbody tr:last-child td,.roster-table tbody tr:last-child td { border-bottom: 0; }
+.incident-log-table .incident-id { color: #64748b; font-family: monospace; font-weight: 600; }.incident-log-table .incident-location,.roster-employee-name { color: #334155 !important; font-weight: 700; }.incident-log-table .incident-date { color: #64748b; }.incident-more { position: relative; color: #94a3b8 !important; font-size: 16px !important; text-align: center; }.incident-more > button { border: 0; background: transparent; color: #64748b; cursor: pointer; font-size: 16px; }.incident-action-menu { display: flex; position: absolute; z-index: 4; top: 28px; right: 8px; width: 120px; flex-direction: column; gap: 2px; padding: 5px; border: 1px solid #dbe3ee; border-radius: 6px; background: #fff; box-shadow: 0 8px 18px rgba(15,23,42,.14); }.incident-action-menu button { border: 0; border-radius: 4px; background: transparent; color: #2563eb; cursor: pointer; font-size: 10px; padding: 6px; text-align: left; }.incident-action-menu button:hover { background: #eff6ff; }
+.incident-badge,.roster-status-badge { display: inline-block; padding: 4px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; line-height: 1; }.incident-priority-critical { background: #ffe5e7; color: #dc2626; }.incident-priority-high { background: #fff0e1; color: #ea580c; }.incident-priority-medium { background: #fff6d9; color: #ca8a04; }.incident-priority-low { background: #e5f8ee; color: #15945c; }.incident-status-open { background: #e5efff; color: #2563eb; }.incident-status-resolved { background: #e3f8ed; color: #15945c; }.incident-status-closed { background: #eef2f7; color: #64748b; }.incident-empty { padding: 24px !important; text-align: center; }
+.incident-logs-footer,.roster-table-footer { display: flex; align-items: center; justify-content: space-between; padding: 9px 14px; border-top: 1px solid #edf1f7; color: #94a3b8; font-size: 13px; }.incident-logs-footer strong,.roster-table-footer b { color: #475569; }.incident-pagination,.roster-pagination { display: flex; align-items: center; gap: 8px; }.incident-pagination button,.roster-pagination button { width: 24px; height: 24px; border: 1px solid #dbe3ee; border-radius: 5px; background: #fff; color: #475569; cursor: pointer; font-size: 16px; line-height: 1; }.incident-pagination button:disabled,.roster-pagination button:disabled { cursor: not-allowed; opacity: .4; }
+.incident-detail-card,.roster-detail-card { margin-top: 10px; }.incident-detail-description,.roster-detail-description { display: block; margin-top: 5px; color: #94a3b8; font-size: 11px; }.incident-detail-table th,.incident-detail-table td,.roster-detail-table th,.roster-detail-table td { white-space: nowrap; }
+
+/* Roster charts and detail styles */
+.roster-chart-card { min-width: 0; padding: 12px 14px; }.roster-chart-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 10px; }.roster-chart-heading h3 { margin: 0; color: #1e293b; font-size: 12px; font-weight: 700; }.roster-chart-heading span,.roster-table-header span { display: block; margin-top: 3px; color: #94a3b8; font-size: 10px; }.roster-limit-badge { margin: 0 !important; padding: 4px 8px; border: 1px solid #dbe7fb; border-radius: 5px; background: #eff6ff; color: #2563eb !important; font-size: 9px !important; font-weight: 700 !important; }.roster-scroll-area { overflow-x: auto; padding-bottom: 4px; }.roster-week-chart { display: flex; align-items: flex-end; min-width: 690px; height: 190px; gap: 15px; padding: 4px 12px 0 0; border-bottom: 1px solid #edf1f7; background: repeating-linear-gradient(to bottom,transparent 0,transparent 35px,#f1f4f8 36px); }.roster-chart-axis { display: flex; height: 100%; flex: 0 0 32px; flex-direction: column; justify-content: space-between; padding-bottom: 23px; color: #94a3b8; font-size: 8px; text-align: right; }.roster-employee-bar { display: flex; position: relative; height: 100%; min-width: 40px; flex: 1 0 40px; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; }.roster-bar-clickable { cursor: pointer; border-radius: 6px; }.roster-bar-clickable:hover,.roster-bar-clickable:focus-visible,.roster-bar-highlight { background: rgba(239,246,255,.75); outline: 0; }.roster-bar-highlight .roster-bar-fill { filter: brightness(.9); }.roster-bar-tooltip { display: flex; position: absolute; z-index: 5; bottom: 30px; left: 50%; min-width: 190px; flex-direction: column; gap: 5px; padding: 12px 14px; border: 1px solid #cbd5e1; border-radius: 9px; background: #fff; box-shadow: 0 10px 24px rgba(15,23,42,.2); color: #334155; font-size: 16px; line-height: 1.35; transform: translateX(-50%); white-space: nowrap; pointer-events: none; }.roster-bar-tooltip::after { position: absolute; bottom: -5px; left: 50%; width: 8px; height: 8px; background: #fff; content: ""; transform: translateX(-50%) rotate(45deg); }.roster-bar-tooltip strong { min-height: 0; margin-bottom: 3px; color: #0f172a; font-size: 17px; line-height: 1.3; }.roster-bar-tooltip span { color: #475569; font-size: 15px; }.roster-employee-bar > strong { min-height: 12px; color: #334155; font-size: 9px; font-weight: 700; }.roster-employee-bar > span:not(.roster-bar-tooltip) { color: #64748b; font-size: 9px; }.roster-bar-track { display: flex; width: 22px; height: 132px; align-items: flex-end; border-radius: 4px 4px 0 0; background: #edf2f8; overflow: hidden; }.roster-bar-fill { width: 100%; border-radius: 4px 4px 0 0; background: #4d8df7; }.roster-bar-daily { background: #73a3f5; }.roster-bar-danger,.roster-hours-danger { background: #ef4444 !important; color: #dc2626 !important; }.roster-exceeded { color: #dc2626 !important; }.roster-chart-note { display: flex; align-items: center; gap: 5px; margin-top: 8px; color: #64748b; font-size: 9px; }.roster-chart-note b { margin-left: auto; color: #94a3b8; font-weight: 500; }.roster-chart-dot { width: 7px; height: 7px; border-radius: 50%; background: #4d8df7; }.roster-dot-daily { background: #73a3f5; }
+.roster-status-card { padding-bottom: 14px; }.roster-status-content { display: flex; align-items: center; gap: 28px; }.roster-status-bar { display: flex; width: 50%; height: 13px; overflow: hidden; border-radius: 99px; background: #eef2f7; }.roster-status-bar span:first-child { border-radius: 99px 0 0 99px; }.roster-status-bar span:last-child { border-radius: 0 99px 99px 0; }.roster-status-legend { display: flex; flex: 1; justify-content: space-between; gap: 14px; }.roster-status-legend span { display: flex; align-items: center; gap: 6px; color: #64748b; font-size: 10px; }.roster-status-legend i { width: 7px; height: 7px; border-radius: 50%; }.roster-legend-green { background: #48b982; }.roster-legend-orange { background: #f97316; }.roster-legend-slate { background: #94a3b8; }.roster-status-legend b { color: #334155; }.roster-table-card { overflow: hidden; }.roster-table-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 14px; border-bottom: 1px solid #edf1f7; }.roster-table-tools { display: flex; align-items: center; gap: 8px; }.roster-table { min-width: 900px; }.roster-table th { padding: 8px 10px; font-size: 11px; }.roster-table td { padding: 9px 10px; font-size: 13px; }.roster-row-clickable { cursor: pointer; }.roster-row-clickable:focus-visible { outline: 2px solid #93b4f8; outline-offset: -2px; }.roster-number { color: #334155 !important; font-variant-numeric: tabular-nums; }.roster-count-green { color: #15945c; font-weight: 700; }.roster-count-red { color: #dc2626; font-weight: 700; }.roster-count-muted { color: #64748b; font-weight: 700; }.roster-count-divider { color: #cbd5e1; }.roster-status-ok { background: #e3f8ed; color: #15945c; }.roster-status-alert { background: #ffe5e7; color: #dc2626; }.roster-status-pending { background: #fff6d9; color: #ca8a04; }.roster-employee-detail-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 1px; overflow: hidden; border: 1px solid #e8edf4; border-radius: 8px; background: #e8edf4; }.roster-employee-detail-grid > div { display: flex; min-height: 72px; flex-direction: column; justify-content: center; gap: 7px; padding: 12px 14px; background: #fff; }.roster-employee-detail-grid span:not(.roster-status-badge) { color: #94a3b8; font-size: 10px; font-weight: 600; }.roster-employee-detail-grid strong { color: #334155; font-size: 13px; }.roster-detail-value-green { color: #15945c !important; }.roster-detail-value-red { color: #dc2626 !important; }
+
+.back-btn { color: #2563eb; }.back-btn:hover { color: var(--dash-primary); }
+
+/* Keep exceeded hours red without painting the entire table cell. */
+.roster-hours-danger {
+  background: transparent !important;
+  color: #dc2626 !important;
+  font-weight: 700;
+}
+
+@media (max-width: 1100px) { .incident-kpi-grid,.roster-kpi-grid { grid-template-columns: repeat(3,minmax(0,1fr)); } }
+@media (max-width: 760px) { .incident-kpi-grid,.incident-chart-grid,.roster-kpi-grid,.roster-chart-grid { grid-template-columns: 1fr; }.incident-logs-header,.incident-logs-footer,.roster-table-header,.roster-table-footer { align-items: flex-start; flex-direction: column; }.incident-log-tools,.roster-table-tools { width: 100%; flex-wrap: wrap; }.incident-search,.roster-table-search { flex: 1; min-width: 160px; }.roster-status-content { align-items: stretch; flex-direction: column; gap: 14px; }.roster-status-bar { width: 100%; }.roster-status-legend { flex-wrap: wrap; }.roster-detail-header { align-items: flex-start; flex-direction: column; }.roster-employee-detail-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }

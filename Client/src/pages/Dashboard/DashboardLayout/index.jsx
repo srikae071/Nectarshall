@@ -6,18 +6,11 @@ import "./index.css";
 import DashbordNavbar from "../DashbordNavbar/index.jsx";
 import { EmployeeContext } from "../DashboardRightLayout/EmployeeContext.js";
 
-import { FiFileText, FiBarChart2, FiShield, FiUsers, FiCalendar, FiGrid } from "react-icons/fi";
+import { FiFileText, FiShield, FiUsers, FiCalendar, FiGrid } from "react-icons/fi";
 
 const OperationsNavTabs = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const path = location.pathname;
-
-  const isDashboardRoute =
-    path === "/main-dashboard" ||
-    path === "/dashboard";
-
-  if (!isDashboardRoute) return null;
 
   const searchParams = new URLSearchParams(location.search);
   const activeTab = searchParams.get("tab") || "Overview";
@@ -25,67 +18,37 @@ const OperationsNavTabs = () => {
   const navItems = [
     { label: "Overview", tab: "Overview", icon: FiGrid },
     { label: "Timesheets", tab: "Timesheets", icon: FiFileText },
-    { label: "Reports", tab: "Reports", icon: FiBarChart2 },
     { label: "Incidents", tab: "Incidents", icon: FiShield },
     { label: "Onboarding Candidate", tab: "Onboarding Candidate", icon: FiUsers },
     { label: "Roster", tab: "Roster", icon: FiCalendar },
   ];
 
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "16px 24px",
-        background: "#f8fafc",
-        width: "100%",
-        boxSizing: "border-box",
-      }}
-    >
-      <div 
-        style={{ 
-          display: "flex", 
-          gap: "8px", 
-          alignItems: "center", 
-          flexWrap: "nowrap",
-          background: "#ffffff",
-          border: "1px solid #e2e8f0",
-          borderRadius: "16px",
-          padding: "6px",
-          boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.05)"
-        }}
-      >
+    <nav className="operationsNavTabs" aria-label="Operations dashboard sections">
+      <div className="operationsNavTabsList">
         {navItems.map((item) => {
           const active = activeTab === item.tab;
           const Icon = item.icon;
           return (
             <div
               key={item.tab}
+              className={`operationsNavTab${active ? " active" : ""}`}
               onClick={() => navigate(`/main-dashboard?tab=${item.tab}`)}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                cursor: "pointer",
-                fontSize: "14.5px",
-                fontWeight: active ? 700 : 500,
-                color: active ? "#2563eb" : "#475569",
-                backgroundColor: active ? "#eff6ff" : "transparent",
-                borderRadius: "12px",
-                padding: "8px 18px",
-                transition: "all 0.15s ease-in-out",
-                whiteSpace: "nowrap",
-                flexShrink: 0
+              role="button"
+              tabIndex={0}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  navigate(`/main-dashboard?tab=${item.tab}`);
+                }
               }}
             >
-              <Icon size={18} style={{ color: active ? "#2563eb" : "#64748b" }} />
+              <Icon className="operationsNavTabIcon" size={16} />
               <span>{item.label}</span>
             </div>
           );
         })}
       </div>
-    </div>
+    </nav>
   );
 };
 
