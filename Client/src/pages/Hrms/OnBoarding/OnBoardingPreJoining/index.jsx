@@ -18,11 +18,10 @@ function OnBoardingPreJoining() {
       );
 
       setData(
-        response.data.filter(
-          (item) =>
-            // item.category === "Resonance Requirement" &&
-            item.status === "PreJoiningCompliance",
-        ),
+        response.data.filter((item) => {
+          const st = (item.status || "").toLowerCase().replace(/[\s\-_]/g, "");
+          return st === "prejoiningcompliance" || st === "prejoining";
+        })
       );
     } catch (error) {
       console.error(error);

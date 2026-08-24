@@ -214,6 +214,10 @@ exports.sendCandidateEmail = async (req, res) => {
       });
     }
 
+    request.form1EmailSent = true;
+    request.emailSent = true;
+    await request.save();
+
     res.json({
       message: `Emails Sent Successfully to ${recipientList.length} candidate(s)`,
     });
@@ -366,6 +370,9 @@ exports.sendCandidateForm2Email = async (req, res) => {
         </a>
       `,
     });
+
+    request.form2EmailSent = true;
+    await request.save();
 
     res.json({
       message: "Candidate Form 2 Email Sent",

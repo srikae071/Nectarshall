@@ -271,10 +271,10 @@ function EmployeRequestSave() {
   };
   const handleSendEmail = async () => {
     try {
-      // First save candidate list and current form state to backend
-      await sendApiData(`/api/jobrequests/${id}`, formData, "put");
-      
-      // Send candidate emails for all candidate email IDs
+      const updatedForm = { ...formData, form1EmailSent: true, emailSent: true };
+      await sendApiData(`/api/jobrequests/${id}`, updatedForm, "put");
+      setFormData(updatedForm);
+
       const res = await sendApiData(
         `/api/jobrequests/send-email/${formData.caseId}`,
         {}
@@ -285,6 +285,23 @@ function EmployeRequestSave() {
     } catch (error) {
       console.log(error.response?.data);
       alert(error.response?.data?.message || "Error sending candidate emails");
+    }
+  };
+
+  const handleSendCandidateForm2Email = async () => {
+    try {
+      const updatedForm = { ...formData, form2EmailSent: true };
+      await sendApiData(`/api/jobrequests/${id}`, updatedForm, "put");
+      setFormData(updatedForm);
+
+      await sendApiData(
+        `/api/jobrequests/send-candidate-form2/${formData.caseId}`,
+        {}
+      );
+      alert(`Candidate Form 2 Email Sent Successfully to ${currentCand.email || "candidates"}`);
+    } catch (err) {
+      console.log(err);
+      alert("Error sending Candidate Form 2 Email");
     }
   };
 
@@ -763,9 +780,11 @@ function EmployeRequestSave() {
           </button> */}
           {normStatus !== "resolved" && (
             <div className="lr-actions">
-              <button type="button" className="lr-btn-cancel" onClick={handleSendEmail}>
-                Send Email
-              </button>
+              {!formData.form1EmailSent && !formData.emailSent && (
+                <button type="button" className="lr-btn-cancel" onClick={handleSendEmail}>
+                  Send Email
+                </button>
+              )}
               <button type="button" className="lr-btn-cancel" onClick={() => setFormData({})}>
                 Cancel
               </button>
@@ -1622,31 +1641,26 @@ function EmployeRequestSave() {
                   </div>
                 </div>
 
-                <div style={{ marginTop: "16px", paddingTop: "14px", borderTop: "1px dashed #cbd5e1", display: "flex", justifyContent: "flex-end" }}>
-                  <button
-                    type="button"
-                    onClick={async () => {
-                      try {
-                        await sendApiData(`/api/jobrequests/send-candidate-form2/${formData.caseId}`, {});
-                        alert(`Candidate Form 2 Email Sent Successfully to ${currentCand.email || "candidates"}`);
-                      } catch (err) {
-                        alert("Error sending Candidate Form 2 Email");
-                      }
-                    }}
-                    style={{
-                      background: "#0284c7",
-                      color: "#ffffff",
-                      border: "none",
-                      borderRadius: "6px",
-                      padding: "8px 18px",
-                      fontWeight: "700",
-                      cursor: "pointer",
-                      fontSize: "13px",
-                    }}
-                  >
-                    Send Candidate Form 2 Email ({currentCand.candidateId || "CND-001"})
-                  </button>
-                </div>
+                {!formData.form2EmailSent && (
+                  <div style={{ marginTop: "16px", paddingTop: "14px", borderTop: "1px dashed #cbd5e1", display: "flex", justifyContent: "flex-end" }}>
+                    <button
+                      type="button"
+                      onClick={handleSendCandidateForm2Email}
+                      style={{
+                        background: "#0284c7",
+                        color: "#ffffff",
+                        border: "none",
+                        borderRadius: "6px",
+                        padding: "8px 18px",
+                        fontWeight: "700",
+                        cursor: "pointer",
+                        fontSize: "13px",
+                      }}
+                    >
+                      Send Candidate Form 2 Email ({currentCand.candidateId || "CND-001"})
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
@@ -1753,9 +1767,11 @@ function EmployeRequestSave() {
             )}
             {normStatus !== "resolved" && (
               <div className="lr-actions">
-                <button type="button" className="lr-btn-cancel" onClick={handleSendEmail}>
-                  Send Email
-                </button>
+                {!formData.form1EmailSent && !formData.emailSent && (
+                  <button type="button" className="lr-btn-cancel" onClick={handleSendEmail}>
+                    Send Email
+                  </button>
+                )}
                 <button
                   type="button"
                   className="lr-btn-cancel"

@@ -20,11 +20,10 @@ function OnBoardingOfferLetter() {
       // setData(response.data);
 
       setData(
-        response.data.filter(
-          (item) =>
-            // item.category === "Resonance Requirement" &&
-            item.status === "OfferLetter",
-        ),
+        response.data.filter((item) => {
+          const st = (item.status || "").toLowerCase().replace(/[\s\-_]/g, "");
+          return st === "offerletter";
+        })
       );
     } catch (error) {
       console.error(error);
