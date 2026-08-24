@@ -38,7 +38,7 @@ function OnBoardingResonanceRequirementsAll() {
       <div className="Openhome">
         <div>
           <h3 className="openheading">All Onboarding Cases (Every Status)</h3>
-          {/* fff */}
+
           <table className="opentable">
             <thead className="opentablerow">
               <tr className="opentablerow">
