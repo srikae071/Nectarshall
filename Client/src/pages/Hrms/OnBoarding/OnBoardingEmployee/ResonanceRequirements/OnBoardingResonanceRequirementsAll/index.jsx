@@ -38,7 +38,7 @@ function OnBoardingResonanceRequirementsAll() {
       <div className="Openhome">
         <div>
           <h3 className="openheading">All Onboarding Cases (Every Status)</h3>
-
+          {/* fff */}
           <table className="opentable">
             <thead className="opentablerow">
               <tr className="opentablerow">
@@ -67,9 +67,13 @@ function OnBoardingResonanceRequirementsAll() {
                     <td className="opentablerow">{item.caseId}</td>
                     <td className="opentablerow">{item.requesterName}</td>
                     <td className="opentablerow">{item.department}</td>
-                    <td className="opentablerow">{item.category || "Resonance Requirement"}</td>
                     <td className="opentablerow">
-                      <span className={`badge ${(item.status || "Open").toLowerCase()}`}>
+                      {item.category || "Resonance Requirement"}
+                    </td>
+                    <td className="opentablerow">
+                      <span
+                        className={`badge ${(item.status || "Open").toLowerCase()}`}
+                      >
                         {item.status || "Open"}
                       </span>
                     </td>
