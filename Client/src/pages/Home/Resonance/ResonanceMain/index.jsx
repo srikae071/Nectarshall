@@ -35,7 +35,7 @@ function ResonanceMain() {
     try {
       const response = await sendApiData("/api/jobrequests", {
         ...formData,
-        category: "Employee Save",
+        category: "Employee Request",
         status: "Open",
         requestType: "Resonance",
       });
@@ -142,8 +142,6 @@ function ResonanceMain() {
             </div>
           </div>
 
-
-
           {/* DESCRIPTION */}
           <div className="lr-field" style={{ marginTop: "12px" }}>
             <label className="lr-label">Description</label>
@@ -176,11 +174,19 @@ function ResonanceMain() {
               Cancel
             </button>
 
-            <button type="button" className="lr-btn-submit" onClick={handleSave}>
+            <button
+              type="button"
+              className="lr-btn-submit"
+              onClick={handleSave}
+            >
               Save
             </button>
 
-            <button type="button" className="lr-btn-submit" onClick={handleSave}>
+            <button
+              type="button"
+              className="lr-btn-submit"
+              onClick={handleSave}
+            >
               Submit
             </button>
           </div>

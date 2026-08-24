@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { fetchApiData, sendApiData } from "../../../utils/apiClient";
-import AskhrNavBar from "../../AskForHrPage/AshrNavBar";
+import Hrmsleftlayout from "../../Hrms/Hrmsleftlayout";
 import axios from "axios";
 import "../../../styles/SharedFormStyle.css";
 
@@ -159,8 +159,10 @@ function EmployeRequestSave() {
       const nextId = `CND-${String(nextNum).padStart(3, "0")}`;
       list.push({
         candidateId: nextId,
-        name: "",
+        firstName: "",
+        lastName: "",
         email: "",
+        contactNumber: "",
       });
       return {
         ...prev,
@@ -181,7 +183,9 @@ function EmployeRequestSave() {
         ...prev,
         candidates: list,
         email: firstCand?.email || prev.email,
-        firstName: firstCand?.name || prev.firstName,
+        firstName: firstCand?.firstName || prev.firstName,
+        lastName: firstCand?.lastName || prev.lastName,
+        contactNumber: firstCand?.contactNumber || prev.contactNumber,
       };
     });
   };
@@ -425,12 +429,9 @@ function EmployeRequestSave() {
   const isCurrentCandSubmitted = checkIsSubmitted(currentCand);
 
   return (
-    <>
-      <AskhrNavBar />
-
+    <Hrmsleftlayout>
       <div className="lr-page">
         <div className="lr-card">
-          <h2 className="lr-title">Create New Case</h2>
           <div className="section-header">EMPLOYEE DETAILS</div>
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
@@ -449,7 +450,7 @@ function EmployeRequestSave() {
                 fontSize: "13px",
               }}
             >
-              + Add Employee
+              + Add Candidate
             </button>
           </div>
 
@@ -560,11 +561,11 @@ function EmployeRequestSave() {
             </div>
           </div>
 
-          {/* DYNAMIC CANDIDATE / EMPLOYEE ENTRIES - VISIBLE ONLY WHEN + Add Employee IS CLICKED */}
+          {/* DYNAMIC CANDIDATE ENTRIES - VISIBLE ONLY WHEN + Add Candidate IS CLICKED */}
           {showCandidatesList && formData.candidates && formData.candidates.length > 0 && (
             <div style={{ marginTop: "18px", marginBottom: "18px", borderTop: "1px dashed #cbd5e1", paddingTop: "14px" }}>
               <h4 style={{ margin: "0 0 12px 0", fontSize: "14px", fontWeight: "700", color: "#0f172a" }}>
-                Candidate / Employee List
+                Candidate List
               </h4>
 
               {formData.candidates.map((cand, candIdx) => (
@@ -577,8 +578,8 @@ function EmployeRequestSave() {
                     border: "1px solid #cbd5e1",
                     marginBottom: "12px",
                     display: "grid",
-                    gridTemplateColumns: "180px 1fr 1fr 48px",
-                    gap: "16px",
+                    gridTemplateColumns: "130px 1fr 1fr 1fr 1fr 44px",
+                    gap: "12px",
                     alignItems: "flex-end",
                     boxSizing: "border-box",
                     width: "100%",
@@ -605,11 +606,11 @@ function EmployeRequestSave() {
                   </div>
 
                   <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <label className="lr-label" style={{ fontSize: "12px", fontWeight: "700", color: "#334155", whiteSpace: "nowrap" }}>Employee Name *</label>
+                    <label className="lr-label" style={{ fontSize: "12px", fontWeight: "700", color: "#334155", whiteSpace: "nowrap" }}>Candidate First Name *</label>
                     <input
-                      value={cand.name || ""}
-                      onChange={(e) => handleCandidateChange(candIdx, "name", e.target.value)}
-                      placeholder="Enter employee name..."
+                      value={cand.firstName || cand.name || ""}
+                      onChange={(e) => handleCandidateChange(candIdx, "firstName", e.target.value)}
+                      placeholder="First name..."
                       style={{
                         height: "38px",
                         padding: "0 12px",
@@ -625,12 +626,53 @@ function EmployeRequestSave() {
                   </div>
 
                   <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <label className="lr-label" style={{ fontSize: "12px", fontWeight: "700", color: "#334155", whiteSpace: "nowrap" }}>Employee Email ID *</label>
+                    <label className="lr-label" style={{ fontSize: "12px", fontWeight: "700", color: "#334155", whiteSpace: "nowrap" }}>Candidate Last Name *</label>
+                    <input
+                      value={cand.lastName || ""}
+                      onChange={(e) => handleCandidateChange(candIdx, "lastName", e.target.value)}
+                      placeholder="Last name..."
+                      style={{
+                        height: "38px",
+                        padding: "0 12px",
+                        background: "#ffffff",
+                        color: "#0f172a",
+                        borderRadius: "6px",
+                        border: "1px solid #cbd5e1",
+                        fontSize: "13px",
+                        width: "100%",
+                        boxSizing: "border-box",
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                    <label className="lr-label" style={{ fontSize: "12px", fontWeight: "700", color: "#334155", whiteSpace: "nowrap" }}>Candidate Email ID *</label>
                     <input
                       type="email"
                       value={cand.email || ""}
                       onChange={(e) => handleCandidateChange(candIdx, "email", e.target.value)}
-                      placeholder="Enter email ID..."
+                      placeholder="Email ID..."
+                      style={{
+                        height: "38px",
+                        padding: "0 12px",
+                        background: "#ffffff",
+                        color: "#0f172a",
+                        borderRadius: "6px",
+                        border: "1px solid #cbd5e1",
+                        fontSize: "13px",
+                        width: "100%",
+                        boxSizing: "border-box",
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+                    <label className="lr-label" style={{ fontSize: "12px", fontWeight: "700", color: "#334155", whiteSpace: "nowrap" }}>Contact Number *</label>
+                    <input
+                      type="text"
+                      value={cand.contactNumber || cand.phone || ""}
+                      onChange={(e) => handleCandidateChange(candIdx, "contactNumber", e.target.value)}
+                      placeholder="Contact number..."
                       style={{
                         height: "38px",
                         padding: "0 12px",
@@ -651,7 +693,7 @@ function EmployeRequestSave() {
                     title="Remove Candidate"
                     style={{
                       height: "38px",
-                      width: "48px",
+                      width: "44px",
                       background: "#fee2e2",
                       color: "#dc2626",
                       border: "1px solid #fecaca",
@@ -676,10 +718,21 @@ function EmployeRequestSave() {
             <label className="lr-label">Short Description</label>
 
             <textarea
-              name="employeeShortDescription"
+              name="shortDescription"
               value={formData.shortDescription || ""}
               onChange={handleChange}
-              className="EmployeeSaveShortDescriptionBox lr-textarea"
+              style={{
+                width: "100%",
+                height: "45px",
+                minHeight: "45px",
+                padding: "8px 12px",
+                borderRadius: "6px",
+                border: "1px solid #cbd5e1",
+                fontSize: "13px",
+                boxSizing: "border-box",
+                resize: "vertical",
+              }}
+              placeholder="Enter short description..."
             />
           </div>
 
@@ -687,10 +740,20 @@ function EmployeRequestSave() {
             <label className="lr-label">Description</label>
 
             <textarea
-              name="employeeDescription"
+              name="description"
               value={formData.description || ""}
               onChange={handleChange}
-              className="EmployeeSaveDescriptionBox lr-textarea"
+              style={{
+                width: "100%",
+                height: "130px",
+                minHeight: "130px",
+                padding: "10px 12px",
+                borderRadius: "6px",
+                border: "1px solid #cbd5e1",
+                fontSize: "13px",
+                boxSizing: "border-box",
+                resize: "vertical",
+              }}
               placeholder="Enter detailed description..."
             />
           </div>
@@ -1665,8 +1728,8 @@ function EmployeRequestSave() {
             </div>
           </>
         )}
-        </div>
-    </>
+      </div>
+    </Hrmsleftlayout>
   );
 }
 export default EmployeRequestSave;

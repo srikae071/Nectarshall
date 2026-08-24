@@ -17,11 +17,10 @@ exports.createJobRequest = async (req, res) => {
 
     data.caseId = `HRY${String(nextNumber).padStart(3, "0")}`;
 
-    // Default values
     // Default values only if not provided
     data.status = data.status || "Pending";
 
-    data.category = data.category || "Employee Save";
+    data.category = data.category || "Employee Request";
     const savedRequest = await JobRequest.create(data);
 
     res.status(201).json(savedRequest);

@@ -31,7 +31,11 @@ const JobRequestSchema = new mongoose.Schema(
       {
         candidateId: { type: String },
         name: { type: String },
+        firstName: { type: String },
+        lastName: { type: String },
         email: { type: String },
+        contactNumber: { type: String },
+        phone: { type: String },
         submitted: { type: Boolean, default: false },
         submittedAt: { type: Date },
 
