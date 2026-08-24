@@ -119,22 +119,30 @@ function Candidateform2() {
             <div className="OfferField">
               <label>Offer Status *</label>
 
-              {formData.offerStatus === "Accept" && (
-                <span className="ToggleActive">Accept</span>
-              )}
-
-              {formData.offerStatus === "Reject" && (
-                <span className="ToggleFail">Reject</span>
-              )}
-
-              {!formData.offerStatus && (
-                <span className="ToggleBtn">Pending</span>
-              )}
-            </div>
-
-            <div className="OfferField">
-              <label>Offer Letter *</label>
-              <input type="file" />
+              <div className="ToggleGroup">
+                <button
+                  type="button"
+                  className={
+                    formData.offerStatus === "ACCEPT" || formData.offerStatus === "Accept"
+                      ? "ToggleActive"
+                      : "ToggleBtn"
+                  }
+                  onClick={() => setFormData({ ...formData, offerStatus: "ACCEPT" })}
+                >
+                  Accept Offer
+                </button>
+                <button
+                  type="button"
+                  className={
+                    formData.offerStatus === "REJECT" || formData.offerStatus === "Reject"
+                      ? "ToggleFail"
+                      : "ToggleBtn"
+                  }
+                  onClick={() => setFormData({ ...formData, offerStatus: "REJECT" })}
+                >
+                  Reject Offer
+                </button>
+              </div>
             </div>
           </div>
         </div>

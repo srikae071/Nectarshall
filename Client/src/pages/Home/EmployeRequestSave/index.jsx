@@ -416,16 +416,15 @@ function EmployeRequestSave() {
         nextSt = "Offer Letter";
       }
     } else if (normStatus === "offerletter") {
-      if ((currentCand.offerLetterResult || formData.offerLetterResult) === "ACCEPT" || (currentCand.offerLetterResult || formData.offerLetterResult) === "PASS") {
+      const res = currentCand.offerLetterResult || formData.offerLetterResult;
+      if (res === "ACCEPT" || res === "PASS") {
         nextSt = "Pre Joining Compliance";
-        try {
-          await sendApiData(
-            `/api/jobrequests/send-candidate-form2/${formData.caseId}`,
-            {}
-          );
-        } catch (e) {
-          console.log("Candidate form 2 email error:", e);
-        }
+      } else if (res === "REJECT" || res === "FAIL") {
+        nextSt = "Closed";
+        alert("Candidate has declined the offer letter.");
+      } else {
+        alert("Candidate Offer Letter response is still PENDING. Waiting for candidate to Accept or Decline via Candidate Form 2 email.");
+        return;
       }
     } else if (normStatus === "prejoiningcompliance") {
       nextSt = "Resolved";
@@ -1597,32 +1596,39 @@ function EmployeRequestSave() {
 
                 <div className="BarrierRow" style={{ marginBottom: "14px" }}>
                   <label className="lr-label" style={{ fontWeight: "700" }}>Letter of Offer *</label>
-                  <div className="ToggleGroup">
-                    <button
-                      type="button"
-                      className={
+
+                  <span
+                    style={{
+                      fontSize: "13px",
+                      fontWeight: "800",
+                      padding: "6px 16px",
+                      borderRadius: "14px",
+                      background:
                         (currentCand.offerLetterResult || formData.offerLetterResult) === "ACCEPT" ||
                         (currentCand.offerLetterResult || formData.offerLetterResult) === "PASS"
-                          ? "ToggleActive"
-                          : "ToggleBtn"
-                      }
-                      onClick={() => handleCandDecision("offerLetterResult", "ACCEPT")}
-                    >
-                      ACCEPT
-                    </button>
-                    <button
-                      type="button"
-                      className={
-                        (currentCand.offerLetterResult || formData.offerLetterResult) === "REJECT" ||
+                          ? "#dcfce7"
+                          : (currentCand.offerLetterResult || formData.offerLetterResult) === "REJECT" ||
+                            (currentCand.offerLetterResult || formData.offerLetterResult) === "FAIL"
+                          ? "#fee2e2"
+                          : "#fef3c7",
+                      color:
+                        (currentCand.offerLetterResult || formData.offerLetterResult) === "ACCEPT" ||
+                        (currentCand.offerLetterResult || formData.offerLetterResult) === "PASS"
+                          ? "#15803d"
+                          : (currentCand.offerLetterResult || formData.offerLetterResult) === "REJECT" ||
+                            (currentCand.offerLetterResult || formData.offerLetterResult) === "FAIL"
+                          ? "#b91c1c"
+                          : "#b45309",
+                    }}
+                  >
+                    {(currentCand.offerLetterResult || formData.offerLetterResult) === "ACCEPT" ||
+                    (currentCand.offerLetterResult || formData.offerLetterResult) === "PASS"
+                      ? "ACCEPTED"
+                      : (currentCand.offerLetterResult || formData.offerLetterResult) === "REJECT" ||
                         (currentCand.offerLetterResult || formData.offerLetterResult) === "FAIL"
-                          ? "ToggleFail"
-                          : "ToggleBtn"
-                      }
-                      onClick={() => handleCandDecision("offerLetterResult", "REJECT")}
-                    >
-                      REJECT
-                    </button>
-                  </div>
+                      ? "DECLINED"
+                      : "PENDING"}
+                  </span>
                 </div>
 
                 <div className="OfferRow">
