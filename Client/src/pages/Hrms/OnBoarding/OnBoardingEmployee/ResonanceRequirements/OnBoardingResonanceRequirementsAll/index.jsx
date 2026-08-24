@@ -29,6 +29,7 @@ function OnBoardingResonanceRequirementsAll() {
   const navigate = useNavigate();
 
   const handleRowClick = (item) => {
+    sessionStorage.setItem("onboardingSource", "all");
     navigate(`/employee-request-save/${item._id}?source=all`);
   };
 

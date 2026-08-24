@@ -127,7 +127,7 @@ const isPathMatchingMenuItem = (menuItemPath, currentPath, searchStr = "") => {
   if (menuItemPath === currentPath) return true;
 
   const query = new URLSearchParams(searchStr);
-  const source = query.get("source");
+  const source = query.get("source") || sessionStorage.getItem("onboardingSource");
 
   // Detail page route alias matching for Onboarding
   if (currentPath.startsWith("/employee-request-save")) {
