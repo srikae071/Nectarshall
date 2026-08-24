@@ -125,19 +125,37 @@ exports.updateJobRequest = async (req, res) => {
 
 exports.updateJobRequestByCaseId = async (req, res) => {
   try {
-    const updated = await JobRequest.findOneAndUpdate(
-      { caseId: req.params.caseId },
-      req.body,
-      { new: true },
-    );
+    const request = await JobRequest.findOne({ caseId: req.params.caseId });
 
-    if (!updated) {
+    if (!request) {
       return res.status(404).json({
         message: "Record not found",
       });
     }
 
-    res.json(updated);
+    Object.assign(request, req.body);
+
+    if (req.body.offerStatus) {
+      request.offerLetterResult = req.body.offerStatus;
+    }
+
+    if (Array.isArray(request.candidates) && request.candidates.length > 0) {
+      request.candidates.forEach((cand) => {
+        if (req.body.offerStatus) cand.offerLetterResult = req.body.offerStatus;
+        if (req.body.bankName) cand.bankName = req.body.bankName;
+        if (req.body.bankAccount) cand.bankAccountName = req.body.bankAccount;
+        if (req.body.bsb) cand.bsb = req.body.bsb;
+        if (req.body.taxFileNumber) cand.tfn = req.body.taxFileNumber;
+        if (req.body.superFundName) cand.superFund = req.body.superFundName;
+        if (req.body.superMemberNumber) cand.superMemberNum = req.body.superMemberNumber;
+        if (req.body.longServiceLeaveId) cand.longServiceLeaveId = req.body.longServiceLeaveId;
+      });
+      request.markModified("candidates");
+    }
+
+    await request.save();
+
+    res.json(request);
   } catch (error) {
     res.status(500).json({
       message: error.message,

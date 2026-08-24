@@ -1767,11 +1767,6 @@ function EmployeRequestSave() {
             )}
             {normStatus !== "resolved" && (
               <div className="lr-actions">
-                {!formData.form1EmailSent && !formData.emailSent && (
-                  <button type="button" className="lr-btn-cancel" onClick={handleSendEmail}>
-                    Send Email
-                  </button>
-                )}
                 <button
                   type="button"
                   className="lr-btn-cancel"
