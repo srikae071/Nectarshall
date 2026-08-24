@@ -214,91 +214,47 @@ function AddEmployee() {
         </div>
 
         <div className="form-row">
-          <label className="form-label">Department *</label>
+          <label className="form-label">Department / Role *</label>
           <select
             className="form-input"
             name="department"
-            value={formData.department}
+            value={formData.subRole || formData.department}
             onChange={(e) => {
-              const dept = e.target.value;
-              let defaultSub = "";
-              if (dept === "HR") defaultSub = "HR Manager";
-              else if (dept === "Operations") defaultSub = "Operations Manager";
-              else if (dept === "Accounts") defaultSub = "Accounts Manager";
-              else if (dept === "IT") defaultSub = "IT Manager";
-              else if (dept === "CNC") defaultSub = "CNC Manager";
-              else if (dept === "Patrolling") defaultSub = "Patrolling Manager";
-              else if (dept === "Admin") defaultSub = "Admin";
+              const val = e.target.value;
+              let dept = val;
+              let sub = val;
+
+              if (val.startsWith("HR")) dept = "HR";
+              else if (val.startsWith("Operations")) dept = "Operations";
+              else if (val.startsWith("Accounts")) dept = "Accounts";
+              else if (val.startsWith("IT")) dept = "IT";
+              else if (val.startsWith("CNC")) dept = "CNC";
+              else if (val.startsWith("Patrolling")) dept = "Patrolling";
+              else if (val === "Admin") { dept = "Admin"; sub = "Admin"; }
 
               setFormData({
                 ...formData,
                 department: dept,
-                subRole: defaultSub,
+                subRole: sub,
               });
             }}
           >
-            <option value="">Select Department</option>
-            <option value="Admin">Admin (Full System Admin)</option>
-            <option value="HR">HR</option>
-            <option value="Operations">Operations</option>
-            <option value="Accounts">Accounts</option>
-            <option value="IT">IT</option>
-            <option value="CNC">CNC</option>
-            <option value="Patrolling">Patrolling</option>
+            <option value="">Select Department / Role</option>
+            <option value="Admin">Admin</option>
+            <option value="HR Manager">HR Manager</option>
+            <option value="HR Coordinator">HR Coordinator</option>
+            <option value="Operations Manager">Operations Manager</option>
+            <option value="Operations Coordinator">Operations Coordinator</option>
+            <option value="Accounts Manager">Accounts Manager</option>
+            <option value="Accounts Coordinator">Accounts Coordinator</option>
+            <option value="IT Manager">IT Manager</option>
+            <option value="IT Coordinator">IT Coordinator</option>
+            <option value="CNC Manager">CNC Manager</option>
+            <option value="CNC Coordinator">CNC Coordinator</option>
+            <option value="Patrolling Manager">Patrolling Manager</option>
+            <option value="Patrolling Coordinator">Patrolling Coordinator</option>
           </select>
         </div>
-
-        {formData.department && (
-          <div className="form-row">
-            <label className="form-label">Role Level / Sub-Role *</label>
-            <select
-              className="form-input"
-              name="subRole"
-              value={formData.subRole}
-              onChange={handleChange}
-            >
-              {formData.department === "Admin" && (
-                <option value="Admin">Admin</option>
-              )}
-              {formData.department === "HR" && (
-                <>
-                  <option value="HR Manager">HR Manager</option>
-                  <option value="HR Coordinator">HR Coordinator</option>
-                </>
-              )}
-              {formData.department === "Operations" && (
-                <>
-                  <option value="Operations Manager">Operations Manager</option>
-                  <option value="Operations Coordinator">Operations Coordinator</option>
-                </>
-              )}
-              {formData.department === "Accounts" && (
-                <>
-                  <option value="Accounts Manager">Accounts Manager</option>
-                  <option value="Accounts Coordinator">Accounts Coordinator</option>
-                </>
-              )}
-              {formData.department === "IT" && (
-                <>
-                  <option value="IT Manager">IT Manager</option>
-                  <option value="IT Coordinator">IT Coordinator</option>
-                </>
-              )}
-              {formData.department === "CNC" && (
-                <>
-                  <option value="CNC Manager">CNC Manager</option>
-                  <option value="CNC Coordinator">CNC Coordinator</option>
-                </>
-              )}
-              {formData.department === "Patrolling" && (
-                <>
-                  <option value="Patrolling Manager">Patrolling Manager</option>
-                  <option value="Patrolling Coordinator">Patrolling Coordinator</option>
-                </>
-              )}
-            </select>
-          </div>
-        )}
 
         <div className="form-row">
           <label className="form-label">Employee ID</label>
