@@ -138,6 +138,9 @@ import AccountsExpenditure from "./pages/Accounts/AccountsExpenditure";
 import AccountsReconciliation from "./pages/Accounts/AccountsReconciliation";
 import AccountsCustomerBilling from "./pages/Accounts/AccountsCustomerBilling";
 import AccountsOnboardingCandidates from "./pages/Accounts/AccountsOnboardingCandidates";
+import AccountsOnboardingRequest from "./pages/Accounts/AccountsOnboardingRequest";
+import AccountsOffboardingRequest from "./pages/Accounts/AccountsOffboardingRequest";
+import AccountsTaskSaves from "./pages/Accounts/AccountsTaskSaves";
 import AccountsEmployeeRateCard from "./pages/Accounts/AccountsEmployeeRateCard";
 import AccountsCustomerRateCard from "./pages/Accounts/AccountsCustomerRateCard";
 
@@ -591,6 +594,23 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route path="/accounts/onboarding-request/all" element={<ProtectedRoute><AccountsOnboardingRequest /></ProtectedRoute>} />
+      <Route path="/accounts/onboarding-request/createnew" element={<ProtectedRoute><OnBoardingResonanceRequirementsCreateNew /></ProtectedRoute>} />
+      <Route path="/accounts/onboarding-request/open" element={<ProtectedRoute><AccountsOnboardingRequest /></ProtectedRoute>} />
+      <Route path="/accounts/onboarding-request/wip" element={<ProtectedRoute><AccountsOnboardingRequest /></ProtectedRoute>} />
+      <Route path="/accounts/onboarding-request/pending" element={<ProtectedRoute><AccountsOnboardingRequest /></ProtectedRoute>} />
+      <Route path="/accounts/onboarding-request/resolved" element={<ProtectedRoute><AccountsOnboardingRequest /></ProtectedRoute>} />
+      <Route path="/accounts/onboarding-request/closed" element={<ProtectedRoute><AccountsOnboardingRequest /></ProtectedRoute>} />
+
+      <Route path="/accounts/offboarding-request/all" element={<ProtectedRoute><AccountsOffboardingRequest /></ProtectedRoute>} />
+      <Route path="/accounts/offboarding-request/createnew" element={<ProtectedRoute><Exit /></ProtectedRoute>} />
+      <Route path="/accounts/offboarding-request/open" element={<ProtectedRoute><AccountsOffboardingRequest /></ProtectedRoute>} />
+      <Route path="/accounts/offboarding-request/wip" element={<ProtectedRoute><AccountsOffboardingRequest /></ProtectedRoute>} />
+      <Route path="/accounts/offboarding-request/pending" element={<ProtectedRoute><AccountsOffboardingRequest /></ProtectedRoute>} />
+      <Route path="/accounts/offboarding-request/resolved" element={<ProtectedRoute><AccountsOffboardingRequest /></ProtectedRoute>} />
+      <Route path="/accounts/offboarding-request/closed" element={<ProtectedRoute><AccountsOffboardingRequest /></ProtectedRoute>} />
+
+      <Route path="/accounts/task-saves/:id" element={<ProtectedRoute><AccountsTaskSaves /></ProtectedRoute>} />
     </Routes>
     </AuthProvider>
   );

@@ -1,0 +1,6 @@
+.accountsReqContainer {
+  font-family: inherit;
+}
+.accountsReqContainer tr:hover {
+  background-color: #f8fafc;
+}
