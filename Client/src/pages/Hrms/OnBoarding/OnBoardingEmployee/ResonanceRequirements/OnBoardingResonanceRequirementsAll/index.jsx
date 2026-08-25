@@ -85,6 +85,7 @@ function OnBoardingResonanceRequirementsAll() {
         </div>
       </div>
     </HrmsLeftLayout>
+    
   );
 }
 

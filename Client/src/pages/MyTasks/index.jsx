@@ -26,11 +26,11 @@ function ApprovalTable() {
     try {
       const response = await fetchApiData("/api/jobrequests");
       const list = (response.data || []).filter(
-        (item) => item.category === "Offboarding" || item.category === "Exit"
+        (item) => item.category === "Offboarding" || item.category === "offboarding" || item.category === "Exit"
       );
       const { username, isAdmin } = getAuthDetails();
       if (isAdmin) {
-        setOffboardingData(list.filter((item) => item.status === "Open" || item.status === "Pending" || item.status === "Approved"));
+        setOffboardingData(list);
       } else if (username) {
         const u = username.toLowerCase();
         setOffboardingData(
@@ -100,7 +100,7 @@ function ApprovalTable() {
 
   const approveOffboarding = async (id) => {
     try {
-      await sendApiData(`/api/jobrequests/${id}`, { status: "Approved" }, "put");
+      await sendApiData(`/api/jobrequests/${id}`, { approvalStatus: "Approved", status: "Approved" }, "put");
       alert("Offboarding request approved successfully");
       fetchOffboarding();
     } catch (error) {
@@ -111,7 +111,7 @@ function ApprovalTable() {
 
   const deleteOffboarding = async (id) => {
     try {
-      await sendApiData(`/api/jobrequests/${id}`, { status: "Rejected" }, "put");
+      await sendApiData(`/api/jobrequests/${id}`, { approvalStatus: "Rejected", status: "Rejected" }, "put");
       alert("Offboarding request rejected/deleted");
       fetchOffboarding();
     } catch (error) {
@@ -326,11 +326,10 @@ function ApprovalTable() {
                     <th className="MyTaskTableHeader">Resignation Date</th>
                     <th className="MyTaskTableHeader">Last Working Day</th>
                     <th className="MyTaskTableHeader">Resignation Reason</th>
-                    <th className="MyTaskTableHeader">Approval Status</th>
                     <th className="MyTaskTableHeader">IT Clearance</th>
                     <th className="MyTaskTableHeader">Finance Clearance</th>
                     <th className="MyTaskTableHeader">Admin Clearance</th>
-                    {isAdmin && <th className="MyTaskTableHeader">Actions</th>}
+                    <th className="MyTaskTableHeader">Approval Status</th>
                   </tr>
                 </thead>
 
@@ -343,7 +342,8 @@ function ApprovalTable() {
                     const itBadge = getStatusBadgeStyle(itStatusVal);
                     const finBadge = getStatusBadgeStyle(finStatusVal);
                     const admBadge = getStatusBadgeStyle(admStatusVal);
-                    const appBadge = getStatusBadgeStyle(item.status);
+                    const appStatusVal = item.approvalStatus || (item.status === "Open" ? "Pending" : item.status || "Pending");
+                    const appBadge = getStatusBadgeStyle(appStatusVal);
 
                     return (
                       <tr className="MyTaskTableRow" key={item._id || idx}>
@@ -364,22 +364,6 @@ function ApprovalTable() {
                         </td>
 
                         <td className="MyTaskTableCell">{item.resignationReason || item.description || "-"}</td>
-
-                        {/* APPROVAL STATUS */}
-                        <td className="MyTaskTableCell MyTaskCenter">
-                          <span
-                            style={{
-                              padding: "4px 10px",
-                              borderRadius: "12px",
-                              fontWeight: "700",
-                              fontSize: "12px",
-                              background: appBadge.bg,
-                              color: appBadge.color,
-                            }}
-                          >
-                            {item.status === "Open" ? "Pending" : item.status || "Pending"}
-                          </span>
-                        </td>
 
                         {/* IT CLEARANCE STATUS */}
                         <td className="MyTaskTableCell MyTaskCenter">
@@ -444,19 +428,66 @@ function ApprovalTable() {
                           )}
                         </td>
 
-                        {/* ADMIN ACTIONS */}
-                        {isAdmin && (
-                          <td className="MyTaskTableCell MyTaskCenter">
-                            <div style={{ display: "flex", gap: "6px" }}>
-                              <button className="approve-btn" onClick={() => approveOffboarding(item._id)} style={{ padding: "4px 8px", fontSize: "11.5px" }}>
+                        {/* APPROVAL STATUS COLUMN AT THE END */}
+                        <td className="MyTaskTableCell MyTaskCenter">
+                          {appStatusVal === "Approved" ? (
+                            <span
+                              style={{
+                                padding: "4px 12px",
+                                borderRadius: "12px",
+                                fontWeight: "700",
+                                fontSize: "12px",
+                                background: "#dcfce7",
+                                color: "#166534",
+                              }}
+                            >
+                              Approved
+                            </span>
+                          ) : appStatusVal === "Rejected" ? (
+                            <span
+                              style={{
+                                padding: "4px 12px",
+                                borderRadius: "12px",
+                                fontWeight: "700",
+                                fontSize: "12px",
+                                background: "#fee2e2",
+                                color: "#991b1b",
+                              }}
+                            >
+                              Rejected
+                            </span>
+                          ) : isAdmin ? (
+                            <div style={{ display: "flex", gap: "6px", justifyContent: "center" }}>
+                              <button
+                                className="approve-btn"
+                                onClick={() => approveOffboarding(item._id)}
+                                style={{ padding: "4px 10px", fontSize: "12px", fontWeight: "600", borderRadius: "6px" }}
+                              >
                                 Approve
                               </button>
-                              <button className="delete-btn" onClick={() => deleteOffboarding(item._id)} style={{ padding: "4px 8px", fontSize: "11.5px" }}>
+                              <button
+                                className="delete-btn"
+                                onClick={() => deleteOffboarding(item._id)}
+                                style={{ padding: "4px 10px", fontSize: "12px", fontWeight: "600", borderRadius: "6px" }}
+                              >
                                 Reject
                               </button>
                             </div>
-                          </td>
-                        )}
+                          ) : (
+                            <span
+                              style={{
+                                padding: "4px 12px",
+                                borderRadius: "12px",
+                                fontWeight: "700",
+                                fontSize: "12px",
+                                background: "#fef3c7",
+                                color: "#92400e",
+                              }}
+                            >
+                              Pending
+                            </span>
+                          )}
+                        </td>
                       </tr>
                     );
                   })}

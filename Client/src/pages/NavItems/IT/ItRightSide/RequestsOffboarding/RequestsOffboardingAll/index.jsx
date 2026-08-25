@@ -40,10 +40,10 @@ function RequestsOffboardingAll({ filterStatus }) {
       if (activeFilterStatus) {
         const s = activeFilterStatus.toLowerCase().replace(/\s+/g, "");
         filtered = filtered.filter((item) => {
-          const tStatus = (item.taskStatus || item.ItTAskStatus || item.status || "Open")
+          const tStatus = (item.itStatus || item.itClearanceStatus || item.ItTAskStatus || item.taskStatus || "Open")
             .toLowerCase()
             .replace(/\s+/g, "");
-          return tStatus === s || tStatus.includes(s);
+          return tStatus === s || tStatus.includes(s) || (s === "workinprogress" && (tStatus === "wip" || tStatus.includes("progress")));
         });
       }
 
@@ -66,12 +66,12 @@ function RequestsOffboardingAll({ filterStatus }) {
           <table className="opentable">
             <thead>
               <tr className="opentablerow">
-                <th>Task / Case ID</th>
+                <th>Task ID</th>
                 <th>Requester</th>
                 <th>Resignation Date</th>
                 <th>Last Working Day</th>
                 <th>Resignation Reason</th>
-                <th>Task Status</th>
+                <th>IT Status</th>
               </tr>
             </thead>
 
@@ -83,12 +83,12 @@ function RequestsOffboardingAll({ filterStatus }) {
                     style={{ cursor: "pointer" }}
                     onClick={() => navigate(`/tasksaves/${item._id}`)}
                   >
-                    <td>{item.caseId || item.taskId || `TSK-${String(idx + 1).padStart(3, "0")}`}</td>
+                    <td>{item.taskId || `TSK-${String(idx + 1).padStart(3, "0")}`}</td>
                     <td>{item.requesterName || item.requester || "N/A"}</td>
                     <td>{item.resignationDate ? new Date(item.resignationDate).toLocaleDateString() : "N/A"}</td>
                     <td>{item.lastWorkingDay ? new Date(item.lastWorkingDay).toLocaleDateString() : "N/A"}</td>
                     <td>{item.resignationReason || item.description || "N/A"}</td>
-                    <td>{item.taskStatus || item.ItTAskStatus || "Open"}</td>
+                    <td>{item.itStatus || item.itClearanceStatus || item.ItTAskStatus || item.taskStatus || "Open"}</td>
                   </tr>
                 ))
               ) : (

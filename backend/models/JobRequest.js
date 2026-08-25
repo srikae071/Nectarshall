@@ -202,6 +202,10 @@ const JobRequestSchema = new mongoose.Schema(
     emailIdReceived: String,
     ItTAskStatus: String,
 
+    approvalStatus: {
+      type: String,
+      default: "Pending",
+    },
     itClearanceStatus: {
       type: String,
       default: "Open",

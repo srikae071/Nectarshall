@@ -93,8 +93,8 @@ function TaskSaves() {
           {/* HEADER DETAILS SECTION */}
           <div className="ITSRow">
             <div className="ITSField ITSTaskIdField">
-              <label>Case / Task ID</label>
-              <input value={formData.caseId || formData.taskId || ""} readOnly />
+              <label>Task ID</label>
+              <input value={formData.taskId || formData.caseId || ""} readOnly />
             </div>
 
             <div className="ITSField">
@@ -136,8 +136,8 @@ function TaskSaves() {
             </div>
 
             <div className="ITSField">
-              <label>Offboarding Status</label>
-              <input value={formData.status || "Approved"} readOnly />
+              <label>Approval Status</label>
+              <input value={formData.approvalStatus || (formData.status === "Open" ? "Pending" : formData.status || "Pending")} readOnly />
             </div>
           </div>
 
@@ -210,11 +210,19 @@ function TaskSaves() {
             </div>
 
             <div className="ITSField">
-              <label>Task Status</label>
+              <label>IT Status</label>
               <select
                 name="taskStatus"
-                value={formData.taskStatus || "Open"}
-                onChange={handleChange}
+                value={formData.taskStatus || formData.itStatus || "Open"}
+                onChange={(e) => {
+                  setFormData({
+                    ...formData,
+                    taskStatus: e.target.value,
+                    itStatus: e.target.value,
+                    itClearanceStatus: e.target.value,
+                    ItTAskStatus: e.target.value,
+                  });
+                }}
               >
                 <option value="Open">Open</option>
                 <option value="Work In Progress">Work In Progress</option>

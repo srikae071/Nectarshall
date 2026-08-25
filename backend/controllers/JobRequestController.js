@@ -8,18 +8,30 @@ exports.createJobRequest = async (req, res) => {
 
     // Generate Case ID
     const lastRecord = await JobRequest.findOne().sort({ caseId: -1 });
-
     let nextNumber = 1;
-
     if (lastRecord?.caseId) {
-      nextNumber = parseInt(lastRecord.caseId.replace("HRY", "")) + 1;
+      const numPart = lastRecord.caseId.replace(/\D/g, "");
+      if (numPart) nextNumber = parseInt(numPart) + 1;
     }
+    data.caseId = data.caseId || `HRY${String(nextNumber).padStart(3, "0")}`;
 
-    data.caseId = `HRY${String(nextNumber).padStart(3, "0")}`;
+    // Generate Task ID
+    if (!data.taskId) {
+      const lastTask = await JobRequest.findOne({ taskId: { $regex: "^TSK" } }).sort({ createdAt: -1 });
+      let nextTaskNum = 1;
+      if (lastTask && lastTask.taskId) {
+        const numPart = lastTask.taskId.replace(/\D/g, "");
+        if (numPart) nextTaskNum = parseInt(numPart) + 1;
+      }
+      data.taskId = `TSK${String(nextTaskNum).padStart(3, "0")}`;
+    }
 
     // Default values only if not provided
     data.status = data.status || "Pending";
-
+    data.approvalStatus = data.approvalStatus || "Pending";
+    data.itStatus = data.itStatus || "Open";
+    data.itClearanceStatus = data.itClearanceStatus || "Open";
+    data.ItTAskStatus = data.ItTAskStatus || "Open";
     data.category = data.category || "Employee Request";
     const savedRequest = await JobRequest.create(data);
 
