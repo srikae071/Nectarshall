@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import HrmsLeftLayout from "../../Hrmsleftlayout";
 import { fetchApiData, sendApiData } from "../../../../utils/apiClient";
+import AuditTimeline from "../../../../components/AuditTimeline";
 import axios from "axios";
 import "./index.css";
 
@@ -117,6 +118,16 @@ function OffBoardingSaves() {
   const finStatusVal = formData.financeClearanceStatus || formData.financeStatus || "Open";
   const hrStatusVal = formData.hrClearanceStatus || formData.hrStatus || "Open";
 
+  const isItResolved =
+    String(itStatusVal).toLowerCase() === "resolved" ||
+    String(itStatusVal).toLowerCase() === "closed";
+
+  const isFinanceResolved =
+    String(finStatusVal).toLowerCase() === "resolved" ||
+    String(finStatusVal).toLowerCase() === "closed";
+
+  const isTask3Visible = isItResolved && isFinanceResolved;
+
   return (
     <HrmsLeftLayout>
       <div className="OBSContainer">
@@ -194,22 +205,22 @@ function OffBoardingSaves() {
             <h3 className="OBSTaskHeading">Offboarding Clearance Tasks</h3>
 
             {/* TASK 1: IT CLEARANCE */}
-            <div className="OBSTaskCard" onClick={openITTask} style={{ cursor: "pointer" }}>
-              <div className="OBSTaskGrid">
+            <div className="OBSTaskCard" onClick={openITTask} style={{ cursor: "pointer", marginBottom: "16px" }}>
+              <div className="OBSTaskGrid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", alignItems: "center" }}>
                 <div className="OBSTaskInfo">
-                  <div className="OBSTaskTitle">Task 1 - IT Clearance</div>
+                  <div className="OBSTaskTitle" style={{ fontWeight: "700" }}>Task 1 - IT Clearance</div>
                 </div>
 
-                <div className="OBSTaskItem">
-                  <label>Status</label>
-                  <span className="OBSStatus" style={{ padding: "4px 10px", borderRadius: "12px", fontWeight: "700", fontSize: "12px", background: "#dbeafe", color: "#1e40af" }}>
+                <div className="OBSTaskItem" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                  <label style={{ fontSize: "12px", color: "#64748b", marginBottom: "4px" }}>Status</label>
+                  <span className="OBSStatus" style={{ padding: "4px 14px", borderRadius: "12px", fontWeight: "700", fontSize: "12px", background: "#dbeafe", color: "#1e40af", display: "inline-block" }}>
                     {itStatusVal}
                   </span>
                 </div>
 
-                <div className="OBSTaskItem">
-                  <label>Laptop Recovered</label>
-                  <span className="OBSTaskValue">
+                <div className="OBSTaskItem" style={{ textAlign: "right" }}>
+                  <label style={{ fontSize: "12px", color: "#64748b", display: "block" }}>Laptop Recovered</label>
+                  <span className="OBSTaskValue" style={{ fontWeight: "700", color: "#334155" }}>
                     {formData.laptopRecovered || "N/A"}
                   </span>
                 </div>
@@ -217,107 +228,126 @@ function OffBoardingSaves() {
             </div>
 
             {/* TASK 2: FINANCE / ACCOUNTS CLEARANCE */}
-            <div className="OBSTaskCard" onClick={openAccountsTask} style={{ cursor: "pointer" }}>
-              <div className="OBSTaskGrid">
+            <div className="OBSTaskCard" onClick={openAccountsTask} style={{ cursor: "pointer", marginBottom: "16px" }}>
+              <div className="OBSTaskGrid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", alignItems: "center" }}>
                 <div className="OBSTaskInfo">
-                  <div className="OBSTaskTitle">Task 2 - Finance Clearance</div>
+                  <div className="OBSTaskTitle" style={{ fontWeight: "700" }}>Task 2 - Finance Clearance</div>
                 </div>
 
-                <div className="OBSTaskItem">
-                  <label>Status</label>
-                  <span className="OBSStatus" style={{ padding: "4px 10px", borderRadius: "12px", fontWeight: "700", fontSize: "12px", background: "#fef3c7", color: "#92400e" }}>
+                <div className="OBSTaskItem" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                  <label style={{ fontSize: "12px", color: "#64748b", marginBottom: "4px" }}>Status</label>
+                  <span className="OBSStatus" style={{ padding: "4px 14px", borderRadius: "12px", fontWeight: "700", fontSize: "12px", background: "#fef3c7", color: "#92400e", display: "inline-block" }}>
                     {finStatusVal}
                   </span>
                 </div>
-              </div>
-            </div>
 
-            {/* TASK 3: HR CLEARANCE */}
-            <div
-              className="OBSTaskCard"
-              onClick={() => setShowHRForm(!showHRForm)}
-              style={{ cursor: "pointer", borderLeft: showHRForm ? "4px solid #2563eb" : "none" }}
-            >
-              <div className="OBSTaskGrid">
-                <div className="OBSTaskInfo">
-                  <div className="OBSTaskTitle">Task 3 - HR Clearance</div>
-                </div>
-
-                <div className="OBSTaskItem">
-                  <label>Status</label>
-                  <span className="OBSStatus" style={{ padding: "4px 10px", borderRadius: "12px", fontWeight: "700", fontSize: "12px", background: "#dcfce7", color: "#166534" }}>
-                    {hrStatusVal}
+                <div className="OBSTaskItem" style={{ textAlign: "right" }}>
+                  <span className="OBSTaskValue" style={{ fontWeight: "600", color: "#94a3b8", fontSize: "12px" }}>
+                    Accounts Clearance
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* HR CLEARANCE INLINE FORM CONTROLS */}
-            {showHRForm && (
-              <div style={{ background: "#f8fafc", borderRadius: "8px", border: "1px solid #cbd5e1", padding: "20px", marginTop: "16px" }}>
-                <h4 style={{ fontSize: "16px", fontWeight: "700", color: "#1e293b", marginBottom: "16px" }}>
-                  HR Clearance Form Controls
-                </h4>
+            {/* TASK 3: HR CLEARANCE (VISIBLE ONLY WHEN TASK 1 AND TASK 2 ARE RESOLVED/CLOSED) */}
+            {isTask3Visible && (
+              <>
+                <div
+                  className="OBSTaskCard"
+                  onClick={() => setShowHRForm(!showHRForm)}
+                  style={{ cursor: "pointer", borderLeft: showHRForm ? "4px solid #2563eb" : "none", marginBottom: "16px" }}
+                >
+                  <div className="OBSTaskGrid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", alignItems: "center" }}>
+                    <div className="OBSTaskInfo">
+                      <div className="OBSTaskTitle" style={{ fontWeight: "700" }}>Task 3 - HR Clearance</div>
+                    </div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
-                  <div>
-                    <label style={{ display: "block", fontSize: "13px", fontWeight: "700", color: "#475569", marginBottom: "6px" }}>Relieving Letter Issued</label>
-                    <select
-                      value={hrFormData.relievingLetterIssued}
-                      onChange={(e) => setHrFormData({ ...hrFormData, relievingLetterIssued: e.target.value })}
-                      style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
-                    >
-                      <option value="No">No</option>
-                      <option value="Yes">Yes</option>
-                    </select>
-                  </div>
+                    <div className="OBSTaskItem" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                      <label style={{ fontSize: "12px", color: "#64748b", marginBottom: "4px" }}>Status</label>
+                      <span className="OBSStatus" style={{ padding: "4px 14px", borderRadius: "12px", fontWeight: "700", fontSize: "12px", background: "#dcfce7", color: "#166534", display: "inline-block" }}>
+                        {hrStatusVal}
+                      </span>
+                    </div>
 
-                  <div>
-                    <label style={{ display: "block", fontSize: "13px", fontWeight: "700", color: "#475569", marginBottom: "6px" }}>Backup Hired</label>
-                    <select
-                      value={hrFormData.backupHired}
-                      onChange={(e) => setHrFormData({ ...hrFormData, backupHired: e.target.value })}
-                      style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
-                    >
-                      <option value="No">No</option>
-                      <option value="Yes">Yes</option>
-                    </select>
+                    <div className="OBSTaskItem" style={{ textAlign: "right" }}>
+                      <span className="OBSTaskValue" style={{ fontWeight: "600", color: "#94a3b8", fontSize: "12px" }}>
+                        HR Clearance
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                <div style={{ marginBottom: "20px" }}>
-                  <label style={{ display: "block", fontSize: "13px", fontWeight: "700", color: "#475569", marginBottom: "6px" }}>HR Clearance Status *</label>
-                  <select
-                    value={hrFormData.hrClearanceStatus}
-                    onChange={(e) => setHrFormData({ ...hrFormData, hrClearanceStatus: e.target.value })}
-                    style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontWeight: "700", fontSize: "14px" }}
-                  >
-                    <option value="Open">Open</option>
-                    <option value="Work In Progress">Work In Progress</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Resolved">Resolved</option>
-                    <option value="Closed">Closed</option>
-                  </select>
-                </div>
+                {/* HR CLEARANCE INLINE FORM CONTROLS */}
+                {showHRForm && (
+                  <div style={{ background: "#f8fafc", borderRadius: "8px", border: "1px solid #cbd5e1", padding: "20px", marginTop: "16px" }}>
+                    <h4 style={{ fontSize: "16px", fontWeight: "700", color: "#1e293b", marginBottom: "16px" }}>
+                      HR Clearance Form Controls
+                    </h4>
 
-                <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px" }}>
-                  <button
-                    onClick={() => setShowHRForm(false)}
-                    style={{ padding: "8px 16px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#ffffff", fontWeight: "600", cursor: "pointer" }}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleHRSave}
-                    style={{ padding: "8px 20px", borderRadius: "6px", border: "none", background: "#2563eb", fontWeight: "700", cursor: "pointer", color: "#ffffff" }}
-                  >
-                    Save HR Clearance Task
-                  </button>
-                </div>
-              </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
+                      <div>
+                        <label style={{ display: "block", fontSize: "13px", fontWeight: "700", color: "#475569", marginBottom: "6px" }}>Relieving Letter Issued</label>
+                        <select
+                          value={hrFormData.relievingLetterIssued}
+                          onChange={(e) => setHrFormData({ ...hrFormData, relievingLetterIssued: e.target.value })}
+                          style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
+                        >
+                          <option value="No">No</option>
+                          <option value="Yes">Yes</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label style={{ display: "block", fontSize: "13px", fontWeight: "700", color: "#475569", marginBottom: "6px" }}>Backup Hired</label>
+                        <select
+                          value={hrFormData.backupHired}
+                          onChange={(e) => setHrFormData({ ...hrFormData, backupHired: e.target.value })}
+                          style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
+                        >
+                          <option value="No">No</option>
+                          <option value="Yes">Yes</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div style={{ marginBottom: "20px" }}>
+                      <label style={{ display: "block", fontSize: "13px", fontWeight: "700", color: "#475569", marginBottom: "6px" }}>HR Clearance Status *</label>
+                      <select
+                        value={hrFormData.hrClearanceStatus}
+                        onChange={(e) => setHrFormData({ ...hrFormData, hrClearanceStatus: e.target.value })}
+                        style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontWeight: "700", fontSize: "14px" }}
+                      >
+                        <option value="Open">Open</option>
+                        <option value="Work In Progress">Work In Progress</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Resolved">Resolved</option>
+                        <option value="Closed">Closed</option>
+                      </select>
+                    </div>
+
+                    <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px" }}>
+                      <button
+                        onClick={() => setShowHRForm(false)}
+                        style={{ padding: "8px 16px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#ffffff", fontWeight: "600", cursor: "pointer" }}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleHRSave}
+                        style={{ padding: "8px 20px", borderRadius: "6px", border: "none", background: "#2563eb", fontWeight: "700", cursor: "pointer", color: "#ffffff" }}
+                      >
+                        Save HR Clearance Task
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}
+
+        {/* AUDIT TIMELINE LOG & TIMESTAMPS */}
+        <AuditTimeline data={formData} module="HRMS" />
       </div>
     </HrmsLeftLayout>
   );

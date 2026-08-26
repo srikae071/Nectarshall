@@ -235,6 +235,26 @@ const JobRequestSchema = new mongoose.Schema(
     adminStatus: String,
     hrStatus: String,
 
+    approvedAt: Date,
+    approvedBy: String,
+    itStatusUpdatedAt: Date,
+    itStatusUpdatedBy: String,
+    itDetailsUpdatedAt: Date,
+    financeStatusUpdatedAt: Date,
+    financeStatusUpdatedBy: String,
+    hrStatusUpdatedAt: Date,
+    hrStatusUpdatedBy: String,
+    timeline: [
+      {
+        action: String,
+        module: { type: String, default: "HRMS" },
+        performedBy: String,
+        timestamp: { type: Date, default: Date.now },
+        details: String,
+        status: String,
+      },
+    ],
+
     onboardingTaskId: {
       type: String,
       default: "",

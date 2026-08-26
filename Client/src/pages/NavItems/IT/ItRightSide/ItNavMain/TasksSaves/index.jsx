@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ItLeftSide from "../../../ItLeftSide";
 import { fetchApiData, sendApiData } from "../../../../../../utils/apiClient";
+import AuditTimeline from "../../../../../../components/AuditTimeline";
 import "./index.css";
 
 function TaskSaves() {
@@ -240,6 +241,9 @@ function TaskSaves() {
             </button>
           </div>
         </div>
+
+        {/* AUDIT TIMELINE LOG & TIMESTAMPS */}
+        <AuditTimeline data={formData} module="IT" />
       </div>
     </ItLeftSide>
   );

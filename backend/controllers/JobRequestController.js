@@ -33,6 +33,17 @@ exports.createJobRequest = async (req, res) => {
     data.itClearanceStatus = data.itClearanceStatus || "Open";
     data.ItTAskStatus = data.ItTAskStatus || "Open";
     data.category = data.category || "Employee Request";
+
+    // Initial timeline record
+    data.timeline = [
+      {
+        action: "Request Submitted",
+        performedBy: data.requesterName || data.requester || "System User",
+        timestamp: new Date(),
+        details: `Request created for category ${data.category}`,
+      },
+    ];
+
     const savedRequest = await JobRequest.create(data);
 
     res.status(201).json(savedRequest);
@@ -105,9 +116,110 @@ exports.updateJobRequest = async (req, res) => {
       });
     }
 
+    const now = new Date();
+    if (!Array.isArray(request.timeline)) {
+      request.timeline = [];
+    }
+
+    // 1. Approval Status Change
+    if (req.body.approvalStatus && req.body.approvalStatus !== request.approvalStatus) {
+      if (req.body.approvalStatus === "Approved") {
+        request.approvedAt = now;
+        request.approvedBy = req.body.approvedBy || "Admin";
+        request.timeline.push({
+          action: "Request Approved",
+          module: "HRMS",
+          performedBy: req.body.approvedBy || "Admin",
+          timestamp: now,
+          status: "Approved",
+          details: `Approval status updated to Approved`,
+        });
+      } else if (req.body.approvalStatus === "Rejected") {
+        request.timeline.push({
+          action: "Request Rejected",
+          module: "HRMS",
+          performedBy: req.body.approvedBy || "Admin",
+          timestamp: now,
+          status: "Rejected",
+          details: `Approval status updated to Rejected`,
+        });
+      }
+    }
+
+    // 2. IT Clearance Status Change
+    const newItStatus = req.body.itClearanceStatus || req.body.itStatus || req.body.ItTAskStatus;
+    const oldItStatus = request.itClearanceStatus || request.itStatus || request.ItTAskStatus;
+    if (newItStatus && newItStatus !== oldItStatus) {
+      request.itStatusUpdatedAt = now;
+      request.itStatusUpdatedBy = req.body.updatedBy || "IT Admin";
+      request.timeline.push({
+        action: `IT Clearance Status Changed`,
+        module: "IT",
+        performedBy: req.body.updatedBy || "IT Admin",
+        timestamp: now,
+        status: newItStatus,
+        details: `IT Clearance Status updated to "${newItStatus}"`,
+      });
+    }
+
+    // 3. IT Equipment Fields Update
+    if (
+      (req.body.laptopRecovered !== undefined && req.body.laptopRecovered !== request.laptopRecovered) ||
+      (req.body.laptopWorkingCondition !== undefined && req.body.laptopWorkingCondition !== request.laptopWorkingCondition) ||
+      (req.body.dataBackup !== undefined && req.body.dataBackup !== request.dataBackup) ||
+      (req.body.emailIdReceived !== undefined && req.body.emailIdReceived !== request.emailIdReceived)
+    ) {
+      request.itDetailsUpdatedAt = now;
+      request.timeline.push({
+        action: `IT Equipment Details Updated`,
+        module: "IT",
+        performedBy: req.body.updatedBy || "IT Specialist",
+        timestamp: now,
+        status: newItStatus || request.itClearanceStatus || request.itStatus || "Updated",
+        details: `Laptop Recovered: ${req.body.laptopRecovered ?? request.laptopRecovered ?? 'N/A'}, Condition: ${req.body.laptopWorkingCondition ?? request.laptopWorkingCondition ?? 'N/A'}, Data Backup: ${req.body.dataBackup ?? request.dataBackup ?? 'N/A'}, Email Received: ${req.body.emailIdReceived ?? request.emailIdReceived ?? 'N/A'}`,
+      });
+    }
+
+    // 4. Finance / Accounts Clearance Status Change
+    const newFinStatus = req.body.financeClearanceStatus || req.body.financeStatus;
+    const oldFinStatus = request.financeClearanceStatus || request.financeStatus;
+    if (newFinStatus && newFinStatus !== oldFinStatus) {
+      request.financeStatusUpdatedAt = now;
+      request.financeStatusUpdatedBy = req.body.updatedBy || "Finance Admin";
+      request.timeline.push({
+        action: `Finance Clearance Status Changed`,
+        module: "ACCOUNTS",
+        performedBy: req.body.updatedBy || "Finance Admin",
+        timestamp: now,
+        status: newFinStatus,
+        details: `Finance Clearance Status updated to "${newFinStatus}"`,
+      });
+    }
+
+    // 5. HR Clearance Status Change
+    const newHrStatus = req.body.hrClearanceStatus || req.body.hrStatus;
+    const oldHrStatus = request.hrClearanceStatus || request.hrStatus;
+    if (
+      (newHrStatus && newHrStatus !== oldHrStatus) ||
+      (req.body.relievingLetterIssued !== undefined && req.body.relievingLetterIssued !== request.relievingLetterIssued) ||
+      (req.body.backupHired !== undefined && req.body.backupHired !== request.backupHired)
+    ) {
+      request.hrStatusUpdatedAt = now;
+      request.hrStatusUpdatedBy = req.body.updatedBy || "HR Manager";
+      request.timeline.push({
+        action: `HR Clearance Updated`,
+        module: "HRMS",
+        performedBy: req.body.updatedBy || "HR Manager",
+        timestamp: now,
+        status: newHrStatus || request.hrClearanceStatus || "Updated",
+        details: `HR Clearance Status: "${newHrStatus || request.hrClearanceStatus || 'Open'}" (Relieving Letter: ${req.body.relievingLetterIssued ?? request.relievingLetterIssued ?? 'No'}, Backup Hired: ${req.body.backupHired ?? request.backupHired ?? 'No'})`,
+      });
+    }
+
     // Update all fields sent from frontend
     Object.assign(request, req.body);
     request.markModified("candidates");
+    request.markModified("timeline");
 
     // Generate Onboarding Task ID only when status becomes Resolved
     if (request.status === "Resolved" && !request.onboardingTaskId) {

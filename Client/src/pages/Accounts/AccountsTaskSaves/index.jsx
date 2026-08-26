@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import AccountsLayout from "../AccountsLayout";
 import { fetchApiData, sendApiData } from "../../../utils/apiClient";
+import AuditTimeline from "../../../components/AuditTimeline";
 import "./index.css";
 
 function AccountsTaskSaves() {
@@ -216,6 +217,9 @@ function AccountsTaskSaves() {
             </div>
           </div>
         )}
+
+        {/* AUDIT TIMELINE LOG & TIMESTAMPS */}
+        <AuditTimeline data={formData} module="ACCOUNTS" />
       </div>
     </AccountsLayout>
   );
