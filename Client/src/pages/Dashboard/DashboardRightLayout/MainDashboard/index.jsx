@@ -155,16 +155,18 @@ function MainDashboard() {
       try {
         const response = await fetchApiData("/api/BoardingCandidates");
         const candidates = extractArrayData(response.data);
-        const requesters = candidates
-          .map((item) => item.requester || item.companyName || item.clientName || item.customerName)
+        const companyNames = candidates
+          .map((item) => item.companyName || item.clientName || item.customerName || item.requester)
           .filter(Boolean)
           .map((name) => String(name).trim())
           .filter(Boolean);
 
-        setApiCustomers([
-          "All Customers",
-          ...new Set([...requesters, "Dell", "Microsoft", "Google", "Amazon"]),
-        ]);
+        const uniqueCompanies = Array.from(new Set(companyNames));
+        if (uniqueCompanies.length > 0) {
+          setApiCustomers(["All Customers", ...uniqueCompanies]);
+        } else {
+          setApiCustomers(["All Customers", "Dell", "Microsoft", "Google", "Amazon"]);
+        }
       } catch (error) {
         console.error("Error loading dashboard customers:", error);
         setApiCustomers(["All Customers", "Dell", "Microsoft", "Google", "Amazon"]);

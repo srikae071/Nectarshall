@@ -44,6 +44,7 @@ function OnBoardingCompliance() {
       contractId: "",
       siteName: "",
       siteAddress: "",
+      postalCode: "",
       siteManagerName: "",
       siteEmail: "",
       siteMobile: "",
@@ -360,7 +361,6 @@ function OnBoardingCompliance() {
                       <div className="deliverable-row">
                         <div className="deliverable-field">
                           <label>Contract ID</label>
-
                           <input
                             type="text"
                             name="contractId"
@@ -371,7 +371,6 @@ function OnBoardingCompliance() {
 
                         <div className="deliverable-field">
                           <label>Site Name</label>
-
                           <input
                             type="text"
                             name="siteName"
@@ -384,7 +383,6 @@ function OnBoardingCompliance() {
                       <div className="deliverable-row">
                         <div className="deliverable-field">
                           <label>Site Address</label>
-
                           <input
                             type="text"
                             name="siteAddress"
@@ -394,12 +392,11 @@ function OnBoardingCompliance() {
                         </div>
 
                         <div className="deliverable-field">
-                          <label>Site Manager Name</label>
-
+                          <label>Postal Code</label>
                           <input
                             type="text"
-                            name="siteManagerName"
-                            value={item.siteManagerName}
+                            name="postalCode"
+                            value={item.postalCode || item.sitePostalCode || ""}
                             onChange={(e) => handleDeliverableChange(index, e)}
                           />
                         </div>
@@ -407,8 +404,17 @@ function OnBoardingCompliance() {
 
                       <div className="deliverable-row">
                         <div className="deliverable-field">
-                          <label>Site Email ID</label>
+                          <label>Site Manager Name</label>
+                          <input
+                            type="text"
+                            name="siteManagerName"
+                            value={item.siteManagerName}
+                            onChange={(e) => handleDeliverableChange(index, e)}
+                          />
+                        </div>
 
+                        <div className="deliverable-field">
+                          <label>Site Email ID</label>
                           <input
                             type="email"
                             name="siteEmail"
@@ -416,44 +422,47 @@ function OnBoardingCompliance() {
                             onChange={(e) => handleDeliverableChange(index, e)}
                           />
                         </div>
-                        <div className="deliverable-field">
-                          <label>Contact Start Date</label>
+                      </div>
 
-                          <input
-                            type="text"
-                            name="siteMobile"
-                            value={item.ContractStartDate}
-                            onChange={(e) => handleDeliverableChange(index, e)}
-                          />
-                        </div>
-                        <div className="deliverable-field">
-                          <label>Contact End Date</label>
-
-                          <input
-                            type="text"
-                            name="siteMobile"
-                            value={item.ContractEndtDate}
-                            onChange={(e) => handleDeliverableChange(index, e)}
-                          />
-                        </div>
-                        <div className="deliverable-field">
-                          <label>Contact Valid Date</label>
-
-                          <input
-                            type="text"
-                            name="siteMobile"
-                            value={item.ContractValidDate}
-                            onChange={(e) => handleDeliverableChange(index, e)}
-                          />
-                        </div>
-
+                      <div className="deliverable-row">
                         <div className="deliverable-field">
                           <label>Site Mobile Number</label>
-
                           <input
                             type="text"
                             name="siteMobile"
                             value={item.siteMobile}
+                            onChange={(e) => handleDeliverableChange(index, e)}
+                          />
+                        </div>
+
+                        <div className="deliverable-field">
+                          <label>Contract Start Date</label>
+                          <input
+                            type="text"
+                            name="ContractStartDate"
+                            value={item.ContractStartDate}
+                            onChange={(e) => handleDeliverableChange(index, e)}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="deliverable-row">
+                        <div className="deliverable-field">
+                          <label>Contract End Date</label>
+                          <input
+                            type="text"
+                            name="ContractEndtDate"
+                            value={item.ContractEndtDate}
+                            onChange={(e) => handleDeliverableChange(index, e)}
+                          />
+                        </div>
+
+                        <div className="deliverable-field">
+                          <label>Contract Valid Date</label>
+                          <input
+                            type="text"
+                            name="ContractValidDate"
+                            value={item.ContractValidDate}
                             onChange={(e) => handleDeliverableChange(index, e)}
                           />
                         </div>
@@ -467,7 +476,7 @@ function OnBoardingCompliance() {
                             <label>
                               <input
                                 type="radio"
-                                name="contractState"
+                                name={`contractState-${index}`}
                                 value="Active"
                                 checked={item.contractState === "Active"}
                                 onChange={(e) =>
@@ -480,7 +489,7 @@ function OnBoardingCompliance() {
                             <label>
                               <input
                                 type="radio"
-                                name="contractState"
+                                name={`contractState-${index}`}
                                 value="Inactive"
                                 checked={item.contractState === "Inactive"}
                                 onChange={(e) =>

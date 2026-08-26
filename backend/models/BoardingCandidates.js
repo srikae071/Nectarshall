@@ -88,6 +88,16 @@ const BoardingCandidatesSchema = new mongoose.Schema(
           default: "",
         },
 
+        postalCode: {
+          type: String,
+          default: "",
+        },
+
+        sitePostalCode: {
+          type: String,
+          default: "",
+        },
+
         siteManagerName: {
           type: String,
           default: "",

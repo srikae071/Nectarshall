@@ -40,21 +40,29 @@ function OffBoardingSaves() {
     });
   };
 
-  const openITTask = async () => {
-    console.log("Clicked Task 1");
+  const [showHRForm, setShowHRForm] = useState(false);
+  const [hrFormData, setHrFormData] = useState({
+    relievingLetterIssued: "No",
+    backupHired: "No",
+    hrClearanceStatus: "Open",
+  });
 
-    try {
-      await sendApiData(
-        `/api/jobrequests/create-it-task/${id}`,
-        {}
-      );
-
-      console.log("Navigating to /hrreq-all");
-
-      navigate("/hrreq-all");
-    } catch (error) {
-      console.log(error);
+  useEffect(() => {
+    if (formData) {
+      setHrFormData({
+        relievingLetterIssued: formData.relievingLetterIssued || "No",
+        backupHired: formData.backupHired || "No",
+        hrClearanceStatus: formData.hrClearanceStatus || formData.hrStatus || "Open",
+      });
     }
+  }, [formData]);
+
+  const openITTask = () => {
+    navigate("/requests-offboarding-all");
+  };
+
+  const openAccountsTask = () => {
+    navigate("/accounts/offboarding-request/all");
   };
 
   const handleSave = async () => {
@@ -64,14 +72,51 @@ function OffBoardingSaves() {
         formData,
         "put"
       );
-
       alert("Saved Successfully");
-
       fetchData();
     } catch (error) {
       console.log(error);
     }
   };
+
+  const handleHRSave = async () => {
+    try {
+      const currentStatus = hrFormData.hrClearanceStatus || "Work In Progress";
+      const updatedData = {
+        ...formData,
+        relievingLetterIssued: hrFormData.relievingLetterIssued,
+        backupHired: hrFormData.backupHired,
+        hrClearanceStatus: currentStatus,
+        hrStatus: currentStatus,
+      };
+
+      await sendApiData(`/api/jobrequests/${id}`, updatedData, "put");
+      alert(`HR Clearance Task updated to "${currentStatus}"!`);
+
+      const s = currentStatus.toLowerCase();
+      if (s.includes("wip") || s.includes("work in progress")) {
+        navigate("/offboarding-wip");
+      } else if (s.includes("open")) {
+        navigate("/offboarding-open");
+      } else if (s.includes("closed")) {
+        navigate("/offboarding-closed");
+      } else if (s.includes("resolved")) {
+        navigate("/offboarding-resolved");
+      } else if (s.includes("pending")) {
+        navigate("/offboarding-pending");
+      } else {
+        navigate("/offboarding-employes-all");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error updating HR Clearance Task");
+    }
+  };
+
+  const itStatusVal = formData.itClearanceStatus || formData.ItTAskStatus || formData.itStatus || "Open";
+  const finStatusVal = formData.financeClearanceStatus || formData.financeStatus || "Open";
+  const hrStatusVal = formData.hrClearanceStatus || formData.hrStatus || "Open";
+
   return (
     <HrmsLeftLayout>
       <div className="OBSContainer">
@@ -80,8 +125,8 @@ function OffBoardingSaves() {
 
           <div className="OBSRow">
             <div className="OBSField">
-              <label>Case ID</label>
-              <input value={formData.caseId || ""} readOnly />
+              <label>Case ID / Task ID</label>
+              <input value={formData.caseId || formData.taskId || ""} readOnly />
             </div>
 
             <div className="OBSField">
@@ -123,15 +168,13 @@ function OffBoardingSaves() {
             </div>
 
             <div className="OBSField">
-              <label>Status</label>
-
-              <input type="text" value={formData.status || ""} readOnly />
+              <label>Approval Status</label>
+              <input type="text" value={formData.approvalStatus || (formData.status === "Open" ? "Pending" : formData.status || "Pending")} readOnly />
             </div>
           </div>
 
           <div className="OBSDescription">
             <label>Description</label>
-
             <textarea
               name="description"
               value={formData.description || ""}
@@ -146,11 +189,12 @@ function OffBoardingSaves() {
           </div>
         </div>
 
-        {formData.status === "Approved" && (
+        {(formData.status === "Approved" || formData.approvalStatus === "Approved" || formData.status === "Open" || true) && (
           <div className="OBSCard">
             <h3 className="OBSTaskHeading">Offboarding Clearance Tasks</h3>
 
-            <div className="OBSTaskCard" onClick={openITTask}>
+            {/* TASK 1: IT CLEARANCE */}
+            <div className="OBSTaskCard" onClick={openITTask} style={{ cursor: "pointer" }}>
               <div className="OBSTaskGrid">
                 <div className="OBSTaskInfo">
                   <div className="OBSTaskTitle">Task 1 - IT Clearance</div>
@@ -158,7 +202,9 @@ function OffBoardingSaves() {
 
                 <div className="OBSTaskItem">
                   <label>Status</label>
-                  <span className="OBSStatus">{formData.taskStatus}</span>
+                  <span className="OBSStatus" style={{ padding: "4px 10px", borderRadius: "12px", fontWeight: "700", fontSize: "12px", background: "#dbeafe", color: "#1e40af" }}>
+                    {itStatusVal}
+                  </span>
                 </div>
 
                 <div className="OBSTaskItem">
@@ -167,46 +213,106 @@ function OffBoardingSaves() {
                     {formData.laptopRecovered || "N/A"}
                   </span>
                 </div>
+              </div>
+            </div>
+
+            {/* TASK 2: FINANCE / ACCOUNTS CLEARANCE */}
+            <div className="OBSTaskCard" onClick={openAccountsTask} style={{ cursor: "pointer" }}>
+              <div className="OBSTaskGrid">
+                <div className="OBSTaskInfo">
+                  <div className="OBSTaskTitle">Task 2 - Finance Clearance</div>
+                </div>
 
                 <div className="OBSTaskItem">
-                  <label>Working Condition</label>
-                  <span className="OBSTaskValue">
-                    {formData.laptopWorkingCondition || "N/A"}
+                  <label>Status</label>
+                  <span className="OBSStatus" style={{ padding: "4px 10px", borderRadius: "12px", fontWeight: "700", fontSize: "12px", background: "#fef3c7", color: "#92400e" }}>
+                    {finStatusVal}
                   </span>
                 </div>
               </div>
             </div>
 
+            {/* TASK 3: HR CLEARANCE */}
             <div
               className="OBSTaskCard"
-              onClick={() => navigate(`/offboarding/finance-clearance/${id}`)}
+              onClick={() => setShowHRForm(!showHRForm)}
+              style={{ cursor: "pointer", borderLeft: showHRForm ? "4px solid #2563eb" : "none" }}
             >
               <div className="OBSTaskGrid">
                 <div className="OBSTaskInfo">
-                  <div className="OBSTaskTitle">Task 2 - Finance Clearance</div>
+                  <div className="OBSTaskTitle">Task 3 - HR Clearance</div>
+                </div>
+
+                <div className="OBSTaskItem">
+                  <label>Status</label>
+                  <span className="OBSStatus" style={{ padding: "4px 10px", borderRadius: "12px", fontWeight: "700", fontSize: "12px", background: "#dcfce7", color: "#166534" }}>
+                    {hrStatusVal}
+                  </span>
                 </div>
               </div>
             </div>
 
-            <div
-              className="OBSTaskCard"
-              onClick={() => navigate(`/offboarding/admin-clearance/${id}`)}
-            >
-              <div className="OBSTaskGrid">
-                <div className="OBSTaskInfo">
-                  <div className="OBSTaskTitle">Task 3 - Admin Clearance</div>
-                </div>
-              </div>
-            </div>
-            {formData.ItTAskStatus === "Closed" && (
-              <div
-                className="OBSTaskCard"
-                onClick={() => navigate(`/offboarding/hr-clearance/${id}`)}
-              >
-                <div className="OBSTaskGrid">
-                  <div className="OBSTaskInfo">
-                    <div className="OBSTaskTitle">Task 4 - HR Clearance</div>
+            {/* HR CLEARANCE INLINE FORM CONTROLS */}
+            {showHRForm && (
+              <div style={{ background: "#f8fafc", borderRadius: "8px", border: "1px solid #cbd5e1", padding: "20px", marginTop: "16px" }}>
+                <h4 style={{ fontSize: "16px", fontWeight: "700", color: "#1e293b", marginBottom: "16px" }}>
+                  HR Clearance Form Controls
+                </h4>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
+                  <div>
+                    <label style={{ display: "block", fontSize: "13px", fontWeight: "700", color: "#475569", marginBottom: "6px" }}>Relieving Letter Issued</label>
+                    <select
+                      value={hrFormData.relievingLetterIssued}
+                      onChange={(e) => setHrFormData({ ...hrFormData, relievingLetterIssued: e.target.value })}
+                      style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
+                    >
+                      <option value="No">No</option>
+                      <option value="Yes">Yes</option>
+                    </select>
                   </div>
+
+                  <div>
+                    <label style={{ display: "block", fontSize: "13px", fontWeight: "700", color: "#475569", marginBottom: "6px" }}>Backup Hired</label>
+                    <select
+                      value={hrFormData.backupHired}
+                      onChange={(e) => setHrFormData({ ...hrFormData, backupHired: e.target.value })}
+                      style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
+                    >
+                      <option value="No">No</option>
+                      <option value="Yes">Yes</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: "20px" }}>
+                  <label style={{ display: "block", fontSize: "13px", fontWeight: "700", color: "#475569", marginBottom: "6px" }}>HR Clearance Status *</label>
+                  <select
+                    value={hrFormData.hrClearanceStatus}
+                    onChange={(e) => setHrFormData({ ...hrFormData, hrClearanceStatus: e.target.value })}
+                    style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1", fontWeight: "700", fontSize: "14px" }}
+                  >
+                    <option value="Open">Open</option>
+                    <option value="Work In Progress">Work In Progress</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Resolved">Resolved</option>
+                    <option value="Closed">Closed</option>
+                  </select>
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px" }}>
+                  <button
+                    onClick={() => setShowHRForm(false)}
+                    style={{ padding: "8px 16px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#ffffff", fontWeight: "600", cursor: "pointer" }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleHRSave}
+                    style={{ padding: "8px 20px", borderRadius: "6px", border: "none", background: "#2563eb", fontWeight: "700", cursor: "pointer", color: "#ffffff" }}
+                  >
+                    Save HR Clearance Task
+                  </button>
                 </div>
               </div>
             )}

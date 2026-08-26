@@ -1185,6 +1185,15 @@ function OnBoardingSaves() {
                         </div>
 
                         <div className="deliverable-field">
+                          <label>Postal Code</label>
+                          <input
+                            name="postalCode"
+                            value={item.postalCode || item.sitePostalCode || ""}
+                            onChange={(e) => handleDeliverableChange(index, e)}
+                          />
+                        </div>
+
+                        <div className="deliverable-field">
                           <label>Site Manager Name</label>
                           <input
                             name="siteManagerName"
@@ -1194,7 +1203,7 @@ function OnBoardingSaves() {
                         </div>
 
                         <div className="deliverable-field">
-                          <label>Site Email</label>
+                          <label>Site Email ID</label>
                           <input
                             type="email"
                             name="siteEmail"
@@ -1214,7 +1223,6 @@ function OnBoardingSaves() {
 
                         <div className="deliverable-field">
                           <label>Contract State</label>
-
                           <div className="radio-group">
                             <label>
                               <input

@@ -16,17 +16,66 @@ function Navbar() {
 
   const getModuleLabel = () => {
     const p = location.pathname.toLowerCase();
-    if (p.includes("/accounts")) return "ACCOUNTS";
+
+    // 1. CNC Module Routes
+    if (
+      p.includes("/cnc") ||
+      p.includes("/client/onboarding-compliance") ||
+      p.includes("/client-complience") ||
+      p.includes("/onboaeding-complience") ||
+      p.includes("/onboarding-compliance") ||
+      p.includes("/supplier/onboardingcompilence") ||
+      p.includes("/onboarding-supplier") ||
+      p.includes("/offboarding-supplier") ||
+      p.includes("/onb") ||
+      p.includes("/business-engagement")
+    ) {
+      return "CNC";
+    }
+
+    // 2. ACCOUNTS Module Routes
+    if (p.includes("/accounts")) {
+      return "ACCOUNTS";
+    }
+
+    // 3. HRMS Module Routes
+    if (
+      p.includes("/hrms") ||
+      p.includes("/regular-form") ||
+      p.includes("/add-employee") ||
+      p.includes("/ask-for-hr") ||
+      p.includes("/onboarding") ||
+      p.includes("/offboarding") ||
+      p.includes("/candidate") ||
+      p.includes("/offerletter") ||
+      p.includes("/prejoining") ||
+      p.includes("/resonancereq") ||
+      p.includes("/employee-request-save")
+    ) {
+      return "HRMS";
+    }
+
+    // 4. IT Module Routes
+    if (p.includes("/it") || p.includes("/ask-for-it")) {
+      return "IT";
+    }
+
+    // 5. OPERATIONS Module Routes
     if (
       p.includes("/operations") ||
       p.includes("/timesheets") ||
       p.includes("/roster") ||
       p.includes("/main-dashboard") ||
-      p.includes("/client/onboarding-compliance")
-    )
+      p.includes("/schedule") ||
+      p.includes("/employe-sites") ||
+      p.includes("/reports") ||
+      p.includes("/incidents") ||
+      p.includes("/add-adhoc")
+    ) {
       return "OPERATIONS";
-    if (p.includes("/hrms") || p.includes("/ask-for-hr") || p.includes("/onboarding") || p.includes("/offboarding")) return "HRMS";
-    if (p.includes("/it") || p.includes("/ask-for-it")) return "IT";
+    }
+
+    // 6. Other Modules
     if (p.includes("/leave")) return "LEAVE MANAGEMENT";
     if (p.includes("/exit")) return "EXIT";
     if (p.includes("/my-tasks")) return "MY TASKS";
@@ -34,6 +83,8 @@ function Navbar() {
     if (p.includes("/my-mails")) return "MY MAILS";
     if (p.includes("/payroll")) return "PAYROLLS";
     if (p.includes("/organisation-policies")) return "ORGANIZATION POLICIES";
+    if (p.includes("/patrolling")) return "PATROLLING";
+
     return "";
   };
 
@@ -59,17 +110,9 @@ function Navbar() {
       >
         <img src={logo} alt="logo" className="logoimage" />
         {moduleLabel && (
-          <span
-            className="navbarModuleLabel"
-            style={{
-              fontSize: "15px",
-              fontWeight: "800",
-              letterSpacing: "1px",
-              textTransform: "uppercase",
-            }}
-          >
-            | {moduleLabel}
-          </span>
+          <div className="operationslogoname">
+            <p style={{ color: "#db3939", fontStyle: "italic" }}>{moduleLabel}</p>
+          </div>
         )}
       </div>
 

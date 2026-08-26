@@ -218,9 +218,22 @@ const JobRequestSchema = new mongoose.Schema(
       type: String,
       default: "Open",
     },
+    hrClearanceStatus: {
+      type: String,
+      default: "Open",
+    },
+    relievingLetterIssued: {
+      type: String,
+      default: "No",
+    },
+    backupHired: {
+      type: String,
+      default: "No",
+    },
     itStatus: String,
     financeStatus: String,
     adminStatus: String,
+    hrStatus: String,
 
     onboardingTaskId: {
       type: String,

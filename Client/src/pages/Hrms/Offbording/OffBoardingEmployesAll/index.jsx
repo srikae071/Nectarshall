@@ -42,10 +42,21 @@ function OffBoardingEmployesAll({ filterStatus }) {
       if (activeFilterStatus) {
         const s = activeFilterStatus.toLowerCase().replace(/\s+/g, "");
         filteredData = filteredData.filter((item) => {
-          const tStatus = (item.taskStatus || item.ItTAskStatus || item.status || "Open")
-            .toLowerCase()
-            .replace(/\s+/g, "");
-          return tStatus === s || tStatus.includes(s);
+          const statuses = [
+            item.hrStatus,
+            item.hrClearanceStatus,
+            item.itStatus,
+            item.itClearanceStatus,
+            item.financeStatus,
+            item.financeClearanceStatus,
+            item.taskStatus,
+            item.ItTAskStatus,
+            item.status,
+          ]
+            .filter(Boolean)
+            .map((st) => String(st).toLowerCase().replace(/\s+/g, ""));
+
+          return statuses.some((st) => st === s || st.includes(s) || (s === "workinprogress" && (st === "wip" || st.includes("progress"))));
         });
       }
 
