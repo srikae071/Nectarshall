@@ -161,8 +161,21 @@ const MenuItem = ({ item, level = 0, expandedMenus, setExpandedMenus }) => {
     </div>
   );
 };
+import { useAuth } from "../../../context/AuthContext";
+
 /* ================= MAIN LAYOUT ================= */
 function CncLeftLayout({ children }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { isEndUser } = useAuth();
+
+  useEffect(() => {
+    if (isEndUser && isEndUser()) {
+      alert("Access Restricted: End User role cannot access management modules.");
+      navigate("/");
+    }
+  }, [location.pathname]);
+
   const [openMenus, setOpenMenus] = useState(() => {
     const saved = localStorage.getItem("hrms-open-menus");
 

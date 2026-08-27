@@ -231,6 +231,7 @@ function AddEmployee() {
               else if (val.startsWith("CNC")) dept = "CNC";
               else if (val.startsWith("Patrolling")) dept = "Patrolling";
               else if (val === "Admin") { dept = "Admin"; sub = "Admin"; }
+              else if (val === "End User") { dept = "End User"; sub = "End User"; }
 
               setFormData({
                 ...formData,
@@ -241,6 +242,7 @@ function AddEmployee() {
           >
             <option value="">Select Department / Role</option>
             <option value="Admin">Admin</option>
+            <option value="End User">End User</option>
             <option value="HR Manager">HR Manager</option>
             <option value="HR Coordinator">HR Coordinator</option>
             <option value="Operations Manager">Operations Manager</option>

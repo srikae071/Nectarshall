@@ -310,9 +310,16 @@ const DashboardNavTabs = () => {
 function HrmsLeftLayout({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { hasHrOnboardingAccess, hasHrOffboardingAccess } = useAuth();
+  const { hasHrOnboardingAccess, hasHrOffboardingAccess, isEndUser } = useAuth();
   const [openMenus, setOpenMenus] = useState({});
   const [expandedMenus, setExpandedMenus] = useState({});
+
+  useEffect(() => {
+    if (isEndUser && isEndUser()) {
+      alert("Access Restricted: End User role cannot access management modules.");
+      navigate("/");
+    }
+  }, [location.pathname]);
 
   // Automatically expand parent section and child submenus for current active route
   useEffect(() => {

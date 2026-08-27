@@ -1,12 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Navbar from "../../../components/Navbar";
+import { useAuth } from "../../../context/AuthContext";
 import "./index.css";
 
 function AccountsLayout({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { isEndUser } = useAuth();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  useEffect(() => {
+    if (isEndUser && isEndUser()) {
+      alert("Access Restricted: End User role cannot access management modules.");
+      navigate("/");
+    }
+  }, [location.pathname]);
 
   // Expanded category dropdown states (default open based on active route)
   const [expandedCategories, setExpandedCategories] = useState({

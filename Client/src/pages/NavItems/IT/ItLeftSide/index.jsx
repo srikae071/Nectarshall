@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./index.css";
 import ItNavbar from "../../IT/ItNavBar";
+import { useAuth } from "../../../../context/AuthContext";
 
 const menuData = [
   {
@@ -124,11 +125,21 @@ const MenuItem = ({ item, level = 0, expandedMenus, setExpandedMenus }) => {
 
 /* ================= MAIN LAYOUT ================= */
 function ItLeftSide({ children }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { isEndUser } = useAuth();
   const [openMenus, setOpenMenus] = useState({
     0: true,
     1: true,
   });
   const [expandedMenus, setExpandedMenus] = useState({});
+
+  useEffect(() => {
+    if (isEndUser && isEndUser()) {
+      alert("Access Restricted: End User role cannot access management modules.");
+      navigate("/");
+    }
+  }, [location.pathname]);
 
   const toggle = (index) => {
     setOpenMenus((prev) => ({

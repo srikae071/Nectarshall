@@ -153,6 +153,14 @@ export const AuthProvider = ({ children }) => {
     );
   };
 
+  const isEndUser = (u = user) => {
+    if (!u) return false;
+    const sub = (u.subRole || "").trim().toUpperCase();
+    const dept = (u.department || "").trim().toUpperCase();
+    const role = (u.role || "").trim().toUpperCase();
+    return sub === "END USER" || dept === "END USER" || role === "END USER";
+  };
+
   const getSubRole = (u = user) => {
     if (!u) return "";
     if (checkIsAdmin(u)) return "Admin";
@@ -161,10 +169,10 @@ export const AuthProvider = ({ children }) => {
     return `${dept} Manager`;
   };
 
-  const hasHrOnboardingAccess = checkIsAdmin() || getSubRole() !== "HR Coordinator";
-  const hasHrOffboardingAccess = checkIsAdmin() || getSubRole() !== "HR Coordinator";
-  const hasOpsOnboardingClientAccess = checkIsAdmin() || getSubRole() !== "Operations Coordinator";
-  const hasAccountsOnboardingCandidateAccess = checkIsAdmin() || getSubRole() !== "Accounts Coordinator";
+  const hasHrOnboardingAccess = checkIsAdmin() || (getSubRole() !== "HR Coordinator" && !isEndUser());
+  const hasHrOffboardingAccess = checkIsAdmin() || (getSubRole() !== "HR Coordinator" && !isEndUser());
+  const hasOpsOnboardingClientAccess = checkIsAdmin() || (getSubRole() !== "Operations Coordinator" && !isEndUser());
+  const hasAccountsOnboardingCandidateAccess = checkIsAdmin() || (getSubRole() !== "Accounts Coordinator" && !isEndUser());
 
   const getUserDepartments = (u) => {
     if (!u) return [];
@@ -187,6 +195,12 @@ export const AuthProvider = ({ children }) => {
 
     // Admin sees EVERYTHING
     if (checkIsAdmin(user)) return true;
+
+    // End User CANNOT access module tabs (OPERATIONS, HRMS, CNC, ACCOUNTS, IT, CONSOLE, PATROLLING, etc.)
+    if (isEndUser(user)) {
+      if (["MY_TASK", "MY_TICKETS", "MY_MAILS"].includes(tabName)) return true;
+      return false;
+    }
 
     // CONSOLE tab is ONLY visible to Admin
     if (tabName === "CONSOLE") return false;
@@ -217,11 +231,12 @@ export const AuthProvider = ({ children }) => {
     // Business Engagement tile is ONLY visible to Admin
     if (tileKey === "BUSINESS_ENGAGEMENT") return false;
 
-    // All other tiles are visible to everyone
+    // All other tiles are visible to everyone (including End Users)
     return true;
   };
 
   const hasModuleAccess = (moduleName) => {
+    if (isEndUser(user)) return false;
     if (moduleName === "ALL") return hasTabAccess("ADMIN");
     return hasTabAccess(moduleName);
   };
@@ -237,6 +252,7 @@ export const AuthProvider = ({ children }) => {
         hasTileAccess,
         hasModuleAccess,
         checkIsAdmin,
+        isEndUser,
         getSubRole,
         hasHrOnboardingAccess,
         hasHrOffboardingAccess,
