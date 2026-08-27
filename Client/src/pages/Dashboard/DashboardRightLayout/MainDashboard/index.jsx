@@ -81,6 +81,81 @@ const incidentLogs = [
   }),
 ];
 
+const exportCsv = (filename, rows, columns) => {
+  const escapeCsvValue = (value) => `"${String(value ?? "").replace(/"/g, '""')}"`;
+  const csv = [
+    columns.map((column) => escapeCsvValue(column.label)).join(","),
+    ...rows.map((row, rowIndex) => columns.map((column) => escapeCsvValue(column.value(row, rowIndex))).join(",")),
+  ].join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(link.href);
+};
+
+const employeeCsvColumns = [
+  { label: "Employee ID", value: (employee) => employee.id },
+  { label: "Name", value: (employee) => employee.name },
+  { label: "Customer", value: (employee) => employee.customer },
+  { label: "Site", value: (employee) => employee.siteName || employee.site },
+  { label: "Role", value: (employee) => employee.role },
+  { label: "Shift", value: (employee) => employee.shiftTime || `${employee.start || ""} - ${employee.end || ""}` },
+  { label: "Status", value: (employee) => employee.clockedIn === undefined ? employee.status : employee.clockedIn ? "Clocked In" : "Offline" },
+];
+
+const incidentCsvColumns = [
+  { label: "Incident ID", value: (incident) => incident.id }, { label: "Customer", value: (incident) => incident.customer },
+  { label: "Location", value: (incident) => incident.location }, { label: "Incident Type", value: (incident) => incident.type },
+  { label: "Logged By", value: (incident) => incident.loggedBy }, { label: "Priority", value: (incident) => incident.priority },
+  { label: "Status", value: (incident) => incident.status }, { label: "Action Taken", value: (incident) => incident.action },
+  { label: "Logged On", value: (incident) => incident.loggedOn },
+];
+
+const candidateCsvColumns = [
+  { label: "Candidate ID", value: (candidate) => candidate.id }, { label: "Candidate", value: (candidate) => candidate.name },
+  { label: "Customer", value: (candidate) => candidate.customer }, { label: "Site", value: (candidate) => candidate.site },
+  { label: "Compliance", value: (candidate) => `${candidate.compliance}%` }, { label: "Documents", value: (candidate) => candidate.documents },
+  { label: "Background", value: (candidate) => candidate.background }, { label: "Pipeline Stage", value: (candidate) => candidate.status },
+  { label: "Age", value: (candidate) => `${candidate.days} days` },
+];
+
+const rosterCsvColumns = [
+  { label: "Employee", value: (employee) => employee.name }, { label: "Customer", value: (employee) => employee.customer },
+  { label: "Location", value: (employee) => employee.location }, { label: "Shifts", value: (employee) => employee.shifts },
+  { label: "Accepted", value: (employee) => employee.accepted }, { label: "Declined", value: (employee) => employee.declined },
+  { label: "Pending", value: (employee) => employee.pending }, { label: "Daily Hours", value: (employee) => employee.daily },
+  { label: "Weekly Hours", value: (employee) => employee.weekly }, { label: "Remaining Hours", value: (employee) => 38 - employee.weekly },
+  { label: "Status", value: (employee) => employee.status },
+];
+
+const ExportCsvButton = ({ filename, rows, columns = employeeCsvColumns }) => (
+  <button className="export-csv-btn" type="button" disabled={rows.length === 0} onClick={(event) => { event.stopPropagation(); exportCsv(filename, rows, columns); }}>
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 3v12" /><path d="m7 10 5 5 5-5" /><path d="M5 21h14" /></svg>
+    Export CSV
+  </button>
+);
+
+const onboardingCandidates = [
+  { id: "CND-8902", name: "Rahul Sharma", customer: "Dell", site: "Noida Sector 62", status: "Offer Sent", compliance: 98, background: "Pass", documents: "Complete", date: "24 Aug 2026", days: 2 },
+  { id: "CND-8905", name: "Arjun Singh", customer: "Microsoft", site: "Delhi Okhla Phase 3", status: "Form Submitted", compliance: 95, background: "Pass", documents: "Complete", date: "23 Aug 2026", days: 3 },
+  { id: "CND-8912", name: "Priya Nair", customer: "Google", site: "Gurugram Sector 48", status: "Interview", compliance: 72, background: "Pending", documents: "Missing 2", date: "22 Aug 2026", days: 4 },
+  { id: "CND-8916", name: "Vikram Mehta", customer: "Amazon", site: "Mumbai Office", status: "Compliance Review", compliance: 64, background: "Pending", documents: "Missing 1", date: "21 Aug 2026", days: 5 },
+  { id: "CND-8921", name: "Neha Kapoor", customer: "Dell", site: "Noida Site B", status: "Operations Review", compliance: 100, background: "Pass", documents: "Complete", date: "20 Aug 2026", days: 6 },
+  { id: "CND-8925", name: "Aman Verma", customer: "Microsoft", site: "Bangalore ORR", status: "Ready for Roster", compliance: 100, background: "Pass", documents: "Complete", date: "19 Aug 2026", days: 7 },
+  { id: "CND-8930", name: "Isha Roy", customer: "Google", site: "Delhi Dwarka", status: "Applied", compliance: 38, background: "Not Started", documents: "Missing 4", date: "18 Aug 2026", days: 8 },
+  { id: "CND-8934", name: "Karan Joshi", customer: "Amazon", site: "Noida Site A", status: "Rejected", compliance: 46, background: "Fail", documents: "Incomplete", date: "17 Aug 2026", days: 9 },
+  { id: "CND-8939", name: "Maya Thomas", customer: "Dell", site: "Gurugram Cybercity", status: "Offer Sent", compliance: 92, background: "Pass", documents: "Complete", date: "16 Aug 2026", days: 10 },
+  { id: "CND-8943", name: "Rohan Das", customer: "Microsoft", site: "Delhi Connaught Place", status: "Form Submitted", compliance: 89, background: "Pass", documents: "Complete", date: "15 Aug 2026", days: 11 },
+  { id: "CND-8948", name: "Sara Khan", customer: "Google", site: "Noida Sector 135", status: "Interview", compliance: 81, background: "Pending", documents: "Missing 1", date: "14 Aug 2026", days: 12 },
+  { id: "CND-8952", name: "Dev Patel", customer: "Amazon", site: "Bangalore Whitefield", status: "Operations Review", compliance: 96, background: "Pass", documents: "Complete", date: "13 Aug 2026", days: 13 },
+  { id: "CND-8957", name: "Anika Bose", customer: "Dell", site: "Delhi Okhla", status: "Ready for Roster", compliance: 100, background: "Pass", documents: "Complete", date: "12 Aug 2026", days: 14 },
+  { id: "CND-8961", name: "Manish Rao", customer: "Microsoft", site: "Noida Sector 144", status: "Compliance Review", compliance: 58, background: "Pending", documents: "Missing 3", date: "11 Aug 2026", days: 15 },
+  { id: "CND-8966", name: "Tara Iyer", customer: "Google", site: "Gurugram Site C", status: "Applied", compliance: 42, background: "Not Started", documents: "Missing 2", date: "10 Aug 2026", days: 16 },
+  { id: "CND-8970", name: "Yash Gupta", customer: "Amazon", site: "Mumbai Office", status: "Offer Sent", compliance: 94, background: "Pass", documents: "Complete", date: "09 Aug 2026", days: 17 },
+];
+
 function MainDashboard() {
   const context = useContext(EmployeeContext);
 
@@ -89,7 +164,13 @@ function MainDashboard() {
 
   const [apiCustomers, setApiCustomers] = useState([]);
   const [selectedCust, setSelectedCust] = useState("All Customers");
+  const [dateRange, setDateRange] = useState("last-7-days");
+  const [customStart, setCustomStart] = useState("");
+  const [customEnd, setCustomEnd] = useState("");
   const [selectedSiteName, setSelectedSiteName] = useState("");
+  const [selectedPinCode, setSelectedPinCode] = useState("");
+  const [hoveredSiteOverview, setHoveredSiteOverview] = useState("");
+  const [hoveredHoursLocation, setHoveredHoursLocation] = useState("");
   const [isCustDropdownOpen, setIsCustDropdownOpen] = useState(false);
   const [activeView, setActiveView] = useState("dashboard"); // "dashboard", "total-sites", "active-sites", "total-employees", "clocked-in", "site-schedule"
   const [incidentStatusFilter, setIncidentStatusFilter] = useState("All");
@@ -98,10 +179,15 @@ function MainDashboard() {
   const [rosterDetailType, setRosterDetailType] = useState("");
   const [selectedRosterEmployee, setSelectedRosterEmployee] = useState(null);
   const [hoveredRosterBar, setHoveredRosterBar] = useState("");
+  const [hoveredRosterDonut, setHoveredRosterDonut] = useState("");
+  const [rosterHoursFilter, setRosterHoursFilter] = useState("");
   const [incidentDetailType, setIncidentDetailType] = useState("");
   const [hoveredIncidentStatus, setHoveredIncidentStatus] = useState("");
   const [hoveredIncidentPriority, setHoveredIncidentPriority] = useState("");
   const [incidentMenuId, setIncidentMenuId] = useState("");
+  const [onboardingStatusFilter, setOnboardingStatusFilter] = useState("All");
+  const [hoveredOnboardingStatus, setHoveredOnboardingStatus] = useState("");
+  const [onboardingDetailType, setOnboardingDetailType] = useState("");
   
   // Pagination and Search State
   const [searchQuery, setSearchQuery] = useState("");
@@ -115,6 +201,43 @@ function MainDashboard() {
   const [currentDayStr, setCurrentDayStr] = useState("");
   const [greeting, setGreeting] = useState("Good morning");
   const [dateRangeStr, setDateRangeStr] = useState("");
+
+  const selectedDateBounds = useMemo(() => {
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+
+    if (dateRange === "custom") {
+      return {
+        start: customStart ? new Date(`${customStart}T00:00:00`) : null,
+        end: customEnd ? new Date(`${customEnd}T23:59:59`) : null,
+      };
+    }
+
+    const start = new Date(today);
+    start.setDate(today.getDate() - (dateRange === "last-month" ? 29 : 6));
+    start.setHours(0, 0, 0, 0);
+    return { start, end: today };
+  }, [dateRange, customStart, customEnd]);
+
+  const selectedDateLabel = useMemo(() => {
+    if (dateRange === "last-7-days") return "Last 7 Days";
+    if (dateRange === "last-month") return "Last 30 Days";
+    if (customStart && customEnd) return `${customStart} - ${customEnd}`;
+    return "Choose dates";
+  }, [dateRange, customStart, customEnd]);
+
+  const isDateInSelectedRange = (value) => {
+    const { start, end } = selectedDateBounds;
+    if (!start || !end || start > end) return false;
+    const date = value instanceof Date ? value : new Date(value);
+    return !Number.isNaN(date.getTime()) && date >= start && date <= end;
+  };
+
+  const selectedDateDays = useMemo(() => {
+    const { start, end } = selectedDateBounds;
+    if (!start || !end || start > end) return 0;
+    return Math.max(1, Math.floor((end - start) / 86400000) + 1);
+  }, [selectedDateBounds]);
 
   useEffect(() => {
     const today = new Date();
@@ -225,14 +348,6 @@ function MainDashboard() {
     return currentCustData.filter((item) => item.clockedIn > 0).length;
   }, [selectedCust, currentCustData]);
 
-  const totalEmployees = useMemo(() => {
-    return currentCustData.reduce((sum, item) => sum + item.totalEmployees, 0);
-  }, [currentCustData]);
-
-  const clockedIn = useMemo(() => {
-    return currentCustData.reduce((sum, item) => sum + item.clockedIn, 0);
-  }, [currentCustData]);
-
   const handleSiteClick = (siteName, customerName) => {
     const targetCust = customerName || selectedCust;
     setSelectedCust(targetCust);
@@ -245,8 +360,9 @@ function MainDashboard() {
     const size = 565.48; // Circumference for r=90
 
     return currentCustData.map((site) => {
-      const strokeDasharray = `${size}`;
-      const strokeDashoffset = `${size - (site.percentage / 100) * size}`;
+      const segmentLength = (site.percentage / 100) * size;
+      const strokeDasharray = `${segmentLength} ${size - segmentLength}`;
+      const strokeDashoffset = "0";
       const rotation = (accumulatedPercent / 100) * 360 - 90;
       
       const midAngle = rotation + (site.percentage / 100 * 360) / 2;
@@ -300,6 +416,8 @@ function MainDashboard() {
       for (let i = 0; i < site.totalEmployees; i++) {
         const empName = names[nameIdx % names.length] + ` (${(nameIdx + 1).toString().padStart(3, "0")})`;
         const isClockedIn = i < site.clockedIn;
+        const recordDate = new Date();
+        recordDate.setDate(recordDate.getDate() - (nameIdx % 45));
         list.push({
           id: `EMP-${nameIdx + 1000}`,
           name: empName,
@@ -311,6 +429,7 @@ function MainDashboard() {
           startTime: i % 2 === 0 ? "07:00 AM" : "03:00 PM",
           endTime: i % 2 === 0 ? "03:00 PM" : "11:00 PM",
           clockedIn: isClockedIn,
+          recordDate: `${recordDate.getFullYear()}-${String(recordDate.getMonth() + 1).padStart(2, "0")}-${String(recordDate.getDate()).padStart(2, "0")}`,
           actualClockIn: isClockedIn ? "07:02" : "-",
           actualClockOut: "-",
           coordinatorVerify: isClockedIn ? "✓ Verified" : "⚠️ Warning"
@@ -321,13 +440,61 @@ function MainDashboard() {
     return list;
   }, [currentCustData, selectedCust, fallbackData]);
 
+  const dateFilteredEmployees = useMemo(
+    () => employeesList.filter((employee) => isDateInSelectedRange(`${employee.recordDate}T12:00:00`)),
+    [employeesList, selectedDateBounds],
+  );
+
+  const totalEmployees = dateFilteredEmployees.length;
+  const clockedIn = dateFilteredEmployees.filter((employee) => employee.clockedIn).length;
+
+  const pinCodeWorkforce = useMemo(() => {
+    const groups = new Map();
+    dateFilteredEmployees.forEach((employee) => {
+      const pinCode = employee.address?.match(/\b\d{6}\b/)?.[0] || "000000";
+      const area = employee.address?.split("-")[0]?.trim() || employee.siteName;
+      const group = groups.get(pinCode) || {
+        pinCode,
+        area,
+        employees: 0,
+        clockedIn: 0,
+        sites: new Set(),
+        customers: new Set(),
+      };
+      group.employees += 1;
+      group.clockedIn += employee.clockedIn ? 1 : 0;
+      group.sites.add(employee.siteName);
+      group.customers.add(employee.customer);
+      groups.set(pinCode, group);
+    });
+
+    return [...groups.values()]
+      .map((group) => ({
+        ...group,
+        scheduled: group.employees - group.clockedIn,
+        siteCount: group.sites.size,
+        customerCount: group.customers.size,
+        coverage: group.employees ? Math.round((group.clockedIn / group.employees) * 100) : 0,
+      }))
+      .sort((a, b) => b.employees - a.employees);
+  }, [dateFilteredEmployees]);
+
+  const selectedPinEmployees = useMemo(() => dateFilteredEmployees.filter(
+    (employee) => (employee.address?.match(/\b\d{6}\b/)?.[0] || "000000") === selectedPinCode,
+  ), [dateFilteredEmployees, selectedPinCode]);
+
+  const openPinCodeDetails = (pinCode) => {
+    setSelectedPinCode(pinCode);
+    setActiveView("pin-code-employees");
+  };
+
   const siteEmployees = useMemo(() => {
-    return employeesList.filter(emp => {
+    return dateFilteredEmployees.filter(emp => {
       const matchSite = emp.siteName === selectedSiteName;
       const matchCust = selectedCust === "All Customers" ? true : emp.customer === selectedCust;
       return matchSite && matchCust;
     });
-  }, [employeesList, selectedSiteName, selectedCust]);
+  }, [dateFilteredEmployees, selectedSiteName, selectedCust]);
 
   const expandSites = (sites) => {
     const expanded = [];
@@ -358,13 +525,13 @@ function MainDashboard() {
   // Filtered and Paginated Employees
   const filteredEmployees = useMemo(() => {
     const query = searchQuery.toLowerCase();
-    return employeesList.filter(emp => 
+    return dateFilteredEmployees.filter(emp =>
       emp.name.toLowerCase().includes(query) || 
       emp.siteName.toLowerCase().includes(query) || 
       emp.customer.toLowerCase().includes(query) || 
       emp.role.toLowerCase().includes(query)
     );
-  }, [employeesList, searchQuery]);
+  }, [dateFilteredEmployees, searchQuery]);
 
   const paginatedEmployees = useMemo(() => {
     const start = (currentPage - 1) * PAGE_SIZE;
@@ -398,8 +565,11 @@ function MainDashboard() {
         loggedOn: `${24 - dayOffset} Aug 2026, ${String(8 + (index % 10)).padStart(2, "0")}:${String((index * 7) % 60).padStart(2, "0")} ${index % 2 ? "PM" : "AM"}`,
         trendDay: dayOffset,
       };
-    }).filter((incident) => selectedCust === "All Customers" || incident.customer === selectedCust);
-  }, [selectedCust]);
+    }).filter((incident) =>
+      (selectedCust === "All Customers" || incident.customer === selectedCust)
+      && isDateInSelectedRange(new Date(2026, 7, 24 - incident.trendDay)),
+    );
+  }, [selectedCust, selectedDateBounds]);
 
   const incidentKpis = useMemo(() => ({
     total: customerIncidentLogs.length,
@@ -492,6 +662,89 @@ function MainDashboard() {
         ? `${incidentDetailType.split(":")[1]} Cases`
         : "Incident Cases";
 
+  const filteredOnboardingCandidates = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    return onboardingCandidates.filter((candidate) => {
+      const matchesDate = isDateInSelectedRange(new Date(candidate.date));
+      const matchesCustomer = selectedCust === "All Customers" || candidate.customer === selectedCust;
+      const matchesStatus = onboardingStatusFilter === "All" || candidate.status === onboardingStatusFilter;
+      const matchesQuery = !query || Object.values(candidate).some((value) => String(value).toLowerCase().includes(query));
+      return matchesDate && matchesCustomer && matchesStatus && matchesQuery;
+    });
+  }, [searchQuery, selectedCust, selectedDateBounds, onboardingStatusFilter]);
+
+  const onboardingCustomerCandidates = useMemo(
+    () => onboardingCandidates.filter((candidate) =>
+      (selectedCust === "All Customers" || candidate.customer === selectedCust)
+      && isDateInSelectedRange(new Date(candidate.date)),
+    ),
+    [selectedCust, selectedDateBounds],
+  );
+
+  const onboardingKpis = useMemo(() => ({
+    total: onboardingCustomerCandidates.length,
+    active: onboardingCustomerCandidates.filter((candidate) => candidate.status !== "Rejected" && candidate.status !== "Ready for Roster").length,
+    ready: onboardingCustomerCandidates.filter((candidate) => candidate.status === "Ready for Roster").length,
+    missing: onboardingCustomerCandidates.filter((candidate) => candidate.documents !== "Complete").length,
+    ageing: onboardingCustomerCandidates.filter((candidate) => candidate.days > 7 && candidate.status !== "Ready for Roster").length,
+  }), [onboardingCustomerCandidates]);
+
+  const onboardingStatusData = useMemo(() => {
+    const statuses = [
+      { label: "Applied", color: "#64748b" }, { label: "Compliance Review", color: "#f97316" },
+      { label: "Interview", color: "#8b5cf6" }, { label: "Offer Sent", color: "#2563eb" },
+      { label: "Form Submitted", color: "#0ea5e9" }, { label: "Operations Review", color: "#f59e0b" },
+      { label: "Ready for Roster", color: "#10b981" }, { label: "Rejected", color: "#f43f5e" },
+    ];
+    return statuses.map((status) => ({
+      ...status,
+      value: onboardingCustomerCandidates.filter((candidate) => candidate.status === status.label).length,
+    })).filter((status) => status.value > 0);
+  }, [onboardingCustomerCandidates]);
+
+  const onboardingDonutSegments = useMemo(() => {
+    const circumference = 2 * Math.PI * 48;
+    let offset = 0;
+    return onboardingStatusData.map((item) => {
+      const dash = onboardingKpis.total ? (item.value / onboardingKpis.total) * circumference : 0;
+      const segment = { ...item, circumference, dash, offset: -offset };
+      offset += dash;
+      return segment;
+    });
+  }, [onboardingStatusData, onboardingKpis.total]);
+
+  const onboardingComplianceData = useMemo(() => [
+    { label: "Identity", value: Math.round(onboardingCustomerCandidates.reduce((sum, candidate) => sum + Math.min(candidate.compliance + 2, 100), 0) / Math.max(onboardingKpis.total, 1)), color: "#2563eb" },
+    { label: "Work Rights", value: Math.round(onboardingCustomerCandidates.reduce((sum, candidate) => sum + Math.min(candidate.compliance + 1, 100), 0) / Math.max(onboardingKpis.total, 1)), color: "#10b981" },
+    { label: "Licences", value: Math.round(onboardingCustomerCandidates.reduce((sum, candidate) => sum + candidate.compliance, 0) / Math.max(onboardingKpis.total, 1)), color: "#8b5cf6" },
+    { label: "Documents", value: Math.round(onboardingCustomerCandidates.reduce((sum, candidate) => sum + (candidate.documents === "Complete" ? 100 : candidate.compliance - 8), 0) / Math.max(onboardingKpis.total, 1)), color: "#f97316" },
+  ], [onboardingCustomerCandidates, onboardingKpis.total]);
+
+  const onboardingTrendData = useMemo(() => Array.from({ length: 7 }, (_, index) => ({
+    label: `${18 + index} Aug`,
+    value: onboardingCustomerCandidates.filter((candidate) => candidate.days >= 7 - index && candidate.days < 10 - index).length,
+  })), [onboardingCustomerCandidates]);
+
+  const onboardingTrendPoints = useMemo(() => {
+    const maxValue = Math.max(...onboardingTrendData.map((item) => item.value), 1);
+    return onboardingTrendData.map((item, index) => ({ ...item, x: 42 + index * 93, y: 185 - (item.value / maxValue) * 145 }));
+  }, [onboardingTrendData]);
+  const onboardingTrendPath = onboardingTrendPoints.map((point, index) => `${index === 0 ? "M" : "L"}${point.x} ${point.y}`).join(" ");
+
+  const openOnboardingDetails = (type) => {
+    setOnboardingDetailType(type);
+    setOnboardingStatusFilter(["total", "missing", "ageing"].includes(type) ? "All" : type);
+    setSearchQuery("");
+    setActiveView("onboarding-detail");
+  };
+
+  const onboardingDetailCandidates = useMemo(() => {
+    if (onboardingDetailType === "total") return onboardingCustomerCandidates;
+    if (onboardingDetailType === "missing") return onboardingCustomerCandidates.filter((candidate) => candidate.documents !== "Complete");
+    if (onboardingDetailType === "ageing") return onboardingCustomerCandidates.filter((candidate) => candidate.days > 7 && candidate.status !== "Ready for Roster");
+    return onboardingCustomerCandidates.filter((candidate) => candidate.status === onboardingDetailType);
+  }, [onboardingCustomerCandidates, onboardingDetailType]);
+
   const rosterEmployees = useMemo(() => {
     const rosterSourceData = selectedCust === "All Customers"
       ? ["Dell", "Microsoft", "Google", "Amazon"].flatMap((customer) =>
@@ -533,6 +786,13 @@ function MainDashboard() {
       const weekly = daily * 4 + (index % 3);
       const overDaily = daily > 8;
       const overWeekly = weekly > 38;
+      const rosterDate = new Date();
+      rosterDate.setDate(rosterDate.getDate() - (index % 45));
+      const rosterDateValue = [
+        rosterDate.getFullYear(),
+        String(rosterDate.getMonth() + 1).padStart(2, "0"),
+        String(rosterDate.getDate()).padStart(2, "0"),
+      ].join("-");
 
       return {
         ...employee,
@@ -543,20 +803,74 @@ function MainDashboard() {
         pending,
         daily,
         weekly,
+        rosterDate: rosterDateValue,
         status: overDaily || overWeekly ? "Hours exceeded" : pending > 0 ? "Pending review" : "On track",
       };
     });
   }, [fallbackData, selectedCust]);
 
+  const dateFilteredRosterEmployees = useMemo(() => {
+    const { start, end } = selectedDateBounds;
+    if (!start || !end || start > end) return [];
+    return rosterEmployees.filter((employee) => {
+      const rosterDate = new Date(`${employee.rosterDate}T12:00:00`);
+      return rosterDate >= start && rosterDate <= end;
+    });
+  }, [rosterEmployees, selectedDateBounds]);
+
   const filteredRosterEmployees = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
-    return rosterEmployees.filter((employee) => {
+    return dateFilteredRosterEmployees.filter((employee) => {
       const matchesQuery = !query || Object.values(employee).some((value) => String(value).toLowerCase().includes(query));
       const matchesStatus = rosterStatusFilter === "All"
         || (rosterStatusFilter === "Alerts" ? employee.daily > 8 || employee.weekly > 38 : employee.status === rosterStatusFilter);
-      return matchesQuery && matchesStatus;
+      const matchesHours = !rosterHoursFilter
+        || (rosterHoursFilter === "weekly-under" && employee.weekly > 0 && employee.weekly < 36)
+        || (rosterHoursFilter === "weekly-near" && employee.weekly >= 36 && employee.weekly < 38)
+        || (rosterHoursFilter === "weekly-over" && employee.weekly >= 38)
+        || (rosterHoursFilter === "weekly-none" && employee.weekly === 0)
+        || (rosterHoursFilter === "daily-under" && employee.daily > 0 && employee.daily < 8)
+        || (rosterHoursFilter === "daily-near" && employee.daily === 8)
+        || (rosterHoursFilter === "daily-over" && employee.daily > 8)
+        || (rosterHoursFilter === "daily-none" && employee.daily === 0);
+      return matchesQuery && matchesStatus && matchesHours;
     });
-  }, [rosterEmployees, searchQuery, rosterStatusFilter]);
+  }, [dateFilteredRosterEmployees, searchQuery, rosterStatusFilter, rosterHoursFilter]);
+
+  const rosterDonutData = useMemo(() => {
+    const buildSegments = (type) => {
+      const ranges = type === "weekly"
+        ? [
+            { key: "weekly-under", label: "Under 36h", color: "#48b982", matches: (employee) => employee.weekly > 0 && employee.weekly < 36 },
+            { key: "weekly-near", label: "36-37h", color: "#f5b82e", matches: (employee) => employee.weekly >= 36 && employee.weekly < 38 },
+            { key: "weekly-over", label: "38h and over", color: "#ef4444", matches: (employee) => employee.weekly >= 38 },
+            { key: "weekly-none", label: "No scheduled hours", color: "#cbd5e1", matches: (employee) => employee.weekly === 0 },
+          ]
+        : [
+            { key: "daily-under", label: "Under 8h", color: "#48b982", matches: (employee) => employee.daily > 0 && employee.daily < 8 },
+            { key: "daily-near", label: "At 8h", color: "#f5b82e", matches: (employee) => employee.daily === 8 },
+            { key: "daily-over", label: "Over 8h", color: "#ef4444", matches: (employee) => employee.daily > 8 },
+            { key: "daily-none", label: "No scheduled hours", color: "#cbd5e1", matches: (employee) => employee.daily === 0 },
+          ];
+      const total = dateFilteredRosterEmployees.length;
+      let offset = 0;
+      const circumference = 2 * Math.PI * 52;
+      return ranges.map((range) => {
+        const value = dateFilteredRosterEmployees.filter(range.matches).length;
+        const dash = total ? (value / total) * circumference : 0;
+        const segment = { ...range, value, dash, circumference, offset: -offset };
+        offset += dash;
+        return segment;
+      });
+    };
+
+    return {
+      weekly: buildSegments("weekly"),
+      daily: buildSegments("daily"),
+      weeklyExceptions: [...dateFilteredRosterEmployees].filter((employee) => employee.weekly > 38).sort((a, b) => b.weekly - a.weekly).slice(0, 5),
+      dailyExceptions: [...dateFilteredRosterEmployees].filter((employee) => employee.daily > 8).sort((a, b) => b.daily - a.daily).slice(0, 5),
+    };
+  }, [dateFilteredRosterEmployees]);
 
   const rosterPageSize = 6;
   const paginatedRosterEmployees = useMemo(() => {
@@ -565,13 +879,37 @@ function MainDashboard() {
   }, [filteredRosterEmployees, currentPage]);
 
   const rosterKpis = useMemo(() => ({
-    totalShifts: rosterEmployees.reduce((total, employee) => total + employee.shifts, 0),
-    acceptedShifts: rosterEmployees.reduce((total, employee) => total + employee.accepted, 0),
-    declinedShifts: rosterEmployees.reduce((total, employee) => total + employee.declined, 0),
-    openShifts: rosterEmployees.reduce((total, employee) => total + employee.pending, 0),
-    scheduledHours: rosterEmployees.reduce((total, employee) => total + employee.weekly, 0),
-  }), [rosterEmployees]);
+    totalShifts: dateFilteredRosterEmployees.reduce((total, employee) => total + employee.shifts, 0),
+    acceptedShifts: dateFilteredRosterEmployees.reduce((total, employee) => total + employee.accepted, 0),
+    declinedShifts: dateFilteredRosterEmployees.reduce((total, employee) => total + employee.declined, 0),
+    openShifts: dateFilteredRosterEmployees.reduce((total, employee) => total + employee.pending, 0),
+    scheduledHours: dateFilteredRosterEmployees.reduce((total, employee) => total + employee.weekly, 0),
+  }), [dateFilteredRosterEmployees]);
   const rosterStatusTotal = rosterKpis.acceptedShifts + rosterKpis.declinedShifts + rosterKpis.openShifts;
+
+  const overviewOperations = useMemo(() => {
+    const rosterFulfilment = rosterStatusTotal ? Math.round((rosterKpis.acceptedShifts / rosterStatusTotal) * 100) : 0;
+    const timesheetApproval = rosterKpis.totalShifts ? Math.round((rosterKpis.acceptedShifts / rosterKpis.totalShifts) * 100) : 0;
+    const criticalIncidents = customerIncidentLogs.filter((incident) => incident.priority === "Critical" && incident.status === "Open").length;
+    const highPendingIncidents = customerIncidentLogs.filter((incident) => incident.priority === "High" && incident.status === "Open").length;
+    const lowCoverageSites = currentCustData.filter((site) => site.totalEmployees && (site.clockedIn / site.totalEmployees) < 0.8).length;
+    const health = criticalIncidents > 0 || rosterFulfilment < 75 ? "Needs attention" : timesheetApproval < 85 || lowCoverageSites > 0 ? "Monitor closely" : "Operating well";
+    const healthTone = health === "Needs attention" ? "critical" : health === "Monitor closely" ? "watch" : "good";
+    const attention = [
+      ...customerIncidentLogs.filter((incident) => incident.status === "Open" && ["Critical", "High"].includes(incident.priority)).slice(0, 2).map((incident) => ({ tone: incident.priority === "Critical" ? "critical" : "high", label: "Incident", title: `${incident.priority} priority case at ${incident.location}`, detail: incident.id })),
+      ...(rosterKpis.openShifts > 0 ? [{ tone: "high", label: "Roster", title: `${rosterKpis.openShifts} shifts need assignment`, detail: "Open / Unassigned" }] : []),
+      ...(rosterKpis.declinedShifts > 0 ? [{ tone: "watch", label: "Roster", title: `${rosterKpis.declinedShifts} shifts were declined`, detail: "Declined Shifts" }] : []),
+      ...(onboardingKpis.missing > 0 ? [{ tone: "watch", label: "Onboarding", title: `${onboardingKpis.missing} candidates have missing documents`, detail: "Missing documents" }] : []),
+      ...(lowCoverageSites > 0 ? [{ tone: "watch", label: "Coverage", title: `${lowCoverageSites} site${lowCoverageSites === 1 ? " is" : "s are"} below 80% coverage`, detail: "Workforce coverage" }] : []),
+    ].slice(0, 5);
+    const commitments = [
+      ...(rosterKpis.openShifts > 0 ? [{ time: "Now", type: "Roster", text: `${rosterKpis.openShifts} open shifts require assignment` }] : []),
+      ...(onboardingKpis.ready > 0 ? [{ time: "This week", type: "Onboarding", text: `${onboardingKpis.ready} candidates ready for roster` }] : []),
+      ...(highPendingIncidents > 0 ? [{ time: "Today", type: "Incident", text: `${highPendingIncidents} high-priority incidents need review` }] : []),
+      { time: "Today", type: "Timesheets", text: `${Math.max(rosterKpis.totalShifts - rosterKpis.acceptedShifts, 0)} shift records await approval` },
+    ].slice(0, 4);
+    return { rosterFulfilment, timesheetApproval, criticalIncidents, highPendingIncidents, lowCoverageSites, health, healthTone, attention, commitments };
+  }, [rosterKpis, rosterStatusTotal, customerIncidentLogs, onboardingKpis, currentCustData]);
 
   const openRosterKpiDetails = (detailType) => {
     setRosterDetailType(detailType);
@@ -585,6 +923,26 @@ function MainDashboard() {
     setActiveView("roster-employee-detail");
   };
 
+  const openOverviewModule = (module, detail = "") => {
+    if (module === "Overview") {
+      setActiveView(detail === "coverage" ? "active-sites" : "clocked-in");
+      return;
+    }
+    if (module === "Incidents") {
+      setIncidentStatusFilter(detail === "open" || detail === "high" ? "Open" : "All");
+      setIncidentPriorityFilter(detail === "critical" ? "Critical" : detail === "high" ? "High" : "All");
+    }
+    if (module === "Onboarding Candidate") {
+      setOnboardingStatusFilter(detail === "ready" ? "Ready for Roster" : "All");
+    }
+    if (module === "Roster") {
+      setRosterStatusFilter(detail === "declined" ? "All" : detail === "hours" ? "Alerts" : "All");
+    }
+    setSearchQuery("");
+    setActiveView("dashboard");
+    navigate(`${location.pathname}?tab=${encodeURIComponent(module)}`);
+  };
+
   const rosterDetailConfig = {
     totalShifts: { title: "Total Shifts", value: (employee) => employee.shifts, description: "Scheduled shifts by employee" },
     acceptedShifts: { title: "Accepted Shifts", value: (employee) => employee.accepted, description: "Employees with accepted shifts" },
@@ -595,13 +953,13 @@ function MainDashboard() {
 
   const activeRosterDetail = rosterDetailConfig[rosterDetailType];
   const rosterDetailEmployees = activeRosterDetail
-    ? rosterEmployees.filter((employee) => rosterDetailType === "totalShifts" || activeRosterDetail.value(employee) > 0)
+    ? dateFilteredRosterEmployees.filter((employee) => rosterDetailType === "totalShifts" || activeRosterDetail.value(employee) > 0)
     : [];
 
   // Reset pagination when search or customer changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, selectedCust, activeTab, incidentStatusFilter, incidentPriorityFilter, rosterStatusFilter, incidentDetailType]);
+  }, [searchQuery, selectedCust, activeTab, selectedDateBounds, incidentStatusFilter, incidentPriorityFilter, rosterStatusFilter, rosterHoursFilter, incidentDetailType, onboardingStatusFilter, onboardingDetailType]);
 
   // Reset activeView to dashboard when the top tab is switched
   useEffect(() => {
@@ -620,7 +978,7 @@ function MainDashboard() {
         <div className="dashboard-header-controls">
           <div className="customer-selector-card">
             <label className="selector-label">Select Customer</label>
-            <div className="select-wrapper">
+              <div className="select-wrapper">
               <div 
                 className={`custom-select-trigger ${isCustDropdownOpen ? "open" : ""}`} 
                 onClick={() => setIsCustDropdownOpen(!isCustDropdownOpen)}
@@ -645,9 +1003,28 @@ function MainDashboard() {
                     </div>
                   ))}
                 </div>
+                )}
+              </div>
+              {["Overview", "Timesheets", "Incidents", "Onboarding Candidate", "Roster"].includes(activeTab) && (
+                <div className="roster-date-filter">
+                  <label className="selector-label" htmlFor="dashboard-date-range">Date Range</label>
+                  <div className="roster-date-select-wrap">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2" /><path d="M8 2v4M16 2v4M3 10h18" /></svg>
+                    <select id="dashboard-date-range" value={dateRange} onChange={(event) => setDateRange(event.target.value)}>
+                      <option value="last-7-days">Last 7 Days</option>
+                      <option value="last-month">Last 30 Days</option>
+                      <option value="custom">Custom Date</option>
+                    </select>
+                  </div>
+                  {dateRange === "custom" && (
+                    <div className="roster-custom-dates">
+                      <label><span>From</span><input type="date" value={customStart} max={customEnd || undefined} onChange={(event) => setCustomStart(event.target.value)} /></label>
+                      <label><span>To</span><input type="date" value={customEnd} min={customStart || undefined} onChange={(event) => setCustomEnd(event.target.value)} /></label>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
-          </div>
 
           {/* WELCOME BANNER WITH DYNAMIC DATES */}
           <div className="welcome-banner-card">
@@ -767,7 +1144,7 @@ function MainDashboard() {
               <div className="metric-info">
                 <span className="metric-label">Total Employees</span>
                 <span className="metric-value font-number">{totalEmployees}</span>
-                <span className="metric-sub">Across all sites</span>
+                <span className="metric-sub">{selectedDateLabel}</span>
               </div>
               <div className="metric-sparkline">
                 {drawSparkline("#8b5cf6")}
@@ -788,7 +1165,7 @@ function MainDashboard() {
               <div className="metric-info">
                 <span className="metric-label">Clocked In</span>
                 <span className="metric-value font-number">{clockedIn}</span>
-                <span className="metric-sub">Right now</span>
+                <span className="metric-sub">Clocked in · {selectedDateLabel}</span>
               </div>
               <div className="metric-sparkline">
                 {drawSparkline("#f97316")}
@@ -796,11 +1173,72 @@ function MainDashboard() {
             </div>
           </div>
 
+          <section className="ops-health-strip">
+            <div className={`ops-health-lead ${overviewOperations.healthTone}`}>
+              <span className="ops-health-pulse" />
+              <div><small>Operational health</small><strong>{overviewOperations.health}</strong></div>
+            </div>
+            {[
+              ["Workforce coverage", `${totalEmployees ? Math.round((clockedIn / totalEmployees) * 100) : 0}%`, `${clockedIn} of ${totalEmployees} clocked in`, "green"],
+              ["Timesheet approval", `${overviewOperations.timesheetApproval}%`, `${Math.max(rosterKpis.totalShifts - rosterKpis.acceptedShifts, 0)} records pending`, "blue"],
+              ["Incident risk", overviewOperations.criticalIncidents, overviewOperations.criticalIncidents ? "Critical cases open" : "No critical cases", overviewOperations.criticalIncidents ? "red" : "green"],
+              ["Roster fulfilment", `${overviewOperations.rosterFulfilment}%`, `${rosterKpis.openShifts} shifts unassigned`, "purple"],
+              ["Roster ready", onboardingKpis.ready, `${onboardingKpis.active} candidates in progress`, "orange"],
+            ].map(([label, value, note, tone], index) => <button className="ops-health-metric" type="button" key={label} onClick={() => openOverviewModule(["Overview","Timesheets","Incidents","Roster","Onboarding Candidate"][index], index === 0 ? "workforce" : "")}><i className={`ops-health-icon ${tone}`} /><span>{label}</span><strong>{value}</strong><small>{note}</small></button>)}
+          </section>
+
+          <section className="ops-attention-card">
+            <div className="ops-section-heading">
+              <div><span className="ops-section-kicker">Priority control</span><h3>Operations Attention Queue</h3><p>Highest-impact exceptions requiring action across all operational modules.</p></div>
+              <div className="ops-attention-count"><strong>{overviewOperations.attention.length}</strong><span>items to review</span></div>
+            </div>
+            <div className="ops-attention-list">
+              {overviewOperations.attention.map((item, index) => <button className="ops-attention-row" type="button" key={`${item.label}-${item.title}`} onClick={() => openOverviewModule(item.label === "Incident" ? "Incidents" : item.label === "Onboarding" ? "Onboarding Candidate" : item.label === "Roster" ? "Roster" : "Overview", item.label === "Incident" ? (item.tone === "critical" ? "critical" : "high") : item.label === "Coverage" ? "coverage" : item.detail.toLowerCase().includes("declined") ? "declined" : "")}><span className={`ops-priority-marker ${item.tone}`}>{String(index + 1).padStart(2,"0")}</span><span className="ops-attention-module">{item.label}</span><div><strong>{item.title}</strong><small>{item.detail} · {selectedCust}</small></div><span className={`ops-priority-label ${item.tone}`}>{item.tone === "critical" ? "Critical" : item.tone === "high" ? "High" : "Review"}</span></button>)}
+              {overviewOperations.attention.length === 0 && <div className="ops-attention-empty"><strong>Operations are clear</strong><span>No priority exceptions require action for the selected period.</span></div>}
+            </div>
+          </section>
+
+          <div className="ops-snapshot-grid">
+            <section className="ops-snapshot-card ops-snapshot-timesheets" role="button" tabIndex="0" onClick={() => openOverviewModule("Timesheets")} onKeyDown={(event) => event.key === "Enter" && openOverviewModule("Timesheets")}>
+              <div className="ops-snapshot-header"><div className="ops-snapshot-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 2v4M16 2v4M3 10h18"/><rect x="3" y="4" width="18" height="17" rx="2"/><path d="m9 15 2 2 4-4"/></svg></div><div><span>Timesheets</span><h3>Compliance Snapshot</h3></div><strong>{overviewOperations.timesheetApproval}%</strong></div>
+              <p>Share of scheduled shift records accepted for the selected period.</p>
+              <div className="ops-segment-bar"><i className="approved" style={{width:`${overviewOperations.timesheetApproval}%`}}/><i className="pending" style={{width:`${Math.max(100-overviewOperations.timesheetApproval,0)}%`}}/></div>
+              <div className="ops-stat-pair"><span><b>{rosterKpis.acceptedShifts}</b>Approved</span><span><b>{Math.max(rosterKpis.totalShifts-rosterKpis.acceptedShifts,0)}</b>Awaiting review</span><span><b>{rosterKpis.declinedShifts}</b>Declined</span></div>
+              <div className="ops-snapshot-foot"><span className={overviewOperations.timesheetApproval >= 90 ? "good" : "watch"}>{overviewOperations.timesheetApproval >= 90 ? "Approval SLA on track" : "Approval follow-up required"}</span><small>Target 90%</small></div>
+            </section>
+
+            <section className="ops-snapshot-card ops-snapshot-incidents" role="button" tabIndex="0" onClick={() => openOverviewModule("Incidents", "open")} onKeyDown={(event) => event.key === "Enter" && openOverviewModule("Incidents", "open")}>
+              <div className="ops-snapshot-header"><div className="ops-snapshot-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.3 3.4 2.5 17a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 3.4a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg></div><div><span>Incidents</span><h3>Risk Snapshot</h3></div><strong>{incidentKpis.open}</strong></div>
+              <p>Open operational cases, prioritized by severity and urgency.</p>
+              <div className="ops-risk-scale">{incidentPriorityData.map((item) => <span key={item.label}><i style={{height:`${Math.max((item.value/Math.max(...incidentPriorityData.map(entry=>entry.value),1))*52,5)}px`,background:item.color}}/><b>{item.value}</b><small>{item.label}</small></span>)}</div>
+              <div className="ops-snapshot-foot"><span className={overviewOperations.criticalIncidents ? "critical" : "good"}>{overviewOperations.criticalIncidents ? `${overviewOperations.criticalIncidents} critical cases open` : "No critical cases open"}</span><small>{incidentKpis.resolved} resolved</small></div>
+            </section>
+
+            <section className="ops-snapshot-card ops-snapshot-onboarding" role="button" tabIndex="0" onClick={() => openOverviewModule("Onboarding Candidate")} onKeyDown={(event) => event.key === "Enter" && openOverviewModule("Onboarding Candidate")}>
+              <div className="ops-snapshot-header"><div className="ops-snapshot-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="7" r="4"/><path d="M2 21c.8-4 3-6 7-6s6.2 2 7 6M17 11h5M19.5 8.5v5"/></svg></div><div><span>Onboarding</span><h3>Pipeline Snapshot</h3></div><strong>{onboardingKpis.ready}</strong></div>
+              <p>Candidates progressing toward operational roster readiness.</p>
+              <div className="ops-pipeline"><span><b>{onboardingKpis.total}</b><small>Total</small></span><i/><span><b>{onboardingKpis.active}</b><small>In progress</small></span><i/><span className="ready"><b>{onboardingKpis.ready}</b><small>Roster ready</small></span></div>
+              <div className="ops-snapshot-foot"><span className={onboardingKpis.missing ? "watch" : "good"}>{onboardingKpis.missing ? `${onboardingKpis.missing} missing documents` : "Documents complete"}</span><small>{onboardingKpis.ageing} ageing cases</small></div>
+            </section>
+
+            <section className="ops-snapshot-card ops-snapshot-roster" role="button" tabIndex="0" onClick={() => openOverviewModule("Roster")} onKeyDown={(event) => event.key === "Enter" && openOverviewModule("Roster")}>
+              <div className="ops-snapshot-header"><div className="ops-snapshot-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18M8 15h3M14 15h2"/></svg></div><div><span>Roster</span><h3>Coverage & Exceptions</h3></div><strong>{overviewOperations.rosterFulfilment}%</strong></div>
+              <p>Accepted shift coverage and workforce-hour exceptions.</p>
+              <div className="ops-roster-gauge"><div style={{"--coverage":`${overviewOperations.rosterFulfilment}%`}}><strong>{overviewOperations.rosterFulfilment}%</strong><small>fulfilled</small></div><span><b>{rosterKpis.openShifts}</b>Open shifts</span><span><b>{rosterKpis.declinedShifts}</b>Declined</span><span><b>{rosterDonutData.weeklyExceptions.length+rosterDonutData.dailyExceptions.length}</b>Hours alerts</span></div>
+              <div className="ops-snapshot-foot"><span className={rosterKpis.openShifts ? "watch" : "good"}>{rosterKpis.openShifts ? "Assignment action required" : "All shifts assigned"}</span><small>{rosterKpis.totalShifts} scheduled</small></div>
+            </section>
+          </div>
+
+          <section className="ops-commitments-card">
+            <div className="ops-section-heading compact"><div><span className="ops-section-kicker">Next actions</span><h3>Upcoming Operational Commitments</h3><p>Time-sensitive work that operations teams should prepare for.</p></div><span className="ops-period-chip">Next 24–48 hours</span></div>
+            <div className="ops-commitment-list">{overviewOperations.commitments.map((item,index)=><button type="button" key={`${item.type}-${index}`} className="ops-commitment-item" onClick={() => openOverviewModule(item.type === "Onboarding" ? "Onboarding Candidate" : item.type, item.type === "Incident" ? "high" : item.type === "Onboarding" ? "ready" : "")}><span className="ops-commitment-time">{item.time}</span><i/><div><strong>{item.text}</strong><small>{item.type} · {selectedCust}</small></div><span className="ops-commitment-index">{String(index+1).padStart(2,"0")}</span></button>)}</div>
+          </section>
+
           <div className="dashboard-grid">
             {/* SITES OVERVIEW / DONUT CHART */}
             <div className="chart-card">
               <div className="chart-card-header">
-                <h3 className="card-title">Sites Overview</h3>
+                <div><span className="ops-section-kicker">Location footprint</span><h3 className="card-title">Sites Overview</h3><p className="site-overview-subtitle">Active service locations by region</p></div>
                 <button className="more-options-btn">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <circle cx="12" cy="12" r="1" />
@@ -824,46 +1262,38 @@ function MainDashboard() {
                       strokeDasharray={sector.strokeDasharray}
                       strokeDashoffset={sector.strokeDashoffset}
                       transform={`rotate(${sector.rotation} 150 150)`}
-                      className="donut-segment"
+                      className={`donut-segment ${hoveredSiteOverview === sector.siteName ? "active" : ""}`}
+                      pointerEvents="visibleStroke"
+                      tabIndex="0"
+                      role="button"
+                      aria-label={`${sector.siteName}: ${sector.count} sites, ${sector.percentage}% of network`}
+                      onMouseEnter={() => setHoveredSiteOverview(sector.siteName)}
+                      onMouseLeave={() => setHoveredSiteOverview("")}
+                      onFocus={() => setHoveredSiteOverview(sector.siteName)}
+                      onBlur={() => setHoveredSiteOverview("")}
                       onClick={() => handleSiteClick(sector.siteName, sector.customer)}
                     />
                   ))}
-                  {donutSectors.map((sector, index) => {
-                    if (sector.percentage < 5) return null;
-                    return (
-                      <text
-                        key={`pct-${index}`}
-                        x={sector.labelX}
-                        y={sector.labelY + 4}
-                        fill="#ffffff"
-                        fontSize="12"
-                        fontWeight="700"
-                        textAnchor="middle"
-                        className="font-number"
-                      >
-                        {sector.percentage}
-                      </text>
-                    );
-                  })}
-                  <text x="150" y="140" textAnchor="middle" className="donut-center-val font-number">
+                  <text x="150" y="132" textAnchor="middle" className="donut-center-kicker">NETWORK</text>
+                  <text x="150" y="151" textAnchor="middle" className="donut-center-val font-number">
                     {totalSites}
                   </text>
-                  <text x="150" y="160" textAnchor="middle" className="donut-center-lbl">
-                    Total Sites
+                  <text x="150" y="174" textAnchor="middle" className="donut-center-lbl">
+                    sites across {currentCustData.length} regions
                   </text>
                 </svg>
+                {hoveredSiteOverview && (() => { const sector = donutSectors.find((item) => item.siteName === hoveredSiteOverview); const site = currentCustData.find((item) => item.siteName === hoveredSiteOverview); return sector && site ? <div className="site-donut-tooltip"><span className="site-tooltip-dot" style={{background:sector.color}}/><div><strong>{sector.siteName}</strong><span>{sector.count} {sector.count === 1 ? "site" : "sites"} · {sector.percentage}% of network</span><small>{site.clockedIn} of {site.totalEmployees} employees clocked in</small></div></div> : null; })()}
               </div>
 
               <div className="donut-legend">
                 {donutSectors.map((sector, index) => (
-                  <div key={index} className="legend-item" onClick={() => handleSiteClick(sector.siteName, sector.customer)}>
+                  <div key={index} className={`legend-item ${hoveredSiteOverview === sector.siteName ? "active" : ""}`} role="button" tabIndex="0" onMouseEnter={() => setHoveredSiteOverview(sector.siteName)} onMouseLeave={() => setHoveredSiteOverview("")} onFocus={() => setHoveredSiteOverview(sector.siteName)} onBlur={() => setHoveredSiteOverview("")} onClick={() => handleSiteClick(sector.siteName, sector.customer)}>
                     <span className="legend-dot" style={{ backgroundColor: sector.color }} />
                     <span className="legend-text-label">
                       {sector.siteName}
                     </span>
-                    <span className="legend-text-val font-number">
-                      {sector.count} {sector.count > 1 ? "Sites" : "Site"}
-                    </span>
+                    <span className="legend-text-val font-number"><strong>{sector.count}</strong> {sector.count > 1 ? "Sites" : "Site"}</span>
+                    <span className="legend-percentage font-number">{sector.percentage}%</span>
                   </div>
                 ))}
               </div>
@@ -933,6 +1363,51 @@ function MainDashboard() {
               </div>
             </div>
           </div>
+
+          <section className="pin-workforce-card">
+            <div className="pin-workforce-header">
+              <div>
+                <span className="pin-workforce-eyebrow">Workforce geography</span>
+                <h3>Employee Distribution by Site PIN Code</h3>
+                <p>{selectedCust} · {selectedDateLabel} · ranked by workforce strength</p>
+              </div>
+              <div className="pin-workforce-summary">
+                <span><strong>{pinCodeWorkforce.length}</strong> PIN codes</span>
+                <span><strong>{totalEmployees}</strong> employees</span>
+                <span><strong>{totalEmployees ? Math.round((clockedIn / totalEmployees) * 100) : 0}%</strong> clocked in</span>
+              </div>
+            </div>
+
+            <div className="pin-workforce-legend" aria-label="Chart legend">
+              <span><i className="pin-legend-active" />Clocked in</span>
+              <span><i className="pin-legend-scheduled" />Scheduled / offline</span>
+              <small>Click a PIN code to view employees</small>
+            </div>
+
+            <div className="pin-workforce-chart">
+              {pinCodeWorkforce.map((item) => {
+                const maxEmployees = Math.max(...pinCodeWorkforce.map((group) => group.employees), 1);
+                const barWidth = (item.employees / maxEmployees) * 100;
+                const activeWidth = item.employees ? (item.clockedIn / item.employees) * 100 : 0;
+                return (
+                  <button className="pin-workforce-row" type="button" key={item.pinCode} onClick={() => openPinCodeDetails(item.pinCode)}>
+                    <span className="pin-code-label">{item.pinCode}</span>
+                    <span className="pin-area-label"><strong>{item.area}</strong><small>{item.siteCount} {item.siteCount === 1 ? "site" : "sites"} · {item.customerCount} {item.customerCount === 1 ? "customer" : "customers"}</small></span>
+                    <span className="pin-bar-cell">
+                      <span className="pin-bar-track">
+                        <span className="pin-bar-total" style={{ width: `${barWidth}%` }}>
+                          <span className="pin-bar-active" style={{ width: `${activeWidth}%` }} />
+                        </span>
+                      </span>
+                    </span>
+                    <span className="pin-workforce-count"><strong>{item.employees}</strong><small>{item.clockedIn} active · {item.coverage}%</small></span>
+                    <svg className="pin-row-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m9 18 6-6-6-6" /></svg>
+                  </button>
+                );
+              })}
+              {pinCodeWorkforce.length === 0 && <div className="pin-workforce-empty">No employee data is available for this date range.</div>}
+            </div>
+          </section>
         </>
       )}
 
@@ -992,7 +1467,17 @@ function MainDashboard() {
           },
         };
 
-        const td = tsData[selectedCust] || tsData["All Customers"];
+        const baseTd = tsData[selectedCust] || tsData["All Customers"];
+        const periodFactor = selectedDateDays / 7;
+        const td = {
+          ...baseTd,
+          totalHours: Math.round(baseTd.totalHours * periodFactor),
+          approvedLogs: Math.round(baseTd.approvedLogs * periodFactor),
+          pendingLogs: Math.round(baseTd.pendingLogs * periodFactor),
+          disputedLogs: Math.round(baseTd.disputedLogs * periodFactor),
+          locations: baseTd.locations.map((location) => ({ ...location, hrs: Math.round(location.hrs * periodFactor) })),
+          trend: baseTd.trend.map((value) => Math.round(value * periodFactor)),
+        };
         const totalHrs = td.totalHours;
 
         // Build donut sectors for hours-by-location
@@ -1047,7 +1532,7 @@ function MainDashboard() {
                     <span className="ts-kpi-num">{td.approvedLogs}</span>
                     <span className="ts-kpi-unit">Logs</span>
                   </div>
-                  <span className="ts-kpi-desc">This week</span>
+                  <span className="ts-kpi-desc">{selectedDateLabel}</span>
                 </div>
                 <div className="ts-kpi-bar ts-kpi-bar-green"></div>
               </div>
@@ -1093,7 +1578,7 @@ function MainDashboard() {
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                     <span className="ts-chart-title">Hours Logged Trend — {selectedCust}</span>
                   </div>
-                  <span className="ts-period-badge">{dateRangeStr || "Last 7 Days"}</span>
+                  <span className="ts-period-badge">{selectedDateLabel}</span>
                 </div>
                 <svg width="100%" height="160" viewBox="0 0 560 160" preserveAspectRatio="none">
                   {[0,40,80,120,160].map((y, i) => (
@@ -1140,7 +1625,15 @@ function MainDashboard() {
                         strokeDasharray={`${loc.dash} ${circ - loc.dash}`}
                         strokeDashoffset={loc.offset}
                         transform="rotate(-90 70 70)"
-                        className="donut-segment"
+                        className={`donut-segment ${hoveredHoursLocation === loc.name ? "active" : ""}`}
+                        pointerEvents="visibleStroke"
+                        tabIndex="0"
+                        role="button"
+                        aria-label={`${loc.name}: ${loc.hrs} hours, ${loc.pct.toFixed(1)}%`}
+                        onMouseEnter={() => setHoveredHoursLocation(loc.name)}
+                        onMouseLeave={() => setHoveredHoursLocation("")}
+                        onFocus={() => setHoveredHoursLocation(loc.name)}
+                        onBlur={() => setHoveredHoursLocation("")}
                         onClick={() => {
                           setSelectedSiteName(loc.name);
                           setActiveView("timesheet-detail");
@@ -1153,13 +1646,19 @@ function MainDashboard() {
                     </text>
                     <text x="70" y="80" textAnchor="middle" fontSize="9" fontWeight="600" fill="#64748b">Total Hrs</text>
                   </svg>
-
+                  {hoveredHoursLocation && (() => { const loc = donutLocs.find((item) => item.name === hoveredHoursLocation); return loc ? <div className="hours-donut-tooltip"><span className="site-tooltip-dot" style={{background:loc.color}}/><div><strong>{loc.name}</strong><span>{loc.hrs.toLocaleString()} approved hours</span><small>{loc.pct.toFixed(1)}% of total · {loc.clockedIn} staff clocked in</small></div></div> : null; })()}
                   <div className="ts-donut-legend">
                     {donutLocs.map((loc) => (
                       <div
                         key={loc.name}
-                        className="ts-legend-row"
+                        className={`ts-legend-row ${hoveredHoursLocation === loc.name ? "active" : ""}`}
                         style={{ cursor: "pointer" }}
+                        role="button"
+                        tabIndex="0"
+                        onMouseEnter={() => setHoveredHoursLocation(loc.name)}
+                        onMouseLeave={() => setHoveredHoursLocation("")}
+                        onFocus={() => setHoveredHoursLocation(loc.name)}
+                        onBlur={() => setHoveredHoursLocation("")}
                         onClick={() => {
                           setSelectedSiteName(loc.name);
                           setActiveView("timesheet-detail");
@@ -1178,11 +1677,19 @@ function MainDashboard() {
 
             {/* ── LOCATION PERFORMANCE TABLE ── */}
             <div className="ts-table-card">
-              <div className="ts-table-header">
+              <div className="ts-table-header exportable-table-header">
                 <div className="ts-chart-title-row">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
                   <span className="ts-chart-title">Location Performance Overview — {selectedCust}</span>
                 </div>
+                <ExportCsvButton filename="location-performance-overview.csv" rows={td.locations} columns={[
+                  { label: "Location", value: (location) => location.name },
+                  { label: "Total Approved Hours", value: (location) => location.hrs },
+                  { label: "Assigned Supervisor", value: (location, index) => `Supervisor ${String(index + 1).padStart(2, "0")}` },
+                  { label: "Clocked In", value: (location) => location.clockedIn },
+                  { label: "Approval Ratio", value: (location) => `${location.pct.toFixed(1)}%` },
+                  { label: "Operational Status", value: () => "Synchronized" },
+                ]} />
               </div>
               <div className="detail-table-wrapper">
                 <table className="detail-table ts-perf-table">
@@ -1256,7 +1763,16 @@ function MainDashboard() {
           Google: { totalHours: 1200, approvedLogs: 85, pendingLogs: 12, disputedLogs: 2, locations: [ { name: "Noida", hrs: 560, pct: 46.7, color: "#2563eb", clockedIn: 6 }, { name: "Delhi", hrs: 240, pct: 20.0, color: "#10b981", clockedIn: 2 }, { name: "Gurugram", hrs: 240, pct: 20.0, color: "#8b5cf6", clockedIn: 2 }, { name: "Bangalore", hrs: 160, pct: 13.3, color: "#f97316", clockedIn: 1 } ] },
           Amazon: { totalHours: 1280, approvedLogs: 94, pendingLogs: 11, disputedLogs: 1, locations: [ { name: "Noida", hrs: 568, pct: 44.4, color: "#2563eb", clockedIn: 6 }, { name: "Delhi", hrs: 284, pct: 22.2, color: "#10b981", clockedIn: 3 }, { name: "Gurugram", hrs: 213, pct: 16.7, color: "#8b5cf6", clockedIn: 2 }, { name: "Bangalore", hrs: 215, pct: 16.7, color: "#f97316", clockedIn: 2 } ] },
         };
-        const td = tsData[selectedCust] || tsData["All Customers"];
+        const baseTd = tsData[selectedCust] || tsData["All Customers"];
+        const periodFactor = selectedDateDays / 7;
+        const td = {
+          ...baseTd,
+          totalHours: Math.round(baseTd.totalHours * periodFactor),
+          approvedLogs: Math.round(baseTd.approvedLogs * periodFactor),
+          pendingLogs: Math.round(baseTd.pendingLogs * periodFactor),
+          disputedLogs: Math.round(baseTd.disputedLogs * periodFactor),
+          locations: baseTd.locations.map((location) => ({ ...location, hrs: Math.round(location.hrs * periodFactor) })),
+        };
         const filteredLocs = selectedSiteName
           ? td.locations.filter(l => l.name === selectedSiteName)
           : td.locations;
@@ -1288,10 +1804,17 @@ function MainDashboard() {
         });
         return (
           <div className="detail-view-card animate-fade-in">
-            <div className="detail-view-header">
+            <div className="detail-view-header exportable-table-header">
               <h3 className="detail-view-title">
                 Timesheet Details — {selectedCust}{selectedSiteName ? ` / ${selectedSiteName}` : ""}
               </h3>
+              <ExportCsvButton filename="timesheet-employees.csv" rows={rows} columns={[
+                { label: "Log ID", value: (row) => row.id }, { label: "Employee Name", value: (row) => row.name },
+                { label: "Customer", value: (row) => row.customer }, { label: "Site", value: (row) => row.site },
+                { label: "PIN Code", value: (row) => row.pin }, { label: "Role", value: (row) => row.role },
+                { label: "Shift Start", value: (row) => row.start }, { label: "Shift End", value: (row) => row.end },
+                { label: "Hours Logged", value: (row) => row.hrs }, { label: "Status", value: (row) => row.status },
+              ]} />
             </div>
             <div className="detail-table-wrapper">
               <table className="detail-table">
@@ -1439,7 +1962,7 @@ function MainDashboard() {
       {activeTab === "Incidents" && activeView === "dashboard" && (
         <div className="incident-dashboard animate-fade-in">
           <div className="incident-kpi-grid">
-            <div className="incident-kpi-card incident-kpi-clickable" role="button" tabIndex="0" onClick={() => openIncidentDetails("total")} onKeyDown={(event) => event.key === "Enter" && openIncidentDetails("total")}>
+            <div className="incident-kpi-card incident-kpi-clickable" role="button" tabIndex="0" onClick={() => openIncidentDetails("total")} onKeyDown={(event) => event.key === "Enter" && openIncidentDetails("total")}><ExportCsvButton filename="incident-total-cases.csv" rows={customerIncidentLogs} columns={incidentCsvColumns} />
               <div className="incident-kpi-icon incident-icon-blue">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M8 8h8M8 12h8M8 16h5" /></svg>
               </div>
@@ -1448,7 +1971,7 @@ function MainDashboard() {
               <span className="incident-kpi-sub">All incidents</span>
               <span className="incident-sparkline incident-sparkline-blue">↗︎</span>
             </div>
-            <div className="incident-kpi-card incident-kpi-clickable" role="button" tabIndex="0" onClick={() => openIncidentDetails("status", "Open")} onKeyDown={(event) => event.key === "Enter" && openIncidentDetails("status", "Open")}>
+            <div className="incident-kpi-card incident-kpi-clickable" role="button" tabIndex="0" onClick={() => openIncidentDetails("status", "Open")} onKeyDown={(event) => event.key === "Enter" && openIncidentDetails("status", "Open")}><ExportCsvButton filename="incident-open-cases.csv" rows={customerIncidentLogs.filter((incident) => incident.status === "Open")} columns={incidentCsvColumns} />
               <div className="incident-kpi-icon incident-icon-purple">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 6v6l4 2" /><circle cx="12" cy="12" r="9" /></svg>
               </div>
@@ -1457,7 +1980,7 @@ function MainDashboard() {
               <span className="incident-kpi-sub">Active incidents</span>
               <span className="incident-sparkline incident-sparkline-purple">↗︎</span>
             </div>
-            <div className="incident-kpi-card incident-kpi-clickable" role="button" tabIndex="0" onClick={() => openIncidentDetails("status", "Resolved")} onKeyDown={(event) => event.key === "Enter" && openIncidentDetails("status", "Resolved")}>
+            <div className="incident-kpi-card incident-kpi-clickable" role="button" tabIndex="0" onClick={() => openIncidentDetails("status", "Resolved")} onKeyDown={(event) => event.key === "Enter" && openIncidentDetails("status", "Resolved")}><ExportCsvButton filename="incident-resolved-cases.csv" rows={customerIncidentLogs.filter((incident) => incident.status === "Resolved")} columns={incidentCsvColumns} />
               <div className="incident-kpi-icon incident-icon-green">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 4 4L19 6" /><circle cx="12" cy="12" r="9" /></svg>
               </div>
@@ -1466,7 +1989,7 @@ function MainDashboard() {
               <span className="incident-kpi-sub">Successfully resolved</span>
               <span className="incident-sparkline incident-sparkline-green">↗︎</span>
             </div>
-            <div className="incident-kpi-card incident-kpi-clickable" role="button" tabIndex="0" onClick={() => openIncidentDetails("status", "Closed")} onKeyDown={(event) => event.key === "Enter" && openIncidentDetails("status", "Closed")}>
+            <div className="incident-kpi-card incident-kpi-clickable" role="button" tabIndex="0" onClick={() => openIncidentDetails("status", "Closed")} onKeyDown={(event) => event.key === "Enter" && openIncidentDetails("status", "Closed")}><ExportCsvButton filename="incident-closed-cases.csv" rows={customerIncidentLogs.filter((incident) => incident.status === "Closed")} columns={incidentCsvColumns} />
               <div className="incident-kpi-icon incident-icon-slate">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M8 8h8M8 12h5M8 16h8" /></svg>
               </div>
@@ -1475,7 +1998,7 @@ function MainDashboard() {
               <span className="incident-kpi-sub">Closed this period</span>
               <span className="incident-sparkline incident-sparkline-blue">↗︎</span>
             </div>
-            <div className="incident-kpi-card incident-kpi-clickable" role="button" tabIndex="0" onClick={() => openIncidentDetails("highPending")} onKeyDown={(event) => event.key === "Enter" && openIncidentDetails("highPending")}>
+            <div className="incident-kpi-card incident-kpi-clickable" role="button" tabIndex="0" onClick={() => openIncidentDetails("highPending")} onKeyDown={(event) => event.key === "Enter" && openIncidentDetails("highPending")}><ExportCsvButton filename="incident-high-priority-pending.csv" rows={customerIncidentLogs.filter((incident) => incident.status === "Open" && incident.priority === "High")} columns={incidentCsvColumns} />
               <div className="incident-kpi-icon incident-icon-red">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.3 3.4 2.5 17a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 3.4a2 2 0 0 0-3.4 0Z" /><path d="M12 9v4M12 17h.01" /></svg>
               </div>
@@ -1490,7 +2013,8 @@ function MainDashboard() {
             <section className="incident-chart-card">
               <div className="incident-section-heading">
                 <h3>Incidents Trend</h3>
-                <span>Last 7 Days</span>
+                <span>{selectedDateLabel}</span>
+                <ExportCsvButton filename="incident-trend.csv" rows={incidentTrendData} columns={[{ label: "Date", value: (item) => item.label }, { label: "Incidents", value: (item) => item.value }]} />
               </div>
               <svg className="incident-trend-chart" viewBox="0 0 620 220" role="img" aria-label="Incidents trend over the last seven days">
                 <g className="incident-grid-lines">
@@ -1505,7 +2029,7 @@ function MainDashboard() {
             </section>
 
             <section className="incident-chart-card incident-status-card">
-              <div className="incident-section-heading"><h3>Incidents by Status</h3></div>
+              <div className="incident-section-heading"><h3>Incidents by Status</h3><ExportCsvButton filename="incidents-by-status.csv" rows={incidentStatusData} columns={[{ label: "Status", value: (item) => item.label }, { label: "Cases", value: (item) => item.value }]} /></div>
               <div className="incident-donut-layout">
                 <div className="incident-donut" aria-label={`${incidentKpis.total} incidents`}>
                   <svg viewBox="0 0 128 128" aria-hidden="true">
@@ -1522,7 +2046,7 @@ function MainDashboard() {
           </div>
 
           <section className="incident-chart-card incident-priority-card">
-            <div className="incident-section-heading"><h3>Incidents by Priority</h3></div>
+            <div className="incident-section-heading"><h3>Incidents by Priority</h3><ExportCsvButton filename="incidents-by-priority.csv" rows={incidentPriorityData} columns={[{ label: "Priority", value: (item) => item.label }, { label: "Cases", value: (item) => item.value }]} /></div>
             <div className="incident-priority-chart" role="img" aria-label="Incidents by priority">
               <div className="incident-priority-axis"><span>30</span><span>20</span><span>10</span><span>0</span></div>
               {incidentPriorityData.map((item) => (
@@ -1547,6 +2071,13 @@ function MainDashboard() {
                 <select value={incidentPriorityFilter} onChange={(event) => setIncidentPriorityFilter(event.target.value)} aria-label="Filter incidents by priority">
                   <option value="All">All priorities</option><option value="Critical">Critical</option><option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option>
                 </select>
+                <ExportCsvButton filename="incident-logs.csv" rows={filteredIncidentLogs} columns={[
+                  { label: "Incident ID", value: (incident) => incident.id }, { label: "Customer", value: (incident) => incident.customer },
+                  { label: "Location", value: (incident) => incident.location }, { label: "Incident Type", value: (incident) => incident.type },
+                  { label: "Logged By", value: (incident) => incident.loggedBy }, { label: "Priority", value: (incident) => incident.priority },
+                  { label: "Status", value: (incident) => incident.status }, { label: "Action Taken", value: (incident) => incident.action },
+                  { label: "Logged On", value: (incident) => incident.loggedOn },
+                ]} />
               </div>
             </div>
             <div className="incident-table-wrap">
@@ -1574,11 +2105,12 @@ function MainDashboard() {
 
       {activeTab === "Incidents" && activeView === "incident-detail" && (
         <div className="detail-view-card incident-detail-card animate-fade-in">
-          <div className="detail-view-header incident-detail-header">
+          <div className="detail-view-header incident-detail-header exportable-table-header">
             <div>
               <h3 className="detail-view-title">{incidentDetailTitle} ({selectedCust})</h3>
               <span className="incident-detail-description">Filtered from the current 60-record incident dataset.</span>
             </div>
+            <ExportCsvButton filename="incident-details.csv" rows={incidentDetailLogs} columns={incidentCsvColumns} />
           </div>
           <div className="detail-table-wrapper">
             <table className="detail-table incident-detail-table">
@@ -1591,123 +2123,129 @@ function MainDashboard() {
 
       {/* ONBOARDING CANDIDATE ANALYTICAL OVERVIEW VIEW */}
       {activeTab === "Onboarding Candidate" && activeView === "dashboard" && (
-        <div className="detail-view-card animate-fade-in">
-          <div className="detail-view-header">
-            <h3 className="detail-view-title">Onboarding Pipeline Overview ({selectedCust})</h3>
+        <div className="onboarding-dashboard animate-fade-in">
+          <div className="onboarding-kpi-grid">
+            {[
+              ["Total Candidates", onboardingKpis.total, "All applications", "blue", "total"],
+              ["In Progress", onboardingKpis.active, "Candidates being onboarded", "purple", "active"],
+              ["Ready for Roster", onboardingKpis.ready, "Approved to schedule", "green", "Ready for Roster"],
+              ["Missing Documents", onboardingKpis.missing, "Needs attention", "orange", "missing"],
+              ["Ageing > 7 Days", onboardingKpis.ageing, "Requires follow-up", "red", "ageing"],
+              ].map(([label, value, sub, color, detail]) => (
+              <div className="onboarding-kpi-card onboarding-kpi-clickable" key={label} role="button" tabIndex="0" onClick={() => openOnboardingDetails(detail)} onKeyDown={(event) => event.key === "Enter" && openOnboardingDetails(detail)}><ExportCsvButton filename={`candidate-${String(detail).toLowerCase().replaceAll(" ", "-")}.csv`} rows={detail === "total" ? onboardingCustomerCandidates : detail === "missing" ? onboardingCustomerCandidates.filter((candidate) => candidate.documents !== "Complete") : detail === "ageing" ? onboardingCustomerCandidates.filter((candidate) => candidate.days > 7) : detail === "active" ? onboardingCustomerCandidates.filter((candidate) => !["Ready for Roster", "Rejected"].includes(candidate.status)) : onboardingCustomerCandidates.filter((candidate) => candidate.status === detail)} columns={candidateCsvColumns} />
+                <div className={`onboarding-kpi-icon onboarding-icon-${color}`}><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4" /><path d="M4 21c.8-4 3.5-6 8-6s7.2 2 8 6" /></svg></div>
+                <span>{label}</span><strong>{value}</strong><small>{sub}</small>
+              </div>
+            ))}
           </div>
 
-          <div className="metrics-row mini-metrics">
-            <div className="metric-card">
-              <span className="metric-label">Total Applied Candidates</span>
-              <span className="metric-value font-number text-primary">45 Applications</span>
-            </div>
-            <div className="metric-card">
-              <span className="metric-label">Compliance Pass</span>
-              <span className="metric-value font-number font-green">32 Verified</span>
-            </div>
-            <div className="metric-card">
-              <span className="metric-label">Interview Pipeline</span>
-              <span className="metric-value font-number text-warning">8 Pending</span>
-            </div>
-            <div className="metric-card">
-              <span className="metric-label">Offers Dispatched</span>
-              <span className="metric-value font-number text-purple">5 Offers</span>
-            </div>
+          <div className="onboarding-chart-grid">
+            <section className="onboarding-chart-card">
+              <div className="onboarding-section-heading"><div><h3>Candidate Intake Trend</h3><span>Applications received · {selectedDateLabel}</span></div><span className="onboarding-chart-badge">Dummy data</span><ExportCsvButton filename="candidate-intake-trend.csv" rows={onboardingTrendData} columns={[{ label: "Date", value: (item) => item.label }, { label: "Applications", value: (item) => item.value }]} /></div>
+              <svg className="onboarding-trend-chart" viewBox="0 0 620 220" role="img" aria-label="Candidate intake trend over the last seven days">
+                <g className="onboarding-grid-lines"><line x1="42" y1="25" x2="600" y2="25" /><line x1="42" y1="65" x2="600" y2="65" /><line x1="42" y1="105" x2="600" y2="105" /><line x1="42" y1="145" x2="600" y2="145" /><line x1="42" y1="185" x2="600" y2="185" /></g>
+                <g className="onboarding-axis-labels"><text x="18" y="29">4</text><text x="18" y="69">3</text><text x="18" y="109">2</text><text x="18" y="149">1</text><text x="22" y="189">0</text></g>
+                <path className="onboarding-trend-area" d={`${onboardingTrendPath} L600 185 L42 185 Z`} /><path className="onboarding-trend-line" d={onboardingTrendPath} />
+                {onboardingTrendPoints.map((point) => <g key={point.label}><circle cx={point.x} cy={point.y} r="4" className="onboarding-trend-point" /><title>{`${point.label}: ${point.value} applications`}</title></g>)}
+                <g className="onboarding-x-labels">{onboardingTrendPoints.map((point) => <text key={point.label} x={point.x - 12} y="210">{point.label}</text>)}</g>
+              </svg>
+            </section>
+
+            <section className="onboarding-chart-card onboarding-status-card">
+              <div className="onboarding-section-heading"><div><h3>Pipeline by Stage</h3><span>Click a stage to view candidates</span></div><ExportCsvButton filename="candidate-pipeline-by-stage.csv" rows={onboardingStatusData} columns={[{ label: "Stage", value: (item) => item.label }, { label: "Candidates", value: (item) => item.value }]} /></div>
+              <div className="onboarding-donut-layout">
+                <div className="onboarding-donut"><svg viewBox="0 0 128 128" aria-hidden="true">{onboardingDonutSegments.map((segment) => <circle key={segment.label} className={`onboarding-donut-segment ${hoveredOnboardingStatus === segment.label ? "active" : ""}`} cx="64" cy="64" r="48" fill="none" stroke={segment.color} strokeWidth="22" strokeDasharray={`${segment.dash} ${segment.circumference - segment.dash}`} strokeDashoffset={segment.offset} transform="rotate(-90 64 64)" onMouseEnter={() => setHoveredOnboardingStatus(segment.label)} onMouseLeave={() => setHoveredOnboardingStatus("")} onClick={() => openOnboardingDetails(segment.label)} />)}</svg><div><strong>{onboardingKpis.total}</strong><span>Candidates</span></div>{hoveredOnboardingStatus && <div className="onboarding-donut-tooltip"><strong>{hoveredOnboardingStatus}</strong><span>{onboardingStatusData.find((item) => item.label === hoveredOnboardingStatus)?.value || 0} candidates</span><small>{onboardingKpis.total ? Math.round(((onboardingStatusData.find((item) => item.label === hoveredOnboardingStatus)?.value || 0) / onboardingKpis.total) * 100) : 0}% of pipeline</small></div>}</div>
+                <div className="onboarding-legend">{onboardingStatusData.map((item) => <div key={item.label} className={`onboarding-legend-item ${hoveredOnboardingStatus === item.label ? "active" : ""}`} role="button" tabIndex="0" onMouseEnter={() => setHoveredOnboardingStatus(item.label)} onMouseLeave={() => setHoveredOnboardingStatus("")} onFocus={() => setHoveredOnboardingStatus(item.label)} onBlur={() => setHoveredOnboardingStatus("")} onClick={() => openOnboardingDetails(item.label)} onKeyDown={(event) => event.key === "Enter" && openOnboardingDetails(item.label)}><i style={{ background: item.color }} /><span>{item.label}</span><strong>{item.value}</strong><small>{onboardingKpis.total ? `${Math.round((item.value / onboardingKpis.total) * 100)}%` : "0%"}</small></div>)}</div>
+              </div>
+            </section>
           </div>
 
-          <div className="detail-table-wrapper">
-            <table className="detail-table">
-              <thead>
-                <tr>
-                  <th>Candidate ID</th>
-                  <th>Name</th>
-                  <th>Target Placement Site</th>
-                  <th>Compliance Rating</th>
-                  <th>Background Check</th>
-                  <th>Pipeline State</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="font-mono">CND-8902</td>
-                  <td className="fw-semibold">Rahul Sharma</td>
-                  <td>Noida Sector 62</td>
-                  <td>98% Compliance</td>
-                  <td><span className="badge-pill bg-success-pill">PASS</span></td>
-                  <td>Offer Letter Sent</td>
-                </tr>
-                <tr>
-                  <td className="font-mono">CND-8905</td>
-                  <td className="fw-semibold">Arjun Singh</td>
-                  <td>Delhi Okhla Phase 3</td>
-                  <td>95% Compliance</td>
-                  <td><span className="badge-pill bg-success-pill">PASS</span></td>
-                  <td>Onboarding Form Submitted</td>
-                </tr>
-                <tr>
-                  <td className="font-mono">CND-8912</td>
-                  <td className="fw-semibold">Priya Nair</td>
-                  <td>Gurugram Sector 48</td>
-                  <td>Pending check</td>
-                  <td><span className="badge-pill bg-warning-pill">Pending Docs</span></td>
-                  <td>Interview Scheduled</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <section className="onboarding-chart-card onboarding-compliance-card">
+            <div className="onboarding-section-heading"><div><h3>Compliance Readiness</h3><span>Average completion across the selected customer</span></div><strong className="onboarding-readiness-value">{Math.round(onboardingCustomerCandidates.reduce((sum, candidate) => sum + candidate.compliance, 0) / Math.max(onboardingKpis.total, 1))}% overall</strong><ExportCsvButton filename="candidate-compliance-readiness.csv" rows={onboardingComplianceData} columns={[{ label: "Compliance Factor", value: (item) => item.label }, { label: "Completion", value: (item) => `${item.value}%` }]} /></div>
+            <div className="onboarding-compliance-bars">{onboardingComplianceData.map((item) => <div className="onboarding-compliance-row" key={item.label}><span>{item.label}</span><div><i style={{ width: `${item.value}%`, background: item.color }} /></div><strong>{item.value}%</strong></div>)}</div>
+          </section>
+
+          <section className="onboarding-table-card">
+            <div className="onboarding-table-header"><div><h3>Candidate Queue <span>({selectedCust})</span></h3><span>Review onboarding progress and readiness</span></div><div className="onboarding-table-tools"><div className="onboarding-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></svg><input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search candidate..." aria-label="Search candidates" /></div><select value={onboardingStatusFilter} onChange={(event) => setOnboardingStatusFilter(event.target.value)} aria-label="Filter candidates by stage"><option value="All">All stages</option>{onboardingStatusData.map((item) => <option key={item.label} value={item.label}>{item.label}</option>)}</select><ExportCsvButton filename="candidate-queue.csv" rows={filteredOnboardingCandidates} columns={[
+              { label: "Candidate ID", value: (candidate) => candidate.id }, { label: "Candidate", value: (candidate) => candidate.name },
+              { label: "Customer", value: (candidate) => candidate.customer }, { label: "Site", value: (candidate) => candidate.site },
+              { label: "Compliance", value: (candidate) => `${candidate.compliance}%` }, { label: "Documents", value: (candidate) => candidate.documents },
+              { label: "Background", value: (candidate) => candidate.background }, { label: "Pipeline Stage", value: (candidate) => candidate.status },
+              { label: "Age", value: (candidate) => `${candidate.days} days` },
+            ]} /></div></div>
+            <div className="onboarding-table-wrap"><table className="onboarding-table"><thead><tr><th>Candidate</th><th>Customer / Site</th><th>Compliance</th><th>Documents</th><th>Background</th><th>Pipeline Stage</th><th>Age</th></tr></thead><tbody>{filteredOnboardingCandidates.slice(0, 6).map((candidate) => <tr key={candidate.id} onClick={() => openOnboardingDetails(candidate.status)}><td><strong>{candidate.name}</strong><small>{candidate.id}</small></td><td><strong>{candidate.customer}</strong><small>{candidate.site}</small></td><td><div className="onboarding-table-progress"><i style={{ width: `${candidate.compliance}%` }} /><span>{candidate.compliance}%</span></div></td><td><span className={`onboarding-doc-badge ${candidate.documents === "Complete" ? "complete" : "missing"}`}>{candidate.documents}</span></td><td><span className={`onboarding-background-badge ${candidate.background === "Pass" ? "pass" : candidate.background === "Fail" ? "fail" : "pending"}`}>{candidate.background}</span></td><td><span className="onboarding-stage-badge">{candidate.status}</span></td><td className={candidate.days > 7 ? "onboarding-age-warning" : ""}>{candidate.days} days</td></tr>)}{filteredOnboardingCandidates.length === 0 && <tr><td colSpan="7" className="onboarding-empty">No candidates match the selected filters.</td></tr>}</tbody></table></div>
+            <div className="onboarding-table-footer"><span>Showing <strong>{Math.min(filteredOnboardingCandidates.length, 6)}</strong> of <strong>{filteredOnboardingCandidates.length}</strong> candidates</span><button className="onboarding-view-all" onClick={() => openOnboardingDetails("total")}>View full queue</button></div>
+          </section>
         </div>
+      )}
+
+      {activeTab === "Onboarding Candidate" && activeView === "onboarding-detail" && (
+        <div className="detail-view-card onboarding-detail-card animate-fade-in"><div className="detail-view-header exportable-table-header"><div><h3 className="detail-view-title">{onboardingDetailType === "total" ? "All Onboarding Candidates" : onboardingDetailType === "missing" ? "Candidates Missing Documents" : onboardingDetailType === "ageing" ? "Ageing Candidates" : onboardingDetailType} ({selectedCust})</h3><span className="onboarding-detail-description">Filtered from the current dummy onboarding dataset.</span></div><ExportCsvButton filename="onboarding-details.csv" rows={onboardingDetailCandidates} columns={candidateCsvColumns} /></div><div className="detail-table-wrapper"><table className="detail-table"><thead><tr><th>Candidate ID</th><th>Name</th><th>Customer</th><th>Site</th><th>Compliance</th><th>Documents</th><th>Background</th><th>Stage</th><th>Age</th></tr></thead><tbody>{onboardingDetailCandidates.map((candidate) => <tr key={candidate.id}><td className="font-mono">{candidate.id}</td><td className="fw-semibold">{candidate.name}</td><td>{candidate.customer}</td><td>{candidate.site}</td><td>{candidate.compliance}%</td><td>{candidate.documents}</td><td>{candidate.background}</td><td>{candidate.status}</td><td>{candidate.days} days</td></tr>)}{onboardingDetailCandidates.length === 0 && <tr><td colSpan="9" className="incident-empty">No candidates match this view.</td></tr>}</tbody></table></div></div>
       )}
 
       {/* ROSTER ANALYTICAL OVERVIEW VIEW */}
       {activeTab === "Roster" && activeView === "dashboard" && (
         <div className="roster-dashboard animate-fade-in">
           <div className="roster-kpi-grid">
-             <div className="roster-kpi-card roster-kpi-clickable" role="button" tabIndex="0" onClick={() => openRosterKpiDetails("totalShifts")} onKeyDown={(event) => event.key === "Enter" && openRosterKpiDetails("totalShifts")}><div className="roster-kpi-icon roster-icon-blue"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M8 2v4M16 2v4M3 10h18" /></svg></div><span>Total Shifts</span><strong>{rosterKpis.totalShifts}</strong><small>Scheduled shifts</small></div>
-             <div className="roster-kpi-card roster-kpi-clickable" role="button" tabIndex="0" onClick={() => openRosterKpiDetails("acceptedShifts")} onKeyDown={(event) => event.key === "Enter" && openRosterKpiDetails("acceptedShifts")}><div className="roster-kpi-icon roster-icon-green"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 4 4L19 6" /><circle cx="12" cy="12" r="9" /></svg></div><span>Accepted Shifts</span><strong>{rosterKpis.acceptedShifts}</strong><small>Accepted across employees</small></div>
-             <div className="roster-kpi-card roster-kpi-clickable" role="button" tabIndex="0" onClick={() => openRosterKpiDetails("declinedShifts")} onKeyDown={(event) => event.key === "Enter" && openRosterKpiDetails("declinedShifts")}><div className="roster-kpi-icon roster-icon-red"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d="m15 9-6 6M9 9l6 6" /></svg></div><span>Declined Shifts</span><strong>{rosterKpis.declinedShifts}</strong><small>Declined across employees</small></div>
-             <div className="roster-kpi-card roster-kpi-clickable" role="button" tabIndex="0" onClick={() => openRosterKpiDetails("openShifts")} onKeyDown={(event) => event.key === "Enter" && openRosterKpiDetails("openShifts")}><div className="roster-kpi-icon roster-icon-orange"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 6v6l4 2" /><circle cx="12" cy="12" r="9" /></svg></div><span>Open / Unassigned</span><strong>{rosterKpis.openShifts}</strong><small>Needs assignment</small></div>
-             <div className="roster-kpi-card roster-kpi-clickable" role="button" tabIndex="0" onClick={() => openRosterKpiDetails("scheduledHours")} onKeyDown={(event) => event.key === "Enter" && openRosterKpiDetails("scheduledHours")}><div className="roster-kpi-icon roster-icon-purple"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg></div><span>Total Scheduled Hours</span><strong>{rosterKpis.scheduledHours}</strong><small>Weekly hours across employees</small></div>
+             <div className="roster-kpi-card roster-kpi-clickable" role="button" tabIndex="0" onClick={() => openRosterKpiDetails("totalShifts")} onKeyDown={(event) => event.key === "Enter" && openRosterKpiDetails("totalShifts")}><ExportCsvButton filename="roster-total-shifts.csv" rows={dateFilteredRosterEmployees} columns={rosterCsvColumns} /><div className="roster-kpi-icon roster-icon-blue"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M8 2v4M16 2v4M3 10h18" /></svg></div><span>Total Shifts</span><strong>{rosterKpis.totalShifts}</strong><small>Scheduled shifts</small></div>
+              <div className="roster-kpi-card roster-kpi-clickable" role="button" tabIndex="0" onClick={() => openRosterKpiDetails("acceptedShifts")} onKeyDown={(event) => event.key === "Enter" && openRosterKpiDetails("acceptedShifts")}><ExportCsvButton filename="roster-accepted-shifts.csv" rows={dateFilteredRosterEmployees.filter((employee) => employee.accepted > 0)} columns={rosterCsvColumns} /><div className="roster-kpi-icon roster-icon-green"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 4 4L19 6" /><circle cx="12" cy="12" r="9" /></svg></div><span>Accepted Shifts</span><strong>{rosterKpis.acceptedShifts}</strong><small>Accepted across employees</small></div>
+              <div className="roster-kpi-card roster-kpi-clickable" role="button" tabIndex="0" onClick={() => openRosterKpiDetails("declinedShifts")} onKeyDown={(event) => event.key === "Enter" && openRosterKpiDetails("declinedShifts")}><ExportCsvButton filename="roster-declined-shifts.csv" rows={dateFilteredRosterEmployees.filter((employee) => employee.declined > 0)} columns={rosterCsvColumns} /><div className="roster-kpi-icon roster-icon-red"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d="m15 9-6 6M9 9l6 6" /></svg></div><span>Declined Shifts</span><strong>{rosterKpis.declinedShifts}</strong><small>Declined across employees</small></div>
+              <div className="roster-kpi-card roster-kpi-clickable" role="button" tabIndex="0" onClick={() => openRosterKpiDetails("openShifts")} onKeyDown={(event) => event.key === "Enter" && openRosterKpiDetails("openShifts")}><ExportCsvButton filename="roster-open-shifts.csv" rows={dateFilteredRosterEmployees.filter((employee) => employee.pending > 0)} columns={rosterCsvColumns} /><div className="roster-kpi-icon roster-icon-orange"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 6v6l4 2" /><circle cx="12" cy="12" r="9" /></svg></div><span>Open / Unassigned</span><strong>{rosterKpis.openShifts}</strong><small>Needs assignment</small></div>
+              <div className="roster-kpi-card roster-kpi-clickable" role="button" tabIndex="0" onClick={() => openRosterKpiDetails("scheduledHours")} onKeyDown={(event) => event.key === "Enter" && openRosterKpiDetails("scheduledHours")}><ExportCsvButton filename="roster-scheduled-hours.csv" rows={dateFilteredRosterEmployees} columns={rosterCsvColumns} /><div className="roster-kpi-icon roster-icon-purple"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg></div><span>Total Scheduled Hours</span><strong>{rosterKpis.scheduledHours}</strong><small>Weekly hours across employees</small></div>
            </div>
 
           <div className="roster-chart-grid">
             <section className="roster-chart-card">
-              <div className="roster-chart-heading"><div><h3>Weekly Hours Overview</h3><span>Maximum 38h per employee</span></div><span className="roster-limit-badge">Max 38h</span></div>
-              <div className="roster-scroll-area">
-                <div className="roster-week-chart">
-                  <div className="roster-chart-axis"><span>45h</span><span>38h</span><span>30h</span><span>15h</span><span>0h</span></div>
-                  {rosterEmployees.map((employee) => {
-                    const barKey = `weekly-${employee.name}`;
-                    const exceeded = Math.max(employee.weekly - 38, 0);
-                    return <div className={`roster-employee-bar roster-bar-clickable ${hoveredRosterBar === barKey ? "roster-bar-highlight" : ""}`} key={employee.name} role="button" tabIndex="0" aria-label={`View weekly hours for ${employee.name}`} onMouseEnter={() => setHoveredRosterBar(barKey)} onMouseLeave={() => setHoveredRosterBar("")} onFocus={() => setHoveredRosterBar(barKey)} onBlur={() => setHoveredRosterBar("")} onClick={() => openRosterEmployeeDetails(employee)} onKeyDown={(event) => event.key === "Enter" && openRosterEmployeeDetails(employee)}><strong className={exceeded > 0 ? "roster-exceeded" : ""}>{exceeded > 0 ? `+${exceeded}h` : `${employee.weekly}h`}</strong><div className="roster-bar-track"><div className={`roster-bar-fill ${exceeded > 0 ? "roster-bar-danger" : ""}`} style={{ height: `${Math.min((employee.weekly / 45) * 100, 100)}%` }} /></div><span>{employee.name.split(" ")[0]}</span>{hoveredRosterBar === barKey && <div className="roster-bar-tooltip"><strong>{employee.name}</strong><span>Actual: {employee.weekly}h</span><span>Limit: 38h</span><span>{exceeded > 0 ? `Exceeded: ${exceeded}h` : "Within limit"}</span></div>}</div>;
-                  })}
+              <div className="roster-chart-heading"><div><h3>Weekly Hours Overview</h3><span>Employee distribution by weekly hours</span></div><span className="roster-limit-badge">Max 38h</span><ExportCsvButton filename="roster-weekly-hours.csv" rows={dateFilteredRosterEmployees} columns={rosterCsvColumns} /></div>
+              <div className="roster-hours-summary">
+                <div className="roster-donut-wrap">
+                  <div className="roster-hours-donut">
+                    <svg viewBox="0 0 144 144" aria-label="Weekly hours employee distribution">
+                      {rosterDonutData.weekly.map((segment) => <circle key={segment.key} className={`roster-hours-segment ${rosterHoursFilter === segment.key || hoveredRosterDonut === segment.key ? "active" : ""}`} cx="72" cy="72" r="52" fill="none" stroke={segment.color} strokeWidth="22" strokeDasharray={`${segment.dash} ${segment.circumference - segment.dash}`} strokeDashoffset={segment.offset} transform="rotate(-90 72 72)" tabIndex="0" role="button" onMouseEnter={() => setHoveredRosterDonut(segment.key)} onMouseLeave={() => setHoveredRosterDonut("")} onFocus={() => setHoveredRosterDonut(segment.key)} onBlur={() => setHoveredRosterDonut("")} onClick={() => setRosterHoursFilter((current) => current === segment.key ? "" : segment.key)} onKeyDown={(event) => event.key === "Enter" && setRosterHoursFilter((current) => current === segment.key ? "" : segment.key)} />)}
+                    </svg>
+                    <div className="roster-donut-center"><strong>{dateFilteredRosterEmployees.length}</strong><span>Employees</span></div>
+                  </div>
+                  <div className="roster-hours-legend">{rosterDonutData.weekly.map((segment) => <button key={segment.key} className={rosterHoursFilter === segment.key ? "active" : ""} onMouseEnter={() => setHoveredRosterDonut(segment.key)} onMouseLeave={() => setHoveredRosterDonut("")} onClick={() => setRosterHoursFilter((current) => current === segment.key ? "" : segment.key)}><i style={{ background: segment.color }} /><span>{segment.label}</span><strong>{segment.value}</strong></button>)}</div>
+                  <div className={`roster-hours-hover-result ${hoveredRosterDonut.startsWith("weekly") ? "visible" : ""}`}>{hoveredRosterDonut.startsWith("weekly") && (() => { const segment = rosterDonutData.weekly.find((item) => item.key === hoveredRosterDonut); return segment ? <><i style={{background:segment.color}}/><div><strong>{segment.label}</strong><span>{segment.value} employees</span></div><small>{dateFilteredRosterEmployees.length ? Math.round((segment.value / dateFilteredRosterEmployees.length) * 100) : 0}% of total</small></> : null; })()}</div>
                 </div>
+                <div className="roster-exception-list"><div className="roster-exception-title"><span>Top weekly exceedances</span><small>Click employee to view</small></div>{rosterDonutData.weeklyExceptions.map((employee) => <button key={employee.id} onClick={() => openRosterEmployeeDetails(employee)}><span><strong>{employee.name}</strong><small>{employee.location}</small></span><b>+{employee.weekly - 38}h</b></button>)}{rosterDonutData.weeklyExceptions.length === 0 && <p>No weekly exceedances</p>}</div>
               </div>
-              <div className="roster-chart-note"><span className="roster-chart-dot" />Weekly limit: 38 hours <b>Scroll horizontally to view more employees</b></div>
+              <div className="roster-chart-note"><span className="roster-chart-dot" />Click a segment to filter the employee roster <b>{rosterHoursFilter.startsWith("weekly") ? "Weekly filter active" : "Weekly limit: 38 hours"}</b></div>
             </section>
 
             <section className="roster-chart-card">
-              <div className="roster-chart-heading"><div><h3>Daily Hours Monitoring</h3><span>Maximum 8h per employee</span></div><span className="roster-limit-badge">Max 8h</span></div>
-              <div className="roster-scroll-area">
-                <div className="roster-week-chart roster-daily-chart">
-                  <div className="roster-chart-axis"><span>12h</span><span>8h</span><span>6h</span><span>3h</span><span>0h</span></div>
-                  {rosterEmployees.map((employee) => {
-                    const barKey = `daily-${employee.name}`;
-                    const exceeded = Math.max(employee.daily - 8, 0);
-                    return <div className={`roster-employee-bar roster-bar-clickable ${hoveredRosterBar === barKey ? "roster-bar-highlight" : ""}`} key={employee.name} role="button" tabIndex="0" aria-label={`View daily hours for ${employee.name}`} onMouseEnter={() => setHoveredRosterBar(barKey)} onMouseLeave={() => setHoveredRosterBar("")} onFocus={() => setHoveredRosterBar(barKey)} onBlur={() => setHoveredRosterBar("")} onClick={() => openRosterEmployeeDetails(employee)} onKeyDown={(event) => event.key === "Enter" && openRosterEmployeeDetails(employee)}><strong className={exceeded > 0 ? "roster-exceeded" : ""}>{exceeded > 0 ? `+${exceeded}h` : `${employee.daily}h`}</strong><div className="roster-bar-track"><div className={`roster-bar-fill roster-bar-daily ${exceeded > 0 ? "roster-bar-danger" : ""}`} style={{ height: `${Math.min((employee.daily / 12) * 100, 100)}%` }} /></div><span>{employee.name.split(" ")[0]}</span>{hoveredRosterBar === barKey && <div className="roster-bar-tooltip"><strong>{employee.name}</strong><span>Actual: {employee.daily}h</span><span>Limit: 8h</span><span>{exceeded > 0 ? `Exceeded: ${exceeded}h` : "Within limit"}</span></div>}</div>;
-                  })}
+              <div className="roster-chart-heading"><div><h3>Daily Hours Monitoring</h3><span>Employee distribution by daily hours</span></div><span className="roster-limit-badge">Max 8h</span><ExportCsvButton filename="roster-daily-hours.csv" rows={dateFilteredRosterEmployees} columns={rosterCsvColumns} /></div>
+              <div className="roster-hours-summary">
+                <div className="roster-donut-wrap">
+                  <div className="roster-hours-donut">
+                    <svg viewBox="0 0 144 144" aria-label="Daily hours employee distribution">
+                      {rosterDonutData.daily.map((segment) => <circle key={segment.key} className={`roster-hours-segment ${rosterHoursFilter === segment.key || hoveredRosterDonut === segment.key ? "active" : ""}`} cx="72" cy="72" r="52" fill="none" stroke={segment.color} strokeWidth="22" strokeDasharray={`${segment.dash} ${segment.circumference - segment.dash}`} strokeDashoffset={segment.offset} transform="rotate(-90 72 72)" tabIndex="0" role="button" onMouseEnter={() => setHoveredRosterDonut(segment.key)} onMouseLeave={() => setHoveredRosterDonut("")} onFocus={() => setHoveredRosterDonut(segment.key)} onBlur={() => setHoveredRosterDonut("")} onClick={() => setRosterHoursFilter((current) => current === segment.key ? "" : segment.key)} onKeyDown={(event) => event.key === "Enter" && setRosterHoursFilter((current) => current === segment.key ? "" : segment.key)} />)}
+                    </svg>
+                    <div className="roster-donut-center"><strong>{dateFilteredRosterEmployees.length}</strong><span>Employees</span></div>
+                  </div>
+                  <div className="roster-hours-legend">{rosterDonutData.daily.map((segment) => <button key={segment.key} className={rosterHoursFilter === segment.key ? "active" : ""} onMouseEnter={() => setHoveredRosterDonut(segment.key)} onMouseLeave={() => setHoveredRosterDonut("")} onClick={() => setRosterHoursFilter((current) => current === segment.key ? "" : segment.key)}><i style={{ background: segment.color }} /><span>{segment.label}</span><strong>{segment.value}</strong></button>)}</div>
+                  <div className={`roster-hours-hover-result ${hoveredRosterDonut.startsWith("daily") ? "visible" : ""}`}>{hoveredRosterDonut.startsWith("daily") && (() => { const segment = rosterDonutData.daily.find((item) => item.key === hoveredRosterDonut); return segment ? <><i style={{background:segment.color}}/><div><strong>{segment.label}</strong><span>{segment.value} employees</span></div><small>{dateFilteredRosterEmployees.length ? Math.round((segment.value / dateFilteredRosterEmployees.length) * 100) : 0}% of total</small></> : null; })()}</div>
                 </div>
+                <div className="roster-exception-list"><div className="roster-exception-title"><span>Top daily exceedances</span><small>Click employee to view</small></div>{rosterDonutData.dailyExceptions.map((employee) => <button key={employee.id} onClick={() => openRosterEmployeeDetails(employee)}><span><strong>{employee.name}</strong><small>{employee.location}</small></span><b>+{employee.daily - 8}h</b></button>)}{rosterDonutData.dailyExceptions.length === 0 && <p>No daily exceedances</p>}</div>
               </div>
-              <div className="roster-chart-note"><span className="roster-chart-dot roster-dot-daily" />Daily limit: 8 hours <b>Red values show the exact exceeded amount</b></div>
+              <div className="roster-chart-note"><span className="roster-chart-dot roster-dot-daily" />Click a segment to filter the employee roster <b>{rosterHoursFilter.startsWith("daily") ? "Daily filter active" : "Daily limit: 8 hours"}</b></div>
             </section>
           </div>
 
           <section className="roster-chart-card roster-status-card">
-            <div className="roster-chart-heading"><div><h3>Shift Status Overview</h3><span>Current roster distribution</span></div></div>
+            <div className="roster-chart-heading"><div><h3>Shift Status Overview</h3><span>{selectedDateLabel} roster distribution</span></div><ExportCsvButton filename="roster-shift-status.csv" rows={dateFilteredRosterEmployees} columns={rosterCsvColumns} /></div>
             <div className="roster-status-content"><div className="roster-status-bar"><span style={{ width: `${(rosterKpis.acceptedShifts / rosterStatusTotal) * 100}%`, background: "#48b982" }} /><span style={{ width: `${(rosterKpis.declinedShifts / rosterStatusTotal) * 100}%`, background: "#f97316" }} /><span style={{ width: `${(rosterKpis.openShifts / rosterStatusTotal) * 100}%`, background: "#94a3b8" }} /></div><div className="roster-status-legend"><span><i className="roster-legend-green" />Accepted <b>{rosterKpis.acceptedShifts}</b></span><span><i className="roster-legend-orange" />Declined <b>{rosterKpis.declinedShifts}</b></span><span><i className="roster-legend-slate" />Open / Pending <b>{rosterKpis.openShifts}</b></span></div></div>
           </section>
 
           <section className="roster-table-card">
-            <div className="roster-table-header"><div><h3>Employee Roster</h3><span>{selectedCust} · hours and shift allocation</span></div><div className="roster-table-tools"><div className="roster-table-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></svg><input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search employee..." aria-label="Search employees" /></div><select value={rosterStatusFilter} onChange={(event) => setRosterStatusFilter(event.target.value)} aria-label="Filter roster employees"><option value="All">All statuses</option><option value="On track">On track</option><option value="Alerts">Hours alerts</option><option value="Pending review">Pending review</option></select></div></div>
+            <div className="roster-table-header"><div><h3>Employee Roster</h3><span>{selectedCust} · {selectedDateLabel} · hours and shift allocation</span></div><div className="roster-table-tools"><div className="roster-table-search"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></svg><input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Search employee..." aria-label="Search employees" /></div><select value={rosterStatusFilter} onChange={(event) => setRosterStatusFilter(event.target.value)} aria-label="Filter roster employees"><option value="All">All statuses</option><option value="On track">On track</option><option value="Alerts">Hours alerts</option><option value="Pending review">Pending review</option></select><ExportCsvButton filename="employee-roster.csv" rows={filteredRosterEmployees} columns={[
+              { label: "Employee", value: (employee) => employee.name }, { label: "Customer", value: (employee) => employee.customer },
+              { label: "Location", value: (employee) => employee.location }, { label: "Shifts", value: (employee) => employee.shifts },
+              { label: "Accepted", value: (employee) => employee.accepted }, { label: "Declined", value: (employee) => employee.declined },
+              { label: "Pending", value: (employee) => employee.pending }, { label: "Daily Hours", value: (employee) => employee.daily },
+              { label: "Weekly Hours", value: (employee) => employee.weekly }, { label: "Remaining Hours", value: (employee) => 38 - employee.weekly },
+              { label: "Status", value: (employee) => employee.status },
+            ]} /></div></div>
             <div className="roster-table-wrap"><table className="roster-table"><thead><tr><th>Employee</th><th>Location</th><th>Shifts</th><th>Accepted / Declined / Pending</th><th>Daily Hours</th><th>Weekly Hours</th><th>Remaining Hours</th><th>Status / Alert</th></tr></thead><tbody>{paginatedRosterEmployees.map((employee) => <tr key={employee.name} className="roster-row-clickable" role="button" tabIndex="0" onClick={() => openRosterEmployeeDetails(employee)} onKeyDown={(event) => event.key === "Enter" && openRosterEmployeeDetails(employee)}><td className="roster-employee-name">{employee.name}</td><td>{employee.location}</td><td className="roster-number">{employee.shifts}</td><td><span className="roster-count-green">{employee.accepted}</span><span className="roster-count-divider"> / </span><span className="roster-count-red">{employee.declined}</span><span className="roster-count-divider"> / </span><span className="roster-count-muted">{employee.pending}</span></td><td className={employee.daily > 8 ? "roster-hours-danger" : "roster-number"}>{employee.daily > 8 ? `${employee.daily}h (+${employee.daily - 8}h)` : `${employee.daily}h / 8h`}</td><td className={employee.weekly > 38 ? "roster-hours-danger" : "roster-number"}>{employee.weekly > 38 ? `${employee.weekly}h (+${employee.weekly - 38}h)` : `${employee.weekly}h / 38h`}</td><td className={employee.weekly > 38 ? "roster-hours-danger" : "roster-number"}>{38 - employee.weekly}h</td><td><span className={`roster-status-badge ${employee.status === "On track" ? "roster-status-ok" : employee.status === "Pending review" ? "roster-status-pending" : "roster-status-alert"}`}>{employee.status}</span></td></tr>)}{paginatedRosterEmployees.length === 0 && <tr><td colSpan="8" className="roster-empty">No employees match the selected filters.</td></tr>}</tbody></table></div>
             <div className="roster-table-footer"><span>Showing <b>{paginatedRosterEmployees.length}</b> of <b>{filteredRosterEmployees.length}</b> employees</span><div className="roster-pagination"><button disabled={currentPage === 1} onClick={() => setCurrentPage((page) => page - 1)} aria-label="Previous page">‹</button><span>Page {currentPage} of {Math.max(1, Math.ceil(filteredRosterEmployees.length / rosterPageSize))}</span><button disabled={currentPage >= Math.ceil(filteredRosterEmployees.length / rosterPageSize)} onClick={() => setCurrentPage((page) => page + 1)} aria-label="Next page">›</button></div></div>
           </section>
@@ -1716,12 +2254,19 @@ function MainDashboard() {
 
       {/* ROSTER KPI DETAIL VIEW */}
       {activeTab === "Roster" && activeView === "roster-detail" && activeRosterDetail && (
-        <div className="detail-view-card roster-detail-card animate-fade-in">
+          <div className="detail-view-card roster-detail-card animate-fade-in">
             <div className="detail-view-header roster-detail-header">
             <div>
               <h3 className="detail-view-title">{activeRosterDetail.title} ({selectedCust})</h3>
               <span className="roster-detail-description">{activeRosterDetail.description} from the current dummy roster.</span>
             </div>
+            <ExportCsvButton filename="roster-employees.csv" rows={rosterDetailEmployees} columns={[
+              { label: "Employee", value: (employee) => employee.name }, { label: "Customer", value: (employee) => employee.customer },
+              { label: "Location", value: (employee) => employee.location }, { label: activeRosterDetail.title, value: activeRosterDetail.value },
+              { label: "Daily Hours", value: (employee) => employee.daily }, { label: "Weekly Hours", value: (employee) => employee.weekly },
+              { label: "Accepted", value: (employee) => employee.accepted }, { label: "Declined", value: (employee) => employee.declined },
+              { label: "Pending", value: (employee) => employee.pending }, { label: "Status", value: (employee) => employee.status },
+            ]} />
           </div>
           <div className="detail-table-wrapper">
             <table className="detail-table roster-detail-table">
@@ -1767,6 +2312,31 @@ function MainDashboard() {
             <div><span>Weekly Hours</span><strong className={selectedRosterEmployee.weekly > 38 ? "roster-detail-value-red" : ""}>{selectedRosterEmployee.weekly}h / 38h</strong></div>
             <div><span>Remaining Hours</span><strong className={selectedRosterEmployee.weekly > 38 ? "roster-detail-value-red" : ""}>{38 - selectedRosterEmployee.weekly}h</strong></div>
             <div><span>Status</span><strong><span className={`roster-status-badge ${selectedRosterEmployee.status === "On track" ? "roster-status-ok" : selectedRosterEmployee.status === "Pending review" ? "roster-status-pending" : "roster-status-alert"}`}>{selectedRosterEmployee.status}</span></strong></div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === "Overview" && activeView === "pin-code-employees" && (
+        <div className="detail-view-card pin-detail-card animate-fade-in">
+          <div className="detail-view-header exportable-table-header">
+            <div>
+              <h3 className="detail-view-title">Employees in PIN Code {selectedPinCode}</h3>
+              <span className="pin-detail-description">{selectedCust} · {selectedDateLabel} · {selectedPinEmployees.length} employees</span>
+            </div>
+            <ExportCsvButton filename={`employees-${selectedPinCode}.csv`} rows={selectedPinEmployees} columns={[
+              ...employeeCsvColumns.slice(0, 3),
+              { label: "PIN Code", value: () => selectedPinCode },
+              ...employeeCsvColumns.slice(3),
+            ]} />
+          </div>
+          <div className="detail-table-wrapper">
+            <table className="detail-table pin-detail-table">
+              <thead><tr><th>Employee ID</th><th>Name</th><th>Customer</th><th>Site</th><th>PIN Code</th><th>Role</th><th>Shift</th><th>Status</th></tr></thead>
+              <tbody>
+                {selectedPinEmployees.map((employee) => <tr key={employee.id}><td className="font-mono">{employee.id}</td><td className="fw-semibold">{employee.name}</td><td>{employee.customer}</td><td>{employee.siteName}</td><td className="font-number">{selectedPinCode}</td><td>{employee.role}</td><td>{employee.shiftTime}</td><td><span className={`badge-pill ${employee.clockedIn ? "bg-success-pill" : "bg-warning-pill"}`}>{employee.clockedIn ? "Clocked In" : "Offline"}</span></td></tr>)}
+                {selectedPinEmployees.length === 0 && <tr><td colSpan="8" className="incident-empty">No employees are available for this PIN code.</td></tr>}
+              </tbody>
+            </table>
           </div>
         </div>
       )}
@@ -1865,8 +2435,9 @@ function MainDashboard() {
       {/* TOTAL EMPLOYEES DETAILS VIEW */}
       {activeView === "total-employees" && (
         <div className="detail-view-card">
-          <div className="detail-view-header">
+          <div className="detail-view-header exportable-table-header">
             <h3 className="detail-view-title">Total Employees Details ({selectedCust})</h3>
+            <ExportCsvButton filename="total-employees.csv" rows={dateFilteredEmployees} />
           </div>
           <div className="detail-table-wrapper">
             <table className="detail-table">
@@ -1882,7 +2453,7 @@ function MainDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {employeesList.map((emp, index) => (
+                {dateFilteredEmployees.map((emp, index) => (
                   <tr key={index}>
                     <td className="text-secondary font-mono">{emp.id}</td>
                     <td className="fw-semibold">{emp.name}</td>
@@ -1906,8 +2477,9 @@ function MainDashboard() {
       {/* CLOCKED IN DETAILS VIEW */}
       {activeView === "clocked-in" && (
         <div className="detail-view-card">
-          <div className="detail-view-header">
+          <div className="detail-view-header exportable-table-header">
             <h3 className="detail-view-title">Clocked In Employees Details ({selectedCust})</h3>
+            <ExportCsvButton filename="clocked-in-employees.csv" rows={dateFilteredEmployees.filter((employee) => employee.clockedIn)} />
           </div>
           <div className="detail-table-wrapper">
             <table className="detail-table">
@@ -1923,7 +2495,7 @@ function MainDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {employeesList.filter(e => e.clockedIn).map((emp, index) => (
+                {dateFilteredEmployees.filter(e => e.clockedIn).map((emp, index) => (
                   <tr key={index}>
                     <td className="text-secondary font-mono">{emp.id}</td>
                     <td className="fw-semibold">{emp.name}</td>
@@ -1945,10 +2517,11 @@ function MainDashboard() {
       {/* SITE SCHEDULE DETAILS VIEW */}
       {activeView === "site-schedule" && (
         <div className="detail-view-card">
-          <div className="detail-view-header">
+          <div className="detail-view-header exportable-table-header">
             <h3 className="detail-view-title">
               Site Schedule Details for {selectedSiteName} ({selectedCust === "All Customers" ? "All Customers" : selectedCust})
             </h3>
+            <ExportCsvButton filename="site-schedule-employees.csv" rows={siteEmployees} />
           </div>
           <div className="detail-table-wrapper">
             <table className="detail-table">

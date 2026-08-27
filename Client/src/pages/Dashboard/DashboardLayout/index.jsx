@@ -19,7 +19,7 @@ const OperationsNavTabs = () => {
     { label: "Overview", tab: "Overview", icon: FiGrid },
     { label: "Timesheets", tab: "Timesheets", icon: FiFileText },
     { label: "Incidents", tab: "Incidents", icon: FiShield },
-    { label: "Onboarding Candidate", tab: "Onboarding Candidate", icon: FiUsers },
+    { label: "Onboarding Clients", tab: "Onboarding Candidate", icon: FiUsers },
     { label: "Roster", tab: "Roster", icon: FiCalendar },
   ];
 
