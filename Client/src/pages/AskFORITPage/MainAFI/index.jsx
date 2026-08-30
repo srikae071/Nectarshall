@@ -64,33 +64,47 @@ function MainAFI() {
     });
   };
 
-  const handleSave = async () => {
-    console.log("FORM DATA BEFORE SAVE:", formData);
-    try {
-      console.log("Sending:", formData);
+  const handleCancel = () => {
+    setFormData({
+      requesterName: currentUserName,
+      category: "",
+      subCategory: "",
+      urgency: "",
+      shortDescription: "",
+      description: "",
+    });
+  };
 
-      const response = await sendApiData("/api/itrequests/create", {
+  const handleSave = async () => {
+    try {
+      await sendApiData("/api/itrequests/create", {
         ...formData,
+        status: "Draft",
         requestType: "IT",
       });
-
-      console.log(response.data);
-      navigate("/"); // Home page route
-      alert("IT Request Saved Successfully");
-
-      setFormData({
-        requester: "",
-        requesterFor: "",
-        category: "",
-        subCategory: "",
-        urgency: "",
-        shortDescription: "",
-        description: "",
-        workNotes: "",
-      });
+      alert("IT Request Saved as Draft Successfully.");
     } catch (error) {
       console.error(error);
-      alert("Error Saving Request");
+      alert("Error Saving Draft");
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.shortDescription || !formData.shortDescription.trim()) {
+      alert("Please enter a Short Description.");
+      return;
+    }
+    try {
+      await sendApiData("/api/itrequests/create", {
+        ...formData,
+        status: "Open",
+        requestType: "IT",
+      });
+      alert("IT Request Submitted Successfully!");
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+      alert("Error Submitting Request");
     }
   };
 
@@ -184,6 +198,20 @@ function MainAFI() {
 
 
 
+          {/* SHORT DESCRIPTION */}
+          <div className="lr-field">
+            <label className="lr-label">Short Description *</label>
+            <input
+              type="text"
+              className="lr-input"
+              name="shortDescription"
+              value={formData.shortDescription || ""}
+              onChange={handleChange}
+              placeholder="Enter short summary (1-2 lines)..."
+              required
+            />
+          </div>
+
           {/* DESCRIPTION */}
           <div className="lr-field">
             <label className="lr-label">Description</label>
@@ -198,28 +226,15 @@ function MainAFI() {
 
           {/* BUTTONS */}
           <div className="CreateFooter">
-            <button
-              type="button"
-              className="CreateBtn btn-cancel"
-              onClick={() =>
-                setFormData({
-                  requesterName: "",
-                  category: "",
-                  subCategory: "",
-                  urgency: "",
-                  shortDescription: "",
-                  description: "",
-                })
-              }
-            >
+            <button type="button" className="CreateBtn btn-cancel" onClick={handleCancel}>
               Cancel
             </button>
 
-            <button type="button" className="CreateBtn btn-submit" onClick={handleSave}>
+            <button type="button" className="CreateBtn btn-submit" style={{ background: "#64748b" }} onClick={handleSave}>
               Save
             </button>
 
-            <button type="button" className="CreateBtn btn-submit" onClick={handleSave}>
+            <button type="button" className="CreateBtn btn-submit" onClick={handleSubmit}>
               Submit
             </button>
           </div>

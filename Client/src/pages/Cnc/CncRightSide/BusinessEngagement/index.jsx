@@ -99,26 +99,53 @@ function BusinessEngagement() {
     }));
   };
 
+  const handleCancel = () => {
+    setFormData((prev) => ({
+      ...prev,
+      companyName: "",
+      abn: "",
+      acn: "",
+      companyAddress: "",
+      companyPhone: "",
+      managingAgentName: "",
+      managingAgentEmail: "",
+      shortDescription: "",
+      description: "",
+      attachment: { fileName: "", filePath: "" },
+    }));
+  };
+
   const handleSave = async () => {
-    // console.log("FORM DATA BEFORE SAVE:", formData);
+    try {
+      await sendApiData("/api/BoardingCandidates/create", {
+        ...formData,
+        category: "Client Onboarding",
+        status: "Draft",
+      });
+      alert("Business Request Saved as Draft Successfully.");
+    } catch (error) {
+      console.error(error);
+      alert("Error Saving Draft");
+    }
+  };
 
-    // Remove spaces before checking
-    console.log("Business Engagement Attachment:", formData.attachment);
-    const abn = formData.abn.trim();
-    const acn = formData.acn.trim();
-
+  const handleSubmit = async () => {
+    const { abn, acn } = formData;
     let hasError = false;
 
-    // ABN validation (must be exactly 11 digits)
     if (!/^\d{11}$/.test(abn)) {
       alert("Invalid ABN Number. ABN must contain exactly 11 digits.");
       hasError = true;
     }
 
-    // ACN validation (must be exactly 9 digits)
     if (!/^\d{9}$/.test(acn)) {
       alert("Invalid ACN Number. ACN must contain exactly 9 digits.");
       hasError = true;
+    }
+
+    if (!formData.shortDescription || !formData.shortDescription.trim()) {
+      alert("Please enter a Short Description.");
+      return;
     }
 
     if (hasError) {
@@ -132,11 +159,11 @@ function BusinessEngagement() {
         status: "Open",
       });
 
+      alert("Business Request Submitted Successfully!");
       navigate("/");
-      alert("Business Request Saved Successfully");
     } catch (error) {
       console.error(error);
-      alert("Error Saving Request");
+      alert("Error Submitting Request");
     }
   };
   return (
@@ -247,6 +274,20 @@ function BusinessEngagement() {
             </div>
           </div>
 
+          {/* SHORT DESCRIPTION */}
+          <div className="lr-field" style={{ marginTop: "12px" }}>
+            <label className="lr-label">Short Description *</label>
+            <input
+              type="text"
+              className="lr-input"
+              name="shortDescription"
+              value={formData.shortDescription || ""}
+              onChange={handleChange}
+              placeholder="Enter short summary (1-2 lines)..."
+              required
+            />
+          </div>
+
           {/* DESCRIPTION */}
           <div className="lr-field" style={{ marginTop: "12px" }}>
             <label className="lr-label">Description</label>
@@ -284,33 +325,15 @@ function BusinessEngagement() {
 
             <div style={{ flexGrow: 1 }} />
 
-            <button
-              type="button"
-              className="lr-btn-cancel"
-              onClick={() =>
-                setFormData((prev) => ({
-                  ...prev,
-                  companyName: "",
-                  abn: "",
-                  acn: "",
-                  companyAddress: "",
-                  companyPhone: "",
-                  managingAgentName: "",
-                  managingAgentEmail: "",
-                  shortDescription: "",
-                  description: "",
-                  attachment: { fileName: "", filePath: "" },
-                }))
-              }
-            >
+            <button type="button" className="lr-btn-cancel" onClick={handleCancel}>
               Cancel
             </button>
 
-            <button type="button" className="lr-btn-submit" onClick={handleSave}>
+            <button type="button" className="lr-btn-submit" style={{ background: "#64748b" }} onClick={handleSave}>
               Save
             </button>
 
-            <button type="button" className="lr-btn-submit" onClick={handleSave}>
+            <button type="button" className="lr-btn-submit" onClick={handleSubmit}>
               Submit
             </button>
           </div>

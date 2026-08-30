@@ -17,6 +17,26 @@ function Navbar() {
   const getModuleLabel = () => {
     const p = location.pathname.toLowerCase();
 
+    // 0. Standalone Form & Request Page Titles (Top Priority)
+    if (p.includes("/ask-for-hr") || p.includes("/askforhr")) {
+      return "ASK FOR HR";
+    }
+    if (p.includes("/ask-for-it") || p.includes("/askforit")) {
+      return "ASK FOR IT";
+    }
+    if (p.includes("/business-engagement")) {
+      return "BUSINESS ENGAGEMENT";
+    }
+    if (p.includes("/resonance") || p.includes("/employeerequest") || p.includes("/employe-request")) {
+      return "EMPLOYEE REQUEST";
+    }
+    if (p.includes("/exit")) {
+      return "EXIT";
+    }
+    if (p.includes("/leave")) {
+      return "LEAVE MANAGEMENT";
+    }
+
     // 1. CNC Module Routes
     if (
       p.includes("/cnc") ||
@@ -27,8 +47,7 @@ function Navbar() {
       p.includes("/supplier/onboardingcompilence") ||
       p.includes("/onboarding-supplier") ||
       p.includes("/offboarding-supplier") ||
-      p.includes("/onb") ||
-      p.includes("/business-engagement")
+      p.includes("/onb")
     ) {
       return "CNC";
     }
@@ -43,7 +62,6 @@ function Navbar() {
       p.includes("/hrms") ||
       p.includes("/regular-form") ||
       p.includes("/add-employee") ||
-      p.includes("/ask-for-hr") ||
       p.includes("/onboarding") ||
       p.includes("/offboarding") ||
       p.includes("/candidate") ||
@@ -56,7 +74,7 @@ function Navbar() {
     }
 
     // 4. IT Module Routes
-    if (p.includes("/it") || p.includes("/ask-for-it")) {
+    if (p.includes("/it")) {
       return "IT";
     }
 
@@ -76,8 +94,6 @@ function Navbar() {
     }
 
     // 6. Other Modules
-    if (p.includes("/leave")) return "LEAVE MANAGEMENT";
-    if (p.includes("/exit")) return "EXIT";
     if (p.includes("/my-tasks")) return "MY TASKS";
     if (p.includes("/my-tickets")) return "MY TICKETS";
     if (p.includes("/my-mails")) return "MY MAILS";

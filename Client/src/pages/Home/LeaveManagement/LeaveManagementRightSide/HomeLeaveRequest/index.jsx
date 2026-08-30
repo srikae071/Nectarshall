@@ -54,7 +54,40 @@ function HomeLeaveRequest() {
     }
     return 1;
   };
+  const handleCancel = () => {
+    setStartDate("");
+    setEndDate("");
+    setHalfDay(false);
+    setLeaveType("");
+    setDescription("");
+  };
+
   const handleSave = async () => {
+    try {
+      const requestedLeaves = Number(calculateLeaves());
+      await sendApiData("/api/leaves/create", {
+        requester,
+        requesterFor,
+        startDate,
+        leaveType,
+        endDate,
+        totalLeaves: requestedLeaves,
+        halfDay,
+        description,
+        status: "Draft",
+      });
+      alert("Leave Request Saved as Draft Successfully.");
+    } catch (error) {
+      console.log(error);
+      alert("Error Saving Draft");
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!leaveType || !startDate || !endDate) {
+      alert("Please fill in required fields (Leave Type, Start Date, End Date).");
+      return;
+    }
     try {
       const leaveAllocation = {
         "Casual Leave": 5,
@@ -65,13 +98,10 @@ function HomeLeaveRequest() {
       };
 
       const allocated = leaveAllocation[leaveType] || 0;
-
       const response = await fetchApiData("/api/leaves");
-
       const approvedLeaves = response.data.filter(
         (item) => item.leaveType === leaveType && item.status === "Approved",
       );
-
       const consumed = approvedLeaves.reduce(
         (sum, item) => sum + Number(item.totalLeaves || 0),
         0,
@@ -84,9 +114,7 @@ function HomeLeaveRequest() {
         alert(
           "Sorry! Your leave balance has been exhausted. Please apply for another leave type if available.",
         );
-
         navigate("/");
-
         return;
       }
 
@@ -99,21 +127,20 @@ function HomeLeaveRequest() {
         totalLeaves: requestedLeaves,
         halfDay,
         description,
+        status: "Pending",
       });
 
       const rawUser = requester.trim() || "Srikar";
       const userMail = getUserEmailByName(rawUser);
-      const adminMail = ADMIN_EMAIL; // sumit@enhanceservices.com.au
-      const senderMail = SYSTEM_SENDER_EMAIL; // srikar071@gmail.com
+      const adminMail = ADMIN_EMAIL;
+      const senderMail = SYSTEM_SENDER_EMAIL;
 
       let userBody = "Leave has been applied.";
       if (rawUser.toLowerCase().includes("karan")) {
         userBody = "Thank you, your leave has been applied.";
       }
-
       const adminBody = `Please approve ${rawUser}'s leave.`;
 
-      // 1. Send User Email Notification (From: srikar071@gmail.com)
       sendMailNotification({
         to: userMail,
         toName: rawUser,
@@ -123,7 +150,6 @@ function HomeLeaveRequest() {
         body: userBody,
       });
 
-      // 2. Send Admin Email Notification (From: srikar071@gmail.com)
       sendMailNotification({
         to: adminMail,
         toName: "Sumit (Admin)",
@@ -133,12 +159,11 @@ function HomeLeaveRequest() {
         body: adminBody,
       });
 
-      alert("Leave Request Saved Successfully & Notification Mails Sent!");
-
+      alert("Leave Request Submitted Successfully & Notification Mails Sent!");
       navigate("/");
     } catch (error) {
       console.log(error);
-      alert("Error Saving Leave Request");
+      alert("Error Submitting Leave Request");
     }
   };
   return (
@@ -270,8 +295,9 @@ function HomeLeaveRequest() {
 
           {/* ACTIONS */}
           <div className="lr-actions">
-            <button className="lr-btn-cancel" onClick={() => navigate("/")}>Cancel</button>
-            <button className="lr-btn-submit" onClick={handleSave}>Submit Request</button>
+            <button type="button" className="lr-btn-cancel" onClick={handleCancel}>Cancel</button>
+            <button type="button" className="lr-btn-submit" style={{ background: "#64748b" }} onClick={handleSave}>Save</button>
+            <button type="button" className="lr-btn-submit" onClick={handleSubmit}>Submit</button>
           </div>
         </div>
       </div>

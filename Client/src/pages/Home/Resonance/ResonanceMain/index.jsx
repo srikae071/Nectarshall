@@ -31,32 +31,51 @@ function ResonanceMain() {
     });
   };
 
+  const handleCancel = () => {
+    setFormData({
+      requesterName: currentUserName,
+      requester: currentUserName,
+      department: "",
+      skillSet: "",
+      experience: "",
+      urgency: "",
+      shortDescription: "",
+      description: "",
+    });
+  };
+
   const handleSave = async () => {
     try {
-      const response = await sendApiData("/api/jobrequests", {
+      await sendApiData("/api/jobrequests", {
+        ...formData,
+        category: "Employee Request",
+        status: "Draft",
+        requestType: "Resonance",
+      });
+      alert("Employee Request Saved as Draft Successfully.");
+    } catch (error) {
+      console.error(error);
+      alert("Error Saving Draft");
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.shortDescription || !formData.shortDescription.trim()) {
+      alert("Please enter a Short Description.");
+      return;
+    }
+    try {
+      await sendApiData("/api/jobrequests", {
         ...formData,
         category: "Employee Request",
         status: "Open",
         requestType: "Resonance",
       });
+      alert("Employee Request Submitted Successfully!");
       navigate("/");
-
-      console.log(response.data);
-
-      alert("Resonance Request Saved Successfully");
-
-      setFormData({
-        requesterName: "",
-        department: "",
-        skillSet: "",
-        experience: "",
-        urgency: "",
-        shortDescription: "",
-        description: "",
-      });
     } catch (error) {
       console.error(error);
-      alert("Error Saving Request");
+      alert("Error Submitting Request");
     }
   };
 
@@ -142,6 +161,20 @@ function ResonanceMain() {
             </div>
           </div>
 
+          {/* SHORT DESCRIPTION */}
+          <div className="lr-field" style={{ marginTop: "12px" }}>
+            <label className="lr-label">Short Description *</label>
+            <input
+              type="text"
+              className="lr-input"
+              name="shortDescription"
+              value={formData.shortDescription || ""}
+              onChange={handleChange}
+              placeholder="Enter short summary (1-2 lines)..."
+              required
+            />
+          </div>
+
           {/* DESCRIPTION */}
           <div className="lr-field" style={{ marginTop: "12px" }}>
             <label className="lr-label">Description</label>
@@ -156,37 +189,15 @@ function ResonanceMain() {
 
           {/* BUTTONS */}
           <div className="lr-actions">
-            <button
-              type="button"
-              className="lr-btn-cancel"
-              onClick={() =>
-                setFormData({
-                  requesterName: "",
-                  department: "",
-                  skillSet: "",
-                  experience: "",
-                  urgency: "",
-                  shortDescription: "",
-                  description: "",
-                })
-              }
-            >
+            <button type="button" className="lr-btn-cancel" onClick={handleCancel}>
               Cancel
             </button>
 
-            <button
-              type="button"
-              className="lr-btn-submit"
-              onClick={handleSave}
-            >
+            <button type="button" className="lr-btn-submit" style={{ background: "#64748b" }} onClick={handleSave}>
               Save
             </button>
 
-            <button
-              type="button"
-              className="lr-btn-submit"
-              onClick={handleSave}
-            >
+            <button type="button" className="lr-btn-submit" onClick={handleSubmit}>
               Submit
             </button>
           </div>

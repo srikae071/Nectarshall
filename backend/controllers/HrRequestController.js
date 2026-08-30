@@ -2,9 +2,19 @@ const HrRequest = require("../models/HrRequest");
 
 exports.createHrRequest = async (req, res) => {
   try {
-    const count = await HrRequest.countDocuments();
+    const lastRequest = await HrRequest.findOne({
+      incidentNumber: { $regex: "^HR" },
+    }).sort({ createdAt: -1 });
 
-    const incidentNumber = `HR${String(count + 1).padStart(3, "0")}`;
+    let nextNumber = 1;
+    if (lastRequest && lastRequest.incidentNumber) {
+      const parsed = parseInt(lastRequest.incidentNumber.replace(/^HR/i, ""), 10);
+      if (!isNaN(parsed)) {
+        nextNumber = parsed + 1;
+      }
+    }
+
+    const incidentNumber = `HR${String(nextNumber).padStart(3, "0")}`;
 
     const request = await HrRequest.create({
       ...req.body,
@@ -13,6 +23,7 @@ exports.createHrRequest = async (req, res) => {
 
     res.status(201).json(request);
   } catch (error) {
+    console.error("Error creating HrRequest:", error);
     res.status(500).json({
       message: error.message,
     });

@@ -16,24 +16,22 @@ function Exit() {
     resignationDate: "",
     lastWorkingDay: "",
     resignationReason: "",
+    shortDescription: "",
     description: "",
   });
   const navigate = useNavigate();
-  //
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
     if (name === "resignationDate") {
       const selectedDate = new Date(value);
-
       let workingDays = 0;
       let nextDate = new Date(selectedDate);
 
       while (workingDays < 10) {
         nextDate.setDate(nextDate.getDate() + 1);
-
         const day = nextDate.getDay();
-
         if (day !== 0 && day !== 6) {
           workingDays++;
         }
@@ -55,19 +53,16 @@ function Exit() {
       [name]: value,
     });
   };
+
   useEffect(() => {
     const today = new Date();
-
     const resignationDate = today.toISOString().split("T")[0];
-
     let workingDays = 0;
     let nextDate = new Date(today);
 
     while (workingDays < 10) {
       nextDate.setDate(nextDate.getDate() + 1);
-
       const day = nextDate.getDay();
-
       if (day !== 0 && day !== 6) {
         workingDays++;
       }
@@ -82,7 +77,40 @@ function Exit() {
     }));
   }, []);
 
+  const handleCancel = () => {
+    setFormData((prev) => ({
+      ...prev,
+      resignationReason: "",
+      shortDescription: "",
+      description: "",
+    }));
+  };
+
   const handleSave = async () => {
+    try {
+      const payload = {
+        ...formData,
+        requester: currentUserName,
+        requesterName: currentUserName,
+        requesterFor: "Sumit",
+        category: "Offboarding",
+        status: "Draft",
+        requestType: "Resignation",
+      };
+
+      await sendApiData("/api/jobrequests", payload);
+      alert("Offboarding Request Saved as Draft Successfully.");
+    } catch (error) {
+      console.error(error);
+      alert("Error Saving Draft");
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!formData.shortDescription || !formData.shortDescription.trim()) {
+      alert("Please enter a Short Description.");
+      return;
+    }
     try {
       const payload = {
         ...formData,
@@ -94,14 +122,12 @@ function Exit() {
         requestType: "Resignation",
       };
 
-      const response = await sendApiData("/api/jobrequests", payload);
-
-      console.log(response.data);
-      alert("Offboarding Request Saved Successfully");
+      await sendApiData("/api/jobrequests", payload);
+      alert("Offboarding Request Submitted Successfully!");
       navigate("/");
     } catch (error) {
       console.error(error);
-      alert("Error Saving Request");
+      alert("Error Submitting Request");
     }
   };
   return (
@@ -169,6 +195,21 @@ function Exit() {
             </div>
           </div>
 
+          {/* SHORT DESCRIPTION */}
+          <div className="lr-field" style={{ marginTop: "12px" }}>
+            <label className="lr-label">Short Description *</label>
+            <input
+              type="text"
+              className="lr-input"
+              name="shortDescription"
+              value={formData.shortDescription || ""}
+              onChange={handleChange}
+              placeholder="Enter short summary (1-2 lines)..."
+              required
+            />
+          </div>
+
+          {/* DESCRIPTION */}
           <div className="lr-field">
             <label className="lr-label">Description</label>
             <textarea
@@ -176,33 +217,20 @@ function Exit() {
               name="description"
               value={formData.description}
               onChange={handleChange}
+              placeholder="Enter detailed description..."
             />
           </div>
           
           <div className="CreateFooter">
-            <button
-              type="button"
-              className="CreateBtn btn-cancel"
-              onClick={() =>
-                setFormData({
-                  requesterName: "",
-                  department: "",
-                  skillSet: "",
-                  experience: "",
-                  urgency: "",
-                  shortDescription: "",
-                  description: "",
-                })
-              }
-            >
+            <button type="button" className="CreateBtn btn-cancel" onClick={handleCancel}>
               Cancel
             </button>
 
-            <button type="button" className="CreateBtn btn-submit" onClick={handleSave}>
+            <button type="button" className="CreateBtn btn-submit" style={{ background: "#64748b" }} onClick={handleSave}>
               Save
             </button>
 
-            <button type="button" className="CreateBtn btn-submit" onClick={handleSave}>
+            <button type="button" className="CreateBtn btn-submit" onClick={handleSubmit}>
               Submit
             </button>
           </div>
