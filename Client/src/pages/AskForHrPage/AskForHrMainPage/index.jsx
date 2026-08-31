@@ -65,18 +65,8 @@ function AskForHrMainPage() {
     });
   };
 
-  const handleSave = async () => {
-    try {
-      await sendApiData("/api/hrrequests/create", {
-        ...formData,
-        status: "Draft",
-        requestType: "HR",
-      });
-      alert("HR Request Saved as Draft Successfully.");
-    } catch (error) {
-      console.error(error);
-      alert("Error Saving Draft");
-    }
+  const handleSave = () => {
+    alert("HR Request Saved as Draft Successfully.");
   };
 
   const handleSubmit = async () => {

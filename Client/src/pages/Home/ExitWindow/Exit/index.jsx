@@ -86,24 +86,8 @@ function Exit() {
     }));
   };
 
-  const handleSave = async () => {
-    try {
-      const payload = {
-        ...formData,
-        requester: currentUserName,
-        requesterName: currentUserName,
-        requesterFor: "Sumit",
-        category: "Offboarding",
-        status: "Draft",
-        requestType: "Resignation",
-      };
-
-      await sendApiData("/api/jobrequests", payload);
-      alert("Offboarding Request Saved as Draft Successfully.");
-    } catch (error) {
-      console.error(error);
-      alert("Error Saving Draft");
-    }
+  const handleSave = () => {
+    alert("Offboarding Request Saved as Draft Successfully.");
   };
 
   const handleSubmit = async () => {

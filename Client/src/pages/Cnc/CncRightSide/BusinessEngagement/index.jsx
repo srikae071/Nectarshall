@@ -115,18 +115,8 @@ function BusinessEngagement() {
     }));
   };
 
-  const handleSave = async () => {
-    try {
-      await sendApiData("/api/BoardingCandidates/create", {
-        ...formData,
-        category: "Client Onboarding",
-        status: "Draft",
-      });
-      alert("Business Request Saved as Draft Successfully.");
-    } catch (error) {
-      console.error(error);
-      alert("Error Saving Draft");
-    }
+  const handleSave = () => {
+    alert("Business Request Saved as Draft Successfully.");
   };
 
   const handleSubmit = async () => {

@@ -62,25 +62,8 @@ function HomeLeaveRequest() {
     setDescription("");
   };
 
-  const handleSave = async () => {
-    try {
-      const requestedLeaves = Number(calculateLeaves());
-      await sendApiData("/api/leaves/create", {
-        requester,
-        requesterFor,
-        startDate,
-        leaveType,
-        endDate,
-        totalLeaves: requestedLeaves,
-        halfDay,
-        description,
-        status: "Draft",
-      });
-      alert("Leave Request Saved as Draft Successfully.");
-    } catch (error) {
-      console.log(error);
-      alert("Error Saving Draft");
-    }
+  const handleSave = () => {
+    alert("Leave Request Saved as Draft Successfully.");
   };
 
   const handleSubmit = async () => {

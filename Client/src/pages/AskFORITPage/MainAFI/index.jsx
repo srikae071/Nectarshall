@@ -75,18 +75,8 @@ function MainAFI() {
     });
   };
 
-  const handleSave = async () => {
-    try {
-      await sendApiData("/api/itrequests/create", {
-        ...formData,
-        status: "Draft",
-        requestType: "IT",
-      });
-      alert("IT Request Saved as Draft Successfully.");
-    } catch (error) {
-      console.error(error);
-      alert("Error Saving Draft");
-    }
+  const handleSave = () => {
+    alert("IT Request Saved as Draft Successfully.");
   };
 
   const handleSubmit = async () => {

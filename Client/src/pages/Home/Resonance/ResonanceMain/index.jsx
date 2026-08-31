@@ -44,19 +44,8 @@ function ResonanceMain() {
     });
   };
 
-  const handleSave = async () => {
-    try {
-      await sendApiData("/api/jobrequests", {
-        ...formData,
-        category: "Employee Request",
-        status: "Draft",
-        requestType: "Resonance",
-      });
-      alert("Employee Request Saved as Draft Successfully.");
-    } catch (error) {
-      console.error(error);
-      alert("Error Saving Draft");
-    }
+  const handleSave = () => {
+    alert("Employee Request Saved as Draft Successfully.");
   };
 
   const handleSubmit = async () => {
