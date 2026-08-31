@@ -23,6 +23,7 @@ function LeaveRequest() {
   const [requesterFor, setRequesterFor] = useState("Sumit");
   const [leaveType, setLeaveType] = useState("");
   const [employeeList, setEmployeeList] = useState([]);
+  const [leaveBalanceInfo, setLeaveBalanceInfo] = useState({ remaining: 0, consumed: 0, allocated: 0 });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -48,6 +49,32 @@ function LeaveRequest() {
     "Paternity Leave": 12,
   };
 
+  useEffect(() => {
+    const fetchPersonalBalance = async () => {
+      if (!leaveType) {
+        setLeaveBalanceInfo({ remaining: 0, consumed: 0, allocated: 0 });
+        return;
+      }
+      const allocated = leaveAllocationMap[leaveType] || 15;
+      try {
+        const response = await fetchApiData("/api/leaves");
+        const u = (currentUserName || "").trim().toLowerCase();
+        const userApprovedLeaves = (response.data || []).filter((item) => {
+          if (item.leaveType !== leaveType || item.status !== "Approved") return false;
+          const r1 = (item.requester || item.employeeName || "").trim().toLowerCase();
+          const r2 = (item.requesterFor || "").trim().toLowerCase();
+          return r1 === u || r1.includes(u) || u.includes(r1 && r1.length > 2 ? r1 : "___never___") || r2 === u || r2.includes(u);
+        });
+        const consumed = userApprovedLeaves.reduce((sum, item) => sum + Number(item.totalLeaves || 0), 0);
+        const remaining = Math.max(0, allocated - consumed);
+        setLeaveBalanceInfo({ remaining, consumed, allocated });
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchPersonalBalance();
+  }, [leaveType, currentUserName]);
+
   const calculateLeaves = () => {
     if (startDate && endDate) {
       const start = new Date(startDate);
@@ -55,9 +82,6 @@ function LeaveRequest() {
       const diffTime = end.getTime() - start.getTime();
       const totalDays = Math.max(1, Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1);
       return halfDay ? totalDays / 2 : totalDays;
-    }
-    if (leaveType && leaveAllocationMap[leaveType]) {
-      return leaveAllocationMap[leaveType];
     }
     return 1;
   };
@@ -81,12 +105,14 @@ function LeaveRequest() {
     }
     try {
       const allocated = leaveAllocationMap[leaveType] || 0;
-
       const response = await fetchApiData("/api/leaves");
-
-      const approvedLeaves = response.data.filter(
-        (item) => item.leaveType === leaveType && item.status === "Approved",
-      );
+      const u = (currentUserName || "").trim().toLowerCase();
+      const approvedLeaves = (response.data || []).filter((item) => {
+        if (item.leaveType !== leaveType || item.status !== "Approved") return false;
+        const r1 = (item.requester || item.employeeName || "").trim().toLowerCase();
+        const r2 = (item.requesterFor || "").trim().toLowerCase();
+        return r1 === u || r1.includes(u) || u.includes(r1 && r1.length > 2 ? r1 : "___never___") || r2 === u || r2.includes(u);
+      });
 
       const consumed = approvedLeaves.reduce(
         (sum, item) => sum + Number(item.totalLeaves || 0),
@@ -98,9 +124,8 @@ function LeaveRequest() {
 
       if (requestedLeaves > balance) {
         alert(
-          "Sorry! Your leave balance has been exhausted. Please apply for another leave type if available.",
+          `Sorry! Your leave balance for ${leaveType} has been exhausted (${balance} days remaining). Please apply for another leave type if available.`,
         );
-
         navigate("/");
         return;
       }
@@ -154,6 +179,7 @@ function LeaveRequest() {
       alert("Error Submitting Leave Request");
     }
   };
+
   return (
     <Hrmsleftlayout>
       <div className="lr-page">
@@ -191,13 +217,6 @@ function LeaveRequest() {
                   style={{ background: "#f1f5f9", cursor: "not-allowed" }}
                 />
               </div>
-
-              <datalist id="employeeDatalist">
-                {employeeList.map((emp, i) => {
-                  const name = emp.displayName || emp.employeeName || `${emp.firstName || ""} ${emp.lastName || ""}`.trim();
-                  return name ? <option key={i} value={name} /> : null;
-                })}
-              </datalist>
             </div>
           </div>
 
@@ -225,12 +244,17 @@ function LeaveRequest() {
               </div>
 
               <div className="lr-field">
-                <label className="lr-label">Total Leaves</label>
+                <label className="lr-label">Total Leave Balance</label>
                 <input
                   type="text"
                   className="lr-input"
-                  value={calculateLeaves()}
+                  value={
+                    leaveType
+                      ? `${leaveBalanceInfo.remaining} days remaining (${leaveBalanceInfo.consumed} taken / ${leaveBalanceInfo.allocated} total)`
+                      : "Select leave type"
+                  }
                   readOnly
+                  style={{ fontWeight: "700", color: "#0f172a", background: "#f8fafc" }}
                 />
               </div>
 
@@ -290,15 +314,9 @@ function LeaveRequest() {
 
           {/* ACTIONS */}
           <div className="lr-actions">
-            <button type="button" className="lr-btn-cancel" onClick={handleCancel}>
-              Cancel
-            </button>
-            <button type="button" className="lr-btn-submit" style={{ background: "#64748b" }} onClick={handleSave}>
-              Save
-            </button>
-            <button type="button" className="lr-btn-submit" onClick={handleSubmit}>
-              Submit
-            </button>
+            <button type="button" className="lr-btn-cancel" onClick={handleCancel}>Cancel</button>
+            <button type="button" className="lr-btn-submit" style={{ background: "#64748b" }} onClick={handleSave}>Save</button>
+            <button type="button" className="lr-btn-submit" onClick={handleSubmit}>Submit</button>
           </div>
         </div>
       </div>

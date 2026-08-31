@@ -20,7 +20,7 @@ const allColumns = [
   { key: "leaveType", label: "Leave Type" },
   { key: "startDate", label: "Start Date" },
   { key: "endDate", label: "End Date" },
-  { key: "totalLeaves", label: "Total Leaves" },
+  { key: "totalLeaves", label: "Total Leave Balance" },
   { key: "halfDay", label: "Half Day" },
   { key: "description", label: "Description" },
   { key: "status", label: "Status" },

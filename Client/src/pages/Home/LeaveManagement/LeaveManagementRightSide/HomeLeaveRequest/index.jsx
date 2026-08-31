@@ -1,4 +1,3 @@
-// import { useState } from "react";
 import axios from "axios";
 import { fetchApiData, sendApiData } from "../../../../../utils/apiClient";
 import {
@@ -24,6 +23,7 @@ function HomeLeaveRequest() {
   const [leaveType, setLeaveType] = useState("");
   const [requester, setRequester] = useState(currentUserName);
   const [requesterFor, setRequesterFor] = useState("Sumit");
+  const [leaveBalanceInfo, setLeaveBalanceInfo] = useState({ remaining: 0, consumed: 0, allocated: 0 });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,6 +32,7 @@ function HomeLeaveRequest() {
     }
     setRequesterFor("Sumit");
   }, [currentUserName]);
+
   const leaveAllocationMap = {
     "Casual Leave": 5,
     "Sick Leave": 10,
@@ -40,6 +41,31 @@ function HomeLeaveRequest() {
     "Paternity Leave": 12,
   };
 
+  useEffect(() => {
+    const fetchPersonalBalance = async () => {
+      if (!leaveType) {
+        setLeaveBalanceInfo({ remaining: 0, consumed: 0, allocated: 0 });
+        return;
+      }
+      const allocated = leaveAllocationMap[leaveType] || 15;
+      try {
+        const response = await fetchApiData("/api/leaves");
+        const u = (currentUserName || "").trim().toLowerCase();
+        const userApprovedLeaves = (response.data || []).filter((item) => {
+          if (item.leaveType !== leaveType || item.status !== "Approved") return false;
+          const r1 = (item.requester || item.employeeName || "").trim().toLowerCase();
+          const r2 = (item.requesterFor || "").trim().toLowerCase();
+          return r1 === u || r1.includes(u) || u.includes(r1 && r1.length > 2 ? r1 : "___never___") || r2 === u || r2.includes(u);
+        });
+        const consumed = userApprovedLeaves.reduce((sum, item) => sum + Number(item.totalLeaves || 0), 0);
+        const remaining = Math.max(0, allocated - consumed);
+        setLeaveBalanceInfo({ remaining, consumed, allocated });
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchPersonalBalance();
+  }, [leaveType, currentUserName]);
 
   const calculateLeaves = () => {
     if (startDate && endDate) {
@@ -49,11 +75,9 @@ function HomeLeaveRequest() {
       const totalDays = Math.max(1, Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1);
       return halfDay ? totalDays / 2 : totalDays;
     }
-    if (leaveType && leaveAllocationMap[leaveType]) {
-      return leaveAllocationMap[leaveType];
-    }
     return 1;
   };
+
   const handleCancel = () => {
     setStartDate("");
     setEndDate("");
@@ -72,19 +96,15 @@ function HomeLeaveRequest() {
       return;
     }
     try {
-      const leaveAllocation = {
-        "Casual Leave": 5,
-        "Sick Leave": 10,
-        "Paid Leave": 15,
-        "Maternity Leave": 20,
-        "Paternity Leave": 12,
-      };
-
-      const allocated = leaveAllocation[leaveType] || 0;
+      const allocated = leaveAllocationMap[leaveType] || 0;
       const response = await fetchApiData("/api/leaves");
-      const approvedLeaves = response.data.filter(
-        (item) => item.leaveType === leaveType && item.status === "Approved",
-      );
+      const u = (currentUserName || "").trim().toLowerCase();
+      const approvedLeaves = (response.data || []).filter((item) => {
+        if (item.leaveType !== leaveType || item.status !== "Approved") return false;
+        const r1 = (item.requester || item.employeeName || "").trim().toLowerCase();
+        const r2 = (item.requesterFor || "").trim().toLowerCase();
+        return r1 === u || r1.includes(u) || u.includes(r1 && r1.length > 2 ? r1 : "___never___") || r2 === u || r2.includes(u);
+      });
       const consumed = approvedLeaves.reduce(
         (sum, item) => sum + Number(item.totalLeaves || 0),
         0,
@@ -95,7 +115,7 @@ function HomeLeaveRequest() {
 
       if (requestedLeaves > balance) {
         alert(
-          "Sorry! Your leave balance has been exhausted. Please apply for another leave type if available.",
+          `Sorry! Your leave balance for ${leaveType} has been exhausted (${balance} days remaining). Please apply for another leave type if available.`,
         );
         navigate("/");
         return;
@@ -149,6 +169,7 @@ function HomeLeaveRequest() {
       alert("Error Submitting Leave Request");
     }
   };
+
   return (
     <LeaveManagementLeftSide>
       <div className="lr-page">
@@ -213,12 +234,17 @@ function HomeLeaveRequest() {
               </div>
 
               <div className="lr-field">
-                <label className="lr-label">Total Leaves</label>
+                <label className="lr-label">Total Leave Balance</label>
                 <input
                   type="text"
                   className="lr-input"
-                  value={calculateLeaves()}
+                  value={
+                    leaveType
+                      ? `${leaveBalanceInfo.remaining} days remaining (${leaveBalanceInfo.consumed} taken / ${leaveBalanceInfo.allocated} total)`
+                      : "Select leave type"
+                  }
                   readOnly
+                  style={{ fontWeight: "700", color: "#0f172a", background: "#f8fafc" }}
                 />
               </div>
 

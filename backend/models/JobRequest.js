@@ -218,6 +218,14 @@ const JobRequestSchema = new mongoose.Schema(
       type: String,
       default: "Open",
     },
+    onboardingStatus: {
+      type: String,
+      default: "Open",
+    },
+    offboardingStatus: {
+      type: String,
+      default: "Open",
+    },
     hrClearanceStatus: {
       type: String,
       default: "Open",

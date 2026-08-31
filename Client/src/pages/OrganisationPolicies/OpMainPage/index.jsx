@@ -10,25 +10,26 @@ import {
   FiDownload,
   FiPrinter,
   FiX,
+  FiArrowLeft,
   FiChevronLeft,
   FiChevronRight,
+  FiCheckCircle,
   FiBookOpen,
-  FiShield,
-  FiDollarSign,
-  FiCalendar,
-  FiExternalLink
+  FiShield
 } from "react-icons/fi";
 import "./index.css";
 
 function OpMainPage() {
   const navigate = useNavigate();
-  const [activeCategory, setActiveCategory] = useState("HR_POLICIES"); 
+  const [activeCategory, setActiveCategory] = useState(null); // null | 'HR_POLICIES' | 'PAYROLL' | 'SHIFT_ROSTER'
   const [selectedPdf, setSelectedPdf] = useState(null); // pdf object for viewer modal
   const [activePageNum, setActivePageNum] = useState(1);
+  const [zoomLevel, setZoomLevel] = useState(100);
 
   const openPdfViewer = (pdf) => {
     setSelectedPdf(pdf);
     setActivePageNum(1);
+    setZoomLevel(100);
   };
 
   const closePdfViewer = () => {
@@ -40,75 +41,29 @@ function OpMainPage() {
   };
 
   const handleDownload = (pdf) => {
-    if (!pdf) return;
-    const url = pdf.fileUrl || pdf.pdfUrl;
-    if (url) {
+    if (pdf.fileUrl) {
       const link = document.createElement("a");
-      link.href = url;
-      link.download = pdf.fileName || `${pdf.title.replace(/[^a-zA-Z0-9]/g, "_")}.pdf`;
+      link.href = pdf.fileUrl;
+      link.download = pdf.fileName;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-    }
-  };
-
-  // EXACT PDF PAGE RENDERER
-  const renderExactPdfPage = (pdf, pageNum) => {
-    if (!pdf) return null;
-    const targetUrl = pdf.fileUrl || pdf.pdfUrl;
-    if (targetUrl) {
-      return (
-        <iframe
-          src={targetUrl}
-          title={pdf.title}
-          style={{ width: "100%", height: "100%", border: "none" }}
-        />
-      );
+      return;
     }
 
-    const pageIndex = pageNum - 1;
-    const pageData = (pdf.pages || [])[pageIndex] || (pdf.pages || [])[0];
-
-    return (
-      <div className="pdfExactPageSheet">
-        <div className="pdfExactHeader">
-          <div className="pdfHeaderLogoArea">
-            <img src={logo} alt="Excell Security Logo" className="pdfLogoImg" />
-          </div>
-          <div className="pdfHeaderConfidential">PERSONNEL - IN - CONFIDENCE</div>
-        </div>
-
-        <div className="pdfPageBodyContent">
-          <span className="pdfTagBadge">{pdf.category}</span>
-          <h2 className="pdfRedTitle" style={{ fontSize: "20px", marginTop: "8px" }}>{pdf.title}</h2>
-          <div className="pdfPageHeaderTitle">
-            PAGE {pageNum}: {pageData?.title || "DOCUMENT SECTION"}
-          </div>
-
-          <div className="pdfVisualContent" style={{ marginTop: "20px" }}>
-            {(pageData?.sections || []).map((sec, sIdx) => (
-              <div key={sIdx} className="pdfSectionBlock">
-                {sec.heading && <h3 className="pdfSecHeading">{sec.heading}</h3>}
-                {sec.subheading && <h4 className="pdfSecSubheading">{sec.subheading}</h4>}
-                {sec.text && <p className="pdfSecText">{sec.text}</p>}
-
-                {sec.bullets && (
-                  <ul className="pdfSecBullets">
-                    {sec.bullets.map((b, bIdx) => (
-                      <li key={bIdx}>{b}</li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="pdfExactFooter">
-          <span>Page {pageNum} of {pdf.pagesCount}</span>
-        </div>
-      </div>
-    );
+    const textContent = (pdf.pages || [])
+      .map((p) => `--- PAGE ${p.pageNumber}: ${p.title} ---\n\n${p.content}`)
+      .join("\n\n=========================================\n\n");
+    const blob = new Blob([`${pdf.title}\n${pdf.subtitle}\n\n${textContent}`], {
+      type: "application/pdf;charset=utf-8",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${pdf.title.replace(/[^a-zA-Z0-9]/g, "_")}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -127,49 +82,94 @@ function OpMainPage() {
         <div className="navTitle">ORGANIZATION POLICIES</div>
       </div>
 
-      {/* TOP CATEGORY NAVIGATION TABS */}
-      <div className="opTopTabRibbon">
-        <div className="opTabContainer">
-          <button
-            type="button"
-            className={`opTabItem ${activeCategory === "HR_POLICIES" ? "active" : ""}`}
-            onClick={() => setActiveCategory("HR_POLICIES")}
-          >
-            <FiShield size={16} />
-            <span>HR Policies (4 PDFs)</span>
-          </button>
-
-          <button
-            type="button"
-            className="opTabItem"
-            onClick={() => navigate("/payroll")}
-          >
-            <FiDollarSign size={16} />
-            <span>Payroll</span>
-          </button>
-
-          <button
-            type="button"
-            className="opTabItem"
-            onClick={() => navigate("/roster-shifts")}
-          >
-            <FiCalendar size={16} />
-            <span>Shift & Roster</span>
-          </button>
-        </div>
-      </div>
-
       <div className="opContentContainer">
-        {/* --- HR POLICIES 4 PDF LIST VIEW --- */}
+        {/* BREADCRUMB / BACK NAVIGATION */}
+        {activeCategory && (
+          <button
+            type="button"
+            onClick={() => setActiveCategory(null)}
+            className="opBackButton"
+          >
+            <FiArrowLeft size={16} />
+            <span>Back to Policy Categories</span>
+          </button>
+        )}
+
+        {/* --- 1. MAIN CATEGORIES VIEW --- */}
+        {!activeCategory && (
+          <>
+            <div className="opHeaderBlock">
+              <h2>Organisation Policies & Key Services</h2>
+              <p>Select a category below to explore organizational handbooks, HR policies, and guidelines.</p>
+            </div>
+
+            <div className="opGridContainer">
+              {/* CATEGORY 1: HR POLICIES (Replaced Leave Management) */}
+              <div
+                className="opCategoryCard"
+                onClick={() => setActiveCategory("HR_POLICIES")}
+              >
+                <div className="opCardImageWrap">
+                  <img src={leaveImg} alt="HR Policies" />
+                  <div className="opCardOverlayBadge">7 PDF Documents Available</div>
+                </div>
+                <div className="opCardBody">
+                  <h3>HR Policies</h3>
+                  <p>Comprehensive HR guidelines, employment handbooks, OHS manuals & code of conduct.</p>
+                  <button type="button" className="opViewButton">
+                    <FiBookOpen size={15} />
+                    <span>View 7 HR Policy PDFs</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* CATEGORY 2: PAYROLL */}
+              <div
+                className="opCategoryCard"
+                onClick={() => navigate("/payroll")}
+              >
+                <div className="opCardImageWrap">
+                  <img src={payrollImg} alt="Payroll" />
+                </div>
+                <div className="opCardBody">
+                  <h3>Payroll</h3>
+                  <p>Accurate weekly payroll management, payslips, tax declarations & superannuation.</p>
+                  <button type="button" className="opViewButton">
+                    <span>Access Payroll</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* CATEGORY 3: SHIFT & ROSTER */}
+              <div
+                className="opCategoryCard"
+                onClick={() => navigate("/roster-shifts")}
+              >
+                <div className="opCardImageWrap">
+                  <img src={rosterImg} alt="Shift & Roster" />
+                </div>
+                <div className="opCardBody">
+                  <h3>Shift & Roster</h3>
+                  <p>Roster management, shift planning, site schedules & guard allocations.</p>
+                  <button type="button" className="opViewButton">
+                    <span>Access Shift & Roster</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* --- 2. HR POLICIES 7 PDF LIST VIEW --- */}
         {activeCategory === "HR_POLICIES" && (
           <div className="hrPoliciesSection">
             <div className="opHeaderBlock">
               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                 <FiShield size={24} style={{ color: "#0284c7" }} />
-                <h2 style={{ margin: 0 }}>HR Policies & Official Documents (4 PDFs)</h2>
+                <h2 style={{ margin: 0 }}>HR Policies Documents & Handbooks</h2>
               </div>
               <p style={{ marginTop: "6px" }}>
-                Click any of the 4 official HR policy PDF documents below to open and view the exact PDF file directly.
+                Below are the official 7 HR policy PDF documents for Excell Protective Group. Click on any document to view the full PDF content.
               </p>
             </div>
 
@@ -208,7 +208,7 @@ function OpMainPage() {
                     }}
                   >
                     <FiBookOpen size={14} />
-                    <span>View PDF Document</span>
+                    <span>View PDF</span>
                   </button>
                 </div>
               ))}
@@ -217,7 +217,7 @@ function OpMainPage() {
         )}
       </div>
 
-      {/* --- DIRECT NATIVE PDF VIEWER MODAL --- */}
+      {/* --- 3. FULL INTERACTIVE PDF VIEWER MODAL --- */}
       {selectedPdf && (
         <div className="pdfModalBackdrop" onClick={closePdfViewer}>
           <div className="pdfModalContainer" onClick={(e) => e.stopPropagation()}>
@@ -227,41 +227,50 @@ function OpMainPage() {
                 <FiFileText size={20} style={{ color: "#0284c7" }} />
                 <div>
                   <h3 className="pdfModalTitle">{selectedPdf.title}</h3>
-                  <span className="pdfModalSub">
-                    {selectedPdf.subtitle} • Page {activePageNum} of {selectedPdf.pagesCount}
-                  </span>
+                  <span className="pdfModalSub">{selectedPdf.subtitle} • Page {activePageNum} of {selectedPdf.pagesCount}</span>
                 </div>
               </div>
 
               <div className="pdfHeaderActions">
-                <a
-                  href={selectedPdf.fileUrl || selectedPdf.pdfUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="pdfActionBtn"
-                  title="Open PDF in New Window"
-                >
-                  <FiExternalLink size={14} />
-                  <span>Open Full Window</span>
-                </a>
+                {!selectedPdf.fileUrl && (
+                  <>
+                    <button
+                      type="button"
+                      title="Zoom Out"
+                      onClick={() => setZoomLevel((z) => Math.max(70, z - 10))}
+                      className="pdfActionBtn"
+                    >
+                      -
+                    </button>
+                    <span className="zoomLabel">{zoomLevel}%</span>
+                    <button
+                      type="button"
+                      title="Zoom In"
+                      onClick={() => setZoomLevel((z) => Math.min(150, z + 10))}
+                      className="pdfActionBtn"
+                    >
+                      +
+                    </button>
 
-                <button
-                  type="button"
-                  className="pdfActionBtn highlightBtn"
-                  onClick={() => handleDownload(selectedPdf)}
-                >
-                  <FiDownload size={14} />
-                  <span>Download PDF</span>
-                </button>
+                    <button
+                      type="button"
+                      className="pdfActionBtn highlightBtn"
+                      onClick={() => handleDownload(selectedPdf)}
+                    >
+                      <FiDownload size={14} />
+                      <span>Download PDF</span>
+                    </button>
 
-                <button
-                  type="button"
-                  className="pdfActionBtn"
-                  onClick={handlePrint}
-                >
-                  <FiPrinter size={14} />
-                  <span>Print</span>
-                </button>
+                    <button
+                      type="button"
+                      className="pdfActionBtn"
+                      onClick={handlePrint}
+                    >
+                      <FiPrinter size={14} />
+                      <span>Print</span>
+                    </button>
+                  </>
+                )}
 
                 <button
                   type="button"
@@ -273,9 +282,82 @@ function OpMainPage() {
               </div>
             </div>
 
-            {/* EXACT PDF PAGE RENDERER AREA */}
-            <div className="pdfBodyScrollArea" style={{ height: "calc(100% - 60px)", padding: 0 }}>
-              {renderExactPdfPage(selectedPdf, activePageNum)}
+            {/* PAGE NAVIGATOR RIBBON */}
+            {!selectedPdf.fileUrl && <div className="pdfPageNavRibbon">
+              <button
+                type="button"
+                disabled={activePageNum <= 1}
+                onClick={() => setActivePageNum((p) => Math.max(1, p - 1))}
+                className="pageNavBtn"
+              >
+                <FiChevronLeft size={16} />
+                <span>Prev Page</span>
+              </button>
+
+              <div className="pageTabsList">
+                {(selectedPdf.pages || []).map((p) => (
+                  <button
+                    key={p.pageNumber}
+                    type="button"
+                    className={`pageTabBtn ${activePageNum === p.pageNumber ? "active" : ""}`}
+                    onClick={() => setActivePageNum(p.pageNumber)}
+                  >
+                    Page {p.pageNumber}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                type="button"
+                disabled={activePageNum >= (selectedPdf.pagesCount || selectedPdf.pages.length)}
+                onClick={() =>
+                  setActivePageNum((p) =>
+                    Math.min(selectedPdf.pagesCount || selectedPdf.pages.length, p + 1)
+                  )
+                }
+                className="pageNavBtn"
+              >
+                <span>Next Page</span>
+                <FiChevronRight size={16} />
+              </button>
+            </div>}
+
+            {/* DOCUMENT BODY PAPER VIEW */}
+            <div className="pdfBodyScrollArea">
+              {selectedPdf.fileUrl ? (
+                <iframe
+                  className="nativePdfViewer"
+                  src={selectedPdf.fileUrl}
+                  title={selectedPdf.title}
+                />
+              ) : <div
+                className="pdfPaperSheet"
+                style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: "top center" }}
+              >
+                <div className="pdfPaperHeader">
+                  <div className="paperCompany">EXCELL PROTECTIVE GROUP</div>
+                  <div className="paperConfidential">PERSONNEL - IN - CONFIDENCE</div>
+                </div>
+
+                <div className="pdfPaperTitleArea">
+                  <span className="pdfBadgeTag">{selectedPdf.category}</span>
+                  <h2>{selectedPdf.title}</h2>
+                  <div className="pdfPageHeaderTitle">
+                    PAGE {activePageNum}: {selectedPdf.pages[activePageNum - 1]?.title || "DOCUMENT SECTION"}
+                  </div>
+                </div>
+
+                <div className="pdfPaperContent">
+                  <pre className="pdfTextContent">
+                    {selectedPdf.pages[activePageNum - 1]?.content || selectedPdf.pages[0]?.content}
+                  </pre>
+                </div>
+
+                <div className="pdfPaperFooter">
+                  <span>Excell Security © 2026 - All Rights Reserved</span>
+                  <span>Page {activePageNum} of {selectedPdf.pagesCount}</span>
+                </div>
+              </div>}
             </div>
           </div>
         </div>

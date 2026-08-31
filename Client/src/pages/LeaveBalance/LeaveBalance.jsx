@@ -34,9 +34,24 @@ function LeaveBalance() {
 
     try {
       const response = await fetchApiData("/api/leaves");
-      const approvedLeaves = (response.data || []).filter(
-        (item) => item.leaveType === selectedType && item.status === "Approved",
-      );
+
+      let authUser = null;
+      try {
+        const saved = localStorage.getItem("authUser") || localStorage.getItem("user") || localStorage.getItem("username");
+        if (saved) authUser = JSON.parse(saved);
+      } catch (e) {
+        const raw = localStorage.getItem("authUser") || localStorage.getItem("user") || localStorage.getItem("username");
+        if (raw && typeof raw === "string") authUser = { username: raw };
+      }
+      const username = (authUser?.username || authUser?.name || authUser?.displayName || (typeof authUser === "string" ? authUser : "")).trim().toLowerCase();
+
+      const approvedLeaves = (response.data || []).filter((item) => {
+        if (item.leaveType !== selectedType || item.status !== "Approved") return false;
+        if (!username) return true;
+        const r1 = (item.requester || item.employeeName || "").trim().toLowerCase();
+        const r2 = (item.requesterFor || "").trim().toLowerCase();
+        return r1 === username || r1.includes(username) || username.includes(r1 && r1.length > 2 ? r1 : "___never___") || r2 === username || r2.includes(username);
+      });
       const consumed = approvedLeaves.reduce(
         (sum, item) => sum + Number(item.totalLeaves || 0),
         0,

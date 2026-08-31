@@ -123,15 +123,17 @@ function AccountsTaskSaves() {
               </div>
 
               <div>
-                <label style={{ display: "block", fontSize: "13px", fontWeight: "700", color: "#475569", marginBottom: "6px" }}>Last Working Day</label>
+                <label style={{ display: "block", fontSize: "13px", fontWeight: "700", color: "#475569", marginBottom: "6px" }}>Last Working Day (Editable by Admin)</label>
                 <input
+                  type="date"
+                  name="lastWorkingDay"
                   value={
                     formData.lastWorkingDay
-                      ? new Date(formData.lastWorkingDay).toLocaleDateString()
-                      : "N/A"
+                      ? new Date(formData.lastWorkingDay).toISOString().slice(0, 10)
+                      : ""
                   }
-                  readOnly
-                  style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#f8fafc" }}
+                  onChange={handleChange}
+                  style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1", background: "#ffffff", fontWeight: "600", color: "#0f172a" }}
                 />
               </div>
             </div>

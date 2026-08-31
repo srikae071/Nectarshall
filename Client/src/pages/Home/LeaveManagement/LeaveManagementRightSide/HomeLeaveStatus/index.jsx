@@ -2,12 +2,22 @@ import { useEffect, useState } from "react";
 import LeaveManagementLeftSide from "./../../LeaveManagementLeftSide";
 import { fetchApiData } from "../../../../../utils/apiClient";
 import { useAuth } from "../../../../../context/AuthContext";
+import { FiSearch } from "react-icons/fi";
 import "./index.css";
+
+const leaveAllocation = {
+  "Casual Leave": 5,
+  "Sick Leave": 10,
+  "Paid Leave": 15,
+  "Maternity Leave": 20,
+  "Paternity Leave": 12,
+};
 
 function HomeLeaveStatus() {
   const { user } = useAuth();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Column visibility settings
   const [columns, setColumns] = useState({
@@ -44,17 +54,13 @@ function HomeLeaveStatus() {
       }
 
       const username = (authUser?.username || authUser?.name || authUser?.displayName || (typeof authUser === "string" ? authUser : "")).trim();
-      const role = (authUser?.role || "").toUpperCase();
-      const isAdmin = role === "ADMIN" || username.toLowerCase().includes("sumit");
 
-      if (isAdmin) {
-        setData(allLeaves);
-      } else if (username) {
+      if (username) {
         const u = username.toLowerCase();
         const userLeaves = allLeaves.filter((item) => {
           const r1 = (item.requester || item.employeeName || "").trim().toLowerCase();
           const r2 = (item.requesterFor || "").trim().toLowerCase();
-          return r1.includes(u) || u.includes(r1 && r1.length > 2 ? r1 : "___never___") || r2.includes(u);
+          return r1 === u || r1.includes(u) || u.includes(r1 && r1.length > 2 ? r1 : "___never___") || r2 === u || r2.includes(u);
         });
         setData(userLeaves);
       } else {
@@ -67,13 +73,35 @@ function HomeLeaveStatus() {
     }
   };
 
+  const getPersonalLeaveBalance = (item) => {
+    const type = item.leaveType || "Paid Leave";
+    const allocated = leaveAllocation[type] || 15;
+    const consumed = data
+      .filter((l) => l.leaveType === type && l.status === "Approved")
+      .reduce((sum, l) => sum + Number(l.totalLeaves || 0), 0);
+    return Math.max(0, allocated - consumed);
+  };
+
+  const filteredData = data.filter((item) => {
+    if (!searchQuery.trim()) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      (item.requester || "").toLowerCase().includes(query) ||
+      (item.leaveNumber || "").toLowerCase().includes(query) ||
+      (item.leaveType || "").toLowerCase().includes(query) ||
+      (item.status || "").toLowerCase().includes(query)
+    );
+  });
+
   const visibleColumnCount = Object.values(columns).filter(Boolean).length || 1;
+
+  const currentUserName = user?.displayName || user?.username || user?.name || "Logged In User";
 
   return (
     <LeaveManagementLeftSide>
       <div className="Openhome">
         <div>
-          {/* HEADER ROW WITH TITLE & SETTINGS ICON */}
+          {/* HEADER ROW WITH TITLE, SEARCH BAR & SETTINGS */}
           <div
             style={{
               display: "flex",
@@ -85,100 +113,131 @@ function HomeLeaveStatus() {
             }}
           >
             <h3 className="openheading" style={{ margin: 0 }}>
-              📋 Leave Status
+              📋 Leave Status - {currentUserName}
             </h3>
 
-            <div style={{ position: "relative" }}>
-              <button
-                type="button"
-                onClick={() => setShowSettings(!showSettings)}
-                style={{
-                  background: "#ffffff",
-                  border: "1px solid #cbd5e1",
-                  borderRadius: "8px",
-                  padding: "6px 14px",
-                  cursor: "pointer",
-                  fontSize: "13px",
-                  fontWeight: "700",
-                  color: "#334155",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-                }}
-                title="Customize Display Columns"
-              >
-                ⚙️ Settings
-              </button>
-
-              {showSettings && (
-                <div
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              {/* SEARCH BAR */}
+              <div style={{ position: "relative", display: "inline-block" }}>
+                <FiSearch
                   style={{
                     position: "absolute",
-                    right: 0,
-                    top: "40px",
+                    left: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    color: "#64748b",
+                    fontSize: "14px",
+                  }}
+                />
+                <input
+                  type="text"
+                  placeholder="Search by requester, type, status..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  style={{
+                    padding: "7px 12px 7px 32px",
+                    borderRadius: "6px",
+                    border: "1px solid #cbd5e1",
+                    fontSize: "13px",
+                    width: "240px",
+                    outline: "none",
+                  }}
+                />
+              </div>
+
+              {/* SETTINGS BUTTON */}
+              <div style={{ position: "relative" }}>
+                <button
+                  type="button"
+                  onClick={() => setShowSettings(!showSettings)}
+                  style={{
                     background: "#ffffff",
                     border: "1px solid #cbd5e1",
-                    borderRadius: "10px",
-                    boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
-                    padding: "14px 16px",
-                    width: "220px",
-                    zIndex: 100,
+                    borderRadius: "8px",
+                    padding: "6px 14px",
+                    cursor: "pointer",
+                    fontSize: "13px",
+                    fontWeight: "700",
+                    color: "#334155",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
                   }}
+                  title="Customize Display Columns"
                 >
+                  ⚙️ Settings
+                </button>
+
+                {showSettings && (
                   <div
                     style={{
-                      fontWeight: "700",
-                      fontSize: "13px",
-                      color: "#0f172a",
-                      marginBottom: "10px",
-                      borderBottom: "1px solid #e2e8f0",
-                      paddingBottom: "6px",
+                      position: "absolute",
+                      right: 0,
+                      top: "40px",
+                      background: "#ffffff",
+                      border: "1px solid #cbd5e1",
+                      borderRadius: "10px",
+                      boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
+                      padding: "14px 16px",
+                      width: "220px",
+                      zIndex: 100,
                     }}
                   >
-                    Display Columns:
-                  </div>
-
-                  {Object.entries({
-                    leaveNumber: "Leave ID",
-                    requester: "Requester",
-                    leaveType: "Leave Type",
-                    startDate: "Start Date",
-                    endDate: "End Date",
-                    totalLeaves: "Total Leave Count",
-                    status: "Status",
-                  }).map(([key, label]) => (
-                    <label
-                      key={key}
+                    <div
                       style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
+                        fontWeight: "700",
                         fontSize: "13px",
-                        color: "#334155",
-                        marginBottom: "8px",
-                        cursor: "pointer",
+                        color: "#0f172a",
+                        marginBottom: "10px",
+                        borderBottom: "1px solid #e2e8f0",
+                        paddingBottom: "6px",
                       }}
                     >
-                      <input
-                        type="checkbox"
-                        checked={columns[key]}
-                        onChange={() =>
-                          setColumns((prev) => ({ ...prev, [key]: !prev[key] }))
-                        }
-                        style={{ width: "16px", height: "16px", cursor: "pointer" }}
-                      />
-                      {label}
-                    </label>
-                  ))}
-                </div>
-              )}
+                      Display Columns:
+                    </div>
+
+                    {Object.entries({
+                      leaveNumber: "Leave ID",
+                      requester: "Requester",
+                      leaveType: "Leave Type",
+                      startDate: "Start Date",
+                      endDate: "End Date",
+                      totalLeaves: "Total Leave Balance",
+                      status: "Status",
+                    }).map(([key, label]) => (
+                      <label
+                        key={key}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          fontSize: "13px",
+                          color: "#334155",
+                          marginBottom: "8px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={columns[key]}
+                          onChange={() =>
+                            setColumns((prev) => ({ ...prev, [key]: !prev[key] }))
+                          }
+                          style={{ width: "16px", height: "16px", cursor: "pointer" }}
+                        />
+                        {label}
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
           {loading ? (
             <div style={{ padding: "30px", textAlign: "center", color: "#64748b" }}>
-              Loading personalized leave status...
+              Loading personal leave status for {currentUserName}...
             </div>
           ) : (
             <table className="opentable">
@@ -189,21 +248,21 @@ function HomeLeaveStatus() {
                   {columns.leaveType && <th>Leave Type</th>}
                   {columns.startDate && <th>Start Date</th>}
                   {columns.endDate && <th>End Date</th>}
-                  {columns.totalLeaves && <th>Total Leave Count</th>}
+                  {columns.totalLeaves && <th>Total Leave Balance</th>}
                   {columns.status && <th>Status</th>}
                 </tr>
               </thead>
 
               <tbody>
-                {data.length > 0 ? (
-                  data.map((item) => (
+                {filteredData.length > 0 ? (
+                  filteredData.map((item) => (
                     <tr key={item._id}>
                       {columns.leaveNumber && <td>{item.leaveNumber || "N/A"}</td>}
-                      {columns.requester && <td>{item.requester || "Self"}</td>}
+                      {columns.requester && <td>{item.requester || currentUserName}</td>}
                       {columns.leaveType && <td>{item.leaveType}</td>}
                       {columns.startDate && <td>{item.startDate}</td>}
                       {columns.endDate && <td>{item.endDate}</td>}
-                      {columns.totalLeaves && <td>{item.totalLeaves} day(s)</td>}
+                      {columns.totalLeaves && <td>{getPersonalLeaveBalance(item)} day(s)</td>}
                       {columns.status && (
                         <td>
                           <span
@@ -221,7 +280,7 @@ function HomeLeaveStatus() {
                       colSpan={visibleColumnCount}
                       style={{ padding: "20px", textAlign: "center", color: "#64748b" }}
                     >
-                      No leave requests found for {user?.displayName || user?.username || "this account"}.
+                      No leave records found for {currentUserName}.
                     </td>
                   </tr>
                 )}

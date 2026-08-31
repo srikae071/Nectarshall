@@ -144,6 +144,16 @@ function ApprovalTable() {
     }
   };
 
+  const handleLastWorkingDayUpdate = async (id, newDate) => {
+    try {
+      await sendApiData(`/api/jobrequests/${id}`, { lastWorkingDay: newDate }, "put");
+      fetchOffboarding();
+    } catch (error) {
+      console.log(error);
+      alert("Error updating last working day");
+    }
+  };
+
   const handleResetLeaves = async () => {
     try {
       await sendApiData(`/api/leaves/reset-all`, {}, "put");
@@ -330,6 +340,7 @@ function ApprovalTable() {
                     <th className="MyTaskTableHeader">Finance Clearance</th>
                     <th className="MyTaskTableHeader">Admin Clearance</th>
                     <th className="MyTaskTableHeader">Approval Status</th>
+                    <th className="MyTaskTableHeader">Onboarding Status</th>
                   </tr>
                 </thead>
 
@@ -348,7 +359,13 @@ function ApprovalTable() {
                     return (
                       <tr className="MyTaskTableRow" key={item._id || idx}>
                         <td className="MyTaskTableCell">
-                          <strong>{item.caseId || `OFF-${item._id.slice(-5).toUpperCase()}`}</strong>
+                          <strong
+                            style={{ cursor: "pointer", color: "#0284c7" }}
+                            onClick={() => navigate(`/offboarding-saves/${item._id}`)}
+                            title="Click to open offboarding task details"
+                          >
+                            {item.caseId || `OFF-${item._id.slice(-5).toUpperCase()}`}
+                          </strong>
                         </td>
 
                         <td className="MyTaskTableCell">
@@ -359,8 +376,31 @@ function ApprovalTable() {
                           {item.resignationDate ? new Date(item.resignationDate).toLocaleDateString() : "-"}
                         </td>
 
+                        {/* EDITABLE LAST WORKING DAY FOR ADMIN */}
                         <td className="MyTaskTableCell">
-                          {item.lastWorkingDay ? new Date(item.lastWorkingDay).toLocaleDateString() : "-"}
+                          {isAdmin ? (
+                            <input
+                              type="date"
+                              value={
+                                item.lastWorkingDay
+                                  ? new Date(item.lastWorkingDay).toISOString().slice(0, 10)
+                                  : ""
+                              }
+                              onChange={(e) => handleLastWorkingDayUpdate(item._id, e.target.value)}
+                              style={{
+                                padding: "4px 8px",
+                                borderRadius: "6px",
+                                fontSize: "12px",
+                                fontWeight: "600",
+                                border: "1px solid #cbd5e1",
+                                color: "#0f172a",
+                                backgroundColor: "#ffffff",
+                              }}
+                              title="Click to edit Last Working Day"
+                            />
+                          ) : (
+                            item.lastWorkingDay ? new Date(item.lastWorkingDay).toLocaleDateString() : "-"
+                          )}
                         </td>
 
                         <td className="MyTaskTableCell">{item.resignationReason || item.description || "-"}</td>
@@ -487,6 +527,32 @@ function ApprovalTable() {
                               Pending
                             </span>
                           )}
+                        </td>
+
+                        {/* ONBOARDING STATUS COLUMN */}
+                        <td className="MyTaskTableCell MyTaskCenter">
+                          {(() => {
+                            const isItDone = ["resolved", "closed", "approved"].includes(String(itStatusVal).toLowerCase());
+                            const isFinDone = ["resolved", "closed", "approved"].includes(String(finStatusVal).toLowerCase());
+                            const isHrDone = ["resolved", "closed", "approved"].includes(String(admStatusVal).toLowerCase());
+                            const isAllResolved = isItDone && isFinDone && isHrDone;
+                            const onbStatus = isAllResolved ? "Resolved" : (item.onboardingStatus || item.offboardingStatus || "Open");
+
+                            return (
+                              <span
+                                style={{
+                                  padding: "4px 12px",
+                                  borderRadius: "12px",
+                                  fontWeight: "700",
+                                  fontSize: "12px",
+                                  background: isAllResolved ? "#dcfce7" : "#ffedd5",
+                                  color: isAllResolved ? "#166534" : "#c2410c",
+                                }}
+                              >
+                                {onbStatus}
+                              </span>
+                            );
+                          })()}
                         </td>
                       </tr>
                     );

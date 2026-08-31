@@ -160,14 +160,17 @@ function OffBoardingSaves() {
             </div>
 
             <div className="OBSField">
-              <label>Last Working Day</label>
+              <label>Last Working Day (Editable by Admin)</label>
               <input
+                type="date"
+                name="lastWorkingDay"
                 value={
                   formData.lastWorkingDay
-                    ? new Date(formData.lastWorkingDay).toLocaleDateString()
+                    ? new Date(formData.lastWorkingDay).toISOString().slice(0, 10)
                     : ""
                 }
-                readOnly
+                onChange={handleChange}
+                style={{ fontWeight: "600", color: "#0f172a" }}
               />
             </div>
           </div>
@@ -181,6 +184,34 @@ function OffBoardingSaves() {
             <div className="OBSField">
               <label>Approval Status</label>
               <input type="text" value={formData.approvalStatus || (formData.status === "Open" ? "Pending" : formData.status || "Pending")} readOnly />
+            </div>
+
+            <div className="OBSField">
+              <label>Onboarding Status</label>
+              <input
+                type="text"
+                value={
+                  ["resolved", "closed", "approved"].includes(String(itStatusVal).toLowerCase()) &&
+                  ["resolved", "closed", "approved"].includes(String(finStatusVal).toLowerCase()) &&
+                  ["resolved", "closed", "approved"].includes(String(formData.approvalStatus || formData.status || "Open").toLowerCase())
+                    ? "Resolved"
+                    : (formData.onboardingStatus || formData.offboardingStatus || "Open")
+                }
+                readOnly
+                style={{
+                  fontWeight: "700",
+                  color: ["resolved", "closed", "approved"].includes(String(itStatusVal).toLowerCase()) &&
+                         ["resolved", "closed", "approved"].includes(String(finStatusVal).toLowerCase()) &&
+                         ["resolved", "closed", "approved"].includes(String(formData.approvalStatus || formData.status || "Open").toLowerCase())
+                           ? "#166534"
+                           : "#c2410c",
+                  background: ["resolved", "closed", "approved"].includes(String(itStatusVal).toLowerCase()) &&
+                              ["resolved", "closed", "approved"].includes(String(finStatusVal).toLowerCase()) &&
+                              ["resolved", "closed", "approved"].includes(String(formData.approvalStatus || formData.status || "Open").toLowerCase())
+                                ? "#dcfce7"
+                                : "#ffedd5",
+                }}
+              />
             </div>
           </div>
 

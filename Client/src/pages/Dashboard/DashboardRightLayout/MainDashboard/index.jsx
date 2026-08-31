@@ -102,7 +102,7 @@ const employeeCsvColumns = [
   { label: "Site", value: (employee) => employee.siteName || employee.site },
   { label: "Role", value: (employee) => employee.role },
   { label: "Shift", value: (employee) => employee.shiftTime || `${employee.start || ""} - ${employee.end || ""}` },
-  { label: "Status", value: (employee) => employee.clockedIn === undefined ? employee.status : employee.clockedIn ? "Clocked In" : "Offline" },
+  { label: "Status", value: (employee) => employee.accountStatus || employee.status || (employee.clockedIn ? "Active" : "Pending") },
 ];
 
 const incidentCsvColumns = [
@@ -418,6 +418,8 @@ function MainDashboard() {
         const isClockedIn = i < site.clockedIn;
         const recordDate = new Date();
         recordDate.setDate(recordDate.getDate() - (nameIdx % 45));
+        const statusOptions = ["Active", "Pending", "Inactive"];
+        const empAccountStatus = statusOptions[nameIdx % 3];
         list.push({
           id: `EMP-${nameIdx + 1000}`,
           name: empName,
@@ -429,6 +431,8 @@ function MainDashboard() {
           startTime: i % 2 === 0 ? "07:00 AM" : "03:00 PM",
           endTime: i % 2 === 0 ? "03:00 PM" : "11:00 PM",
           clockedIn: isClockedIn,
+          accountStatus: empAccountStatus,
+          status: empAccountStatus,
           recordDate: `${recordDate.getFullYear()}-${String(recordDate.getMonth() + 1).padStart(2, "0")}-${String(recordDate.getDate()).padStart(2, "0")}`,
           actualClockIn: isClockedIn ? "07:02" : "-",
           actualClockOut: "-",
@@ -2333,7 +2337,22 @@ function MainDashboard() {
             <table className="detail-table pin-detail-table">
               <thead><tr><th>Employee ID</th><th>Name</th><th>Customer</th><th>Site</th><th>PIN Code</th><th>Role</th><th>Shift</th><th>Status</th></tr></thead>
               <tbody>
-                {selectedPinEmployees.map((employee) => <tr key={employee.id}><td className="font-mono">{employee.id}</td><td className="fw-semibold">{employee.name}</td><td>{employee.customer}</td><td>{employee.siteName}</td><td className="font-number">{selectedPinCode}</td><td>{employee.role}</td><td>{employee.shiftTime}</td><td><span className={`badge-pill ${employee.clockedIn ? "bg-success-pill" : "bg-warning-pill"}`}>{employee.clockedIn ? "Clocked In" : "Offline"}</span></td></tr>)}
+                {selectedPinEmployees.map((employee) => {
+                  const statusVal = employee.accountStatus || employee.status || (employee.clockedIn ? "Active" : "Pending");
+                  const badgeClass = statusVal === "Active" ? "bg-success-pill" : statusVal === "Pending" ? "bg-warning-pill" : "bg-danger-pill";
+                  return (
+                    <tr key={employee.id}>
+                      <td className="font-mono">{employee.id}</td>
+                      <td className="fw-semibold">{employee.name}</td>
+                      <td>{employee.customer}</td>
+                      <td>{employee.siteName}</td>
+                      <td className="font-number">{selectedPinCode}</td>
+                      <td>{employee.role}</td>
+                      <td>{employee.shiftTime}</td>
+                      <td><span className={`badge-pill ${badgeClass}`}>{statusVal}</span></td>
+                    </tr>
+                  );
+                })}
                 {selectedPinEmployees.length === 0 && <tr><td colSpan="8" className="incident-empty">No employees are available for this PIN code.</td></tr>}
               </tbody>
             </table>
@@ -2453,21 +2472,25 @@ function MainDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {dateFilteredEmployees.map((emp, index) => (
-                  <tr key={index}>
-                    <td className="text-secondary font-mono">{emp.id}</td>
-                    <td className="fw-semibold">{emp.name}</td>
-                    <td>{emp.customer}</td>
-                    <td>{emp.siteName}</td>
-                    <td>{emp.role}</td>
-                    <td>{emp.shiftTime}</td>
-                    <td>
-                      <span className={`badge-pill ${emp.clockedIn ? "bg-success-pill" : "bg-warning-pill"}`}>
-                        {emp.clockedIn ? "Clocked In" : "Offline"}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
+                {dateFilteredEmployees.map((emp, index) => {
+                  const statusVal = emp.accountStatus || emp.status || (emp.clockedIn ? "Active" : "Pending");
+                  const badgeClass = statusVal === "Active" ? "bg-success-pill" : statusVal === "Pending" ? "bg-warning-pill" : "bg-danger-pill";
+                  return (
+                    <tr key={index}>
+                      <td className="text-secondary font-mono">{emp.id}</td>
+                      <td className="fw-semibold">{emp.name}</td>
+                      <td>{emp.customer}</td>
+                      <td>{emp.siteName}</td>
+                      <td>{emp.role}</td>
+                      <td>{emp.shiftTime}</td>
+                      <td>
+                        <span className={`badge-pill ${badgeClass}`}>
+                          {statusVal}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -2539,23 +2562,27 @@ function MainDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {siteEmployees.map((emp, index) => (
-                  <tr key={index}>
-                    <td className="text-secondary font-mono">{emp.id}</td>
-                    <td className="fw-semibold">{emp.name}</td>
-                    <td>{emp.customer}</td>
-                    <td>{emp.siteName}</td>
-                    <td className="text-secondary">{emp.address}</td>
-                    <td>{emp.role}</td>
-                    <td className="fw-bold font-number">{emp.startTime}</td>
-                    <td className="fw-bold font-number">{emp.endTime}</td>
-                    <td>
-                      <span className={`badge-pill ${emp.clockedIn ? "bg-success-pill" : "bg-warning-pill"}`}>
-                        {emp.clockedIn ? "Clocked In" : "Offline"}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
+                {siteEmployees.map((emp, index) => {
+                  const statusVal = emp.accountStatus || emp.status || (emp.clockedIn ? "Active" : "Pending");
+                  const badgeClass = statusVal === "Active" ? "bg-success-pill" : statusVal === "Pending" ? "bg-warning-pill" : "bg-danger-pill";
+                  return (
+                    <tr key={index}>
+                      <td className="text-secondary font-mono">{emp.id}</td>
+                      <td className="fw-semibold">{emp.name}</td>
+                      <td>{emp.customer}</td>
+                      <td>{emp.siteName}</td>
+                      <td className="text-secondary">{emp.address}</td>
+                      <td>{emp.role}</td>
+                      <td className="fw-bold font-number">{emp.startTime}</td>
+                      <td className="fw-bold font-number">{emp.endTime}</td>
+                      <td>
+                        <span className={`badge-pill ${badgeClass}`}>
+                          {statusVal}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

@@ -118,14 +118,17 @@ function TaskSaves() {
             </div>
 
             <div className="ITSField">
-              <label>Last Working Day</label>
+              <label>Last Working Day (Editable by Admin)</label>
               <input
+                type="date"
+                name="lastWorkingDay"
                 value={
                   formData.lastWorkingDay
-                    ? new Date(formData.lastWorkingDay).toLocaleDateString()
-                    : "N/A"
+                    ? new Date(formData.lastWorkingDay).toISOString().slice(0, 10)
+                    : ""
                 }
-                readOnly
+                onChange={handleChange}
+                style={{ fontWeight: "600", color: "#0f172a" }}
               />
             </div>
           </div>

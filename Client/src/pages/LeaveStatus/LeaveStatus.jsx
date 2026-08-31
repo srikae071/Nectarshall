@@ -2,7 +2,16 @@ import HrmsLeftLayout from "../Hrms/Hrmsleftlayout";
 import { useState, useEffect } from "react";
 import { fetchApiData } from "../../utils/apiClient";
 import { useAuth } from "../../context/AuthContext";
+import { FiSearch } from "react-icons/fi";
 import "./LeaveStatus.css";
+
+const leaveAllocation = {
+  "Casual Leave": 5,
+  "Sick Leave": 10,
+  "Paid Leave": 15,
+  "Maternity Leave": 20,
+  "Paternity Leave": 12,
+};
 
 function LeaveStatus() {
   const { user } = useAuth();
@@ -45,17 +54,13 @@ function LeaveStatus() {
       }
 
       const username = (authUser?.username || authUser?.name || authUser?.displayName || (typeof authUser === "string" ? authUser : "")).trim();
-      const role = (authUser?.role || "").toUpperCase();
-      const isAdmin = role === "ADMIN" || username.toLowerCase().includes("sumit");
 
-      if (isAdmin) {
-        setData(allLeaves);
-      } else if (username) {
+      if (username) {
         const u = username.toLowerCase();
         const userLeaves = allLeaves.filter((item) => {
           const r1 = (item.requester || item.employeeName || "").trim().toLowerCase();
           const r2 = (item.requesterFor || "").trim().toLowerCase();
-          return r1.includes(u) || u.includes(r1 && r1.length > 2 ? r1 : "___never___") || r2.includes(u);
+          return r1 === u || r1.includes(u) || u.includes(r1 && r1.length > 2 ? r1 : "___never___") || r2 === u || r2.includes(u);
         });
         setData(userLeaves);
       } else {
@@ -66,6 +71,15 @@ function LeaveStatus() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const getPersonalLeaveBalance = (item) => {
+    const type = item.leaveType || "Paid Leave";
+    const allocated = leaveAllocation[type] || 15;
+    const consumed = data
+      .filter((l) => l.leaveType === type && l.status === "Approved")
+      .reduce((sum, l) => sum + Number(l.totalLeaves || 0), 0);
+    return Math.max(0, allocated - consumed);
   };
 
   const filteredData = data.filter((item) => {
@@ -82,6 +96,7 @@ function LeaveStatus() {
   });
 
   const visibleColumnCount = Object.values(columns).filter(Boolean).length || 1;
+  const currentUserName = user?.displayName || user?.username || user?.name || "Logged In User";
 
   return (
     <HrmsLeftLayout>
@@ -99,29 +114,39 @@ function LeaveStatus() {
             }}
           >
             <h3 className="openheading" style={{ margin: 0 }}>
-              HRMS Leave Status
+              📋 Leave Status - {currentUserName}
             </h3>
 
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              {/* HRMS SEARCH BAR */}
-              <input
-                type="text"
-                placeholder="🔍 Search leave requests..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                style={{
-                  padding: "6px 14px",
-                  borderRadius: "8px",
-                  border: "1px solid #cbd5e1",
-                  fontSize: "13px",
-                  outline: "none",
-                  width: "220px",
-                  background: "#ffffff",
-                  color: "#0f172a",
-                }}
-              />
+              {/* SEARCH BAR */}
+              <div style={{ position: "relative", display: "inline-block" }}>
+                <FiSearch
+                  style={{
+                    position: "absolute",
+                    left: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    color: "#64748b",
+                    fontSize: "14px",
+                  }}
+                />
+                <input
+                  type="text"
+                  placeholder="Search by requester, type, status..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  style={{
+                    padding: "7px 12px 7px 32px",
+                    borderRadius: "6px",
+                    border: "1px solid #cbd5e1",
+                    fontSize: "13px",
+                    width: "240px",
+                    outline: "none",
+                  }}
+                />
+              </div>
 
-              {/* SETTINGS ICON BUTTON */}
+              {/* SETTINGS BUTTON */}
               <div style={{ position: "relative" }}>
                 <button
                   type="button"
@@ -176,10 +201,10 @@ function LeaveStatus() {
                     {Object.entries({
                       leaveNumber: "Leave ID",
                       requester: "Requester",
-                      leaveType: "Leave type",
-                      startDate: "Start date",
-                      endDate: "End date",
-                      totalLeaves: "Total leave count",
+                      leaveType: "Leave Type",
+                      startDate: "Start Date",
+                      endDate: "End Date",
+                      totalLeaves: "Total Leave Balance",
                       status: "Status",
                     }).map(([key, label]) => (
                       <label
@@ -198,16 +223,9 @@ function LeaveStatus() {
                           type="checkbox"
                           checked={columns[key]}
                           onChange={() =>
-                            setColumns((prev) => ({
-                              ...prev,
-                              [key]: !prev[key],
-                            }))
+                            setColumns((prev) => ({ ...prev, [key]: !prev[key] }))
                           }
-                          style={{
-                            width: "16px",
-                            height: "16px",
-                            cursor: "pointer",
-                          }}
+                          style={{ width: "16px", height: "16px", cursor: "pointer" }}
                         />
                         {label}
                       </label>
@@ -219,63 +237,37 @@ function LeaveStatus() {
           </div>
 
           {loading ? (
-            <div
-              style={{ padding: "20px", textAlign: "center", color: "#64748b" }}
-            >
-              Loading Leave Status...
+            <div style={{ padding: "30px", textAlign: "center", color: "#64748b" }}>
+              Loading personal leave status for {currentUserName}...
             </div>
           ) : (
             <table className="opentable">
-              <thead className="opentablerow">
-                <tr className="opentablerow">
-                  {columns.leaveNumber && (
-                    <th className="opentablerow">Leave ID</th>
-                  )}
-                  {columns.requester && (
-                    <th className="opentablerow">Requester</th>
-                  )}
-                  {columns.leaveType && (
-                    <th className="opentablerow">Leave type</th>
-                  )}
-                  {columns.startDate && (
-                    <th className="opentablerow">Start date</th>
-                  )}
-                  {columns.endDate && (
-                    <th className="opentablerow">End date</th>
-                  )}
-                  {columns.totalLeaves && (
-                    <th className="opentablerow">Total leave count</th>
-                  )}
-                  {columns.status && <th className="opentablerow">Status</th>}
+              <thead>
+                <tr>
+                  {columns.leaveNumber && <th>Leave ID</th>}
+                  {columns.requester && <th>Requester</th>}
+                  {columns.leaveType && <th>Leave Type</th>}
+                  {columns.startDate && <th>Start Date</th>}
+                  {columns.endDate && <th>End Date</th>}
+                  {columns.totalLeaves && <th>Total Leave Balance</th>}
+                  {columns.status && <th>Status</th>}
                 </tr>
               </thead>
 
-              <tbody className="opentablerow">
+              <tbody>
                 {filteredData.length > 0 ? (
                   filteredData.map((item) => (
-                    <tr className="opentablerow" key={item._id || item.id}>
-                      {columns.leaveNumber && (
-                        <td>{item.leaveNumber || item.id}</td>
-                      )}
-                      {columns.requester && (
-                        <td> {item.requester || "Self"}</td>
-                      )}
-                      {columns.leaveType && (
-                        <td>{item.leaveType || item.type}</td>
-                      )}
-                      {columns.startDate && (
-                        <td>{item.startDate || item.start}</td>
-                      )}
-                      {columns.endDate && <td>{item.endDate || item.end}</td>}
-                      {columns.totalLeaves && (
-                        <td>{item.totalLeaves || item.total} day(s)</td>
-                      )}
+                    <tr key={item._id}>
+                      {columns.leaveNumber && <td>{item.leaveNumber || "N/A"}</td>}
+                      {columns.requester && <td>{item.requester || currentUserName}</td>}
+                      {columns.leaveType && <td>{item.leaveType}</td>}
+                      {columns.startDate && <td>{item.startDate}</td>}
+                      {columns.endDate && <td>{item.endDate}</td>}
+                      {columns.totalLeaves && <td>{getPersonalLeaveBalance(item)} day(s)</td>}
                       {columns.status && (
                         <td>
                           <span
-                            className={`badge ${(item.status || "Pending")
-                              .replace(" ", "-")
-                              .toLowerCase()}`}
+                            className={`badge ${(item.status || "Pending").toLowerCase()}`}
                           >
                             {item.status || "Pending"}
                           </span>
@@ -287,15 +279,9 @@ function LeaveStatus() {
                   <tr>
                     <td
                       colSpan={visibleColumnCount}
-                      style={{
-                        textAlign: "center",
-                        padding: "20px",
-                        color: "#64748b",
-                      }}
+                      style={{ padding: "20px", textAlign: "center", color: "#64748b" }}
                     >
-                      {searchTerm
-                        ? `No leave records matching "${searchTerm}".`
-                        : `No leave records found for ${user?.displayName || user?.username || "this user"}.`}
+                      No leave records found for {currentUserName}.
                     </td>
                   </tr>
                 )}

@@ -71,6 +71,69 @@ const syncResolvedCandidateToEmployee = async (candData, requestData) => {
   }
 };
 
+const checkAndUpdateOffboardingStatus = async (request) => {
+  const isOffboarding =
+    request.category === "Offboarding" ||
+    request.category === "offboarding" ||
+    request.category === "Exit";
+  if (!isOffboarding) return;
+
+  const itVal = String(
+    request.itClearanceStatus || request.itStatus || request.ItTAskStatus || request.taskStatus || "Open"
+  ).toLowerCase();
+  const finVal = String(
+    request.financeClearanceStatus || request.financeStatus || "Open"
+  ).toLowerCase();
+  const hrVal = String(
+    request.adminClearanceStatus || request.adminStatus || request.hrClearanceStatus || request.hrStatus || request.approvalStatus || request.status || "Open"
+  ).toLowerCase();
+
+  const resolvedTerms = ["resolved", "closed", "approved"];
+  const itDone = resolvedTerms.includes(itVal);
+  const finDone = resolvedTerms.includes(finVal);
+  const hrDone = resolvedTerms.includes(hrVal);
+
+  if (itDone && finDone && hrDone) {
+    request.onboardingStatus = "Resolved";
+    request.offboardingStatus = "Resolved";
+    request.status = "Resolved";
+
+    // Auto-update Employee Account Status to Inactive in HRMS
+    const reqName = (
+      request.requesterName ||
+      request.requester ||
+      request.employeeName ||
+      ""
+    ).trim();
+
+    if (reqName) {
+      try {
+        const Employee = require("../models/Employee");
+        const emp = await Employee.findOne({
+          $or: [
+            { displayName: new RegExp(`^${reqName}$`, "i") },
+            { employeeName: new RegExp(`^${reqName}$`, "i") },
+            { firstName: new RegExp(`^${reqName.split(" ")[0]}$`, "i") },
+          ],
+        });
+        if (emp) {
+          emp.accountStatus = "Inactive";
+          emp.status = "Inactive";
+          emp.accountActive = false;
+          emp.accountEnabled = false;
+          await emp.save();
+          console.log(`Auto-updated Employee '${emp.displayName}' Account Status to Inactive upon offboarding completion.`);
+        }
+      } catch (err) {
+        console.error("Error setting employee inactive on offboarding completion:", err);
+      }
+    }
+  } else {
+    request.onboardingStatus = "Open";
+    request.offboardingStatus = "Open";
+  }
+};
+
 exports.createJobRequest = async (req, res) => {
   try {
     const data = req.body;
@@ -318,6 +381,9 @@ exports.updateJobRequest = async (req, res) => {
       }
     }
 
+    // Check if offboarding request: set onboardingStatus = Resolved and Employee = Inactive ONLY if all 3 clearances are done
+    await checkAndUpdateOffboardingStatus(request);
+
     await request.save();
 
     res.json(request);
@@ -384,6 +450,8 @@ exports.updateJobRequestByCaseId = async (req, res) => {
       });
       request.markModified("candidates");
     }
+
+    await checkAndUpdateOffboardingStatus(request);
 
     await request.save();
 
