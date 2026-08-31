@@ -112,11 +112,12 @@ function AllEmployees() {
                     const roleLevel = emp.subRole || (emp.role === "ADMIN" || emp.department === "Admin" ? "Admin" : `${emp.department || "HR"} Manager`);
 
                     // Determine Account Status (Active, Pending, Inactive)
-                    let statusLabel = emp.accountStatus || emp.status || "Active";
-                    if (!emp.accountStatus) {
-                      if (emp.status === "Pending") statusLabel = "Pending";
-                      else if (emp.accountActive === false || emp.accountEnabled === false) statusLabel = "Inactive";
-                      else statusLabel = "Active";
+                    let statusLabel = emp.accountStatus || emp.status;
+                    if (!statusLabel) {
+                      statusLabel = emp.accountActive ? "Active" : "Pending";
+                    }
+                    if (statusLabel === "Active" && (emp.accountActive === false || emp.accountEnabled === false)) {
+                      statusLabel = "Pending";
                     }
 
                     return (

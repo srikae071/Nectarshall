@@ -81,11 +81,11 @@ const EmployeeSchema = new mongoose.Schema(
     ageGroup: { type: String, default: "Adult" },
     consentProvidedForMinor: { type: String, default: "No" },
 
-    // 8. Settings & Account Status
-    accountActive: { type: Boolean, default: true },
-    accountStatus: { type: String, default: "Active" }, // 'Active' | 'Inactive' | 'Pending'
-    status: { type: String, default: "Active" },
-    accountEnabled: { type: Boolean, default: true },
+    // 8. Settings & Account Status (Default to Pending for all newly synced candidates)
+    accountActive: { type: Boolean, default: false },
+    accountStatus: { type: String, default: "Pending" }, // 'Active' | 'Inactive' | 'Pending'
+    status: { type: String, default: "Pending" },
+    accountEnabled: { type: Boolean, default: false },
     usageLocation: { type: String, default: "" },
 
     // Backward compatibility helper
@@ -95,7 +95,7 @@ const EmployeeSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-// Pre-save middleware to keep employeeName and place synced if missing
+// Pre-save middleware to keep employeeName and place synced and enforce accountStatus
 EmployeeSchema.pre("save", function () {
   if (!this.employeeName && this.displayName) {
     this.employeeName = this.displayName;
@@ -117,6 +117,11 @@ EmployeeSchema.pre("save", function () {
       this.accountEnabled = false;
       this.status = "Inactive";
     }
+  } else {
+    this.accountStatus = "Pending";
+    this.accountActive = false;
+    this.accountEnabled = false;
+    this.status = "Pending";
   }
 });
 
