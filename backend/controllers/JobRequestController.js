@@ -1,5 +1,75 @@
 const JobRequest = require("../models/JobRequest");
+const Employee = require("../models/Employee");
 const nodemailer = require("nodemailer");
+
+const syncResolvedCandidateToEmployee = async (candData, requestData) => {
+  try {
+    const candidateName = candData.name || candData.firstName || requestData.firstName || requestData.employeeName || "Candidate";
+    let firstName = candData.firstName || candidateName.split(" ")[0] || "Candidate";
+    let lastName = candData.lastName || candidateName.split(" ").slice(1).join(" ") || "";
+    const displayName = `${firstName} ${lastName}`.trim() || candidateName;
+    const candidateId = candData.candidateId || "CND-001";
+    const email = candData.email || requestData.email || `${firstName.toLowerCase()}@company.com`;
+
+    let existingEmp = await Employee.findOne({
+      $or: [
+        { email: email },
+        { candidateId: candidateId },
+        { displayName: displayName }
+      ]
+    });
+
+    if (!existingEmp) {
+      const newEmp = new Employee({
+        displayName: displayName,
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        mobilePhone: candData.phone || candData.contactNumber || requestData.contactNumber || requestData.mobilePhone || "",
+        userPrincipalName: `${firstName.toLowerCase()}.${lastName.toLowerCase() || "emp"}@enhanceservices.com`,
+        candidateId: candidateId,
+        shortDescription: requestData.shortDescription || candData.shortDescription || "",
+        description: requestData.description || candData.description || "",
+        barriers: candData.barriers || requestData.barriers || "",
+
+        securityLicence: candData.securityLicence || candData.securityLicenceCandidateForm || "",
+        securityLicenceExpiry: candData.securityLicenceExpiry || "",
+        drivingLicence: candData.drivingLicence || candData.drivingLicenceCandidateForm || "",
+        drivingLicenceExpiry: candData.drivingLicenceExpiry || "",
+        firstAid: candData.firstAid || candData.firstAidCandidateForm || "",
+        firstAidExpiry: candData.firstAidExpiry || "",
+        cpr: candData.cpr || candData.cprCandidateForm || "",
+        cprExpiry: candData.cprExpiry || "",
+        workingWithChildren: candData.workingWithChildren || candData.workingWithChildrenCandidateForm || "",
+        wwccExpiry: candData.wwccExpiry || candData.workingWithChildrenExpiry || "",
+        trafficManagement: candData.trafficManagement || candData.trafficManagementCandidateForm || "",
+        trafficManagementExpiry: candData.trafficManagementExpiry || "",
+        whiteCard: candData.whiteCard || candData.whiteCardCandidateForm || "",
+        yellowCard: candData.yellowCard || candData.yellowCardCandidateForm || "",
+
+        bankName: candData.bankName || requestData.bankName || "",
+        bankAccountName: candData.bankAccountName || candData.accountName || candData.name || "",
+        bsb: candData.bsb || requestData.bsb || "",
+        accountNumber: candData.accountNumber || candData.bankAccount || requestData.bankAccount || "",
+        tfn: candData.taxFileNumber || requestData.taxFileNumber || "",
+        superNumber: candData.superNumber || "",
+        superFund: candData.superFundName || requestData.superFundName || "",
+        superMemberNum: candData.superMemberNumber || requestData.superMemberNumber || "",
+        longServiceLeaveId: candData.longServiceLeaveId || "",
+
+        accountActive: false,
+        accountEnabled: false,
+        accountStatus: "Pending",
+        status: "Pending"
+      });
+
+      await newEmp.save();
+      console.log(`Auto-created Pending Employee '${displayName}' from Resolved Candidate ${candidateId}`);
+    }
+  } catch (err) {
+    console.error("Error auto-creating employee from resolved candidate:", err);
+  }
+};
 
 exports.createJobRequest = async (req, res) => {
   try {
@@ -235,6 +305,17 @@ exports.updateJobRequest = async (req, res) => {
       }
 
       request.onboardingTaskId = `ONBTSK${String(nextNumber).padStart(3, "0")}`;
+    }
+
+    // Auto-create Pending Employee if request or candidate is Resolved
+    if (request.status === "Resolved") {
+      if (Array.isArray(request.candidates) && request.candidates.length > 0) {
+        for (const cand of request.candidates) {
+          await syncResolvedCandidateToEmployee(cand, request);
+        }
+      } else {
+        await syncResolvedCandidateToEmployee({}, request);
+      }
     }
 
     await request.save();

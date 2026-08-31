@@ -84,7 +84,7 @@ function AllEmployees() {
                   <th>Employee ID</th>
                   <th>Email</th>
                   <th>Office Location</th>
-                  <th>Status</th>
+                  <th>Account Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -110,6 +110,14 @@ function AllEmployees() {
                       "Unnamed Employee";
 
                     const roleLevel = emp.subRole || (emp.role === "ADMIN" || emp.department === "Admin" ? "Admin" : `${emp.department || "HR"} Manager`);
+
+                    // Determine Account Status (Active, Pending, Inactive)
+                    let statusLabel = emp.accountStatus || emp.status || "Active";
+                    if (!emp.accountStatus) {
+                      if (emp.status === "Pending") statusLabel = "Pending";
+                      else if (emp.accountActive === false || emp.accountEnabled === false) statusLabel = "Inactive";
+                      else statusLabel = "Active";
+                    }
 
                     return (
                       <tr
@@ -144,20 +152,30 @@ function AllEmployees() {
                         <td>{emp.email || "-"}</td>
                         <td>{emp.officeLocation || emp.place || "-"}</td>
                         <td>
-                          {(() => {
-                            const isActive = emp.accountActive !== undefined 
-                              ? Boolean(emp.accountActive) 
-                              : (emp.status ? emp.status.toLowerCase() === "active" : emp.accountEnabled !== false);
-                            return (
-                              <span
-                                className={`statusBadge ${
-                                  isActive ? "active" : "inactive"
-                                }`}
-                              >
-                                {isActive ? "Active" : "Inactive"}
-                              </span>
-                            );
-                          })()}
+                          <span
+                            className={`statusBadge ${statusLabel.toLowerCase()}`}
+                            style={{
+                              padding: "4px 10px",
+                              borderRadius: "12px",
+                              fontSize: "11.5px",
+                              fontWeight: "700",
+                              display: "inline-block",
+                              background:
+                                statusLabel === "Active"
+                                  ? "#dcfce7"
+                                  : statusLabel === "Pending"
+                                  ? "#fef3c7"
+                                  : "#fee2e2",
+                              color:
+                                statusLabel === "Active"
+                                  ? "#15803d"
+                                  : statusLabel === "Pending"
+                                  ? "#b45309"
+                                  : "#dc2626",
+                            }}
+                          >
+                            {statusLabel}
+                          </span>
                         </td>
                       </tr>
                     );

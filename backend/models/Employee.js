@@ -39,11 +39,52 @@ const EmployeeSchema = new mongoose.Schema(
     faxNumber: { type: String, default: "" },
     mailNickname: { type: String, default: "" },
 
-    // 4. Parental Controls
+    // 4. Qualification & Licenses
+    securityLicence: { type: String, default: "" },
+    securityLicenceExpiry: { type: String, default: "" },
+    drivingLicence: { type: String, default: "" },
+    drivingLicenceExpiry: { type: String, default: "" },
+    firstAid: { type: String, default: "" },
+    firstAidExpiry: { type: String, default: "" },
+    cpr: { type: String, default: "" },
+    cprExpiry: { type: String, default: "" },
+    workingWithChildren: { type: String, default: "" },
+    wwccExpiry: { type: String, default: "" },
+    trafficManagement: { type: String, default: "" },
+    trafficManagementExpiry: { type: String, default: "" },
+    whiteCard: { type: String, default: "" },
+    yellowCard: { type: String, default: "" },
+
+    // 5. Offer Letter
+    offerLetterUrl: { type: String, default: "" },
+    offerLetterTitle: { type: String, default: "" },
+    offerLetterStatus: { type: String, default: "Generated" },
+
+    // 6. Financial & Tax Information
+    bankName: { type: String, default: "" },
+    bankAccountName: { type: String, default: "" },
+    bsb: { type: String, default: "" },
+    accountNumber: { type: String, default: "" },
+    tfn: { type: String, default: "" },
+    superNumber: { type: String, default: "" },
+    superFund: { type: String, default: "" },
+    superMemberNum: { type: String, default: "" },
+    longServiceLeaveId: { type: String, default: "" },
+
+    // Candidate Origin & Descriptions
+    shortDescription: { type: String, default: "" },
+    description: { type: String, default: "" },
+    barriers: { type: String, default: "" },
+    candidateId: { type: String, default: "" },
+
+    // 7. Parental Controls
     ageGroup: { type: String, default: "Adult" },
     consentProvidedForMinor: { type: String, default: "No" },
 
-    // 5. Settings
+    // 8. Settings & Account Status
+    accountActive: { type: Boolean, default: true },
+    accountStatus: { type: String, default: "Active" }, // 'Active' | 'Inactive' | 'Pending'
+    status: { type: String, default: "Active" },
     accountEnabled: { type: Boolean, default: true },
     usageLocation: { type: String, default: "" },
 
@@ -61,6 +102,21 @@ EmployeeSchema.pre("save", function () {
   }
   if (!this.place && this.officeLocation) {
     this.place = this.officeLocation;
+  }
+  if (this.accountStatus) {
+    if (this.accountStatus === "Active") {
+      this.accountActive = true;
+      this.accountEnabled = true;
+      this.status = "Active";
+    } else if (this.accountStatus === "Pending") {
+      this.accountActive = false;
+      this.accountEnabled = false;
+      this.status = "Pending";
+    } else {
+      this.accountActive = false;
+      this.accountEnabled = false;
+      this.status = "Inactive";
+    }
   }
 });
 

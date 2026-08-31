@@ -30,33 +30,51 @@
   color: #0f172a;
 }
 
+/* Top Tab Ribbon */
+.opTopTabRibbon {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0 24px;
+}
+
+.opTabContainer {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: flex;
+  gap: 16px;
+}
+
+.opTabItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 18px;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.opTabItem:hover {
+  color: #0284c7;
+}
+
+.opTabItem.active {
+  color: #0284c7;
+  border-bottom-color: #0284c7;
+  font-weight: 700;
+}
+
 .opContentContainer {
   max-width: 1240px;
   width: 100%;
   margin: 24px auto;
   padding: 0 24px;
   box-sizing: border-box;
-}
-
-.opBackButton {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: #ffffff;
-  color: #0284c7;
-  border: 1px solid #cbd5e1;
-  padding: 8px 14px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  margin-bottom: 20px;
-  transition: all 0.2s ease;
-}
-
-.opBackButton:hover {
-  background: #e0f2fe;
-  border-color: #0284c7;
 }
 
 .opHeaderBlock {
@@ -76,103 +94,7 @@
   margin: 0;
 }
 
-/* Category Cards Grid */
-.opGridContainer {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 24px;
-}
-
-.opCategoryCard {
-  background: #ffffff;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid #cbd5e1;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  display: flex;
-  flex-direction: column;
-}
-
-.opCategoryCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-  border-color: #0284c7;
-}
-
-.opCardImageWrap {
-  position: relative;
-  height: 200px;
-  width: 100%;
-  overflow: hidden;
-  background: #e2e8f0;
-}
-
-.opCardImageWrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.opCardOverlayBadge {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: rgba(15, 23, 42, 0.85);
-  color: #ffffff;
-  font-size: 11.5px;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 12px;
-  backdrop-filter: blur(4px);
-}
-
-.opCardBody {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-.opCardBody h3 {
-  font-size: 18px;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0 0 8px 0;
-}
-
-.opCardBody p {
-  font-size: 13.5px;
-  color: #64748b;
-  margin: 0 0 16px 0;
-  line-height: 1.5;
-  flex: 1;
-}
-
-.opViewButton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  background: #0284c7;
-  color: #ffffff;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.2s ease;
-  width: 100%;
-}
-
-.opCategoryCard:hover .opViewButton {
-  background: #0369a1;
-}
-
-/* --- HR POLICIES PDF CARDS GRID --- */
+/* --- HR POLICIES 4 PDF CARDS GRID --- */
 .pdfCardsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -183,11 +105,11 @@
   background: #ffffff;
   border: 1px solid #cbd5e1;
   border-radius: 10px;
-  padding: 18px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 14px;
+  gap: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -209,9 +131,9 @@
 .pdfNum {
   background: #e0f2fe;
   color: #0369a1;
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 700;
-  padding: 2px 8px;
+  padding: 3px 10px;
   border-radius: 4px;
 }
 
@@ -225,7 +147,7 @@
 
 .pdfTitle {
   margin: 6px 0 4px 0;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   color: #0f172a;
   line-height: 1.35;
@@ -233,9 +155,9 @@
 
 .pdfSubtitle {
   margin: 0;
-  font-size: 12.5px;
+  font-size: 13px;
   color: #64748b;
-  line-height: 1.4;
+  line-height: 1.45;
 }
 
 .pdfFooterInfo {
@@ -255,9 +177,9 @@
   background: #f1f5f9;
   color: #0f172a;
   border: 1px solid #cbd5e1;
-  padding: 8px 14px;
+  padding: 9px 16px;
   border-radius: 6px;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -276,7 +198,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(15, 23, 42, 0.75);
+  background: rgba(15, 23, 42, 0.85);
   backdrop-filter: blur(4px);
   z-index: 9999;
   display: flex;
@@ -289,20 +211,20 @@
 .pdfModalContainer {
   background: #f1f5f9;
   width: 100%;
-  max-width: 1000px;
-  height: 90vh;
+  max-width: 1080px;
+  height: 92vh;
   border-radius: 12px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
   border: 1px solid #cbd5e1;
 }
 
 .pdfViewerHeader {
   background: #ffffff;
   border-bottom: 1px solid #cbd5e1;
-  padding: 14px 20px;
+  padding: 12px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -346,6 +268,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  text-decoration: none;
   transition: all 0.15s ease;
 }
 
@@ -361,13 +284,6 @@
 
 .pdfActionBtn.highlightBtn:hover {
   background: #0369a1;
-}
-
-.zoomLabel {
-  font-size: 12px;
-  font-weight: 700;
-  color: #334155;
-  padding: 0 4px;
 }
 
 .pdfCloseBtn {
@@ -449,7 +365,7 @@
   padding: 30px 20px;
   display: flex;
   justify-content: center;
-  background: #cbd5e1;
+  background: #64748b;
 }
 
 .nativePdfViewer {
@@ -459,49 +375,78 @@
   background: #ffffff;
 }
 
-.pdfPaperSheet {
+/* --- EXACT PDF SHEET VISUAL STYLING --- */
+.pdfExactPageSheet {
   background: #ffffff;
   width: 100%;
-  max-width: 780px;
-  min-height: 900px;
-  padding: 40px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  max-width: 840px;
+  min-height: 980px;
+  padding: 36px 44px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
   border-radius: 4px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  transition: transform 0.2s ease;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: #0f172a;
 }
 
-.pdfPaperHeader {
+.pdfExactHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 2px solid #0284c7;
-  padding-bottom: 10px;
+  border-bottom: 2px solid #dc2626;
+  padding-bottom: 12px;
   margin-bottom: 24px;
 }
 
-.paperCompany {
-  font-size: 14px;
+.pdfHeaderLogoArea {
+  display: flex;
+  align-items: center;
+}
+
+.pdfLogoImg {
+  height: 40px;
+  object-fit: contain;
+}
+
+.pdfHeaderConfidential {
+  font-size: 11.5px;
   font-weight: 800;
+  color: #dc2626;
+  letter-spacing: 0.5px;
+}
+
+.pdfPageBodyContent {
+  flex: 1;
+}
+
+.pdfRedTitle {
+  color: #dc2626;
+  font-size: 18px;
+  font-weight: 800;
+  text-align: center;
+  margin: 0 0 14px 0;
+  letter-spacing: 0.3px;
+}
+
+.pdfIntroLead {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #1e293b;
+  margin: 0 0 16px 0;
+}
+
+.pdfBlueSectionHeader {
   color: #0284c7;
-  letter-spacing: 0.5px;
+  font-size: 15px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  letter-spacing: 0.4px;
 }
 
-.paperConfidential {
-  font-size: 11px;
-  font-weight: 700;
-  color: #94a3b8;
-  letter-spacing: 0.5px;
-}
-
-.pdfPaperTitleArea {
-  margin-bottom: 20px;
-}
-
-.pdfBadgeTag {
+.pdfTagBadge {
   background: #e0f2fe;
   color: #0369a1;
   font-size: 11px;
@@ -509,45 +454,198 @@
   padding: 2px 8px;
   border-radius: 4px;
   display: inline-block;
+}
+
+/* PDF Form Guidance Box & Arrows */
+.pdfFormGuidanceBox {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  padding: 16px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.formBoxMock {
+  background: #ffffff;
+  border: 1px solid #94a3b8;
+  padding: 14px;
+  border-radius: 4px;
+}
+
+.formHeaderRed {
+  color: #dc2626;
+  font-size: 11.5px;
+  font-weight: 800;
+  text-align: center;
   margin-bottom: 8px;
 }
 
-.pdfPaperTitleArea h2 {
-  font-size: 20px;
+.sigMockRow {
+  font-size: 11.5px;
+  color: #334155;
+  margin-top: 6px;
+}
+
+.handbookFormTitle {
+  font-weight: 800;
+  font-size: 13px;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.ackTextMock {
+  font-size: 12px;
+  color: #334155;
+  margin: 0 0 10px 0;
+}
+
+/* Blue Guidance Arrow Callouts */
+.arrowCallout {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: #eff6ff;
+  border-left: 3px solid #2563eb;
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+.arrowCallout.employerArrow {
+  border-left-color: #0284c7;
+  background: #f0f9ff;
+}
+
+.arrowCallout.employeeArrow {
+  border-left-color: #2563eb;
+  background: #eff6ff;
+}
+
+.arrowCallout.witnessArrow {
+  border-left-color: #059669;
+  background: #ecfdf5;
+}
+
+.arrowLine {
+  color: #2563eb;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.arrowText {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.4;
+}
+
+.pdfNoteRedAlert {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  margin-top: 20px;
+}
+
+/* ATO Form & Checklist Visual Mocks */
+.atoFormVisualMock,
+.superFormVisualMock {
+  background: #ffffff;
+  border: 1px solid #0284c7;
+  padding: 14px;
+  border-radius: 6px;
+}
+
+.atoTitleBanner {
+  background: #0369a1;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.atoSectionHeader {
+  font-size: 12px;
   font-weight: 800;
   color: #0f172a;
-  margin: 0 0 6px 0;
+  margin-bottom: 8px;
 }
 
-.pdfPageHeaderTitle {
-  font-size: 13px;
-  font-weight: 700;
-  color: #475569;
-  border-bottom: 1px dashed #cbd5e1;
-  padding-bottom: 8px;
-}
-
-.pdfPaperContent {
-  flex: 1;
-  margin: 20px 0;
-}
-
-.pdfTextContent {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 13.5px;
-  line-height: 1.75;
-  color: #1e293b;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  margin: 0;
-}
-
-.pdfPaperFooter {
-  border-top: 1px solid #cbd5e1;
-  padding-top: 12px;
-  display: flex;
-  justify-content: space-between;
+.atoInputRow,
+.superInputRow {
   font-size: 11.5px;
-  color: #64748b;
-  font-weight: 600;
+  color: #334155;
+  margin-top: 6px;
+}
+
+.superSecTitle {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #0284c7;
+  margin-bottom: 8px;
+}
+
+.checklistTableMock {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+  font-size: 11.5px;
+}
+
+.checklistTableMock th {
+  background: #f1f5f9;
+  color: #0f172a;
+  padding: 6px 10px;
+  border: 1px solid #cbd5e1;
+  font-weight: 700;
+}
+
+.checklistTableMock td {
+  padding: 6px 10px;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+}
+
+.circledVal {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #2563eb;
+  color: #ffffff;
+  text-align: center;
+  line-height: 18px;
+  font-weight: 700;
+  font-size: 11px;
+}
+
+.bankDetailsVisualBox {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  padding: 14px 18px;
+  border-radius: 6px;
+  margin-top: 10px;
+}
+
+.bankDetailRow {
+  font-size: 12.5px;
+  color: #1e293b;
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+.pdfExactFooter {
+  border-top: 1px solid #dc2626;
+  padding-top: 10px;
+  margin-top: 30px;
+  text-align: center;
+  font-size: 11.5px;
+  color: #dc2626;
+  font-weight: 700;
 }
