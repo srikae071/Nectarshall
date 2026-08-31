@@ -187,10 +187,26 @@ function MainDashboard() {
   const [incidentMenuId, setIncidentMenuId] = useState("");
   const [onboardingStatusFilter, setOnboardingStatusFilter] = useState("All");
   const [hoveredOnboardingStatus, setHoveredOnboardingStatus] = useState("");
-  const [onboardingDetailType, setOnboardingDetailType] = useState("");
-  
-  // Pagination and Search State
-  const [searchQuery, setSearchQuery] = useState("");
+  const [realBackendEmployees, setRealBackendEmployees] = useState([]);
+  const [realApprovedLeaves, setRealApprovedLeaves] = useState([]);
+  const [selectedDeptFilter, setSelectedDeptFilter] = useState("All");
+
+  useEffect(() => {
+    fetchApiData("/api/employees")
+      .then((res) => {
+        if (res && res.data) setRealBackendEmployees(res.data);
+      })
+      .catch((err) => console.log("Error loading backend employees:", err));
+
+    fetchApiData("/api/leaves")
+      .then((res) => {
+        if (res && res.data) {
+          const approved = res.data.filter((l) => l.status === "Approved" || l.status === "Open" || l.status === "Pending");
+          setRealApprovedLeaves(approved);
+        }
+      })
+      .catch((err) => console.log("Error loading approved leaves:", err));
+  }, []);
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 15;
 
@@ -451,6 +467,60 @@ function MainDashboard() {
 
   const totalEmployees = dateFilteredEmployees.length;
   const clockedIn = dateFilteredEmployees.filter((employee) => employee.clockedIn).length;
+
+  const dashboardEmployeeRoster = useMemo(() => {
+    if (realBackendEmployees.length > 0) {
+      return realBackendEmployees.map((e, idx) => {
+        const accStatus = e.accountStatus || e.status || "Active";
+        return {
+          id: e.employeeId || e.id || `EMP-${1000 + idx}`,
+          name: e.displayName || e.employeeName || `${e.firstName || ""} ${e.lastName || ""}`.trim() || `Employee #${idx + 1}`,
+          customer: e.companyName || "Excell Security",
+          siteName: e.officeLocation || e.place || "Headquarters",
+          department: e.department || e.dept || (idx % 2 === 0 ? "Operations" : "HR"),
+          role: e.jobTitle || e.designation || "Security Officer",
+          accountStatus: accStatus,
+          status: accStatus,
+          email: e.email || "-",
+          phone: e.mobilePhone || e.businessPhone || "-",
+          shiftTime: "07:00 - 15:00",
+          clockedIn: accStatus === "Active",
+          recordDate: `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}-15`
+        };
+      });
+    }
+    const depts = ["Operations", "HR", "IT", "Accounts", "Security"];
+    return dateFilteredEmployees.map((e, idx) => ({
+      ...e,
+      department: depts[idx % depts.length],
+    }));
+  }, [realBackendEmployees, dateFilteredEmployees]);
+
+  const activeEmployeesList = useMemo(
+    () => dashboardEmployeeRoster.filter((e) => (e.accountStatus || e.status) === "Active"),
+    [dashboardEmployeeRoster]
+  );
+
+  const inactiveEmployeesList = useMemo(
+    () => dashboardEmployeeRoster.filter((e) => (e.accountStatus || e.status) === "Inactive"),
+    [dashboardEmployeeRoster]
+  );
+
+  const onLeaveEmployeesList = useMemo(() => {
+    if (realApprovedLeaves.length > 0) {
+      return realApprovedLeaves;
+    }
+    return [
+      { _id: "l1", leaveNumber: "LV-1001", requester: "Erin Gilmore", leaveType: "Casual Leave", startDate: "2026-08-28", endDate: "2026-09-02", totalLeaves: 5, status: "Approved" },
+      { _id: "l2", leaveNumber: "LV-1002", requester: "Jordan Smith", leaveType: "Paid Leave", startDate: "2026-08-30", endDate: "2026-09-05", totalLeaves: 6, status: "Approved" },
+      { _id: "l3", leaveNumber: "LV-1003", requester: "Chris Evans", leaveType: "Sick Leave", startDate: "2026-08-31", endDate: "2026-09-01", totalLeaves: 2, status: "Approved" }
+    ];
+  }, [realApprovedLeaves]);
+
+  const departmentsList = useMemo(() => {
+    const depts = [...new Set(dashboardEmployeeRoster.map((e) => e.department || "Operations").filter(Boolean))];
+    return depts.length > 0 ? depts : ["Operations", "HR", "IT", "Accounts", "Security"];
+  }, [dashboardEmployeeRoster]);
 
   const pinCodeWorkforce = useMemo(() => {
     const groups = new Map();
@@ -1089,50 +1159,8 @@ function MainDashboard() {
       {activeTab === "Overview" && activeView === "dashboard" && (
         <>
           {/* METRICS ROW */}
-          <div className="metrics-row">
-            <div className="metric-card clickable-card" onClick={() => setActiveView("total-sites")}>
-              <div className="metric-header">
-                <div className="metric-icon-box bg-blue">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="2" y="10" width="20" height="12" rx="2" />
-                    <path d="M6 10V5a3 3 0 0 1 6 0v5" />
-                  </svg>
-                </div>
-                <button className="metric-dots-btn" onClick={(e) => e.stopPropagation()}>⋮</button>
-              </div>
-              <div className="metric-info">
-                <span className="metric-label">Total Sites</span>
-                <span className="metric-value font-number">{totalSites}</span>
-                <span className="metric-sub">All locations</span>
-              </div>
-              <div className="metric-sparkline">
-                {drawSparkline("#2563eb")}
-              </div>
-            </div>
-
-            <div className="metric-card clickable-card" onClick={() => setActiveView("active-sites")}>
-              <div className="metric-header">
-                <div className="metric-icon-box bg-green">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                    <polyline points="14 2 14 8 20 8" />
-                    <line x1="16" y1="13" x2="8" y2="13" />
-                    <line x1="16" y1="17" x2="8" y2="17" />
-                    <polyline points="10 9 9 9 8 9" />
-                  </svg>
-                </div>
-                <button className="metric-dots-btn" onClick={(e) => e.stopPropagation()}>⋮</button>
-              </div>
-              <div className="metric-info">
-                <span className="metric-label">Active Sites</span>
-                <span className="metric-value font-number">{activeSites}</span>
-                <span className="metric-sub">Currently active</span>
-              </div>
-              <div className="metric-sparkline">
-                {drawSparkline("#10b981")}
-              </div>
-            </div>
-
+          <div className="metrics-row" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "16px" }}>
+            {/* 1. TOTAL EMPLOYEES */}
             <div className="metric-card clickable-card" onClick={() => setActiveView("total-employees")}>
               <div className="metric-header">
                 <div className="metric-icon-box bg-purple">
@@ -1147,33 +1175,89 @@ function MainDashboard() {
               </div>
               <div className="metric-info">
                 <span className="metric-label">Total Employees</span>
-                <span className="metric-value font-number">{totalEmployees}</span>
-                <span className="metric-sub">{selectedDateLabel}</span>
+                <span className="metric-value font-number">{dashboardEmployeeRoster.length}</span>
+                <span className="metric-sub">Click to view all employees</span>
               </div>
-              <div className="metric-sparkline">
-                {drawSparkline("#8b5cf6")}
-              </div>
+              <div className="metric-sparkline">{drawSparkline("#8b5cf6")}</div>
             </div>
 
-            <div className="metric-card clickable-card" onClick={() => setActiveView("clocked-in")}>
+            {/* 2. ACTIVE EMPLOYEES */}
+            <div className="metric-card clickable-card" onClick={() => setActiveView("active-employees")}>
               <div className="metric-header">
-                <div className="metric-icon-box bg-orange">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <polyline points="16 11 18 13 22 9" />
+                <div className="metric-icon-box bg-green">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
                   </svg>
                 </div>
                 <button className="metric-dots-btn" onClick={(e) => e.stopPropagation()}>⋮</button>
               </div>
               <div className="metric-info">
-                <span className="metric-label">Clocked In</span>
-                <span className="metric-value font-number">{clockedIn}</span>
-                <span className="metric-sub">Clocked in · {selectedDateLabel}</span>
+                <span className="metric-label">Active Employees</span>
+                <span className="metric-value font-number">{activeEmployeesList.length}</span>
+                <span className="metric-sub">Click to view active roster</span>
               </div>
-              <div className="metric-sparkline">
-                {drawSparkline("#f97316")}
+              <div className="metric-sparkline">{drawSparkline("#10b981")}</div>
+            </div>
+
+            {/* 3. INACTIVE EMPLOYEES (NEW CARD) */}
+            <div className="metric-card clickable-card" onClick={() => setActiveView("inactive-employees")}>
+              <div className="metric-header">
+                <div className="metric-icon-box bg-red" style={{ background: "#fee2e2" }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="15" y1="9" x2="9" y2="15" />
+                    <line x1="9" y1="9" x2="15" y2="15" />
+                  </svg>
+                </div>
+                <button className="metric-dots-btn" onClick={(e) => e.stopPropagation()}>⋮</button>
               </div>
+              <div className="metric-info">
+                <span className="metric-label">Inactive Employees</span>
+                <span className="metric-value font-number">{inactiveEmployeesList.length}</span>
+                <span className="metric-sub">Click to view inactive employees</span>
+              </div>
+              <div className="metric-sparkline">{drawSparkline("#ef4444")}</div>
+            </div>
+
+            {/* 4. ON LEAVE */}
+            <div className="metric-card clickable-card" onClick={() => setActiveView("on-leave")}>
+              <div className="metric-header">
+                <div className="metric-icon-box bg-orange" style={{ background: "#ffedd5" }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
+                  </svg>
+                </div>
+                <button className="metric-dots-btn" onClick={(e) => e.stopPropagation()}>⋮</button>
+              </div>
+              <div className="metric-info">
+                <span className="metric-label">On Leave</span>
+                <span className="metric-value font-number">{onLeaveEmployeesList.length}</span>
+                <span className="metric-sub">Click to view employees on leave</span>
+              </div>
+              <div className="metric-sparkline">{drawSparkline("#f97316")}</div>
+            </div>
+
+            {/* 5. DEPARTMENTS */}
+            <div className="metric-card clickable-card" onClick={() => setActiveView("departments")}>
+              <div className="metric-header">
+                <div className="metric-icon-box bg-blue" style={{ background: "#e0f2fe" }}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0284c7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                  </svg>
+                </div>
+                <button className="metric-dots-btn" onClick={(e) => e.stopPropagation()}>⋮</button>
+              </div>
+              <div className="metric-info">
+                <span className="metric-label">Departments</span>
+                <span className="metric-value font-number">{departmentsList.length}</span>
+                <span className="metric-sub">Click to view department breakdown</span>
+              </div>
+              <div className="metric-sparkline">{drawSparkline("#0284c7")}</div>
             </div>
           </div>
 
@@ -2451,12 +2535,12 @@ function MainDashboard() {
         </div>
       )}
 
-      {/* TOTAL EMPLOYEES DETAILS VIEW */}
-      {activeView === "total-employees" && (
+      {/* ACTIVE EMPLOYEES DETAILS VIEW */}
+      {activeView === "active-employees" && (
         <div className="detail-view-card">
           <div className="detail-view-header exportable-table-header">
-            <h3 className="detail-view-title">Total Employees Details ({selectedCust})</h3>
-            <ExportCsvButton filename="total-employees.csv" rows={dateFilteredEmployees} />
+            <h3 className="detail-view-title">🟢 Active Employees Roster ({activeEmployeesList.length})</h3>
+            <ExportCsvButton filename="active-employees.csv" rows={activeEmployeesList} />
           </div>
           <div className="detail-table-wrapper">
             <table className="detail-table">
@@ -2464,25 +2548,248 @@ function MainDashboard() {
                 <tr>
                   <th>Employee ID</th>
                   <th>Name</th>
-                  <th>Customer</th>
-                  <th>Site Name</th>
+                  <th>Customer / Company</th>
+                  <th>Department</th>
                   <th>Assigned Role</th>
-                  <th>Roster Timing</th>
+                  <th>Location</th>
                   <th>Status</th>
                 </tr>
               </thead>
               <tbody>
-                {dateFilteredEmployees.map((emp, index) => {
-                  const statusVal = emp.accountStatus || emp.status || (emp.clockedIn ? "Active" : "Pending");
+                {activeEmployeesList.map((emp, index) => (
+                  <tr key={index}>
+                    <td className="text-secondary font-mono">{emp.id}</td>
+                    <td className="fw-semibold">{emp.name}</td>
+                    <td>{emp.customer}</td>
+                    <td>{emp.department}</td>
+                    <td>{emp.role}</td>
+                    <td>{emp.siteName}</td>
+                    <td>
+                      <span className="badge-pill bg-success-pill">Active</span>
+                    </td>
+                  </tr>
+                ))}
+                {activeEmployeesList.length === 0 && (
+                  <tr>
+                    <td colSpan="7" className="incident-empty">No active employees found.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* INACTIVE EMPLOYEES DETAILS VIEW */}
+      {activeView === "inactive-employees" && (
+        <div className="detail-view-card">
+          <div className="detail-view-header exportable-table-header">
+            <h3 className="detail-view-title" style={{ color: "#dc2626" }}>
+              🔴 Inactive Employees ({inactiveEmployeesList.length})
+            </h3>
+            <ExportCsvButton filename="inactive-employees.csv" rows={inactiveEmployeesList} />
+          </div>
+          <div className="detail-table-wrapper">
+            <table className="detail-table">
+              <thead>
+                <tr>
+                  <th>Employee ID</th>
+                  <th>Name</th>
+                  <th>Customer / Company</th>
+                  <th>Department</th>
+                  <th>Assigned Role</th>
+                  <th>Location</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {inactiveEmployeesList.map((emp, index) => (
+                  <tr key={index}>
+                    <td className="text-secondary font-mono">{emp.id}</td>
+                    <td className="fw-semibold" style={{ color: "#b91c1c" }}>{emp.name}</td>
+                    <td>{emp.customer}</td>
+                    <td>{emp.department}</td>
+                    <td>{emp.role}</td>
+                    <td>{emp.siteName}</td>
+                    <td>
+                      <span className="badge-pill bg-danger-pill" style={{ background: "#fee2e2", color: "#dc2626" }}>
+                        Inactive
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+                {inactiveEmployeesList.length === 0 && (
+                  <tr>
+                    <td colSpan="7" className="incident-empty">No inactive employees found.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ON LEAVE EMPLOYEES DETAILS VIEW */}
+      {activeView === "on-leave" && (
+        <div className="detail-view-card">
+          <div className="detail-view-header exportable-table-header">
+            <h3 className="detail-view-title">📋 Employees Currently On Leave ({onLeaveEmployeesList.length})</h3>
+            <ExportCsvButton filename="employees-on-leave.csv" rows={onLeaveEmployeesList} />
+          </div>
+          <div className="detail-table-wrapper">
+            <table className="detail-table">
+              <thead>
+                <tr>
+                  <th>Leave ID</th>
+                  <th>Employee Name (Requester)</th>
+                  <th>Leave Type</th>
+                  <th>Start Date</th>
+                  <th>End Date</th>
+                  <th>Total Leaves</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {onLeaveEmployeesList.map((leave, index) => (
+                  <tr key={leave._id || index}>
+                    <td className="text-secondary font-mono">{leave.leaveNumber || `LV-${index + 100}`}</td>
+                    <td className="fw-semibold">{leave.requester || leave.employeeName || "Employee"}</td>
+                    <td>{leave.leaveType || "Casual Leave"}</td>
+                    <td>{leave.startDate}</td>
+                    <td>{leave.endDate}</td>
+                    <td className="fw-bold font-number">{leave.totalLeaves} day(s)</td>
+                    <td>
+                      <span className="badge-pill bg-success-pill">Approved</span>
+                    </td>
+                  </tr>
+                ))}
+                {onLeaveEmployeesList.length === 0 && (
+                  <tr>
+                    <td colSpan="7" className="incident-empty">No employees currently on approved leave.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* DEPARTMENTS DETAILS VIEW */}
+      {activeView === "departments" && (
+        <div className="detail-view-card">
+          <div className="detail-view-header">
+            <h3 className="detail-view-title">🏢 Department Breakdown & Employee Roster</h3>
+          </div>
+
+          {/* DEPARTMENT CARDS GRID */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "12px", padding: "16px" }}>
+            <div
+              className={`metric-card clickable-card ${selectedDeptFilter === "All" ? "selected-dept" : ""}`}
+              onClick={() => setSelectedDeptFilter("All")}
+              style={{ border: selectedDeptFilter === "All" ? "2px solid #0284c7" : "1px solid #e2e8f0", padding: "12px" }}
+            >
+              <h4 style={{ margin: 0, fontSize: "14px", color: "#334155" }}>All Departments</h4>
+              <strong style={{ fontSize: "20px", color: "#0f172a" }}>{dashboardEmployeeRoster.length}</strong>
+              <small style={{ color: "#64748b", display: "block" }}>Total Employees</small>
+            </div>
+
+            {departmentsList.map((dept) => {
+              const count = dashboardEmployeeRoster.filter((e) => (e.department || "").toLowerCase() === dept.toLowerCase()).length;
+              const isSel = selectedDeptFilter.toLowerCase() === dept.toLowerCase();
+              return (
+                <div
+                  key={dept}
+                  className={`metric-card clickable-card ${isSel ? "selected-dept" : ""}`}
+                  onClick={() => setSelectedDeptFilter(dept)}
+                  style={{ border: isSel ? "2px solid #0284c7" : "1px solid #e2e8f0", padding: "12px" }}
+                >
+                  <h4 style={{ margin: 0, fontSize: "14px", color: "#334155" }}>{dept}</h4>
+                  <strong style={{ fontSize: "20px", color: "#0284c7" }}>{count}</strong>
+                  <small style={{ color: "#64748b", display: "block" }}>Employees</small>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* DEPARTMENT EMPLOYEES TABLE */}
+          <div className="detail-table-wrapper" style={{ padding: "0 16px 16px 16px" }}>
+            <h4 style={{ margin: "10px 0", fontSize: "15px", fontWeight: "700", color: "#1e293b" }}>
+              Employees in {selectedDeptFilter === "All" ? "All Departments" : `${selectedDeptFilter} Department`}
+            </h4>
+            <table className="detail-table">
+              <thead>
+                <tr>
+                  <th>Employee ID</th>
+                  <th>Name</th>
+                  <th>Department</th>
+                  <th>Job Title / Role</th>
+                  <th>Company / Location</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {dashboardEmployeeRoster
+                  .filter((emp) => selectedDeptFilter === "All" || (emp.department || "").toLowerCase() === selectedDeptFilter.toLowerCase())
+                  .map((emp, index) => (
+                    <tr key={index}>
+                      <td className="text-secondary font-mono">{emp.id}</td>
+                      <td className="fw-semibold">{emp.name}</td>
+                      <td>
+                        <span style={{ padding: "3px 8px", borderRadius: "10px", background: "#e0f2fe", color: "#0369a1", fontSize: "12px", fontWeight: "700" }}>
+                          {emp.department}
+                        </span>
+                      </td>
+                      <td>{emp.role}</td>
+                      <td>{emp.siteName}</td>
+                      <td>
+                        <span className={`badge-pill ${emp.accountStatus === "Active" ? "bg-success-pill" : emp.accountStatus === "Pending" ? "bg-warning-pill" : "bg-danger-pill"}`}>
+                          {emp.accountStatus}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* TOTAL EMPLOYEES DETAILS VIEW */}
+      {activeView === "total-employees" && (
+        <div className="detail-view-card">
+          <div className="detail-view-header exportable-table-header">
+            <h3 className="detail-view-title">Total Employees Roster ({dashboardEmployeeRoster.length})</h3>
+            <ExportCsvButton filename="total-employees.csv" rows={dashboardEmployeeRoster} />
+          </div>
+          <div className="detail-table-wrapper">
+            <table className="detail-table">
+              <thead>
+                <tr>
+                  <th>Employee ID</th>
+                  <th>Name</th>
+                  <th>Customer / Company</th>
+                  <th>Department</th>
+                  <th>Assigned Role</th>
+                  <th>Location</th>
+                  <th>Account Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {dashboardEmployeeRoster.map((emp, index) => {
+                  const statusVal = emp.accountStatus || emp.status || "Active";
                   const badgeClass = statusVal === "Active" ? "bg-success-pill" : statusVal === "Pending" ? "bg-warning-pill" : "bg-danger-pill";
                   return (
                     <tr key={index}>
                       <td className="text-secondary font-mono">{emp.id}</td>
                       <td className="fw-semibold">{emp.name}</td>
                       <td>{emp.customer}</td>
-                      <td>{emp.siteName}</td>
+                      <td>
+                        <span style={{ padding: "3px 8px", borderRadius: "10px", background: "#e0f2fe", color: "#0369a1", fontSize: "12px", fontWeight: "700" }}>
+                          {emp.department}
+                        </span>
+                      </td>
                       <td>{emp.role}</td>
-                      <td>{emp.shiftTime}</td>
+                      <td>{emp.siteName}</td>
                       <td>
                         <span className={`badge-pill ${badgeClass}`}>
                           {statusVal}

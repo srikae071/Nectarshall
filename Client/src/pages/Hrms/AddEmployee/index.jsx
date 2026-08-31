@@ -242,7 +242,7 @@ function AddEmployee() {
               onClick={() => setJobSecTab("JOB_INFO")}
             >
               <FiBriefcase size={15} />
-              <span>💼 Job Information</span>
+              <span>Job Information</span>
             </button>
 
             <button
@@ -251,7 +251,7 @@ function AddEmployee() {
               onClick={() => setJobSecTab("QUALIFICATIONS")}
             >
               <FiShield size={15} />
-              <span>🛡️ Qualification Licenses</span>
+              <span>Qualification Licenses</span>
             </button>
 
             <button
@@ -260,7 +260,7 @@ function AddEmployee() {
               onClick={() => setJobSecTab("OFFER_LETTER")}
             >
               <FiFileText size={15} />
-              <span>📄 Offer Letter</span>
+              <span>Offer Letter</span>
             </button>
 
             <button
@@ -269,7 +269,7 @@ function AddEmployee() {
               onClick={() => setJobSecTab("FINANCIAL")}
             >
               <FiDollarSign size={15} />
-              <span>💳 Financial & Tax Information</span>
+              <span>Financial & Tax Information</span>
             </button>
           </div>
         </div>
@@ -760,8 +760,8 @@ function AddEmployee() {
         )}
 
         {/* SECTION 3: CONTACT INFORMATION (ALL 11 ORIGINAL FIELDS PRESERVED) */}
-        <div className="section-header-row" style={{ marginTop: "25px" }}>
-          <h3 className="section-title">📞 Contact Information</h3>
+        <div className="section-header-row" style={{ marginTop: "25px", padding: "12px 0 8px 0" }}>
+          <h3 className="section-title" style={{ padding: "12px 0 8px 0" }}>Contact Information</h3>
         </div>
 
         <div className="form-row">
@@ -888,7 +888,7 @@ function AddEmployee() {
 
         {/* SECTION 4: PARENTAL CONTROLS */}
         <div className="section-header-row" style={{ marginTop: "25px" }}>
-          <h3 className="section-title">👨‍👩‍👧 Parental Controls</h3>
+          <h3 className="section-title">Parental Controls</h3>
         </div>
 
         <div className="form-row">
@@ -921,7 +921,7 @@ function AddEmployee() {
 
         {/* SECTION 5: SETTINGS & ACCOUNT STATUS */}
         <div className="section-header-row" style={{ marginTop: "25px" }}>
-          <h3 className="section-title">⚙️ Settings</h3>
+          <h3 className="section-title">Settings</h3>
         </div>
 
         <div className="form-row">
