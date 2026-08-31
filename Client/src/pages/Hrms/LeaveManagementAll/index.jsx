@@ -91,9 +91,10 @@ function LeaveManagementAll() {
 
       const username = (authUser?.username || authUser?.name || authUser?.displayName || (typeof authUser === "string" ? authUser : "")).trim();
       const role = (authUser?.role || "").toUpperCase();
-      const isAdmin = role === "ADMIN" || username.toLowerCase().includes("sumit");
+      const dept = (authUser?.department || "").toUpperCase();
+      const isHrOrAdmin = role === "ADMIN" || role.includes("HR") || dept.includes("HR") || username.toLowerCase().includes("sumit");
 
-      if (isAdmin) {
+      if (isHrOrAdmin) {
         setData(allLeaves);
       } else if (username) {
         const u = username.toLowerCase();

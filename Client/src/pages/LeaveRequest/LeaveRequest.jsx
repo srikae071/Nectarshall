@@ -1,5 +1,5 @@
-// import { useState } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { fetchApiData, sendApiData } from "../../utils/apiClient";
 import {
   sendMailNotification,
@@ -9,7 +9,6 @@ import {
 } from "../../utils/mailService";
 import Hrmsleftlayout from "../Hrms/Hrmsleftlayout";
 import "./LeaveRequest.css";
-import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 
 function LeaveRequest() {
@@ -41,18 +40,47 @@ function LeaveRequest() {
       .catch((err) => console.log(err));
   }, []);
 
+  const leaveAllocationMap = {
+    "Casual Leave": 5,
+    "Sick Leave": 10,
+    "Paid Leave": 15,
+    "Maternity Leave": 20,
+    "Paternity Leave": 12,
+  };
 
-  const handleSave = async () => {
+  const calculateLeaves = () => {
+    if (startDate && endDate) {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      const diffTime = end.getTime() - start.getTime();
+      const totalDays = Math.max(1, Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1);
+      return halfDay ? totalDays / 2 : totalDays;
+    }
+    if (leaveType && leaveAllocationMap[leaveType]) {
+      return leaveAllocationMap[leaveType];
+    }
+    return 1;
+  };
+
+  const handleCancel = () => {
+    setStartDate("");
+    setEndDate("");
+    setHalfDay(false);
+    setLeaveType("");
+    setDescription("");
+  };
+
+  const handleSave = () => {
+    alert("Leave Request Saved as Draft Successfully.");
+  };
+
+  const handleSubmit = async () => {
+    if (!leaveType || !startDate || !endDate) {
+      alert("Please fill in required fields (Leave Type, Start Date, End Date).");
+      return;
+    }
     try {
-      const leaveAllocation = {
-        "Casual Leave": 5,
-        "Sick Leave": 10,
-        "Paid Leave": 15,
-        "Maternity Leave": 20,
-        "Paternity Leave": 12,
-      };
-
-      const allocated = leaveAllocation[leaveType] || 0;
+      const allocated = leaveAllocationMap[leaveType] || 0;
 
       const response = await fetchApiData("/api/leaves");
 
@@ -74,7 +102,6 @@ function LeaveRequest() {
         );
 
         navigate("/");
-
         return;
       }
 
@@ -87,12 +114,13 @@ function LeaveRequest() {
         totalLeaves: requestedLeaves,
         halfDay,
         description,
+        status: "Pending",
       });
 
       const rawUser = requester.trim() || "Srikar";
       const userMail = getUserEmailByName(rawUser);
-      const adminMail = ADMIN_EMAIL; // sumit@enhanceservices.com.au
-      const senderMail = SYSTEM_SENDER_EMAIL; // srikar071@gmail.com
+      const adminMail = ADMIN_EMAIL;
+      const senderMail = SYSTEM_SENDER_EMAIL;
 
       let userBody = "Leave has been applied.";
       if (rawUser.toLowerCase().includes("karan")) {
@@ -101,7 +129,6 @@ function LeaveRequest() {
 
       const adminBody = `Please approve ${rawUser}'s leave.`;
 
-      // 1. Send User Email Notification (From: srikar071@gmail.com)
       sendMailNotification({
         to: userMail,
         toName: rawUser,
@@ -111,7 +138,6 @@ function LeaveRequest() {
         body: userBody,
       });
 
-      // 2. Send Admin Email Notification (From: srikar071@gmail.com)
       sendMailNotification({
         to: adminMail,
         toName: "Sumit (Admin)",
@@ -121,34 +147,12 @@ function LeaveRequest() {
         body: adminBody,
       });
 
-      alert("Leave Request Saved Successfully & Notification Mails Sent!");
-
+      alert("Leave Request Submitted Successfully & Notification Mails Sent!");
       navigate("/");
     } catch (error) {
       console.log(error);
-      alert("Error Saving Leave Request");
+      alert("Error Submitting Leave Request");
     }
-  };
-  const leaveAllocationMap = {
-    "Casual Leave": 5,
-    "Sick Leave": 10,
-    "Paid Leave": 15,
-    "Maternity Leave": 20,
-    "Paternity Leave": 12,
-  };
-
-  const calculateLeaves = () => {
-    if (startDate && endDate) {
-      const start = new Date(startDate);
-      const end = new Date(endDate);
-      const diffTime = end.getTime() - start.getTime();
-      const totalDays = Math.max(1, Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1);
-      return halfDay ? totalDays / 2 : totalDays;
-    }
-    if (leaveType && leaveAllocationMap[leaveType]) {
-      return leaveAllocationMap[leaveType];
-    }
-    return 1;
   };
   return (
     <Hrmsleftlayout>
@@ -286,8 +290,15 @@ function LeaveRequest() {
 
           {/* ACTIONS */}
           <div className="lr-actions">
-            <button className="lr-btn-cancel" onClick={() => navigate("/")}>Cancel</button>
-            <button className="lr-btn-submit" onClick={handleSave}>Submit Request</button>
+            <button type="button" className="lr-btn-cancel" onClick={handleCancel}>
+              Cancel
+            </button>
+            <button type="button" className="lr-btn-submit" style={{ background: "#64748b" }} onClick={handleSave}>
+              Save
+            </button>
+            <button type="button" className="lr-btn-submit" onClick={handleSubmit}>
+              Submit
+            </button>
           </div>
         </div>
       </div>

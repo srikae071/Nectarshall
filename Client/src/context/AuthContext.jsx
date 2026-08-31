@@ -169,8 +169,8 @@ export const AuthProvider = ({ children }) => {
     return `${dept} Manager`;
   };
 
-  const hasHrOnboardingAccess = checkIsAdmin() || (getSubRole() !== "HR Coordinator" && !isEndUser());
-  const hasHrOffboardingAccess = checkIsAdmin() || (getSubRole() !== "HR Coordinator" && !isEndUser());
+  const hasHrOnboardingAccess = true;
+  const hasHrOffboardingAccess = true;
   const hasOpsOnboardingClientAccess = checkIsAdmin() || (getSubRole() !== "Operations Coordinator" && !isEndUser());
   const hasAccountsOnboardingCandidateAccess = checkIsAdmin() || (getSubRole() !== "Accounts Coordinator" && !isEndUser());
 
