@@ -7,6 +7,8 @@ export const hrPoliciesData = [
     pagesCount: 5,
     fileSize: "1.2 MB",
     updatedDate: "June 2023",
+    fileUrl: "/pdfs/guide-to-employment-application.pdf.pdf",
+    fileName: "guide-to-employment-application.pdf",
     pages: [
       {
         pageNumber: 1,
@@ -87,6 +89,8 @@ SUPPLYING EVIDENCE OF FIRST AID & CPR CURRENCY:
     pagesCount: 3,
     fileSize: "850 KB",
     updatedDate: "June 2023",
+    fileUrl: "/pdfs/confidentiality-agreement.pdf.pdf",
+    fileName: "confidentiality-agreement.pdf",
     pages: [
       {
         pageNumber: 1,
@@ -139,6 +143,8 @@ EXECUTION & SIGNATURES:
     pagesCount: 10,
     fileSize: "2.4 MB",
     updatedDate: "June 2023",
+    fileUrl: "/pdfs/employment-contract-full-time.pdf.pdf",
+    fileName: "employment-contract-full-time.pdf",
     pages: [
       {
         pageNumber: 1,
@@ -244,6 +250,8 @@ SIGNATURES:
     pagesCount: 34,
     fileSize: "4.8 MB",
     updatedDate: "June 2023",
+    fileUrl: "/pdfs/employee-handbook.pdf.pdf",
+    fileName: "employee-handbook.pdf",
     pages: [
       {
         pageNumber: 1,
@@ -301,6 +309,8 @@ Mission: Quality Responsiveness`
     pagesCount: 47,
     fileSize: "5.6 MB",
     updatedDate: "June 2023",
+    fileUrl: "/pdfs/employee-health-and-safety-handbook.pdf.pdf",
+    fileName: "employee-health-and-safety-handbook.pdf",
     pages: [
       {
         pageNumber: 1,
@@ -348,6 +358,8 @@ DRUGS & ALCOHOL POLICY:
     pagesCount: 12,
     fileSize: "1.8 MB",
     updatedDate: "June 2023",
+    fileUrl: "/pdfs/code-of-conduct.pdf.pdf",
+    fileName: "code-of-conduct.pdf",
     pages: [
       {
         pageNumber: 1,
@@ -372,6 +384,8 @@ DRUGS & ALCOHOL POLICY:
     pagesCount: 8,
     fileSize: "1.1 MB",
     updatedDate: "June 2023",
+    fileUrl: "/pdfs/fair-work-information-statement.pdf.pdf",
+    fileName: "fair-work-information-statement.pdf",
     pages: [
       {
         pageNumber: 1,

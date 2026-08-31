@@ -41,6 +41,16 @@ function OpMainPage() {
   };
 
   const handleDownload = (pdf) => {
+    if (pdf.fileUrl) {
+      const link = document.createElement("a");
+      link.href = pdf.fileUrl;
+      link.download = pdf.fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      return;
+    }
+
     const textContent = (pdf.pages || [])
       .map((p) => `--- PAGE ${p.pageNumber}: ${p.title} ---\n\n${p.content}`)
       .join("\n\n=========================================\n\n");
@@ -222,41 +232,45 @@ function OpMainPage() {
               </div>
 
               <div className="pdfHeaderActions">
-                <button
-                  type="button"
-                  title="Zoom Out"
-                  onClick={() => setZoomLevel((z) => Math.max(70, z - 10))}
-                  className="pdfActionBtn"
-                >
-                  -
-                </button>
-                <span className="zoomLabel">{zoomLevel}%</span>
-                <button
-                  type="button"
-                  title="Zoom In"
-                  onClick={() => setZoomLevel((z) => Math.min(150, z + 10))}
-                  className="pdfActionBtn"
-                >
-                  +
-                </button>
+                {!selectedPdf.fileUrl && (
+                  <>
+                    <button
+                      type="button"
+                      title="Zoom Out"
+                      onClick={() => setZoomLevel((z) => Math.max(70, z - 10))}
+                      className="pdfActionBtn"
+                    >
+                      -
+                    </button>
+                    <span className="zoomLabel">{zoomLevel}%</span>
+                    <button
+                      type="button"
+                      title="Zoom In"
+                      onClick={() => setZoomLevel((z) => Math.min(150, z + 10))}
+                      className="pdfActionBtn"
+                    >
+                      +
+                    </button>
 
-                <button
-                  type="button"
-                  className="pdfActionBtn highlightBtn"
-                  onClick={() => handleDownload(selectedPdf)}
-                >
-                  <FiDownload size={14} />
-                  <span>Download PDF</span>
-                </button>
+                    <button
+                      type="button"
+                      className="pdfActionBtn highlightBtn"
+                      onClick={() => handleDownload(selectedPdf)}
+                    >
+                      <FiDownload size={14} />
+                      <span>Download PDF</span>
+                    </button>
 
-                <button
-                  type="button"
-                  className="pdfActionBtn"
-                  onClick={handlePrint}
-                >
-                  <FiPrinter size={14} />
-                  <span>Print</span>
-                </button>
+                    <button
+                      type="button"
+                      className="pdfActionBtn"
+                      onClick={handlePrint}
+                    >
+                      <FiPrinter size={14} />
+                      <span>Print</span>
+                    </button>
+                  </>
+                )}
 
                 <button
                   type="button"
@@ -269,7 +283,7 @@ function OpMainPage() {
             </div>
 
             {/* PAGE NAVIGATOR RIBBON */}
-            <div className="pdfPageNavRibbon">
+            {!selectedPdf.fileUrl && <div className="pdfPageNavRibbon">
               <button
                 type="button"
                 disabled={activePageNum <= 1}
@@ -306,11 +320,17 @@ function OpMainPage() {
                 <span>Next Page</span>
                 <FiChevronRight size={16} />
               </button>
-            </div>
+            </div>}
 
             {/* DOCUMENT BODY PAPER VIEW */}
             <div className="pdfBodyScrollArea">
-              <div
+              {selectedPdf.fileUrl ? (
+                <iframe
+                  className="nativePdfViewer"
+                  src={selectedPdf.fileUrl}
+                  title={selectedPdf.title}
+                />
+              ) : <div
                 className="pdfPaperSheet"
                 style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: "top center" }}
               >
@@ -337,7 +357,7 @@ function OpMainPage() {
                   <span>Excell Security © 2026 - All Rights Reserved</span>
                   <span>Page {activePageNum} of {selectedPdf.pagesCount}</span>
                 </div>
-              </div>
+              </div>}
             </div>
           </div>
         </div>

@@ -557,10 +557,11 @@ body.theme-green .MyTaskNotificationWrapper a {
 [data-theme="green"] .btn-primary,
 [data-theme="green"] .btn-success,
 [data-theme="green"] button[type="submit"],
-[data-theme="green"] .save-btn {
-  background-color: #008075 !important;
-  background: #008075 !important;
-  border-color: #008075 !important;
+[data-theme="green"] .save-btn,
+[data-theme="green"] .lr-btn-submit {
+  background-color: #00a86b !important;
+  background: #00a86b !important;
+  border-color: #00a86b !important;
 }
 
 /* TIMESHEET SPECIFIC GREEN THEME RULES */
