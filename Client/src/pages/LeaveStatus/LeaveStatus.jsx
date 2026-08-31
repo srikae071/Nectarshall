@@ -15,9 +15,19 @@ const leaveAllocation = {
 
 function LeaveStatus() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedLeaveModal, setSelectedLeaveModal] = useState(null);
+
+  const handleItemClick = (item) => {
+    if ((item.status || "").toLowerCase() === "draft") {
+      navigate("/leave-request", { state: { draftLeave: item } });
+    } else {
+      setSelectedLeaveModal(item);
+    }
+  };
 
   // Column visibility settings
   const [columns, setColumns] = useState({
@@ -258,8 +268,23 @@ function LeaveStatus() {
                 {filteredData.length > 0 ? (
                   filteredData.map((item) => (
                     <tr key={item._id}>
-                      {columns.leaveNumber && <td>{item.leaveNumber || "N/A"}</td>}
-                      {columns.requester && <td>{item.requester || currentUserName}</td>}
+                      {columns.leaveNumber && (
+                        <td
+                          style={{ fontWeight: "700", color: "#0284c7", cursor: "pointer", textDecoration: "underline" }}
+                          onClick={() => handleItemClick(item)}
+                          title={(item.status || "").toLowerCase() === "draft" ? "Click to edit draft leave request" : "Click to view full leave details"}
+                        >
+                          {item.leaveNumber || "View Details"}
+                        </td>
+                      )}
+                      {columns.requester && (
+                        <td
+                          style={{ cursor: "pointer" }}
+                          onClick={() => handleItemClick(item)}
+                        >
+                          {item.requester || currentUserName}
+                        </td>
+                      )}
                       {columns.leaveType && <td>{item.leaveType}</td>}
                       {columns.startDate && <td>{item.startDate}</td>}
                       {columns.endDate && <td>{item.endDate}</td>}
@@ -268,6 +293,8 @@ function LeaveStatus() {
                         <td>
                           <span
                             className={`badge ${(item.status || "Pending").toLowerCase()}`}
+                            style={{ cursor: "pointer" }}
+                            onClick={() => handleItemClick(item)}
                           >
                             {item.status || "Pending"}
                           </span>
@@ -289,6 +316,196 @@ function LeaveStatus() {
             </table>
           )}
         </div>
+
+        {/* LEAVE DETAILS MODAL POPUP */}
+        {selectedLeaveModal && (
+          <div
+            className="pdfModalBackdrop"
+            onClick={() => setSelectedLeaveModal(null)}
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100vw",
+              height: "100vh",
+              background: "rgba(15, 23, 42, 0.65)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 1100,
+              backdropFilter: "blur(4px)",
+            }}
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                background: "#ffffff",
+                width: "90%",
+                maxWidth: "540px",
+                maxHeight: "90vh",
+                borderRadius: "12px",
+                padding: "24px",
+                boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+                overflowY: "auto",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  borderBottom: "1px solid #e2e8f0",
+                  paddingBottom: "12px",
+                  marginBottom: "16px",
+                }}
+              >
+                <div>
+                  <span style={{ fontSize: "11px", fontWeight: "700", color: "#0284c7", letterSpacing: "0.5px", textTransform: "uppercase" }}>
+                    Leave Application Details
+                  </span>
+                  <h3 style={{ margin: "4px 0 0 0", fontSize: "18px", color: "#0f172a" }}>
+                    {selectedLeaveModal.leaveNumber || selectedLeaveModal._id || "Leave Detail"}
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSelectedLeaveModal(null)}
+                  style={{
+                    background: "#f1f5f9",
+                    border: "none",
+                    borderRadius: "50%",
+                    width: "32px",
+                    height: "32px",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                    fontWeight: "700",
+                    color: "#64748b",
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                  <div>
+                    <label style={{ fontSize: "11px", fontWeight: "700", color: "#64748b", textTransform: "uppercase" }}>Requester Name</label>
+                    <div style={{ fontSize: "14px", fontWeight: "600", color: "#1e293b", marginTop: "2px" }}>
+                      {selectedLeaveModal.requester || selectedLeaveModal.employeeName || currentUserName}
+                    </div>
+                  </div>
+                  <div>
+                    <label style={{ fontSize: "11px", fontWeight: "700", color: "#64748b", textTransform: "uppercase" }}>Requested For (Admin)</label>
+                    <div style={{ fontSize: "14px", fontWeight: "600", color: "#1e293b", marginTop: "2px" }}>
+                      {selectedLeaveModal.requesterFor || "Sumit"}
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                  <div>
+                    <label style={{ fontSize: "11px", fontWeight: "700", color: "#64748b", textTransform: "uppercase" }}>Leave Category</label>
+                    <div style={{ fontSize: "14px", fontWeight: "600", color: "#0284c7", marginTop: "2px" }}>
+                      {selectedLeaveModal.leaveType || "Casual Leave"}
+                    </div>
+                  </div>
+                  <div>
+                    <label style={{ fontSize: "11px", fontWeight: "700", color: "#64748b", textTransform: "uppercase" }}>Approval Status</label>
+                    <div style={{ marginTop: "2px" }}>
+                      <span className={`badge ${(selectedLeaveModal.status || "Pending").toLowerCase()}`}>
+                        {selectedLeaveModal.status || "Pending"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
+                  <div>
+                    <label style={{ fontSize: "11px", fontWeight: "700", color: "#64748b", textTransform: "uppercase" }}>Start Date</label>
+                    <div style={{ fontSize: "13px", fontWeight: "600", color: "#334155", marginTop: "2px" }}>
+                      {selectedLeaveModal.startDate || "-"}
+                    </div>
+                  </div>
+                  <div>
+                    <label style={{ fontSize: "11px", fontWeight: "700", color: "#64748b", textTransform: "uppercase" }}>End Date</label>
+                    <div style={{ fontSize: "13px", fontWeight: "600", color: "#334155", marginTop: "2px" }}>
+                      {selectedLeaveModal.endDate || "-"}
+                    </div>
+                  </div>
+                  <div>
+                    <label style={{ fontSize: "11px", fontWeight: "700", color: "#64748b", textTransform: "uppercase" }}>Total Days</label>
+                    <div style={{ fontSize: "13px", fontWeight: "400", color: "#047857", marginTop: "2px" }}>
+                      {selectedLeaveModal.totalLeaves || 1} day(s)
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ fontSize: "11px", fontWeight: "700", color: "#64748b", textTransform: "uppercase" }}>Half Day</label>
+                  <div style={{ fontSize: "13px", fontWeight: "400", color: "#334155", marginTop: "2px" }}>
+                    {selectedLeaveModal.halfDay ? "Yes (Half Day Leave)" : "No (Full Day Leave)"}
+                  </div>
+                </div>
+
+                {selectedLeaveModal.shortDescription && (
+                  <div>
+                    <label style={{ fontSize: "11px", fontWeight: "700", color: "#64748b", textTransform: "uppercase" }}>Short Description</label>
+                    <div
+                      style={{
+                        fontSize: "13px",
+                        color: "#334155",
+                        marginTop: "4px",
+                        background: "#f8fafc",
+                        padding: "8px 12px",
+                        borderRadius: "6px",
+                        border: "1px solid #e2e8f0",
+                      }}
+                    >
+                      {selectedLeaveModal.shortDescription}
+                    </div>
+                  </div>
+                )}
+
+                <div>
+                  <label style={{ fontSize: "11px", fontWeight: "700", color: "#64748b", textTransform: "uppercase" }}>Reason / Description</label>
+                  <div
+                    style={{
+                      fontSize: "13px",
+                      color: "#334155",
+                      marginTop: "4px",
+                      background: "#f8fafc",
+                      padding: "10px 14px",
+                      borderRadius: "6px",
+                      border: "1px solid #e2e8f0",
+                      minHeight: "50px",
+                      lineHeight: "1.5",
+                    }}
+                  >
+                    {selectedLeaveModal.description || "No description provided."}
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ marginTop: "20px", textAlign: "right" }}>
+                <button
+                  type="button"
+                  onClick={() => setSelectedLeaveModal(null)}
+                  style={{
+                    padding: "8px 18px",
+                    background: "#0284c7",
+                    color: "#ffffff",
+                    border: "none",
+                    borderRadius: "6px",
+                    fontWeight: "600",
+                    cursor: "pointer",
+                  }}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </HrmsLeftLayout>
   );

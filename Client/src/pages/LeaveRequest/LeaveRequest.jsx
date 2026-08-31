@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { fetchApiData, sendApiData } from "../../utils/apiClient";
 import {
   sendMailNotification,
@@ -13,30 +13,96 @@ import { useAuth } from "../../context/AuthContext";
 
 function LeaveRequest() {
   const { user } = useAuth();
+  const location = useLocation();
+  const draftItem = location.state?.draftLeave;
+
   const currentUserName = user?.displayName || user?.username || "Employee";
 
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [halfDay, setHalfDay] = useState(false);
-  const [description, setDescription] = useState("");
-  const [requester, setRequester] = useState(currentUserName);
-  const [requesterFor, setRequesterFor] = useState("Sumit");
-  const [leaveType, setLeaveType] = useState("");
+  const [editingDraftId, setEditingDraftId] = useState(draftItem?._id || draftItem?.id || null);
+  const [startDate, setStartDate] = useState(draftItem?.startDate || "");
+  const [endDate, setEndDate] = useState(draftItem?.endDate || "");
+  const [halfDay, setHalfDay] = useState(draftItem?.halfDay || false);
+  const [shortDescription, setShortDescription] = useState(draftItem?.shortDescription || "");
+  const [description, setDescription] = useState(draftItem?.description || "");
+  const [requester, setRequester] = useState(draftItem?.requester || currentUserName);
+  const [requesterFor, setRequesterFor] = useState(draftItem?.requesterFor || "Sumit");
+  const [adminOptions, setAdminOptions] = useState(["Sumit", "Srikar"]);
+  const [leaveType, setLeaveType] = useState(draftItem?.leaveType || "");
   const [employeeList, setEmployeeList] = useState([]);
   const [leaveBalanceInfo, setLeaveBalanceInfo] = useState({ remaining: 0, consumed: 0, allocated: 0 });
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (currentUserName) {
+    if (draftItem) {
+      setEditingDraftId(draftItem._id || draftItem.id);
+      if (draftItem.startDate) setStartDate(draftItem.startDate);
+      if (draftItem.endDate) setEndDate(draftItem.endDate);
+      if (draftItem.leaveType) setLeaveType(draftItem.leaveType);
+      if (draftItem.shortDescription) setShortDescription(draftItem.shortDescription);
+      if (draftItem.description) setDescription(draftItem.description);
+      if (draftItem.halfDay !== undefined) setHalfDay(draftItem.halfDay);
+      if (draftItem.requesterFor) setRequesterFor(draftItem.requesterFor);
+      if (draftItem.requester) setRequester(draftItem.requester);
+    }
+  }, [draftItem]);
+
+  useEffect(() => {
+    if (currentUserName && !draftItem) {
       setRequester(currentUserName);
     }
-    setRequesterFor("Sumit");
-  }, [currentUserName]);
+  }, [currentUserName, draftItem]);
 
   useEffect(() => {
     fetchApiData("/api/employees")
       .then((res) => {
-        setEmployeeList(res.data || []);
+        const empData = res.data || [];
+        setEmployeeList(empData);
+
+        if (empData.length > 0) {
+          const admins = empData.filter((emp) => {
+            const roleStr = (emp.role || "").toLowerCase();
+            const subRoleStr = (emp.subRole || "").toLowerCase();
+            const titleStr = (emp.jobTitle || "").toLowerCase();
+            const extraRolesArr = Array.isArray(emp.extraRoles)
+              ? emp.extraRoles.map((r) => String(r).toLowerCase())
+              : [];
+
+            return (
+              roleStr.includes("admin") ||
+              subRoleStr.includes("admin") ||
+              titleStr.includes("admin") ||
+              extraRolesArr.some((r) => r.includes("admin"))
+            );
+          });
+
+          const adminNames = admins
+            .map(
+              (emp) =>
+                emp.displayName ||
+                emp.employeeName ||
+                `${emp.firstName || ""} ${emp.lastName || ""}`.trim(),
+            )
+            .filter(Boolean);
+
+          const uniqueAdminNames = [...new Set(adminNames)];
+
+          if (uniqueAdminNames.length > 0) {
+            setAdminOptions(uniqueAdminNames);
+            setRequesterFor(uniqueAdminNames[0]);
+          } else {
+            const allNames = empData
+              .map(
+                (emp) =>
+                  emp.displayName ||
+                  emp.employeeName ||
+                  `${emp.firstName || ""} ${emp.lastName || ""}`.trim(),
+              )
+              .filter(Boolean);
+            const uniqueAll = [...new Set(allNames)];
+            setAdminOptions(uniqueAll.length > 0 ? uniqueAll : ["Sumit"]);
+            if (uniqueAll.length > 0) setRequesterFor(uniqueAll[0]);
+          }
+        }
       })
       .catch((err) => console.log(err));
   }, []);
@@ -91,11 +157,42 @@ function LeaveRequest() {
     setEndDate("");
     setHalfDay(false);
     setLeaveType("");
+    setShortDescription("");
     setDescription("");
   };
 
-  const handleSave = () => {
-    alert("Leave Request Saved as Draft Successfully.");
+  const handleSave = async () => {
+    if (!leaveType || !startDate || !endDate) {
+      alert("Please select Leave Type, Start Date, and End Date before saving as Draft.");
+      return;
+    }
+    try {
+      const requestedLeaves = Number(calculateLeaves());
+      const payload = {
+        requester,
+        requesterFor,
+        startDate,
+        endDate,
+        leaveType,
+        totalLeaves: requestedLeaves,
+        halfDay,
+        shortDescription,
+        description,
+        status: "Draft",
+      };
+
+      if (editingDraftId) {
+        await sendApiData("PUT", `/api/leaves/${editingDraftId}`, payload);
+        alert("Draft Leave Request Updated Successfully!");
+      } else {
+        await sendApiData("POST", "/api/leaves/create", payload);
+        alert("Leave Request Saved as Draft Successfully!");
+      }
+      navigate("/leave-status");
+    } catch (err) {
+      console.log("Error saving draft leave:", err);
+      alert("Error saving draft leave.");
+    }
   };
 
   const handleSubmit = async () => {
@@ -130,7 +227,7 @@ function LeaveRequest() {
         return;
       }
 
-      await sendApiData("/api/leaves/create", {
+      const payload = {
         requester,
         requesterFor,
         startDate,
@@ -138,13 +235,20 @@ function LeaveRequest() {
         endDate,
         totalLeaves: requestedLeaves,
         halfDay,
+        shortDescription,
         description,
         status: "Pending",
-      });
+      };
+
+      if (editingDraftId) {
+        await sendApiData("PUT", `/api/leaves/${editingDraftId}`, payload);
+      } else {
+        await sendApiData("POST", "/api/leaves/create", payload);
+      }
 
       const rawUser = requester.trim() || "Srikar";
       const userMail = getUserEmailByName(rawUser);
-      const adminMail = ADMIN_EMAIL;
+      const targetAdminMail = getUserEmailByName(requesterFor) || ADMIN_EMAIL;
       const senderMail = SYSTEM_SENDER_EMAIL;
 
       let userBody = "Leave has been applied.";
@@ -164,8 +268,8 @@ function LeaveRequest() {
       });
 
       sendMailNotification({
-        to: adminMail,
-        toName: "Sumit (Admin)",
+        to: targetAdminMail,
+        toName: `${requesterFor} (Admin)`,
         from: senderMail,
         fromName: "srikar071@gmail.com",
         subject: `Leave Approval Request - ${rawUser}`,
@@ -207,15 +311,18 @@ function LeaveRequest() {
 
               <div className="lr-field">
                 <label className="lr-label">Requested For</label>
-                <input
-                  type="text"
+                <select
                   className="lr-input"
-                  placeholder="Admin"
-                  value="Sumit"
-                  readOnly
-                  disabled
-                  style={{ background: "#f1f5f9", cursor: "not-allowed" }}
-                />
+                  value={requesterFor}
+                  onChange={(e) => setRequesterFor(e.target.value)}
+                  style={{ background: "#ffffff", cursor: "pointer", fontWeight: "600" }}
+                >
+                  {adminOptions.map((adminName, idx) => (
+                    <option key={idx} value={adminName}>
+                      {adminName} (Admin)
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
           </div>
@@ -254,7 +361,7 @@ function LeaveRequest() {
                       : "Select leave type"
                   }
                   readOnly
-                  style={{ fontWeight: "700", color: "#0f172a", background: "#f8fafc" }}
+                  style={{ fontWeight: "normal", color: "#334155", background: "#f8fafc" }}
                 />
               </div>
 
@@ -279,7 +386,7 @@ function LeaveRequest() {
               </div>
             </div>
 
-            <div className="lr-row-checkbox">
+            <div className="lr-row-checkbox" style={{ marginBottom: "16px" }}>
               <label className="lr-checkbox-label-wrap">
                 <input
                   type="checkbox"
@@ -290,15 +397,20 @@ function LeaveRequest() {
                 <span className="lr-checkbox-text">Half-day leave</span>
               </label>
             </div>
-          </div>
 
-          {/* DESCRIPTION SECTION */}
-          <div className="lr-section">
-            <div className="lr-section-header">
-              <span className="lr-section-title">DESCRIPTION</span>
+            <div className="lr-field lr-full" style={{ marginBottom: "16px" }}>
+              <label className="lr-label">Short Description</label>
+              <input
+                type="text"
+                className="lr-input"
+                placeholder="Enter short description"
+                value={shortDescription}
+                onChange={(e) => setShortDescription(e.target.value)}
+              />
             </div>
-            
+
             <div className="lr-field lr-full">
+              <label className="lr-label">Description</label>
               <div className="lr-textarea-wrap">
                 <textarea
                   className="lr-textarea"
