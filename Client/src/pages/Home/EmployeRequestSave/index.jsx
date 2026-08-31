@@ -578,166 +578,147 @@ function EmployeRequestSave() {
                   key={candIdx}
                   style={{
                     background: "#f8fafc",
-                    padding: "14px 16px",
+                    padding: "16px",
                     borderRadius: "8px",
                     border: "1px solid #cbd5e1",
-                    marginBottom: "12px",
-                    display: "grid",
-                    gridTemplateColumns: "130px 1fr 1fr 1fr 1fr 120px 44px",
-                    gap: "12px",
-                    alignItems: "flex-end",
+                    marginBottom: "14px",
                     boxSizing: "border-box",
                     width: "100%",
                   }}
                 >
-                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <label className="lr-label" style={{ fontSize: "12px", fontWeight: "700", color: "#334155", whiteSpace: "nowrap" }}>Candidate ID</label>
-                    <input
-                      value={cand.candidateId || `CND-${String(candIdx + 1).padStart(3, "0")}`}
-                      readOnly
-                      style={{
-                        height: "38px",
-                        padding: "0 10px",
-                        background: "#e2e8f0",
-                        fontWeight: "700",
-                        color: "#0f172a",
-                        borderRadius: "6px",
-                        border: "1px solid #cbd5e1",
-                        fontSize: "13px",
-                        width: "100%",
-                        boxSizing: "border-box",
-                      }}
-                    />
-                  </div>
-
-                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <label className="lr-label" style={{ fontSize: "12px", fontWeight: "700", color: "#334155", whiteSpace: "nowrap" }}>Candidate First Name *</label>
-                    <input
-                      value={cand.firstName || cand.name || ""}
-                      onChange={(e) => handleCandidateChange(candIdx, "firstName", e.target.value)}
-                      placeholder="First name..."
-                      style={{
-                        height: "38px",
-                        padding: "0 12px",
-                        background: "#ffffff",
-                        color: "#0f172a",
-                        borderRadius: "6px",
-                        border: "1px solid #cbd5e1",
-                        fontSize: "13px",
-                        width: "100%",
-                        boxSizing: "border-box",
-                      }}
-                    />
-                  </div>
-
-                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <label className="lr-label" style={{ fontSize: "12px", fontWeight: "700", color: "#334155", whiteSpace: "nowrap" }}>Candidate Last Name *</label>
-                    <input
-                      value={cand.lastName || ""}
-                      onChange={(e) => handleCandidateChange(candIdx, "lastName", e.target.value)}
-                      placeholder="Last name..."
-                      style={{
-                        height: "38px",
-                        padding: "0 12px",
-                        background: "#ffffff",
-                        color: "#0f172a",
-                        borderRadius: "6px",
-                        border: "1px solid #cbd5e1",
-                        fontSize: "13px",
-                        width: "100%",
-                        boxSizing: "border-box",
-                      }}
-                    />
-                  </div>
-
-                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <label className="lr-label" style={{ fontSize: "12px", fontWeight: "700", color: "#334155", whiteSpace: "nowrap" }}>Candidate Email ID *</label>
-                    <input
-                      type="email"
-                      value={cand.email || ""}
-                      onChange={(e) => handleCandidateChange(candIdx, "email", e.target.value)}
-                      placeholder="Email ID..."
-                      style={{
-                        height: "38px",
-                        padding: "0 12px",
-                        background: "#ffffff",
-                        color: "#0f172a",
-                        borderRadius: "6px",
-                        border: "1px solid #cbd5e1",
-                        fontSize: "13px",
-                        width: "100%",
-                        boxSizing: "border-box",
-                      }}
-                    />
-                  </div>
-
-                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <label className="lr-label" style={{ fontSize: "12px", fontWeight: "700", color: "#334155", whiteSpace: "nowrap" }}>Contact Number *</label>
-                    <input
-                      type="text"
-                      value={cand.contactNumber || cand.phone || ""}
-                      onChange={(e) => handleCandidateChange(candIdx, "contactNumber", e.target.value)}
-                      placeholder="Contact number..."
-                      style={{
-                        height: "38px",
-                        padding: "0 12px",
-                        background: "#ffffff",
-                        color: "#0f172a",
-                        borderRadius: "6px",
-                        border: "1px solid #cbd5e1",
-                        fontSize: "13px",
-                        width: "100%",
-                        boxSizing: "border-box",
-                      }}
-                    />
-                  </div>
-
-                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                    <label className="lr-label" style={{ fontSize: "12px", fontWeight: "700", color: "#334155", whiteSpace: "nowrap" }}>Status</label>
-                    <span
-                      style={{
-                        height: "38px",
-                        display: "inline-flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        padding: "0 10px",
-                        borderRadius: "6px",
-                        fontSize: "12px",
-                        fontWeight: "700",
-                        background: checkIsSubmitted(cand) ? "#dcfce7" : "#fee2e2",
-                        color: checkIsSubmitted(cand) ? "#15803d" : "#dc2626",
-                        border: checkIsSubmitted(cand) ? "1px solid #bbf7d0" : "1px solid #fecaca",
-                        whiteSpace: "nowrap",
-                        boxSizing: "border-box",
-                      }}
-                    >
-                      {checkIsSubmitted(cand) ? "Submitted" : "Not Submitted"}
-                    </span>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveCandidate(candIdx)}
-                    title="Remove Candidate"
+                  {/* CARD HEADER INSIDE THE BOX */}
+                  <div
                     style={{
-                      height: "38px",
-                      width: "44px",
-                      background: "#fee2e2",
-                      color: "#dc2626",
-                      border: "1px solid #fecaca",
-                      borderRadius: "6px",
-                      fontWeight: "700",
-                      cursor: "pointer",
                       display: "flex",
+                      justifyContent: "space-between",
                       alignItems: "center",
-                      justifyContent: "center",
-                      fontSize: "16px",
-                      flexShrink: 0,
-                      boxSizing: "border-box",
+                      marginBottom: "14px",
+                      paddingBottom: "8px",
+                      borderBottom: "1px solid #e2e8f0",
                     }}
                   >
-                    ✕
-                  </button>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+                      <span
+                        style={{
+                          background: "#0284c7",
+                          color: "#ffffff",
+                          fontSize: "11px",
+                          fontWeight: "700",
+                          padding: "2px 8px",
+                          borderRadius: "4px",
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        Candidate #{candIdx + 1}
+                      </span>
+                      <span style={{ fontSize: "13px", fontWeight: "700", color: "#0f172a" }}>
+                        {cand.candidateId || `CND-${String(candIdx + 1).padStart(3, "0")}`}
+                      </span>
+                      <span
+                        style={{
+                          padding: "2px 8px",
+                          borderRadius: "4px",
+                          fontSize: "11px",
+                          fontWeight: "700",
+                          background: checkIsSubmitted(cand) ? "#dcfce7" : "#fee2e2",
+                          color: checkIsSubmitted(cand) ? "#15803d" : "#dc2626",
+                          border: checkIsSubmitted(cand) ? "1px solid #bbf7d0" : "1px solid #fecaca",
+                        }}
+                      >
+                        {checkIsSubmitted(cand) ? "Submitted" : "Not Submitted"}
+                      </span>
+                    </div>
+
+                    {/* SUBTLE DELETE BUTTON FIXED INSIDE BOX */}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveCandidate(candIdx)}
+                      title="Remove Candidate"
+                      style={{
+                        background: "#ffffff",
+                        color: "#64748b",
+                        border: "1px solid #cbd5e1",
+                        borderRadius: "6px",
+                        padding: "4px 10px",
+                        fontSize: "12px",
+                        fontWeight: "600",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
+                        boxSizing: "border-box",
+                        transition: "all 0.2s ease",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = "#fee2e2";
+                        e.currentTarget.style.color = "#dc2626";
+                        e.currentTarget.style.borderColor = "#fecaca";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = "#ffffff";
+                        e.currentTarget.style.color = "#64748b";
+                        e.currentTarget.style.borderColor = "#cbd5e1";
+                      }}
+                    >
+                      <span>✕</span>
+                      <span>Delete</span>
+                    </button>
+                  </div>
+
+                  {/* INPUT FIELDS INSIDE BOX */}
+                  <div className="lr-grid-2" style={{ gap: "12px" }}>
+                    <div className="lr-field">
+                      <label className="lr-label" style={{ fontSize: "12px", fontWeight: "700", color: "#334155" }}>
+                        First Name *
+                      </label>
+                      <input
+                        className="lr-input"
+                        value={cand.firstName || cand.name || ""}
+                        onChange={(e) => handleCandidateChange(candIdx, "firstName", e.target.value)}
+                        placeholder="First name..."
+                      />
+                    </div>
+
+                    <div className="lr-field">
+                      <label className="lr-label" style={{ fontSize: "12px", fontWeight: "700", color: "#334155" }}>
+                        Last Name *
+                      </label>
+                      <input
+                        className="lr-input"
+                        value={cand.lastName || ""}
+                        onChange={(e) => handleCandidateChange(candIdx, "lastName", e.target.value)}
+                        placeholder="Last name..."
+                      />
+                    </div>
+                  </div>
+
+                  <div className="lr-grid-2" style={{ gap: "12px", marginTop: "8px" }}>
+                    <div className="lr-field">
+                      <label className="lr-label" style={{ fontSize: "12px", fontWeight: "700", color: "#334155" }}>
+                        Email ID *
+                      </label>
+                      <input
+                        type="email"
+                        className="lr-input"
+                        value={cand.email || ""}
+                        onChange={(e) => handleCandidateChange(candIdx, "email", e.target.value)}
+                        placeholder="Email ID..."
+                      />
+                    </div>
+
+                    <div className="lr-field">
+                      <label className="lr-label" style={{ fontSize: "12px", fontWeight: "700", color: "#334155" }}>
+                        Contact Number *
+                      </label>
+                      <input
+                        type="text"
+                        className="lr-input"
+                        value={cand.contactNumber || cand.phone || ""}
+                        onChange={(e) => handleCandidateChange(candIdx, "contactNumber", e.target.value)}
+                        placeholder="Contact number..."
+                      />
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>

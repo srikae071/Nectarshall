@@ -18,6 +18,9 @@ function Navbar() {
     const p = location.pathname.toLowerCase();
 
     // 0. Standalone Form & Request Page Titles (Top Priority)
+    if (p.includes("/payroll")) {
+      return "PAYROLLS";
+    }
     if (p.includes("/ask-for-hr") || p.includes("/askforhr")) {
       return "ASK FOR HR";
     }

@@ -1,8 +1,9 @@
 /* --- MAIN LEAVE REQUEST PAGE UI --- */
 .lr-page {
   padding: 16px 24px;
-  background-color: #f8fafc;
-  min-height: calc(100vh - 60px);
+  background-color: transparent;
+  min-height: 100%;
+  flex: 1;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   box-sizing: border-box;
 }
@@ -62,6 +63,13 @@
 .lr-grid-2 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  gap: 16px 24px;
+  margin-bottom: 12px;
+}
+
+.lr-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px 24px;
   margin-bottom: 12px;
 }

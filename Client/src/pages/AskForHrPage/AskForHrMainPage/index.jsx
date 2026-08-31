@@ -189,7 +189,7 @@ function AskForHrMainPage() {
 
           {/* TEXTAREAS */}
 
-          <div className="lr-field">
+          <div className="lr-field" style={{ marginTop: "16px" }}>
             <label className="lr-label">Short Description *</label>
             <input
               type="text"
@@ -202,7 +202,7 @@ function AskForHrMainPage() {
             />
           </div>
 
-          <div className="lr-field">
+          <div className="lr-field" style={{ marginTop: "16px" }}>
             <label className="lr-label">Description</label>
             <textarea
               className="lr-textarea"

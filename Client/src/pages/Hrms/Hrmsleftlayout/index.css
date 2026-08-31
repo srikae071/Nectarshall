@@ -54,13 +54,15 @@
 .layoutContainer {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh;
+  background-color: #f8fafc;
 }
 
 .mainLayout {
   display: flex;
   flex: 1;
   overflow: hidden;
+  background-color: #f8fafc;
 }
 
 .rightContent {
@@ -69,6 +71,7 @@
   flex-direction: column;
   overflow: auto;
   background-color: #f8fafc;
+  min-height: 100%;
 }
 
 .hrmssubmenuItem.active {

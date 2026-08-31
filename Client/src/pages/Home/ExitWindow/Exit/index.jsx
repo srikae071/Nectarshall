@@ -196,7 +196,7 @@ function Exit() {
           </div>
 
           {/* SHORT DESCRIPTION */}
-          <div className="lr-field" style={{ marginTop: "12px" }}>
+          <div className="lr-field" style={{ marginTop: "16px" }}>
             <label className="lr-label">Short Description *</label>
             <input
               type="text"
@@ -210,7 +210,7 @@ function Exit() {
           </div>
 
           {/* DESCRIPTION */}
-          <div className="lr-field">
+          <div className="lr-field" style={{ marginTop: "16px" }}>
             <label className="lr-label">Description</label>
             <textarea
               className="lr-textarea"

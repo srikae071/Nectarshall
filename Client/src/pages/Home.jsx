@@ -141,32 +141,35 @@ function Home() {
     {
       key: "ASK_FOR_IT",
       title: "Ask for IT",
+      desc: "Quick IT support & technical assistance",
       img: askItImg,
       route: "/ask-for-it",
     },
     {
       key: "ASK_FOR_HR",
       title: "Ask for HR",
+      desc: "Seamless HR inquiries & support requests",
       img: askHrImg,
       route: "/ask-for-hr",
     },
     {
       key: "EMPLOYE_REQUEST",
       title: "Employe Request",
+      desc: "Submit employee requests & internal queries",
       img: empreq,
       route: "/Resonancereq",
     },
     {
       key: "EXIT",
       title: "Exit",
-      desc: "A simple way to communicate HR issues",
+      desc: "Streamlined employee offboarding & exit requests",
       img: offboarding,
       route: "/exit",
     },
     {
       key: "BUSINESS_ENGAGEMENT",
       title: "Business Engagement",
-      desc: "A simple way to communicate HR issues",
+      desc: "Strategic client & business onboarding",
       img: busineseng,
       route: "/business-engagement",
     },
@@ -459,8 +462,10 @@ function Home() {
               className="HomeCardImage"
               style={{ backgroundImage: `url(${item.img})` }}
             />
-            <h3>{item.title}</h3>
-            <p>{item.desc}</p>
+            <div className="HomeCardContent">
+              <h3 className="HomeCardTitle">{item.title}</h3>
+              {item.desc && <p className="HomeCardDescription">{item.desc}</p>}
+            </div>
           </div>
         ))}
       </div>

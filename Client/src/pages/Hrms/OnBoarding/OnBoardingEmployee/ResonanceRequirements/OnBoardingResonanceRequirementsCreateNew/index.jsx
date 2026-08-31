@@ -464,102 +464,107 @@ function OnBoardingResonanceRequirementsCreateNew() {
                     key={candIdx}
                     style={{
                       background: "#f8fafc",
-                      padding: "14px 16px",
+                      padding: "16px",
                       borderRadius: "8px",
                       border: "1px solid #cbd5e1",
-                      marginBottom: "12px",
-                      display: "grid",
-                      gridTemplateColumns: "180px 1fr 1fr 48px",
-                      gap: "16px",
-                      alignItems: "flex-end",
+                      marginBottom: "14px",
                       boxSizing: "border-box",
                       width: "100%",
                     }}
                   >
-                    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                      <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155", whiteSpace: "nowrap" }}>Candidate ID</label>
-                      <input
-                        value={cand.candidateId || `CND-${String(candIdx + 1).padStart(3, "0")}`}
-                        readOnly
-                        style={{
-                          height: "38px",
-                          padding: "0 10px",
-                          background: "#e2e8f0",
-                          fontWeight: "700",
-                          color: "#0f172a",
-                          borderRadius: "6px",
-                          border: "1px solid #cbd5e1",
-                          fontSize: "13px",
-                          width: "100%",
-                          boxSizing: "border-box",
-                        }}
-                      />
-                    </div>
-
-                    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                      <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155", whiteSpace: "nowrap" }}>Employee Name *</label>
-                      <input
-                        value={cand.name || ""}
-                        onChange={(e) => handleCandidateChange(candIdx, "name", e.target.value)}
-                        placeholder="Enter employee name..."
-                        style={{
-                          height: "38px",
-                          padding: "0 12px",
-                          background: "#ffffff",
-                          color: "#0f172a",
-                          borderRadius: "6px",
-                          border: "1px solid #cbd5e1",
-                          fontSize: "13px",
-                          width: "100%",
-                          boxSizing: "border-box",
-                        }}
-                      />
-                    </div>
-
-                    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                      <label style={{ fontSize: "12px", fontWeight: "700", color: "#334155", whiteSpace: "nowrap" }}>Employee Email ID *</label>
-                      <input
-                        type="email"
-                        value={cand.email || ""}
-                        onChange={(e) => handleCandidateChange(candIdx, "email", e.target.value)}
-                        placeholder="Enter email ID..."
-                        style={{
-                          height: "38px",
-                          padding: "0 12px",
-                          background: "#ffffff",
-                          color: "#0f172a",
-                          borderRadius: "6px",
-                          border: "1px solid #cbd5e1",
-                          fontSize: "13px",
-                          width: "100%",
-                          boxSizing: "border-box",
-                        }}
-                      />
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveCandidate(candIdx)}
-                      title="Remove Candidate"
+                    {/* CARD HEADER INSIDE THE BOX */}
+                    <div
                       style={{
-                        height: "38px",
-                        width: "48px",
-                        background: "#fee2e2",
-                        color: "#dc2626",
-                        border: "1px solid #fecaca",
-                        borderRadius: "6px",
-                        fontWeight: "700",
-                        cursor: "pointer",
                         display: "flex",
+                        justifyContent: "space-between",
                         alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "16px",
-                        flexShrink: 0,
-                        boxSizing: "border-box",
+                        marginBottom: "14px",
+                        paddingBottom: "8px",
+                        borderBottom: "1px solid #e2e8f0",
                       }}
                     >
-                      
-                    </button>
+                      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                        <span
+                          style={{
+                            background: "#0284c7",
+                            color: "#ffffff",
+                            fontSize: "11px",
+                            fontWeight: "700",
+                            padding: "2px 8px",
+                            borderRadius: "4px",
+                            textTransform: "uppercase",
+                          }}
+                        >
+                          Candidate #{candIdx + 1}
+                        </span>
+                        <span style={{ fontSize: "13px", fontWeight: "700", color: "#0f172a" }}>
+                          {cand.candidateId || `CND-${String(candIdx + 1).padStart(3, "0")}`}
+                        </span>
+                      </div>
+
+                      {/* SUBTLE DELETE BUTTON FIXED INSIDE BOX */}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveCandidate(candIdx)}
+                        title="Remove Candidate"
+                        style={{
+                          background: "#ffffff",
+                          color: "#64748b",
+                          border: "1px solid #cbd5e1",
+                          borderRadius: "6px",
+                          padding: "4px 10px",
+                          fontSize: "12px",
+                          fontWeight: "600",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "4px",
+                          boxSizing: "border-box",
+                          transition: "all 0.2s ease",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = "#fee2e2";
+                          e.currentTarget.style.color = "#dc2626";
+                          e.currentTarget.style.borderColor = "#fecaca";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = "#ffffff";
+                          e.currentTarget.style.color = "#64748b";
+                          e.currentTarget.style.borderColor = "#cbd5e1";
+                        }}
+                      >
+                        <span>✕</span>
+                        <span>Delete</span>
+                      </button>
+                    </div>
+
+                    {/* INPUT FIELDS INSIDE BOX */}
+                    <div className="lr-grid-2" style={{ gap: "12px" }}>
+                      <div className="lr-field">
+                        <label className="lr-label" style={{ fontSize: "12px", fontWeight: "700", color: "#334155" }}>
+                          Employee Name *
+                        </label>
+                        <input
+                          className="lr-input"
+                          value={cand.name || ""}
+                          onChange={(e) => handleCandidateChange(candIdx, "name", e.target.value)}
+                          placeholder="Enter employee name..."
+                        />
+                      </div>
+
+                      <div className="lr-field">
+                        <label className="lr-label" style={{ fontSize: "12px", fontWeight: "700", color: "#334155" }}>
+                          Employee Email ID *
+                        </label>
+                        <input
+                          type="email"
+                          className="lr-input"
+                          value={cand.email || ""}
+                          onChange={(e) => handleCandidateChange(candIdx, "email", e.target.value)}
+                          placeholder="Enter email ID..."
+                        />
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>

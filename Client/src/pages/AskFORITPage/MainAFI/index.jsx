@@ -199,7 +199,7 @@ function MainAFI() {
 
 
           {/* SHORT DESCRIPTION */}
-          <div className="lr-field">
+          <div className="lr-field" style={{ marginTop: "16px" }}>
             <label className="lr-label">Short Description *</label>
             <input
               type="text"
@@ -213,7 +213,7 @@ function MainAFI() {
           </div>
 
           {/* DESCRIPTION */}
-          <div className="lr-field">
+          <div className="lr-field" style={{ marginTop: "16px" }}>
             <label className="lr-label">Description</label>
             <textarea
               className="lr-textarea"

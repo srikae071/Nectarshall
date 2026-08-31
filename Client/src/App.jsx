@@ -190,7 +190,7 @@ function App() {
         <Route
           path="/leave-request"
           element={
-            <ProtectedRoute requiredModule="HRMS">
+            <ProtectedRoute>
               <LeaveRequest />
             </ProtectedRoute>
           }
@@ -198,7 +198,7 @@ function App() {
         <Route
           path="/leave-balance"
           element={
-            <ProtectedRoute requiredModule="HRMS">
+            <ProtectedRoute>
               <LeaveBalance />
             </ProtectedRoute>
           }
@@ -206,7 +206,7 @@ function App() {
         <Route
           path="/leave-calendar"
           element={
-            <ProtectedRoute requiredModule="HRMS">
+            <ProtectedRoute>
               <LeaveCalendar />
             </ProtectedRoute>
           }
@@ -214,7 +214,7 @@ function App() {
         <Route
           path="/leave-status"
           element={
-            <ProtectedRoute requiredModule="HRMS">
+            <ProtectedRoute>
               <LeaveStatus />
             </ProtectedRoute>
           }
@@ -222,7 +222,7 @@ function App() {
         <Route
           path="/payroll"
           element={
-            <ProtectedRoute requiredModule="HRMS">
+            <ProtectedRoute>
               <PayrollMain />
             </ProtectedRoute>
           }
