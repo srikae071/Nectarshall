@@ -58,6 +58,7 @@ import MyTickets from "./pages/NavItems/MyTickets/index.jsx";
 import ItNavMain from "./pages/NavItems/IT/ItRightSide/ItNavMain/index.jsx";
 import ITCreateNew from "./pages/NavItems/IT/ItRightSide/ITCreateNew/index.jsx";
 import ItOpen from "./pages/NavItems/IT/ItRightSide/ItOpen/index.jsx";
+import ItRolesRequests from "./pages/NavItems/IT/ItRightSide/ItRolesRequests/index.jsx";
 import ItResolved from "./pages/NavItems/IT/ItRightSide/ItResolved/index.jsx";
 import ItAssignedToMe from "./pages/NavItems/IT/ItRightSide/ItAssignedToMe/index.jsx";
 import ItClosed from "./pages/NavItems/IT/ItRightSide/ItClosed/index.jsx";
@@ -360,6 +361,7 @@ function App() {
       <Route path="/it/assigned-to-me" element={<ItAssignedToMe />} />
       <Route path="/it/pending" element={<ItPending />} />
       <Route path="/it/work-in-progress" element={<ItWorkInProgress />} />
+      <Route path="/it/requests-roles" element={<ItRolesRequests />} />
       <Route
         path="/Client/onboarding-compliance"
         element={<OnBoardingCompliance />}

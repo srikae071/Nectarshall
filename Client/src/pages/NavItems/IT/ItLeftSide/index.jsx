@@ -53,6 +53,13 @@ const menuData = [
           { label: "Pending", path: "/requests-offboarding-pending" },
         ],
       },
+
+      {
+        title: "Roles",
+        items: [
+          { label: "All Role Requests", path: "/it/requests-roles" },
+        ],
+      },
     ],
   },
 ];

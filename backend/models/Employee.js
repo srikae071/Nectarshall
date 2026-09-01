@@ -91,6 +91,9 @@ const EmployeeSchema = new mongoose.Schema(
     // 9. Activity Logs
     activityLogs: { type: [String], default: [] },
 
+    // 10. Role Change Requests
+    roleRequests: { type: [mongoose.Schema.Types.Mixed], default: [] },
+
     // Backward compatibility helper
     employeeName: { type: String, default: "" },
     place: { type: String, default: "" },

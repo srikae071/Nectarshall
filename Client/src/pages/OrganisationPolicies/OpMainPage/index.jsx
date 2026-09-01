@@ -4,6 +4,7 @@ import logo from "../../../images/logo.png";
 import leaveImg from "../../../images/leavemanagement.jfif";
 import payrollImg from "../../../images/payrools.jfif";
 import rosterImg from "../../../images/roster.jfif";
+import Navbar from "../../../components/Navbar";
 import { hrPoliciesData } from "./hrPoliciesData";
 import {
   FiFileText,
@@ -15,7 +16,8 @@ import {
   FiChevronRight,
   FiCheckCircle,
   FiBookOpen,
-  FiShield
+  FiShield,
+  FiSearch
 } from "react-icons/fi";
 import "./index.css";
 
@@ -25,6 +27,7 @@ function OpMainPage() {
   const [selectedPdf, setSelectedPdf] = useState(null); // pdf object for viewer modal
   const [activePageNum, setActivePageNum] = useState(1);
   const [zoomLevel, setZoomLevel] = useState(100);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const openPdfViewer = (pdf) => {
     setSelectedPdf(pdf);
@@ -66,21 +69,20 @@ function OpMainPage() {
     document.body.removeChild(link);
   };
 
+  const filteredHrPolicies = hrPoliciesData.filter((pdf) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase().trim();
+    return (
+      pdf.title.toLowerCase().includes(q) ||
+      pdf.category.toLowerCase().includes(q) ||
+      pdf.subtitle.toLowerCase().includes(q)
+    );
+  });
+
   return (
     <div className="OPPage">
       {/* HEADER NAVBAR */}
-      <div className="navbar">
-        <div className="logo">
-          <img
-            src={logo}
-            className="logoimage"
-            alt="Logo"
-            onClick={() => navigate("/")}
-            style={{ cursor: "pointer" }}
-          />
-        </div>
-        <div className="navTitle">ORGANIZATION POLICIES</div>
-      </div>
+      <Navbar />
 
       <div className="opContentContainer">
         {/* BREADCRUMB / BACK NAVIGATION */}
@@ -163,55 +165,139 @@ function OpMainPage() {
         {/* --- 2. HR POLICIES 7 PDF LIST VIEW --- */}
         {activeCategory === "HR_POLICIES" && (
           <div className="hrPoliciesSection">
-            <div className="opHeaderBlock">
-              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <FiShield size={24} style={{ color: "#0284c7" }} />
-                <h2 style={{ margin: 0 }}>HR Policies Documents & Handbooks</h2>
+            <div
+              className="opHeaderBlock"
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: "16px",
+              }}
+            >
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <FiShield size={24} style={{ color: "#0284c7" }} />
+                  <h2 style={{ margin: 0 }}>HR Policies Documents & Handbooks</h2>
+                </div>
+                <p style={{ marginTop: "6px" }}>
+                  Below are the official HR policy PDF documents for Excell Protective Group. Click on any document to view the full PDF content.
+                </p>
               </div>
-              <p style={{ marginTop: "6px" }}>
-                Below are the official 7 HR policy PDF documents for Excell Protective Group. Click on any document to view the full PDF content.
-              </p>
+
+              {/* SEARCH INPUT BAR BEFORE RIGHT CORNER */}
+              <div
+                className="opSearchInputWrap"
+                style={{
+                  position: "relative",
+                  minWidth: "280px",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <FiSearch
+                  size={16}
+                  style={{
+                    position: "absolute",
+                    left: "12px",
+                    color: "#0284c7",
+                    pointerEvents: "none",
+                  }}
+                />
+                <input
+                  type="text"
+                  placeholder="Search HR policy (e.g. guide, A...)"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: "9px 36px 9px 36px",
+                    borderRadius: "8px",
+                    border: "1.5px solid #0284c7",
+                    fontSize: "13.5px",
+                    outline: "none",
+                    background: "#ffffff",
+                    boxShadow: "0 2px 6px rgba(2, 132, 199, 0.1)",
+                    fontWeight: "500",
+                  }}
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery("")}
+                    style={{
+                      position: "absolute",
+                      right: "10px",
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      color: "#94a3b8",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <FiX size={16} />
+                  </button>
+                )}
+              </div>
             </div>
 
             <div className="pdfCardsGrid">
-              {hrPoliciesData.map((pdf, idx) => (
-                <div
-                  key={pdf.id}
-                  className="pdfDocumentCard"
-                  onClick={() => openPdfViewer(pdf)}
-                >
-                  <div className="pdfIconBadge">
-                    <FiFileText size={28} />
-                    <span className="pdfNum">PDF #{idx + 1}</span>
-                  </div>
-
-                  <div className="pdfMetaInfo">
-                    <span className="pdfTag">{pdf.category}</span>
-                    <h4 className="pdfTitle">{pdf.title}</h4>
-                    <p className="pdfSubtitle">{pdf.subtitle}</p>
-
-                    <div className="pdfFooterInfo">
-                      <span>{pdf.pagesCount} Pages</span>
-                      <span>•</span>
-                      <span>{pdf.fileSize}</span>
-                      <span>•</span>
-                      <span>Updated {pdf.updatedDate}</span>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    className="openPdfBtn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openPdfViewer(pdf);
-                    }}
+              {filteredHrPolicies.length > 0 ? (
+                filteredHrPolicies.map((pdf, idx) => (
+                  <div
+                    key={pdf.id}
+                    className="pdfDocumentCard"
+                    onClick={() => openPdfViewer(pdf)}
                   >
-                    <FiBookOpen size={14} />
-                    <span>View PDF</span>
-                  </button>
+                    <div className="pdfIconBadge">
+                      <FiFileText size={28} />
+                      <span className="pdfNum">PDF #{idx + 1}</span>
+                    </div>
+
+                    <div className="pdfMetaInfo">
+                      <span className="pdfTag">{pdf.category}</span>
+                      <h4 className="pdfTitle">{pdf.title}</h4>
+                      <p className="pdfSubtitle">{pdf.subtitle}</p>
+
+                      <div className="pdfFooterInfo">
+                        <span>{pdf.pagesCount} Pages</span>
+                        <span>•</span>
+                        <span>{pdf.fileSize}</span>
+                        <span>•</span>
+                        <span>Updated {pdf.updatedDate}</span>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      className="openPdfBtn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openPdfViewer(pdf);
+                      }}
+                    >
+                      <FiBookOpen size={14} />
+                      <span>View PDF</span>
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <div
+                  style={{
+                    gridColumn: "1 / -1",
+                    padding: "40px 20px",
+                    textAlign: "center",
+                    background: "#ffffff",
+                    borderRadius: "10px",
+                    border: "1px dashed #cbd5e1",
+                    color: "#64748b",
+                    fontSize: "14.5px",
+                  }}
+                >
+                  🔍 No HR policy documents matching "<strong>{searchQuery}</strong>".
                 </div>
-              ))}
+              )}
             </div>
           </div>
         )}

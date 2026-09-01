@@ -72,8 +72,11 @@ function MainEmployeesSaves() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [jobSecTab, setJobSecTab] = useState("JOB_INFO"); // 'JOB_INFO' | 'QUALIFICATIONS' | 'OFFER_LETTER' | 'FINANCIAL' | 'ACTIVITY_LOG'
+  const [jobSecTab, setJobSecTab] = useState("JOB_INFO"); // 'JOB_INFO' | 'QUALIFICATIONS' | 'OFFER_LETTER' | 'FINANCIAL' | 'ACTIVITY_LOG' | 'CHANGE_ROLES'
   const [originalData, setOriginalData] = useState(null);
+  const [selectedRequestedRole, setSelectedRequestedRole] = useState("HR Manager");
+  const [roleRequestMessage, setRoleRequestMessage] = useState("");
+  const [pendingNewRequest, setPendingNewRequest] = useState(null);
 
   const [formData, setFormData] = useState({
     // Identity
@@ -159,8 +162,9 @@ function MainEmployeesSaves() {
     accountEnabled: true,
     usageLocation: "",
 
-    // Activity Logs
+    // Activity Logs & Role Change Requests
     activityLogs: [],
+    roleRequests: [],
   });
 
   useEffect(() => {
@@ -258,6 +262,7 @@ function MainEmployeesSaves() {
           usageLocation: emp.usageLocation || "",
 
           activityLogs: Array.isArray(emp.activityLogs) ? emp.activityLogs : [],
+          roleRequests: Array.isArray(emp.roleRequests) ? emp.roleRequests : [],
         };
 
         setFormData(loadedState);
@@ -315,10 +320,19 @@ function MainEmployeesSaves() {
         });
       }
 
+      let updatedRoleRequests = [...(formData.roleRequests || [])];
+      if (pendingNewRequest) {
+        updatedRoleRequests.push(pendingNewRequest);
+        newLogEntries.push(
+          `[${timestampStr}] Role change request placed to change role from '${pendingNewRequest.currentRole}' to '${pendingNewRequest.newRole}'`
+        );
+      }
+
       const updatedLogs = [...(formData.activityLogs || []), ...newLogEntries];
 
       const payload = {
         ...formData,
+        roleRequests: updatedRoleRequests,
         activityLogs: updatedLogs,
         accountActive: isAct,
         accountEnabled: isAct,
@@ -331,8 +345,18 @@ function MainEmployeesSaves() {
 
       await sendApiData("PUT", `/api/employees/${id}`, payload);
 
-      setFormData((prev) => ({ ...prev, activityLogs: updatedLogs }));
-      setOriginalData({ ...formData, activityLogs: updatedLogs });
+      setFormData((prev) => ({
+        ...prev,
+        roleRequests: updatedRoleRequests,
+        activityLogs: updatedLogs,
+      }));
+      setOriginalData({
+        ...formData,
+        roleRequests: updatedRoleRequests,
+        activityLogs: updatedLogs,
+      });
+      setPendingNewRequest(null);
+      setRoleRequestMessage("");
 
       alert("Employee Details Updated Successfully!");
       navigate("/hrms/all-employees");
@@ -523,6 +547,14 @@ function MainEmployeesSaves() {
             >
               <span>Activity Log</span>
             </button>
+
+            <button
+              type="button"
+              className={`jobSubTabBtn ${jobSecTab === "CHANGE_ROLES" ? "active" : ""}`}
+              onClick={() => setJobSecTab("CHANGE_ROLES")}
+            >
+              <span>Change/Add Roles</span>
+            </button>
           </div>
         </div>
 
@@ -553,13 +585,48 @@ function MainEmployeesSaves() {
             </div>
 
             <div className="form-row">
-              <label className="form-label">Department / Role</label>
-              <input
+              <label className="form-label">Department / Role *</label>
+              <select
                 className="form-input wideInput"
                 name="department"
-                value={formData.department}
-                onChange={handleChange}
-              />
+                value={formData.subRole || formData.department}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  let dept = val;
+                  let sub = val;
+                  if (val.startsWith("HR")) dept = "HR";
+                  else if (val.startsWith("Operations")) dept = "Operations";
+                  else if (val.startsWith("Accounts")) dept = "Accounts";
+                  else if (val.startsWith("IT")) dept = "IT";
+                  else if (val.startsWith("CNC")) dept = "CNC";
+                  else if (val.startsWith("Patrolling")) dept = "Patrolling";
+                  else if (val === "Admin") { dept = "Admin"; sub = "Admin"; }
+                  else if (val === "End User") { dept = "End User"; sub = "End User"; }
+
+                  setFormData((prev) => ({
+                    ...prev,
+                    department: dept,
+                    subRole: sub,
+                    ...(val === "Admin" ? { role: "ADMIN", extraRoles: ["Admin"] } : {}),
+                  }));
+                }}
+              >
+                <option value="">Select Department / Role</option>
+                <option value="Admin">Admin</option>
+                <option value="End User">End User</option>
+                <option value="HR Manager">HR Manager</option>
+                <option value="HR Coordinator">HR Coordinator</option>
+                <option value="Operations Manager">Operations Manager</option>
+                <option value="Operations Coordinator">Operations Coordinator</option>
+                <option value="Accounts Manager">Accounts Manager</option>
+                <option value="Accounts Coordinator">Accounts Coordinator</option>
+                <option value="IT Manager">IT Manager</option>
+                <option value="IT Coordinator">IT Coordinator</option>
+                <option value="CNC Manager">CNC Manager</option>
+                <option value="CNC Coordinator">CNC Coordinator</option>
+                <option value="Patrolling Manager">Patrolling Manager</option>
+                <option value="Patrolling Coordinator">Patrolling Coordinator</option>
+              </select>
             </div>
 
             <div className="form-row">
@@ -1013,6 +1080,122 @@ function MainEmployeesSaves() {
                 <li style={{ color: "#64748b" }}>No activity logs recorded yet.</li>
               )}
             </ul>
+          </div>
+        )}
+
+        {/* --- SUB-TAB 6: CHANGE / ADD ROLES --- */}
+        {jobSecTab === "CHANGE_ROLES" && (
+          <div
+            className="changeRolesContainerBox"
+            style={{
+              gridColumn: "1 / -1",
+              padding: "24px",
+              background: "#ffffff",
+              border: "1px solid #cbd5e1",
+              borderRadius: "10px",
+              marginTop: "10px",
+            }}
+          >
+            <h4
+              style={{
+                margin: "0 0 16px 0",
+                color: "#008075",
+                fontSize: "16.5px",
+                fontWeight: "700",
+              }}
+            >
+              Change / Add Department Roles
+            </h4>
+
+            <div style={{ marginBottom: "18px", fontSize: "14px", color: "#334155" }}>
+              Current Role / Department: <strong>{formData.subRole || formData.department || "Member"}</strong>
+            </div>
+
+            <div className="form-row" style={{ paddingLeft: "0" }}>
+              <label className="form-label" style={{ fontWeight: "700" }}>
+                Select Requested New Role *
+              </label>
+              <select
+                className="form-input wideInput"
+                value={selectedRequestedRole}
+                onChange={(e) => setSelectedRequestedRole(e.target.value)}
+              >
+                <option value="HR Manager">HR Manager</option>
+                <option value="HR Coordinator">HR Coordinator</option>
+                <option value="Operations Manager">Operations Manager</option>
+                <option value="Operations Coordinator">Operations Coordinator</option>
+                <option value="Accounts Manager">Accounts Manager</option>
+                <option value="Accounts Coordinator">Accounts Coordinator</option>
+                <option value="IT Manager">IT Manager</option>
+                <option value="IT Coordinator">IT Coordinator</option>
+                <option value="CNC Manager">CNC Manager</option>
+                <option value="CNC Coordinator">CNC Coordinator</option>
+                <option value="Patrolling Manager">Patrolling Manager</option>
+                <option value="Patrolling Coordinator">Patrolling Coordinator</option>
+                <option value="Admin">Admin</option>
+                <option value="End User">End User</option>
+              </select>
+            </div>
+
+            <div style={{ marginTop: "20px" }}>
+              <button
+                type="button"
+                className="primary-button"
+                onClick={() => {
+                  const reqObj = {
+                    id: Date.now(),
+                    employeeId: id,
+                    employeeName: formData.displayName,
+                    currentRole: formData.subRole || formData.department || "Member",
+                    newRole: selectedRequestedRole,
+                    status: "Pending",
+                    requestedAt: new Date().toLocaleString("en-GB", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: true,
+                    }),
+                  };
+                  setPendingNewRequest(reqObj);
+                  setRoleRequestMessage(
+                    `✓ Role change request for '${selectedRequestedRole}' prepared. Click 'Save' at top to submit request.`
+                  );
+                }}
+              >
+                Place Request
+              </button>
+
+              {roleRequestMessage && (
+                <div
+                  style={{
+                    marginTop: "12px",
+                    color: "#047857",
+                    fontWeight: "700",
+                    fontSize: "13.5px",
+                  }}
+                >
+                  {roleRequestMessage}
+                </div>
+              )}
+            </div>
+
+            {/* List of existing placed role requests */}
+            {formData.roleRequests && formData.roleRequests.length > 0 && (
+              <div style={{ marginTop: "24px", borderTop: "1px solid #e2e8f0", paddingTop: "16px" }}>
+                <h5 style={{ margin: "0 0 10px 0", color: "#475569", fontSize: "14px", fontWeight: "700" }}>
+                  Placed Role Requests History ({formData.roleRequests.length})
+                </h5>
+                <ul style={{ margin: 0, paddingLeft: "20px", fontSize: "13.5px", color: "#334155" }}>
+                  {formData.roleRequests.map((req, idx) => (
+                    <li key={idx} style={{ marginBottom: "6px" }}>
+                      Requested change from <strong>{req.currentRole}</strong> to <strong>{req.newRole}</strong> on [{req.requestedAt}] - Status: <span style={{ fontWeight: "700", color: req.status === "Approved" ? "#16a34a" : "#d97706" }}>{req.status}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         )}
 
