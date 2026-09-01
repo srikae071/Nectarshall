@@ -1,22 +1,17 @@
 import React, { useEffect, useState } from "react";
 import ItLeftSide from "../../ItLeftSide";
-import { fetchApiData } from "../../../../../utils/apiClient";
+import { fetchApiData, extractArrayData } from "../../../../../utils/apiClient";
 import { useAuth } from "../../../../../context/AuthContext";
 import "./index.css";
 
 function ItRolesRequests() {
-  const { user } = useAuth();
+  const { user, checkIsItAdmin } = useAuth();
   const [roleRequestsList, setRoleRequestsList] = useState([]);
   const [approvedMap, setApprovedMap] = useState({});
   const [loading, setLoading] = useState(true);
 
   // IT & Admin authorization verification
-  const dept = (user?.department || "").toUpperCase();
-  const subRole = (user?.subRole || "").toUpperCase();
-  const role = (user?.role || "").toUpperCase();
-  const isItUser = dept.includes("IT") || subRole.includes("IT") || role.includes("IT");
-  const isAdminUser = role === "ADMIN" || user?.isAdmin || (user?.displayName || "").toLowerCase().includes("sumit");
-  const isAuthorizedItAdmin = isItUser && isAdminUser;
+  const isAuthorizedItAdmin = checkIsItAdmin ? checkIsItAdmin(user) : false;
 
   useEffect(() => {
     fetchRoleRequests();
@@ -26,17 +21,49 @@ function ItRolesRequests() {
     try {
       setLoading(true);
       const res = await fetchApiData("/api/employees");
-      const employees = res.data || [];
+      const employees = extractArrayData(res?.data || res);
 
       const allRequests = [];
       employees.forEach((emp) => {
+        const empDisplayName = emp.displayName || emp.employeeName || "Employee";
+
+        // 1. Extract from emp.roleRequests array
         if (emp.roleRequests && Array.isArray(emp.roleRequests)) {
           emp.roleRequests.forEach((req) => {
             allRequests.push({
               ...req,
               empId: emp._id,
-              employeeName: req.employeeName || emp.displayName || emp.employeeName || "N/A",
+              employeeName: req.employeeName || empDisplayName,
             });
+          });
+        }
+
+        // 2. Extract from emp.activityLogs if role change request was recorded in log history
+        if (emp.activityLogs && Array.isArray(emp.activityLogs)) {
+          emp.activityLogs.forEach((logStr) => {
+            if (typeof logStr === "string" && logStr.includes("Role change request placed")) {
+              const match = logStr.match(/\[(.*?)\] Role change request placed to change role from '(.*?)' to '(.*?)'/);
+              if (match) {
+                const reqDate = match[1];
+                const fromRole = match[2];
+                const toRole = match[3];
+
+                const exists = allRequests.some(
+                  (r) => r.employeeName === empDisplayName && r.newRole === toRole && r.requestedAt === reqDate
+                );
+                if (!exists) {
+                  allRequests.push({
+                    id: `${emp._id}-${reqDate}-${toRole}`,
+                    empId: emp._id,
+                    employeeName: empDisplayName,
+                    currentRole: fromRole,
+                    newRole: toRole,
+                    status: "Pending",
+                    requestedAt: reqDate,
+                  });
+                }
+              }
+            }
           });
         }
       });

@@ -10,7 +10,7 @@ const ALL_ROLES = ["HR", "IT", "Operations", "Accounts", "C&C", "Patrolling"];
 
 function Console() {
   const navigate = useNavigate();
-  const { user, logout, switchProfile, allProfiles } = useAuth();
+  const { user, logout, switchProfile, allProfiles, checkIsAdmin } = useAuth();
 
   const [activeModule, setActiveModule] = useState("EMPLOYEE_MGMT"); // "EMPLOYEE_MGMT" or "THEME_MGMT"
   const [employees, setEmployees] = useState([]);
@@ -25,10 +25,7 @@ function Console() {
     return localStorage.getItem("app_theme") || "regular";
   });
 
-  const username = (user?.displayName || user?.username || "").toLowerCase();
-  const role = (user?.role || "").toUpperCase();
-  const dept = (user?.department || "").toUpperCase();
-  const isAdmin = role === "ADMIN" || username.includes("sumit") || dept === "ADMIN";
+  const isAdmin = checkIsAdmin ? checkIsAdmin(user) : false;
 
   useEffect(() => {
     if (!isAdmin) {

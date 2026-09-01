@@ -26,6 +26,7 @@ function AddEmployee() {
     companyName: "",
     department: "",
     subRole: "",
+    extraRoles: "",
     employeeId: "",
     employeeType: "Full-Time",
     employeeHireDate: "",
@@ -128,8 +129,16 @@ function AddEmployee() {
 
       const isAdmin = formData.department === "Admin" || formData.subRole === "Admin";
       const isAct = formData.accountStatus === "Active";
+      const extraRolesArr = typeof formData.extraRoles === "string"
+        ? formData.extraRoles.split(",").map(r => r.trim()).filter(Boolean)
+        : (formData.extraRoles || []);
+      if (isAdmin && !extraRolesArr.includes("Admin")) {
+        extraRolesArr.push("Admin");
+      }
+
       const payload = {
         ...formData,
+        extraRoles: extraRolesArr,
         activityLogs: [initialLog],
         accountActive: isAct,
         accountEnabled: isAct,
@@ -138,7 +147,7 @@ function AddEmployee() {
         employeeName: formData.displayName,
         place: formData.officeLocation,
         subRole: formData.subRole || `${formData.department || "HR"} Manager`,
-        ...(isAdmin ? { role: "ADMIN", extraRoles: ["Admin"] } : {}),
+        ...(isAdmin ? { role: "ADMIN" } : {}),
       };
 
       await sendApiData("POST", "/api/employees/create", payload);
@@ -399,6 +408,17 @@ function AddEmployee() {
                 <option value="Patrolling Manager">Patrolling Manager</option>
                 <option value="Patrolling Coordinator">Patrolling Coordinator</option>
               </select>
+            </div>
+
+            <div className="form-row">
+              <label className="form-label">Assigned Extra Roles</label>
+              <input
+                className="form-input wideInput"
+                name="extraRoles"
+                value={formData.extraRoles}
+                onChange={handleChange}
+                placeholder="e.g. Admin, IT Manager (assigned from Console)"
+              />
             </div>
 
             <div className="form-row">

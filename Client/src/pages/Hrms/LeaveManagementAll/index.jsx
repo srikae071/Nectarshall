@@ -1,33 +1,9 @@
 import HrmsLeftLayout from "../Hrmsleftlayout";
-import TableLayout1 from "../../../components/Layouts/TableLayouts/TableLayout1";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { fetchApiData } from "../../../utils/apiClient";
 import { FiSettings, FiSearch } from "react-icons/fi";
 import "./index.css";
-
-const defaultColumns = [
-  "leaveNumber",
-  "requester",
-  "leaveType",
-  "startDate",
-  "endDate",
-];
-
-const allColumns = [
-  { key: "leaveNumber", label: "Leave Number" },
-  { key: "requester", label: "Employee Name" },
-  { key: "leaveType", label: "Leave Type" },
-  { key: "startDate", label: "Start Date" },
-  { key: "endDate", label: "End Date" },
-  { key: "totalLeaves", label: "Total Leave Balance" },
-  { key: "halfDay", label: "Half Day" },
-  { key: "description", label: "Description" },
-  { key: "status", label: "Status" },
-  { key: "comment", label: "Comment" },
-  { key: "leaveBalance", label: "Leave Balance" },
-];
 
 const leaveAllocation = {
   "Casual Leave": 5,
@@ -37,100 +13,57 @@ const leaveAllocation = {
   "Paternity Leave": 12,
 };
 
-const getLeaveBalance = (item) => {
-  const allocated = leaveAllocation[item.leaveType] || 0;
-
-  return allocated - Number(item.totalLeaves || 0);
-};
 function LeaveManagementAll() {
+  const navigate = useNavigate();
   const [data, setData] = useState([]);
-  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedLeaveModal, setSelectedLeaveModal] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
 
-  const [visibleColumns, setVisibleColumns] = useState(() => {
-    const saved = localStorage.getItem("leaveColumns");
-    return saved ? JSON.parse(saved) : defaultColumns;
+  const [columns, setColumns] = useState({
+    leaveNumber: true,
+    requester: true,
+    leaveType: true,
+    startDate: true,
+    endDate: true,
+    totalLeaves: true,
+    status: true,
   });
-
-  const settingsRef = useRef(null);
 
   useEffect(() => {
     fetchLeaves();
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("leaveColumns", JSON.stringify(visibleColumns));
-  }, [visibleColumns]);
-
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (settingsRef.current && !settingsRef.current.contains(e.target)) {
-        setShowSettings(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
   const fetchLeaves = async () => {
     try {
+      setLoading(true);
       const response = await fetchApiData("/api/leaves");
       const allLeaves = response.data || [];
-
-      let authUser = null;
-      try {
-        const saved = localStorage.getItem("authUser") || localStorage.getItem("user") || localStorage.getItem("username");
-        if (saved) authUser = JSON.parse(saved);
-      } catch (e) {
-        const raw = localStorage.getItem("authUser") || localStorage.getItem("user") || localStorage.getItem("username");
-        if (raw && typeof raw === "string") authUser = { username: raw };
-      }
-
-      const username = (authUser?.username || authUser?.name || authUser?.displayName || (typeof authUser === "string" ? authUser : "")).trim();
-      const role = (authUser?.role || "").toUpperCase();
-      const dept = (authUser?.department || "").toUpperCase();
-      const isHrOrAdmin = role === "ADMIN" || role.includes("HR") || dept.includes("HR") || username.toLowerCase().includes("sumit");
-
-      if (isHrOrAdmin) {
-        setData(allLeaves);
-      } else if (username) {
-        const u = username.toLowerCase();
-        const userLeaves = allLeaves.filter((item) => {
-          const r1 = (item.requester || item.employeeName || "").trim().toLowerCase();
-          const r2 = (item.requesterFor || "").trim().toLowerCase();
-          return r1.includes(u) || u.includes(r1 && r1.length > 2 ? r1 : "___never___") || r2.includes(u);
-        });
-        setData(userLeaves);
-      } else {
-        setData([]);
-      }
+      setData(allLeaves);
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching all leaves:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const filteredData = data.filter((item) =>
-    item.requester?.toLowerCase().includes(search.toLowerCase()),
-  );
-
-  const toggleColumn = (key) => {
-    // Don't allow default columns to be removed
-    if (defaultColumns.includes(key)) {
-      return;
-    }
-
-    if (visibleColumns.includes(key)) {
-      setVisibleColumns(visibleColumns.filter((col) => col !== key));
-    } else {
-      setVisibleColumns([...visibleColumns, key]);
-    }
+  const getLeaveBalance = (item) => {
+    const allocated = leaveAllocation[item.leaveType] || 15;
+    return Math.max(0, allocated - Number(item.totalLeaves || 0));
   };
-  const navigate = useNavigate();
-  const [selectedLeaveModal, setSelectedLeaveModal] = useState(null);
+
+  const filteredData = data.filter((item) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      (item.requester || "").toLowerCase().includes(q) ||
+      (item.requesterFor || "").toLowerCase().includes(q) ||
+      (item.leaveNumber || "").toLowerCase().includes(q) ||
+      (item.leaveType || "").toLowerCase().includes(q) ||
+      (item.status || "").toLowerCase().includes(q)
+    );
+  });
 
   const handleItemClick = (item) => {
     if ((item.status || "").toLowerCase() === "draft") {
@@ -142,78 +75,210 @@ function LeaveManagementAll() {
 
   return (
     <HrmsLeftLayout>
-      <TableLayout1
-        title="Employee Leaves"
-        search={search}
-        setSearch={setSearch}
-        showSettings={showSettings}
-        setShowSettings={setShowSettings}
-        settingsRef={settingsRef}
-        settingsContent={allColumns
-          .filter((col) => !defaultColumns.includes(col.key))
-          .map((col) => (
-            <label key={col.key} className="LMACheckbox">
-              <input
-                type="checkbox"
-                checked={visibleColumns.includes(col.key)}
-                onChange={() => toggleColumn(col.key)}
-              />
-              {col.label}
-            </label>
-          ))}
-        headers={allColumns.filter((col) => visibleColumns.includes(col.key))}
-      >
-        {filteredData.map((item) => {
-          const currentHeaders = allColumns.filter((col) => visibleColumns.includes(col.key));
-          return (
-            <tr key={item._id}>
-              {currentHeaders.map((col) => {
-                let cellVal = item[col.key];
-                if (col.key === "halfDay") {
-                  cellVal = item.halfDay ? "Yes" : "No";
-                } else if (col.key === "leaveBalance") {
-                  cellVal = getLeaveBalance(item);
-                } else if (!cellVal) {
-                  cellVal = "-";
-                }
+      <div className="Openhome" style={{ padding: "20px" }}>
+        <div>
+          {/* HEADER ROW WITH TITLE, SEARCH BAR & SETTINGS */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "16px",
+              flexWrap: "wrap",
+              gap: "12px",
+            }}
+          >
+            <h3 className="openheading" style={{ margin: 0 }}>
+              📋 All Employee Leaves
+            </h3>
 
-                if (col.key === "leaveNumber") {
-                  return (
-                    <td
-                      key={col.key}
-                      style={{ fontWeight: "700", color: "#0284c7", cursor: "pointer", textDecoration: "underline" }}
-                      onClick={() => handleItemClick(item)}
-                      title={(item.status || "").toLowerCase() === "draft" ? "Click to edit draft leave request" : "Click to view full leave details"}
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              {/* SEARCH BAR WITH ICON */}
+              <div style={{ position: "relative", display: "inline-block" }}>
+                <FiSearch
+                  style={{
+                    position: "absolute",
+                    left: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    color: "#64748b",
+                    fontSize: "14px",
+                  }}
+                />
+                <input
+                  type="text"
+                  placeholder="Search by requester, type, status..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  style={{
+                    padding: "7px 12px 7px 32px",
+                    borderRadius: "6px",
+                    border: "1px solid #cbd5e1",
+                    fontSize: "13px",
+                    width: "240px",
+                    outline: "none",
+                  }}
+                />
+              </div>
+
+              {/* SETTINGS BUTTON & DROPDOWN */}
+              <div style={{ position: "relative" }}>
+                <button
+                  type="button"
+                  onClick={() => setShowSettings(!showSettings)}
+                  style={{
+                    background: "#ffffff",
+                    border: "1px solid #cbd5e1",
+                    borderRadius: "8px",
+                    padding: "6px 14px",
+                    cursor: "pointer",
+                    fontSize: "13px",
+                    fontWeight: "700",
+                    color: "#334155",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+                  }}
+                  title="Customize Display Columns"
+                >
+                  ⚙️ Settings
+                </button>
+
+                {showSettings && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      right: 0,
+                      top: "40px",
+                      background: "#ffffff",
+                      border: "1px solid #cbd5e1",
+                      borderRadius: "10px",
+                      boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
+                      padding: "14px 16px",
+                      width: "220px",
+                      zIndex: 100,
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontWeight: "700",
+                        fontSize: "13px",
+                        color: "#0f172a",
+                        marginBottom: "10px",
+                        borderBottom: "1px solid #e2e8f0",
+                        paddingBottom: "6px",
+                      }}
                     >
-                      {String(cellVal)}
-                    </td>
-                  );
-                }
+                      Display Columns:
+                    </div>
 
-                if (col.key === "status") {
-                  return (
-                    <td key={col.key}>
-                      <span
-                        className={`badge ${(item.status || "Pending").toLowerCase()}`}
-                        style={{ cursor: "pointer" }}
-                        onClick={() => handleItemClick(item)}
+                    {Object.entries({
+                      leaveNumber: "Leave ID",
+                      requester: "Requester",
+                      leaveType: "Leave Type",
+                      startDate: "Start Date",
+                      endDate: "End Date",
+                      totalLeaves: "Total Leave Balance",
+                      status: "Status",
+                    }).map(([key, label]) => (
+                      <label
+                        key={key}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "8px",
+                          fontSize: "13px",
+                          color: "#334155",
+                          marginBottom: "8px",
+                          cursor: "pointer",
+                        }}
                       >
-                        {item.status || "Pending"}
-                      </span>
-                    </td>
-                  );
-                }
+                        <input
+                          type="checkbox"
+                          checked={columns[key]}
+                          onChange={() =>
+                            setColumns((prev) => ({ ...prev, [key]: !prev[key] }))
+                          }
+                          style={{ width: "16px", height: "16px", cursor: "pointer" }}
+                        />
+                        {label}
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
 
-                return (
-                  <td key={col.key} style={{ cursor: "pointer" }} onClick={() => handleItemClick(item)}>
-                    {String(cellVal)}
-                  </td>
-                );
-              })}
-            </tr>
-          );
-        })}
-      </TableLayout1>
+          {loading ? (
+            <div style={{ padding: "30px", textAlign: "center", color: "#64748b" }}>
+              Loading all employee leaves...
+            </div>
+          ) : (
+            <table className="opentable">
+              <thead>
+                <tr>
+                  {columns.leaveNumber && <th>Leave ID</th>}
+                  {columns.requester && <th>Requester</th>}
+                  {columns.leaveType && <th>Leave Type</th>}
+                  {columns.startDate && <th>Start Date</th>}
+                  {columns.endDate && <th>End Date</th>}
+                  {columns.totalLeaves && <th>Total Leave Balance</th>}
+                  {columns.status && <th>Status</th>}
+                </tr>
+              </thead>
+
+              <tbody>
+                {filteredData.length > 0 ? (
+                  filteredData.map((item) => (
+                    <tr key={item._id}>
+                      {columns.leaveNumber && (
+                        <td
+                          style={{ fontWeight: "700", color: "#0284c7", cursor: "pointer", textDecoration: "underline" }}
+                          onClick={() => handleItemClick(item)}
+                          title={(item.status || "").toLowerCase() === "draft" ? "Click to edit draft leave request" : "Click to view full leave details"}
+                        >
+                          {item.leaveNumber || "View Details"}
+                        </td>
+                      )}
+                      {columns.requester && (
+                        <td
+                          style={{ cursor: "pointer" }}
+                          onClick={() => handleItemClick(item)}
+                        >
+                          {item.requester || item.employeeName || "Employee"}
+                        </td>
+                      )}
+                      {columns.leaveType && <td>{item.leaveType}</td>}
+                      {columns.startDate && <td>{item.startDate}</td>}
+                      {columns.endDate && <td>{item.endDate}</td>}
+                      {columns.totalLeaves && <td>{getLeaveBalance(item)} day(s)</td>}
+                      {columns.status && (
+                        <td>
+                          <span
+                            className={`badge ${(item.status || "Pending").toLowerCase()}`}
+                            style={{ cursor: "pointer" }}
+                            onClick={() => handleItemClick(item)}
+                          >
+                            {item.status || "Pending"}
+                          </span>
+                        </td>
+                      )}
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="7" style={{ textAlign: "center", padding: "30px", color: "#64748b" }}>
+                      No Employee Leave Records Found.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </div>
 
       {/* LEAVE DETAILS MODAL POPUP */}
       {selectedLeaveModal && (

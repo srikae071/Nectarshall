@@ -1,5 +1,6 @@
 import axios from "axios";
-import { fetchApiData, sendApiData } from "../../../../../utils/apiClient";
+import { fetchApiData, sendApiData, extractArrayData } from "../../../../../utils/apiClient";
+import { FiSearch } from "react-icons/fi";
 import {
   sendMailNotification,
   getUserEmailByName,
@@ -28,7 +29,9 @@ function HomeLeaveRequest() {
   const [leaveType, setLeaveType] = useState(draftItem?.leaveType || "");
   const [requester, setRequester] = useState(draftItem?.requester || currentUserName);
   const [requesterFor, setRequesterFor] = useState(draftItem?.requesterFor || "Sumit");
-  const [adminOptions, setAdminOptions] = useState(["Sumit", "Srikar"]);
+  const [employeeOptions, setEmployeeOptions] = useState(["Sumit", "Srikar"]);
+  const [showSearchBox, setShowSearchBox] = useState(false);
+  const [searchEmployeeQuery, setSearchEmployeeQuery] = useState("");
   const [leaveBalanceInfo, setLeaveBalanceInfo] = useState({ remaining: 0, consumed: 0, allocated: 0 });
   const navigate = useNavigate();
 
@@ -53,60 +56,34 @@ function HomeLeaveRequest() {
   }, [currentUserName, draftItem]);
 
   useEffect(() => {
-    const fetchAdminEmployees = async () => {
+    const fetchAllEmployees = async () => {
       try {
         const res = await fetchApiData("/api/employees");
-        if (res && res.data && res.data.length > 0) {
-          const admins = res.data.filter((emp) => {
-            const roleStr = (emp.role || "").toLowerCase();
-            const subRoleStr = (emp.subRole || "").toLowerCase();
-            const titleStr = (emp.jobTitle || "").toLowerCase();
-            const extraRolesArr = Array.isArray(emp.extraRoles)
-              ? emp.extraRoles.map((r) => String(r).toLowerCase())
-              : [];
+        const employeesList = res && res.data && Array.isArray(res.data) ? res.data : [];
+        const empNames = employeesList
+          .map(
+            (emp) =>
+              emp.displayName ||
+              emp.employeeName ||
+              `${emp.firstName || ""} ${emp.lastName || ""}`.trim()
+          )
+          .filter(Boolean);
 
-            return (
-              roleStr.includes("admin") ||
-              subRoleStr.includes("admin") ||
-              titleStr.includes("admin") ||
-              extraRolesArr.some((r) => r.includes("admin"))
-            );
-          });
+        if (!empNames.includes("Sumit")) empNames.unshift("Sumit");
+        const uniqueEmpNames = [...new Set(empNames)];
 
-          const adminNames = admins
-            .map(
-              (emp) =>
-                emp.displayName ||
-                emp.employeeName ||
-                `${emp.firstName || ""} ${emp.lastName || ""}`.trim(),
-            )
-            .filter(Boolean);
-
-          const uniqueAdminNames = [...new Set(adminNames)];
-
-          if (uniqueAdminNames.length > 0) {
-            setAdminOptions(uniqueAdminNames);
-            setRequesterFor(uniqueAdminNames[0]);
-          } else {
-            // Fallback to all employees present in the database table
-            const allNames = res.data
-              .map(
-                (emp) =>
-                  emp.displayName ||
-                  emp.employeeName ||
-                  `${emp.firstName || ""} ${emp.lastName || ""}`.trim(),
-              )
-              .filter(Boolean);
-            const uniqueAll = [...new Set(allNames)];
-            setAdminOptions(uniqueAll.length > 0 ? uniqueAll : ["Sumit"]);
-            if (uniqueAll.length > 0) setRequesterFor(uniqueAll[0]);
+        if (uniqueEmpNames.length > 0) {
+          setEmployeeOptions(uniqueEmpNames);
+          if (!draftItem?.requesterFor) {
+            setRequesterFor(uniqueEmpNames[0]);
           }
         }
       } catch (err) {
-        console.log("Error fetching admin employees for Requested For:", err);
+        console.error("Error fetching employee options for leave request:", err);
       }
     };
-    fetchAdminEmployees();
+
+    fetchAllEmployees();
   }, []);
 
   const leaveAllocationMap = {
@@ -117,6 +94,12 @@ function HomeLeaveRequest() {
     "Paternity Leave": 12,
   };
 
+  const filteredSearchEmployees = employeeOptions.filter((name) => {
+    if (!searchEmployeeQuery.trim()) return true;
+    const q = searchEmployeeQuery.toLowerCase().trim();
+    return name.toLowerCase().includes(q);
+  });
+
   useEffect(() => {
     const fetchPersonalBalance = async () => {
       if (!leaveType) {
@@ -126,8 +109,9 @@ function HomeLeaveRequest() {
       const allocated = leaveAllocationMap[leaveType] || 15;
       try {
         const response = await fetchApiData("/api/leaves");
+        const allLeavesList = extractArrayData(response?.data || response);
         const u = (currentUserName || "").trim().toLowerCase();
-        const userApprovedLeaves = (response.data || []).filter((item) => {
+        const userApprovedLeaves = allLeavesList.filter((item) => {
           if (item.leaveType !== leaveType || item.status !== "Approved") return false;
           const r1 = (item.requester || item.employeeName || "").trim().toLowerCase();
           const r2 = (item.requesterFor || "").trim().toLowerCase();
@@ -137,7 +121,7 @@ function HomeLeaveRequest() {
         const remaining = Math.max(0, allocated - consumed);
         setLeaveBalanceInfo({ remaining, consumed, allocated });
       } catch (err) {
-        console.log(err);
+        console.error("Error fetching personal balance:", err);
       }
     };
     fetchPersonalBalance();
@@ -310,19 +294,142 @@ function HomeLeaveRequest() {
               </div>
 
               <div className="lr-field">
-                <label className="lr-label">Requested For</label>
-                <select
-                  className="lr-input"
-                  value={requesterFor}
-                  onChange={(e) => setRequesterFor(e.target.value)}
-                  style={{ background: "#ffffff", cursor: "pointer", fontWeight: "600" }}
-                >
-                  {adminOptions.map((adminName, idx) => (
-                    <option key={idx} value={adminName}>
-                      {adminName} (Admin)
-                    </option>
-                  ))}
-                </select>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+                  <label className="lr-label" style={{ margin: 0 }}>Requested For</label>
+                  <button
+                    type="button"
+                    onClick={() => setShowSearchBox(!showSearchBox)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      color: "#0284c7",
+                      fontSize: "12.5px",
+                      fontWeight: "700",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px",
+                      padding: "2px 6px",
+                      borderRadius: "4px",
+                    }}
+                    title="Click magnifying glass to search employee"
+                  >
+                    <FiSearch size={14} />
+                    <span>Search</span>
+                  </button>
+                </div>
+
+                <div style={{ position: "relative" }}>
+                  <select
+                    className="lr-input"
+                    value={requesterFor}
+                    onChange={(e) => setRequesterFor(e.target.value)}
+                    style={{ background: "#ffffff", cursor: "pointer", fontWeight: "600" }}
+                  >
+                    {employeeOptions.map((empName, idx) => (
+                      <option key={idx} value={empName}>
+                        {empName}
+                      </option>
+                    ))}
+                  </select>
+
+                  {/* QUICK SEARCH MAGNIFYING GLASS POPUP */}
+                  {showSearchBox && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: "42px",
+                        left: 0,
+                        right: 0,
+                        zIndex: 100,
+                        background: "#ffffff",
+                        border: "1.5px solid #0284c7",
+                        borderRadius: "8px",
+                        boxShadow: "0 10px 25px rgba(2, 132, 199, 0.2)",
+                        padding: "10px",
+                      }}
+                    >
+                      <div style={{ position: "relative", marginBottom: "8px" }}>
+                        <FiSearch
+                          size={14}
+                          style={{
+                            position: "absolute",
+                            left: "10px",
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                            color: "#0284c7",
+                          }}
+                        />
+                        <input
+                          type="text"
+                          autoFocus
+                          placeholder="Search employee by name (e.g. Rahul, A...)"
+                          value={searchEmployeeQuery}
+                          onChange={(e) => setSearchEmployeeQuery(e.target.value)}
+                          style={{
+                            width: "100%",
+                            padding: "6px 28px 6px 30px",
+                            borderRadius: "6px",
+                            border: "1px solid #cbd5e1",
+                            fontSize: "13px",
+                            outline: "none",
+                            boxSizing: "border-box",
+                          }}
+                        />
+                        {searchEmployeeQuery && (
+                          <button
+                            type="button"
+                            onClick={() => setSearchEmployeeQuery("")}
+                            style={{
+                              position: "absolute",
+                              right: "8px",
+                              top: "50%",
+                              transform: "translateY(-50%)",
+                              background: "none",
+                              border: "none",
+                              cursor: "pointer",
+                              color: "#94a3b8",
+                              fontSize: "12px",
+                            }}
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+
+                      <div style={{ maxHeight: "150px", overflowY: "auto" }}>
+                        {filteredSearchEmployees.length > 0 ? (
+                          filteredSearchEmployees.map((name, idx) => (
+                            <div
+                              key={idx}
+                              onClick={() => {
+                                setRequesterFor(name);
+                                setShowSearchBox(false);
+                                setSearchEmployeeQuery("");
+                              }}
+                              style={{
+                                padding: "6px 10px",
+                                borderRadius: "4px",
+                                cursor: "pointer",
+                                fontSize: "13px",
+                                fontWeight: requesterFor === name ? "700" : "500",
+                                background: requesterFor === name ? "#e0f2fe" : "#ffffff",
+                                color: requesterFor === name ? "#0369a1" : "#1e293b",
+                                marginBottom: "2px",
+                              }}
+                            >
+                              👤 {name}
+                            </div>
+                          ))
+                        ) : (
+                          <div style={{ padding: "8px", fontSize: "12.5px", color: "#64748b", textAlign: "center" }}>
+                            No employee matching "{searchEmployeeQuery}"
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>

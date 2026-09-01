@@ -66,6 +66,7 @@ const FIELD_LABELS = {
   consentProvidedForMinor: "Consent Provided for Minor",
   shortDescription: "Short Description",
   description: "Description",
+  extraRoles: "Assigned Extra Roles",
 };
 
 function MainEmployeesSaves() {
@@ -92,6 +93,7 @@ function MainEmployeesSaves() {
     companyName: "",
     department: "",
     subRole: "",
+    extraRoles: "",
     employeeId: "",
     employeeType: "Full-Time",
     employeeHireDate: "",
@@ -186,6 +188,15 @@ function MainEmployeesSaves() {
           else statusVal = "Active";
         }
 
+        let formattedExtraRoles = "";
+        if (Array.isArray(emp.extraRoles)) {
+          formattedExtraRoles = emp.extraRoles.join(", ");
+        } else if (typeof emp.extraRoles === "string") {
+          formattedExtraRoles = emp.extraRoles;
+        } else if (emp.ExtaRoles) {
+          formattedExtraRoles = String(emp.ExtaRoles);
+        }
+
         const loadedState = {
           displayName: emp.displayName || emp.employeeName || "",
           firstName: emp.firstName || "",
@@ -198,6 +209,7 @@ function MainEmployeesSaves() {
           companyName: emp.companyName || "",
           department: emp.department || "",
           subRole: emp.subRole || "",
+          extraRoles: formattedExtraRoles,
           employeeId: emp.employeeId || "",
           employeeType: emp.employeeType || "Full-Time",
           employeeHireDate: emp.employeeHireDate ? emp.employeeHireDate.slice(0, 10) : "",
@@ -330,8 +342,13 @@ function MainEmployeesSaves() {
 
       const updatedLogs = [...(formData.activityLogs || []), ...newLogEntries];
 
+      const extraRolesArr = typeof formData.extraRoles === "string"
+        ? formData.extraRoles.split(",").map(r => r.trim()).filter(Boolean)
+        : (formData.extraRoles || []);
+
       const payload = {
         ...formData,
+        extraRoles: extraRolesArr,
         roleRequests: updatedRoleRequests,
         activityLogs: updatedLogs,
         accountActive: isAct,
@@ -627,6 +644,17 @@ function MainEmployeesSaves() {
                 <option value="Patrolling Manager">Patrolling Manager</option>
                 <option value="Patrolling Coordinator">Patrolling Coordinator</option>
               </select>
+            </div>
+
+            <div className="form-row">
+              <label className="form-label">Assigned Extra Roles</label>
+              <input
+                className="form-input wideInput"
+                name="extraRoles"
+                value={formData.extraRoles}
+                onChange={handleChange}
+                placeholder="e.g. Admin, IT Manager (assigned from Console)"
+              />
             </div>
 
             <div className="form-row">
@@ -1141,7 +1169,17 @@ function MainEmployeesSaves() {
               <button
                 type="button"
                 className="primary-button"
-                onClick={() => {
+                onClick={async () => {
+                  const now = new Date();
+                  const timestampStr = now.toLocaleString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true,
+                  });
+
                   const reqObj = {
                     id: Date.now(),
                     employeeId: id,
@@ -1149,19 +1187,39 @@ function MainEmployeesSaves() {
                     currentRole: formData.subRole || formData.department || "Member",
                     newRole: selectedRequestedRole,
                     status: "Pending",
-                    requestedAt: new Date().toLocaleString("en-GB", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: true,
-                    }),
+                    requestedAt: timestampStr,
                   };
-                  setPendingNewRequest(reqObj);
+
+                  const newLog = `[${timestampStr}] Role change request placed to change role from '${reqObj.currentRole}' to '${reqObj.newRole}'`;
+                  const updatedRoleRequests = [...(formData.roleRequests || []), reqObj];
+                  const updatedLogs = [...(formData.activityLogs || []), newLog];
+
+                  setFormData((prev) => ({
+                    ...prev,
+                    roleRequests: updatedRoleRequests,
+                    activityLogs: updatedLogs,
+                  }));
+
                   setRoleRequestMessage(
-                    `✓ Role change request for '${selectedRequestedRole}' prepared. Click 'Save' at top to submit request.`
+                    `✓ Role change request for '${selectedRequestedRole}' submitted successfully to IT Admin!`
                   );
+
+                  try {
+                    const extraRolesArr = typeof formData.extraRoles === "string"
+                      ? formData.extraRoles.split(",").map((r) => r.trim()).filter(Boolean)
+                      : (formData.extraRoles || []);
+
+                    const payload = {
+                      ...formData,
+                      extraRoles: extraRolesArr,
+                      roleRequests: updatedRoleRequests,
+                      activityLogs: updatedLogs,
+                    };
+                    await sendApiData("PUT", `/api/employees/${id}`, payload);
+                    setOriginalData(payload);
+                  } catch (err) {
+                    console.error("Error saving role change request:", err);
+                  }
                 }}
               >
                 Place Request

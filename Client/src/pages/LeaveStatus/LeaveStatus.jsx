@@ -1,6 +1,7 @@
 import HrmsLeftLayout from "../Hrms/Hrmsleftlayout";
 import { useState, useEffect } from "react";
-import { fetchApiData } from "../../utils/apiClient";
+import { useNavigate } from "react-router-dom";
+import { fetchApiData, extractArrayData } from "../../utils/apiClient";
 import { useAuth } from "../../context/AuthContext";
 import { FiSearch } from "react-icons/fi";
 import "./LeaveStatus.css";
@@ -50,7 +51,7 @@ function LeaveStatus() {
     try {
       setLoading(true);
       const response = await fetchApiData("/api/leaves");
-      const allLeaves = response.data || [];
+      const allLeaves = extractArrayData(response?.data || response);
 
       let authUser = user;
       if (!authUser) {

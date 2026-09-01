@@ -153,6 +153,34 @@ export const AuthProvider = ({ children }) => {
     );
   };
 
+  const checkIsItAdmin = (u = user) => {
+    if (!u) return false;
+    const dept = (u.department || "").toUpperCase();
+    const sub = (u.subRole || "").toUpperCase();
+    const role = (u.role || "").toUpperCase();
+    const username = (u.username || u.displayName || "").toLowerCase();
+
+    const extra = u.extraRoles || u.ExtaRoles || [];
+    let extraList = [];
+    if (Array.isArray(extra)) extraList = extra.map((r) => String(r).toUpperCase());
+    else if (typeof extra === "string") extraList = extra.split(",").map((r) => r.trim().toUpperCase());
+
+    const isIt =
+      dept.includes("IT") ||
+      sub.includes("IT") ||
+      role.includes("IT") ||
+      extraList.some((r) => r.includes("IT"));
+
+    const isAdmin =
+      role === "ADMIN" ||
+      dept.includes("ADMIN") ||
+      sub.includes("ADMIN") ||
+      username.includes("sumit") ||
+      extraList.includes("ADMIN");
+
+    return isIt && isAdmin;
+  };
+
   const isEndUser = (u = user) => {
     if (!u) return false;
     const sub = (u.subRole || "").trim().toUpperCase();
@@ -252,6 +280,7 @@ export const AuthProvider = ({ children }) => {
         hasTileAccess,
         hasModuleAccess,
         checkIsAdmin,
+        checkIsItAdmin,
         isEndUser,
         getSubRole,
         hasHrOnboardingAccess,

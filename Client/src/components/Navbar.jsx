@@ -6,13 +6,10 @@ import { useAuth } from "../context/AuthContext";
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, logout, switchProfile, allProfiles } = useAuth();
+  const { user, logout, switchProfile, allProfiles, checkIsAdmin } = useAuth();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
-  const username = (user?.displayName || user?.username || "").toLowerCase();
-  const role = (user?.role || "").toUpperCase();
-  const dept = (user?.department || "").toUpperCase();
-  const isAdmin = role === "ADMIN" || username.includes("sumit") || dept === "ADMIN";
+  const isAdmin = checkIsAdmin ? checkIsAdmin(user) : false;
 
   const getModuleLabel = () => {
     const p = location.pathname.toLowerCase();

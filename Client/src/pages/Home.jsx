@@ -26,14 +26,12 @@ function Home() {
     allProfiles,
     hasTabAccess,
     hasTileAccess,
+    checkIsAdmin,
   } = useAuth();
   const [pendingCount, setPendingCount] = useState(0);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
-  const username = (user?.displayName || user?.username || "").toLowerCase();
-  const role = (user?.role || "").toUpperCase();
-  const dept = (user?.department || "").toUpperCase();
-  const isAdmin = role === "ADMIN" || username.includes("sumit") || dept === "ADMIN";
+  const isAdmin = checkIsAdmin ? checkIsAdmin(user) : false;
 
   useEffect(() => {
     fetchPendingLeaves();

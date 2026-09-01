@@ -5,65 +5,6 @@ import "./index.css";
 import ItNavbar from "../../IT/ItNavBar";
 import { useAuth } from "../../../../context/AuthContext";
 
-const menuData = [
-  {
-    title: "Incidents",
-    items: [
-      { label: "All", path: "/it-all" },
-      { label: "Create New", path: "/it/create-new" },
-      { label: "Open", path: "/it/open" },
-      { label: "Resolved", path: "/it/resolved" },
-      { label: "Closed", path: "/it/closed" },
-      { label: "Work In Progress", path: "/it/work-in-progress" },
-      { label: "Pending", path: "/it/pending" },
-    ],
-  },
-
-  {
-    title: "Requests",
-    children: [
-      {
-        title: "Onboarding Request",
-        items: [
-          { label: "All", path: "/requests-onboarding-all" },
-          { label: "Create New", path: "/onboarding/create-new" },
-          { label: "Open", path: "/onboarding/open" },
-          { label: "Resolved", path: "/requests-onboarding-resolved" },
-          { label: "Closed", path: "/onboarding/closed" },
-          {
-            label: "Work In Progress",
-            path: "/onboarding/work-in-progress",
-          },
-          { label: "Pending", path: "/onboarding/pending" },
-        ],
-      },
-
-      {
-        title: "Offboarding Request",
-        items: [
-          { label: "All", path: "/requests-offboarding-all" },
-          { label: "Create New", path: "/it/create-new" },
-          { label: "Open", path: "/requests-offboarding-open" },
-          { label: "Resolved", path: "/requests-offboarding-resolved" },
-          { label: "Closed", path: "/requests-offboarding-closed" },
-          {
-            label: "Work In Progress",
-            path: "/requests-offboarding-wip",
-          },
-          { label: "Pending", path: "/requests-offboarding-pending" },
-        ],
-      },
-
-      {
-        title: "Roles",
-        items: [
-          { label: "All Role Requests", path: "/it/requests-roles" },
-        ],
-      },
-    ],
-  },
-];
-
 const MenuItem = ({ item, level = 0, expandedMenus, setExpandedMenus }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -134,7 +75,72 @@ const MenuItem = ({ item, level = 0, expandedMenus, setExpandedMenus }) => {
 function ItLeftSide({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isEndUser } = useAuth();
+  const { isEndUser, checkIsItAdmin, user } = useAuth();
+  const isItAdmin = checkIsItAdmin ? checkIsItAdmin(user) : false;
+
+  const menuData = [
+    {
+      title: "Incidents",
+      items: [
+        { label: "All", path: "/it-all" },
+        { label: "Create New", path: "/it/create-new" },
+        { label: "Open", path: "/it/open" },
+        { label: "Resolved", path: "/it/resolved" },
+        { label: "Closed", path: "/it/closed" },
+        { label: "Work In Progress", path: "/it/work-in-progress" },
+        { label: "Pending", path: "/it/pending" },
+      ],
+    },
+
+    {
+      title: "Requests",
+      children: [
+        {
+          title: "Onboarding Request",
+          items: [
+            { label: "All", path: "/requests-onboarding-all" },
+            { label: "Create New", path: "/onboarding/create-new" },
+            { label: "Open", path: "/onboarding/open" },
+            { label: "Resolved", path: "/requests-onboarding-resolved" },
+            { label: "Closed", path: "/onboarding/closed" },
+            {
+              label: "Work In Progress",
+              path: "/onboarding/work-in-progress",
+            },
+            { label: "Pending", path: "/onboarding/pending" },
+          ],
+        },
+
+        {
+          title: "Offboarding Request",
+          items: [
+            { label: "All", path: "/requests-offboarding-all" },
+            { label: "Create New", path: "/it/create-new" },
+            { label: "Open", path: "/requests-offboarding-open" },
+            { label: "Resolved", path: "/requests-offboarding-resolved" },
+            { label: "Closed", path: "/requests-offboarding-closed" },
+            {
+              label: "Work In Progress",
+              path: "/requests-offboarding-wip",
+            },
+            { label: "Pending", path: "/requests-offboarding-pending" },
+          ],
+        },
+
+        ...(isItAdmin
+          ? [
+              {
+                title: "Roles",
+                items: [
+                  { label: "All Role Requests", path: "/it/requests-roles" },
+                ],
+              },
+            ]
+          : []),
+      ],
+    },
+  ];
+
   const [openMenus, setOpenMenus] = useState({
     0: true,
     1: true,
