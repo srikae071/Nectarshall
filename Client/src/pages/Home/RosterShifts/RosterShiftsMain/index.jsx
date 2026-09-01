@@ -781,33 +781,31 @@ function RosterShiftsMain() {
   return (
     <div className="OPPage">
       <div className="navbar">
-        <div className="logo">
+        <div
+          className="logo"
+          onClick={() => navigate("/")}
+          style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "10px" }}
+        >
           <img
             src={logo}
             className="logoimage"
             alt="Logo"
-            onClick={() => navigate("/")}
+            style={{ width: "80px", height: "38px", objectFit: "contain", cursor: "pointer" }}
           />
+          <span
+            style={{
+              color: "#ea580c",
+              fontWeight: "700",
+              fontStyle: "normal",
+              fontSize: "16px",
+              marginLeft: "10px",
+              lineHeight: "1",
+              whiteSpace: "nowrap",
+            }}
+          >
+            ROSTER / SHIFT
+          </span>
         </div>
-        <div className="navTitle">Shift Approvals</div>
-        {/* <button
-          type="button"
-          style={{
-            marginLeft: "auto",
-            marginRight: "20px",
-            background: "#2563eb",
-            color: "#ffffff",
-            border: "none",
-            padding: "8px 16px",
-            borderRadius: "6px",
-            fontWeight: "600",
-            fontSize: "13px",
-            cursor: "pointer",
-          }}
-          onClick={() => navigate("/roster")}
-        >
-          📋 Go to Roster Main ➔
-        </button> */}
       </div>
 
       <div className="opContentContainer">

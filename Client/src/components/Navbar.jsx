@@ -36,6 +36,9 @@ function Navbar() {
     if (p.includes("/leave")) {
       return "LEAVE MANAGEMENT";
     }
+    if (p.includes("/roster-shifts") || p.includes("/roster")) {
+      return "ROSTER / SHIFT";
+    }
 
     // 1. CNC Module Routes
     if (
@@ -124,11 +127,9 @@ function Navbar() {
         onClick={() => navigate("/")}
         style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "10px" }}
       >
-        <img src={logo} alt="logo" className="logoimage" />
+        <img src={logo} alt="logo" className="logoimage" style={{ width: "80px", height: "38px", objectFit: "contain" }} />
         {moduleLabel && (
-          <div className="operationslogoname">
-            <p style={{ color: "#db3939", fontStyle: "italic" }}>{moduleLabel}</p>
-          </div>
+          <span style={{ color: "#ea580c", fontWeight: "700", fontStyle: "normal", fontSize: "16px", marginLeft: "10px", lineHeight: "1", whiteSpace: "nowrap" }}>{moduleLabel}</span>
         )}
       </div>
 

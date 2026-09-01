@@ -771,6 +771,243 @@
   color: white;
 }
 
+/* ================= DONUT CHART STYLES ================= */
+.donut-chart-card {
+  padding: 24px !important;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.donut-chart-header {
+  margin-bottom: 20px;
+}
+
+.donut-chart-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 8px 0;
+  flex-wrap: wrap;
+}
+
+.donut-svg-container {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.donut-svg-container svg {
+  overflow: visible;
+}
+
+.donut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 140px;
+  max-width: 200px;
+  flex: 1;
+}
+
+.donut-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+}
+
+.donut-legend-item:hover,
+.donut-legend-item.hovered {
+  background: #f8fafc;
+}
+
+.donut-legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.donut-legend-label {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1e293b;
+  white-space: nowrap;
+}
+
+.donut-legend-pct {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+  min-width: 36px;
+  text-align: right;
+}
+
+/* ================= DETAIL PAGE TABS ================= */
+.vendor-detail-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.vendor-detail-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #f8fafc;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  transition: all 0.15s ease;
+}
+
+.vendor-detail-tab:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.vendor-detail-tab.active {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+}
+
+.vendor-tab-badge {
+  background: #e2e8f0;
+  color: #475569;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.vendor-detail-tab.active .vendor-tab-badge {
+  background: #334155;
+  color: #ffffff;
+}
+
+
+/* ================= DETAIL TABLE MODAL ================= */
+.donut-detail-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(3px);
+  animation: donutFadeIn 0.2s ease;
+}
+
+@keyframes donutFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.donut-detail-modal {
+  background: #ffffff;
+  width: 90%;
+  max-width: 900px;
+  max-height: 80vh;
+  border-radius: 14px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: donutSlideUp 0.25s ease;
+}
+
+@keyframes donutSlideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.donut-detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #f1f5f9;
+  flex-shrink: 0;
+}
+
+.donut-detail-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.donut-detail-close {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.donut-detail-close:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.donut-detail-body {
+  overflow-y: auto;
+  padding: 0;
+  flex: 1;
+}
+
+.donut-detail-body .vendor-table th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #f8fafc;
+}
+
+.donut-detail-row:hover {
+  background: #f8fafc;
+}
+
+/* ================= RESPONSIVE DONUT ================= */
+@media (max-width: 1100px) {
+  .donut-chart-body {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .donut-legend {
+    min-width: unset;
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .donut-detail-modal {
+    width: 95%;
+    max-height: 90vh;
+  }
+}
+
 /* ================= HRMS THEME OVERRIDES (CSS ONLY) ================= */
 html[data-theme="green"] .vendor-dashboard-wrapper,
 body.theme-green .vendor-dashboard-wrapper,

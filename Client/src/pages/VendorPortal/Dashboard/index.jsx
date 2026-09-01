@@ -1,51 +1,226 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchApiData } from '../../../utils/apiClient';
 import './index.css';
 import { 
-  FiFileText, 
-  FiActivity, 
-  FiCheckCircle, 
-  FiXCircle, 
   FiBriefcase, 
-  FiUserPlus,
   FiCalendar,
-  FiBell,
-  FiChevronDown,
-  FiCheck,
-  FiChevronLeft,
-  FiChevronRight,
   FiX,
-  FiEdit,
-  FiTrash2,
-  FiArrowUpRight,
   FiUsers,
   FiUserCheck,
-  FiMessageSquare
+  FiUserPlus,
+  FiUserMinus,
 } from 'react-icons/fi';
 import { mockVendorData } from '../mockData';
 
-const ALL_EMP_COLUMNS = [
-  { key: 'name', label: 'EMPLOYEE', width: '25%' },
-  { key: 'title', label: 'TITLE / POSITION', width: '20%' },
-  { key: 'dept', label: 'DEPARTMENT', width: '20%' },
-  { key: 'email', label: 'EMAIL', width: '20%' },
-  { key: 'status', label: 'STATUS', width: '15%' },
-];
+/* ==================== DONUT CHART COMPONENT ==================== */
+const DonutChart = ({ title, subtitle, segments, total, onSegmentClick, centerLabel }) => {
+  const [hoveredIndex, setHoveredIndex] = useState(null);
 
+  // SVG donut parameters
+  const size = 200;
+  const cx = size / 2;
+  const cy = size / 2;
+  const radius = 70;
+  const strokeWidth = 28;
+  const hoverStrokeWidth = 34;
+  const circumference = 2 * Math.PI * radius;
+
+  // Build arc segments
+  let cumulativePercent = 0;
+  const arcs = segments.map((seg, i) => {
+    const percent = total > 0 ? seg.count / total : 0;
+    const dashArray = `${percent * circumference} ${circumference}`;
+    const rotation = cumulativePercent * 360 - 90; // -90 to start from top
+    cumulativePercent += percent;
+    return {
+      ...seg,
+      percent,
+      dashArray,
+      rotation,
+      index: i,
+    };
+  });
+
+  return (
+    <div className="donut-chart-card vendor-section-card">
+      <div className="donut-chart-header">
+        <div>
+          <h2 className="vendor-section-title" style={{ fontSize: 18, color: '#0f172a' }}>{title}</h2>
+          <p style={{ fontSize: 13, color: '#64748b', marginTop: 4 }}>{subtitle}</p>
+        </div>
+      </div>
+
+      <div className="donut-chart-body">
+        {/* SVG Donut */}
+        <div className="donut-svg-container">
+          <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+            {/* Background circle */}
+            <circle
+              cx={cx}
+              cy={cy}
+              r={radius}
+              fill="none"
+              stroke="#f1f5f9"
+              strokeWidth={strokeWidth}
+            />
+            {/* Segments */}
+            {arcs.map((arc) => (
+              <circle
+                key={arc.index}
+                cx={cx}
+                cy={cy}
+                r={radius}
+                fill="none"
+                stroke={arc.color}
+                strokeWidth={hoveredIndex === arc.index ? hoverStrokeWidth : strokeWidth}
+                strokeDasharray={arc.dashArray}
+                strokeDashoffset="0"
+                strokeLinecap="butt"
+                transform={`rotate(${arc.rotation} ${cx} ${cy})`}
+                style={{
+                  cursor: 'pointer',
+                  transition: 'stroke-width 0.2s ease, opacity 0.2s ease',
+                  opacity: hoveredIndex !== null && hoveredIndex !== arc.index ? 0.5 : 1,
+                }}
+                onMouseEnter={() => setHoveredIndex(arc.index)}
+                onMouseLeave={() => setHoveredIndex(null)}
+                onClick={() => onSegmentClick && onSegmentClick(arc)}
+              />
+            ))}
+            {/* Center text */}
+            <text x={cx} y={cy - 8} textAnchor="middle" fill="#64748b" fontSize="13" fontWeight="600" fontFamily="inherit">
+              {centerLabel || 'Total'}
+            </text>
+            <text x={cx} y={cy + 18} textAnchor="middle" fill="#0f172a" fontSize="30" fontWeight="800" fontFamily="inherit">
+              {total}
+            </text>
+          </svg>
+        </div>
+
+        {/* Legend */}
+        <div className="donut-legend">
+          {arcs.map((arc) => {
+            const pct = total > 0 ? Math.round((arc.count / total) * 100) : 0;
+            return (
+              <div
+                key={arc.index}
+                className={`donut-legend-item ${hoveredIndex === arc.index ? 'hovered' : ''}`}
+                onMouseEnter={() => setHoveredIndex(arc.index)}
+                onMouseLeave={() => setHoveredIndex(null)}
+                onClick={() => onSegmentClick && onSegmentClick(arc)}
+              >
+                <div className="donut-legend-dot" style={{ background: arc.color }}></div>
+                <span className="donut-legend-label">{arc.label} ({arc.count})</span>
+                <span className="donut-legend-pct">{pct}%</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ==================== DETAIL VIEW PAGE ==================== */
+const DetailView = ({ title, type, segments, allRecords, initialActiveTab, columns, onBack, onRowClick }) => {
+  const [activeTab, setActiveTab] = useState(initialActiveTab || 'All');
+
+  const tabs = [
+    { label: 'All', count: allRecords.length, records: allRecords },
+    ...segments
+  ];
+
+  const activeTabData = tabs.find(t => t.label === activeTab)?.records || [];
+
+  return (
+    <div className="vendor-detail-page">
+      <div className="vendor-dashboard-header" style={{ marginBottom: 16 }}>
+        <div>
+          <button 
+            onClick={onBack}
+            style={{ 
+              background: 'none', border: 'none', color: '#2563eb', 
+              cursor: 'pointer', padding: 0, fontSize: 14, fontWeight: 600, 
+              display: 'flex', alignItems: 'center', gap: 4, marginBottom: 8
+            }}
+          >
+            ← Back to Overview
+          </button>
+          <h1 style={{ fontSize: 24, fontWeight: 700, margin: 0, color: '#0f172a' }}>
+            {title}
+          </h1>
+        </div>
+      </div>
+
+      {/* Top Filter Tabs */}
+      <div className="vendor-detail-tabs">
+        {tabs.map(tab => (
+          <div 
+            key={tab.label}
+            className={`vendor-detail-tab ${activeTab === tab.label ? 'active' : ''}`}
+            onClick={() => setActiveTab(tab.label)}
+          >
+            <span>{tab.label}</span>
+            <span className="vendor-tab-badge">{tab.count}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Table Section */}
+      <div className="vendor-section-card" style={{ padding: 0, overflow: 'hidden', borderRadius: 12 }}>
+        <div style={{ overflowX: 'auto' }}>
+          {activeTabData.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: 40, color: '#64748b' }}>No records found</div>
+          ) : (
+            <table className="vendor-table" style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr>
+                  {columns.map(col => (
+                    <th key={col.key} style={{ width: col.width }}>{col.label}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {activeTabData.map((item, idx) => (
+                  <tr
+                    key={item._id || idx}
+                    style={{ cursor: onRowClick ? 'pointer' : 'default' }}
+                    onClick={() => onRowClick && onRowClick(item)}
+                    className="donut-detail-row"
+                  >
+                    {columns.map(col => (
+                      <td key={col.key}>
+                        {col.render ? col.render(item) : (item[col.key] || 'N/A')}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ==================== MAIN DASHBOARD ==================== */
 const VendorPortalDashboard = () => {
-  const { kpis, pipeline, chart, vacancies, interviews, activities } = mockVendorData;
-  const [selectedInterview, setSelectedInterview] = useState(null);
-  const [hoveredDept, setHoveredDept] = useState(null);
   const [dbEmpList, setDbEmpList] = useState([]);
-  const [showSettings, setShowSettings] = useState(false);
-  const [visibleColumns, setVisibleColumns] = useState(ALL_EMP_COLUMNS.map(c => c.key));
-  const [empHovered, setEmpHovered] = useState('active');
+  const [jobRequests, setJobRequests] = useState([]);
+  const [leavesData, setLeavesData] = useState([]);
+  const [hrCases, setHrCases] = useState([]);
+  const [view, setView] = useState('dashboard'); // 'dashboard', 'onboarding-detail', 'offboarding-detail', 'employee-detail'
+  const [activeTab, setActiveTab] = useState('All');
 
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchDbEmployees();
+    fetchJobRequests();
+    fetchLeaves();
+    fetchHrCases();
   }, []);
 
   const fetchDbEmployees = async () => {
@@ -57,15 +232,34 @@ const VendorPortalDashboard = () => {
     }
   };
 
-  const toggleColumn = (key) => {
-    if (visibleColumns.includes(key)) {
-      if (visibleColumns.length === 1) return;
-      setVisibleColumns(visibleColumns.filter(c => c !== key));
-    } else {
-      setVisibleColumns([...visibleColumns, key]);
+  const fetchJobRequests = async () => {
+    try {
+      const res = await fetchApiData("/api/jobrequests");
+      setJobRequests(res.data || []);
+    } catch (err) {
+      console.error("Error loading job requests:", err);
     }
   };
 
+  const fetchLeaves = async () => {
+    try {
+      const res = await fetchApiData("/api/leaves");
+      setLeavesData(res.data || []);
+    } catch (err) {
+      console.error("Error loading leaves in vendor dashboard:", err);
+    }
+  };
+
+  const fetchHrCases = async () => {
+    try {
+      const res = await fetchApiData("/api/hrrequests");
+      setHrCases(res.data || []);
+    } catch (err) {
+      console.error("Error loading HR cases in vendor dashboard:", err);
+    }
+  };
+
+  // ---- Employee calculations ----
   const employees = dbEmpList.map((emp, index) => {
     const isActive = emp.accountActive !== undefined 
       ? Boolean(emp.accountActive) 
@@ -86,6 +280,202 @@ const VendorPortalDashboard = () => {
   const activeEmployeesCount = employees.filter((e) => e.status === "Active").length;
   const activeEmployeesPct = employees.length > 0 ? ((activeEmployeesCount / employees.length) * 100).toFixed(0) : "0";
 
+  // ---- Departments ----
+  const departmentsList = [...new Set(employees.map(e => e.dept).filter(Boolean))];
+
+  // ---- On Leave Today (real from /api/leaves) ----
+  const todayStr = new Date().toISOString().split('T')[0];
+  const onLeaveTodayList = leavesData.filter(l => {
+    const status = (l.status || '').toLowerCase();
+    const isActive = status === 'approved' || status === 'pending';
+    const start = (l.startDate || '').slice(0, 10);
+    const end = (l.endDate || l.startDate || '').slice(0, 10);
+    return isActive && start <= todayStr && end >= todayStr;
+  });
+  const onLeaveTodayCount = onLeaveTodayList.length;
+
+  // ---- Onboarding / Offboarding data classification ----
+  const onboardingRecords = jobRequests.filter(
+    (item) =>
+      item.category !== "Offboarding" &&
+      item.category !== "offboarding" &&
+      item.category !== "Exit" &&
+      item.taskType !== "IT Clearance"
+  );
+
+  const offboardingRecords = jobRequests.filter(
+    (item) =>
+      item.category === "Offboarding" ||
+      item.category === "offboarding" ||
+      item.category === "Exit" ||
+      item.taskType === "IT Clearance"
+  );
+
+  // ---- Onboarding segments ----
+  const onbPending = onboardingRecords.filter(
+    (r) => {
+      const s = (r.status || "").toLowerCase();
+      return s === "pending" || s === "open";
+    }
+  );
+  const onbInProgress = onboardingRecords.filter(
+    (r) => {
+      const s = (r.status || "").toLowerCase();
+      return s === "interview" || s === "offer letter" || s === "offerletter" || s === "pre-joining" || s === "pre joining" || s === "work in progress" || s === "wip";
+    }
+  );
+  const onbCompleted = onboardingRecords.filter(
+    (r) => {
+      const s = (r.status || "").toLowerCase();
+      return s === "resolved" || s === "closed" || s === "employee save";
+    }
+  );
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+  const onbJoiningThisMonth = onboardingRecords.filter((r) => {
+    const dateStr = r.joiningDate || r.startDate || r.createdAt;
+    if (!dateStr) return false;
+    const d = new Date(dateStr);
+    return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+  });
+
+  const onboardingSegments = [
+    { label: 'Pending', count: onbPending.length, color: '#ef4444', records: onbPending },
+    { label: 'In Progress', count: onbInProgress.length, color: '#f59e0b', records: onbInProgress },
+    { label: 'Completed', count: onbCompleted.length, color: '#10b981', records: onbCompleted },
+    { label: 'Joining This Month', count: onbJoiningThisMonth.length, color: '#3b82f6', records: onbJoiningThisMonth },
+  ];
+
+  // ---- Offboarding segments ----
+  const offResignations = offboardingRecords.filter((r) => {
+    const reason = (r.resignationReason || r.reason || "").toLowerCase();
+    const cat = (r.category || "").toLowerCase();
+    return reason.includes("resign") || cat === "exit";
+  });
+  const offTerminations = offboardingRecords.filter((r) => {
+    const reason = (r.resignationReason || r.reason || "").toLowerCase();
+    return reason.includes("terminat");
+  });
+  const offNoticePeriod = offboardingRecords.filter((r) => {
+    const s = (r.taskStatus || r.status || "").toLowerCase().replace(/\s+/g, "");
+    return s === "open" || s === "workinprogress" || s === "wip";
+  });
+  const offPendingClearance = offboardingRecords.filter((r) => {
+    const s = (r.taskStatus || r.status || "").toLowerCase();
+    return s === "pending" || s.includes("pending");
+  });
+  const offCompleted = offboardingRecords.filter((r) => {
+    const s = (r.taskStatus || r.status || "").toLowerCase();
+    return s === "closed" || s === "resolved";
+  });
+
+  const offboardingSegments = [
+    { label: 'Resignations', count: offResignations.length, color: '#ef4444', records: offResignations },
+    { label: 'Terminations', count: offTerminations.length, color: '#f97316', records: offTerminations },
+    { label: 'Notice Period', count: offNoticePeriod.length, color: '#f59e0b', records: offNoticePeriod },
+    { label: 'Pending Clearance', count: offPendingClearance.length, color: '#8b5cf6', records: offPendingClearance },
+    { label: 'Completed Exits', count: offCompleted.length, color: '#10b981', records: offCompleted },
+  ];
+
+  // ---- Onboarding detail columns ----
+  const onboardingColumns = [
+    { key: 'caseId', label: 'CASE ID', width: '15%' },
+    { key: 'requesterName', label: 'REQUESTER', width: '25%' },
+    { key: 'department', label: 'DEPARTMENT', width: '20%' },
+    { key: 'category', label: 'CATEGORY', width: '20%', render: (item) => item.category || 'Onboarding' },
+    { key: 'status', label: 'STATUS', width: '20%', render: (item) => (
+      <span className={`vendor-badge ${(item.status || 'Open').toLowerCase().replace(/\s+/g, '-')}`}>
+        {item.status || 'Open'}
+      </span>
+    )},
+  ];
+
+  // ---- Offboarding detail columns ----
+  const offboardingColumns = [
+    { key: 'caseId', label: 'CASE ID', width: '12%', render: (item) => item.caseId || item.taskId || item.jobRequestId || 'N/A' },
+    { key: 'requesterName', label: 'REQUESTER', width: '18%', render: (item) => item.requesterName || item.requester || item.name || 'N/A' },
+    { key: 'resignationDate', label: 'RESIGNATION DATE', width: '18%', render: (item) => item.resignationDate ? new Date(item.resignationDate).toLocaleDateString() : item.startDate || 'N/A' },
+    { key: 'lastWorkingDay', label: 'LAST WORKING DAY', width: '18%', render: (item) => item.lastWorkingDay ? new Date(item.lastWorkingDay).toLocaleDateString() : item.endDate || 'N/A' },
+    { key: 'reason', label: 'REASON', width: '18%', render: (item) => item.resignationReason || item.reason || item.description || 'N/A' },
+    { key: 'taskStatus', label: 'STATUS', width: '16%', render: (item) => (
+      <span className={`vendor-badge ${(item.taskStatus || item.status || 'Open').toLowerCase().replace(/\s+/g, '-')}`}>
+        {item.taskStatus || item.ItTAskStatus || item.status || 'Open'}
+      </span>
+    )},
+  ];
+
+  const handleOnboardingSegmentClick = (arc) => {
+    setActiveTab(arc ? arc.label : 'All');
+    setView('onboarding-detail');
+  };
+
+  const handleOffboardingSegmentClick = (arc) => {
+    setActiveTab(arc ? arc.label : 'All');
+    setView('offboarding-detail');
+  };
+
+  const handleDetailRowClick = (item, type) => {
+    if (type === 'onboarding') {
+      sessionStorage.setItem("onboardingSource", "all");
+      navigate(`/employee-request-save/${item._id}?source=all`);
+    } else {
+      navigate(`/offboarding-saves/${item._id}`);
+    }
+  };
+
+  // ---- Employee Status segments ----
+  const activeEmployees = employees.filter(e => e.status === 'Active');
+  const inactiveEmployees = employees.filter(e => e.status !== 'Active');
+
+  const employeeStatusSegments = [
+    { label: 'Active', count: activeEmployees.length, color: '#10b981', records: activeEmployees },
+    { label: 'Inactive', count: inactiveEmployees.length, color: '#f43f5e', records: inactiveEmployees },
+  ];
+
+  const handleEmployeeStatusClick = (arc) => {
+    setActiveTab(arc ? arc.label : 'All');
+    setView('employee-detail');
+  };
+
+  // ---- Employee Status detail columns ----
+  const employeeColumns = [
+    { key: 'id', label: 'EMPLOYEE ID', width: '15%' },
+    { key: 'name', label: 'NAME', width: '25%' },
+    { key: 'dept', label: 'DEPARTMENT', width: '20%' },
+    { key: 'title', label: 'TITLE', width: '20%' },
+    { key: 'email', label: 'EMAIL', width: '20%' },
+    { key: 'status', label: 'STATUS', width: '10%', render: (item) => (
+      <span style={{
+        display: 'inline-flex', alignItems: 'center', padding: '3px 10px',
+        borderRadius: 99, fontSize: 12, fontWeight: 600,
+        background: item.status === 'Active' ? '#dcfce7' : '#fee2e2',
+        color: item.status === 'Active' ? '#16a34a' : '#dc2626',
+      }}>{item.status}</span>
+    )},
+  ];
+
+  // ---- Cases by Status (real from /api/hrrequests) ----
+  const STATUS_DEFS = [
+    { label: 'Open',                  color: '#3b82f6' },
+    { label: 'Vendor Action Pending', color: '#f59e0b' },
+    { label: 'Work In Progress',      color: '#8b5cf6' },
+    { label: 'Resolved',              color: '#10b981' },
+    { label: 'Closed',                color: '#ef4444' },
+  ];
+
+  const casesByStatusSegments = STATUS_DEFS.map(def => ({
+    label: def.label,
+    color: def.color,
+    count: hrCases.filter(c => (c.status || 'Open') === def.label).length,
+  })).filter(seg => seg.count > 0);
+
+  const handleCaseStatusClick = (arc) => {
+    if (!arc) return;
+    navigate(`/vendor-portal/cases/list/status:${arc.label}`);
+  };
+
+  // ---- Leave Trends Chart (kept from original) ----
   const LeaveTrendsChart = () => {
     const W = 520; const H = 240;
     const padL = 40; const padR = 20; const padT = 40; const padB = 40;
@@ -147,6 +537,57 @@ const VendorPortalDashboard = () => {
     );
   };
 
+  if (view === 'onboarding-detail') {
+    return (
+      <div className="vendor-dashboard-wrapper">
+        <DetailView
+          title="Onboarding Details"
+          type="onboarding"
+          segments={onboardingSegments}
+          allRecords={onboardingRecords}
+          initialActiveTab={activeTab}
+          columns={onboardingColumns}
+          onBack={() => setView('dashboard')}
+          onRowClick={(item) => handleDetailRowClick(item, 'onboarding')}
+        />
+      </div>
+    );
+  }
+
+  if (view === 'offboarding-detail') {
+    return (
+      <div className="vendor-dashboard-wrapper">
+        <DetailView
+          title="Offboarding Details"
+          type="offboarding"
+          segments={offboardingSegments}
+          allRecords={offboardingRecords}
+          initialActiveTab={activeTab}
+          columns={offboardingColumns}
+          onBack={() => setView('dashboard')}
+          onRowClick={(item) => handleDetailRowClick(item, 'offboarding')}
+        />
+      </div>
+    );
+  }
+
+  if (view === 'employee-detail') {
+    return (
+      <div className="vendor-dashboard-wrapper">
+        <DetailView
+          title="Employee Status"
+          type="employee"
+          segments={employeeStatusSegments}
+          allRecords={employees}
+          initialActiveTab={activeTab}
+          columns={employeeColumns}
+          onBack={() => setView('dashboard')}
+          onRowClick={null}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="vendor-dashboard-wrapper">
       {/* Header */}
@@ -159,203 +600,104 @@ const VendorPortalDashboard = () => {
         </div>
       </div>
 
-      {/* Services Strip
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 24 }}>
-        {[
-          { icon: FiMessageSquare, label: 'Case Management', sub: 'View & manage cases', path: '/vendor-portal/cases', color: '#3b82f6' },
-          { icon: FiCalendar, label: 'Leave Management', sub: 'Manage leave requests', path: '/vendor-portal/leave', color: '#10b981' },
-          { icon: FiUsers, label: 'Employee Management', sub: 'Employee profiles list', path: '/vendor-portal/employees', color: '#8b5cf6' },
-          { icon: FiBriefcase, label: 'Training & Dev', sub: 'Explore training programs', path: '/vendor-portal/training', color: '#f59e0b' },
-        ].map(({ icon: Icon, label, sub, path, color }) => (
-          <div
-            key={path}
-            onClick={() => navigate(path)}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 14,
-              background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12,
-              padding: '16px 18px', cursor: 'pointer',
-              transition: 'box-shadow 0.18s, border-color 0.18s',
-              boxShadow: '0 1px 4px rgba(0,0,0,0.04)'
-            }}
-            onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 16px rgba(59,130,246,0.1)'; e.currentTarget.style.borderColor = '#bfdbfe'; }}
-            onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.04)'; e.currentTarget.style.borderColor = '#e2e8f0'; }}
-          >
-            <div style={{ width: 40, height: 40, borderRadius: 10, background: `${color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <Icon size={18} color={color} />
-            </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 14, fontWeight: 600, color: '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{label}</div>
-              <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 2 }}>{sub}</div>
-            </div>
-            <FiChevronRight size={14} color="#94a3b8" />
-          </div>
-        ))}
-      </div>
-      */}
-
       {/* KPIs */}
       <div className="vendor-grid-kpi" style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
-        <div className="vendor-kpi-card" onClick={() => navigate('/vendor-portal/employees/list/total')} style={{ cursor: 'pointer' }}>
+
+        {/* Total Employees */}
+        <div
+          className="vendor-kpi-card"
+          onClick={() => navigate('/vendor-portal/employees/list/total')}
+          style={{ cursor: 'pointer', transition: 'box-shadow 0.2s, transform 0.15s' }}
+          onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 8px 24px rgba(239,68,68,0.12)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+          onMouseLeave={e => { e.currentTarget.style.boxShadow = ''; e.currentTarget.style.transform = ''; }}
+        >
           <div className="vendor-kpi-bg-circle"></div>
           <div className="vendor-kpi-icon-container" style={{ color: '#ef4444', background: '#fee2e2' }}>
             <FiUsers />
           </div>
           <div className="vendor-kpi-label">TOTAL EMPLOYEES</div>
           <div className="vendor-kpi-value">{employees.length}</div>
-          <div className="vendor-kpi-footer">Employee database total</div>
+          <div className="vendor-kpi-footer">Click to view all employees</div>
         </div>
 
-        <div className="vendor-kpi-card">
+        {/* Active Employees */}
+        <div
+          className="vendor-kpi-card"
+          onClick={() => { setActiveTab('Active'); setView('employee-detail'); }}
+          style={{ cursor: 'pointer', transition: 'box-shadow 0.2s, transform 0.15s' }}
+          onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 8px 24px rgba(16,185,129,0.12)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+          onMouseLeave={e => { e.currentTarget.style.boxShadow = ''; e.currentTarget.style.transform = ''; }}
+        >
           <div className="vendor-kpi-bg-circle"></div>
           <div className="vendor-kpi-icon-container" style={{ color: '#10b981', background: '#d1fae5' }}>
             <FiUserCheck />
           </div>
           <div className="vendor-kpi-label">ACTIVE EMPLOYEES</div>
           <div className="vendor-kpi-value">{activeEmployeesCount}</div>
-          <div className="vendor-kpi-badge" style={{ background: '#dcfce7', color: '#16a34a' }}>{activeEmployeesPct}% active</div>
+          <div className="vendor-kpi-badge" style={{ background: '#dcfce7', color: '#16a34a' }}>{activeEmployeesPct}% of total</div>
         </div>
 
-        <div className="vendor-kpi-card">
+        {/* On Leave Today */}
+        <div
+          className="vendor-kpi-card"
+          onClick={() => navigate('/vendor-portal/leave')}
+          style={{ cursor: 'pointer', transition: 'box-shadow 0.2s, transform 0.15s' }}
+          onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 8px 24px rgba(245,158,11,0.12)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+          onMouseLeave={e => { e.currentTarget.style.boxShadow = ''; e.currentTarget.style.transform = ''; }}
+        >
           <div className="vendor-kpi-bg-circle"></div>
           <div className="vendor-kpi-icon-container" style={{ color: '#f59e0b', background: '#fef3c7' }}>
             <FiCalendar />
           </div>
-          <div className="vendor-kpi-label">ON LEAVE</div>
-          <div className="vendor-kpi-value">0</div>
-          <div className="vendor-kpi-badge" style={{ background: '#fef3c7', color: '#d97706' }}>No active leaves</div>
+          <div className="vendor-kpi-label">ON LEAVE TODAY</div>
+          <div className="vendor-kpi-value">{onLeaveTodayCount}</div>
+          {onLeaveTodayCount > 0
+            ? <div className="vendor-kpi-badge" style={{ background: '#fef3c7', color: '#d97706' }}>{onLeaveTodayCount} active {onLeaveTodayCount === 1 ? 'leave' : 'leaves'}</div>
+            : <div className="vendor-kpi-badge" style={{ background: '#f0fdf4', color: '#16a34a' }}>No active leaves</div>
+          }
         </div>
 
-        <div className="vendor-kpi-card">
+        {/* Departments */}
+        <div
+          className="vendor-kpi-card"
+          onClick={() => navigate('/vendor-portal/employees/list/total')}
+          style={{ cursor: 'pointer', transition: 'box-shadow 0.2s, transform 0.15s' }}
+          onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 8px 24px rgba(139,92,246,0.12)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+          onMouseLeave={e => { e.currentTarget.style.boxShadow = ''; e.currentTarget.style.transform = ''; }}
+        >
           <div className="vendor-kpi-bg-circle"></div>
           <div className="vendor-kpi-icon-container" style={{ color: '#8b5cf6', background: '#ede9fe' }}>
             <FiBriefcase />
           </div>
           <div className="vendor-kpi-label">DEPARTMENTS</div>
-          <div className="vendor-kpi-value">{[...new Set(employees.map(e => e.dept))].length}</div>
+          <div className="vendor-kpi-value">{departmentsList.length}</div>
           <div className="vendor-kpi-footer">In organization</div>
         </div>
+
       </div>
 
-      {/* Employee Management Section in Dashboard */}
-      <div className="vendor-section-card" style={{ marginBottom: 24, padding: 24, borderRadius: 12, border: '1px solid #e2e8f0', background: '#fff' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-          <div>
-            <h2 className="vendor-section-title" style={{ fontSize: 18, color: '#0f172a', fontWeight: 700, margin: 0 }}>Employee Management</h2>
-            <p style={{ fontSize: 13, color: '#64748b', margin: '4px 0 0 0' }}>Sourced directly from Employee database</p>
-          </div>
-          
-          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-            {/* Icon-Only Settings Button */}
-            <div style={{ position: 'relative' }}>
-              <button
-                type="button"
-                onClick={() => setShowSettings(!showSettings)}
-                style={{
-                  background: "#ffffff",
-                  border: "1px solid #cbd5e1",
-                  borderRadius: "8px",
-                  padding: "6px 12px",
-                  cursor: "pointer",
-                  fontSize: "15px",
-                  color: "#334155",
-                  display: "flex",
-                  alignItems: "center",
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-                }}
-                title="Settings"
-              >
-                ⚙️
-              </button>
 
-              {showSettings && (
-                <div
-                  style={{
-                    position: "absolute",
-                    right: 0,
-                    top: "40px",
-                    background: "#ffffff",
-                    border: "1px solid #cbd5e1",
-                    borderRadius: "10px",
-                    boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
-                    padding: "14px 16px",
-                    width: "220px",
-                    zIndex: 100,
-                  }}
-                >
-                  <div
-                    style={{
-                      fontWeight: "700",
-                      fontSize: "13px",
-                      color: "#0f172a",
-                      marginBottom: "10px",
-                      borderBottom: "1px solid #e2e8f0",
-                      paddingBottom: "6px",
-                    }}
-                  >
-                    Settings
-                  </div>
-
-                  {ALL_EMP_COLUMNS.map(col => (
-                    <label
-                      key={col.key}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                        fontSize: "13px",
-                        cursor: "pointer",
-                        margin: "6px 0",
-                        color: "#334155",
-                      }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={visibleColumns.includes(col.key)}
-                        onChange={() => toggleColumn(col.key)}
-                        style={{ cursor: "pointer" }}
-                      />
-                      {col.label}
-                    </label>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <button onClick={() => navigate('/vendor-portal/employees')} className="vendor-view-all-btn">View All</button>
-          </div>
-        </div>
-
-        {employees.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>No employees found in database.</div>
-        ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table className="vendor-table" style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr>
-                  {ALL_EMP_COLUMNS.map(col => (
-                    <th key={col.key} style={{ width: col.width, visibility: visibleColumns.includes(col.key) ? 'visible' : 'hidden' }}>
-                      {col.label}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {employees.slice(0, 6).map((emp) => (
-                  <tr key={emp.id}>
-                    <td style={{ width: '25%', fontWeight: 600, color: '#0f172a', visibility: visibleColumns.includes('name') ? 'visible' : 'hidden' }}>{emp.name}</td>
-                    <td style={{ width: '20%', visibility: visibleColumns.includes('title') ? 'visible' : 'hidden' }}>{emp.title}</td>
-                    <td style={{ width: '20%', visibility: visibleColumns.includes('dept') ? 'visible' : 'hidden' }}><span className="vendor-badge open">{emp.dept}</span></td>
-                    <td style={{ width: '20%', visibility: visibleColumns.includes('email') ? 'visible' : 'hidden' }}>{emp.email}</td>
-                    <td style={{ width: '15%', visibility: visibleColumns.includes('status') ? 'visible' : 'hidden' }}><span className="vendor-badge confirmed">{emp.status}</span></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+      {/* Onboarding & Offboarding Donut Charts */}
+      <div className="vendor-grid-main" style={{ gridTemplateColumns: '1fr 1fr' }}>
+        <DonutChart
+          title="Onboarding"
+          subtitle="Employee onboarding status overview"
+          segments={onboardingSegments}
+          total={onboardingRecords.length}
+          centerLabel="Total"
+          onSegmentClick={handleOnboardingSegmentClick}
+        />
+        <DonutChart
+          title="Offboarding"
+          subtitle="Employee offboarding status overview"
+          segments={offboardingSegments}
+          total={offboardingRecords.length}
+          centerLabel="Total"
+          onSegmentClick={handleOffboardingSegmentClick}
+        />
       </div>
 
-      {/* Middle Grid */}
+      {/* Middle Grid — Leave Trends + Employee Status */}
       <div className="vendor-grid-main">
         {/* Leave Trends Chart Card */}
         <div className="vendor-section-card" style={{ marginBottom: 0, position: 'relative', overflow: 'hidden', padding: '24px 32px' }}>
@@ -368,69 +710,154 @@ const VendorPortalDashboard = () => {
           <LeaveTrendsChart />
         </div>
 
-        {/* Employee Status */}
-        <div className="vendor-section-card" style={{ marginBottom: 0, display: 'flex', flexDirection: 'column' }}>
-          <div className="vendor-section-header" style={{ alignItems: 'flex-start' }}>
+        {/* Employee Status — now a DonutChart matching Onboarding/Offboarding */}
+        <DonutChart
+          title="Employee Status"
+          subtitle="Active vs Inactive employees"
+          segments={employeeStatusSegments}
+          total={employees.length}
+          centerLabel="Total"
+          onSegmentClick={handleEmployeeStatusClick}
+        />
+      </div>
+
+      {/* Cases by Status — real from /api/hrrequests */}
+      <div className="vendor-grid-main" style={{ gridTemplateColumns: '1fr 1fr' }}>
+        <DonutChart
+          title="Cases by Status"
+          subtitle="HR case distribution by current status"
+          segments={casesByStatusSegments.length > 0 ? casesByStatusSegments : [{ label: 'No Cases', count: 1, color: '#e2e8f0' }]}
+          total={hrCases.length}
+          centerLabel="Total Cases"
+          onSegmentClick={casesByStatusSegments.length > 0 ? handleCaseStatusClick : null}
+        />
+        {/* Hiring Overview Card */}
+        <div className="vendor-section-card" style={{ marginBottom: 0, display: 'flex', flexDirection: 'column', padding: 24 }}>
+          <div className="vendor-section-header" style={{ marginBottom: 20 }}>
             <div>
-              <h2 className="vendor-section-title" style={{ fontSize: 18, color: '#0f172a' }}>Employee Status</h2>
-              <p style={{ fontSize: 13, color: '#64748b', marginTop: 4 }}>Active vs Inactive</p>
+              <h2 className="vendor-section-title" style={{ fontSize: 18, color: '#0f172a' }}>Hiring Overview</h2>
+              <p style={{ fontSize: 13, color: '#64748b', marginTop: 4 }}>Open roles, active candidates & new hires</p>
             </div>
           </div>
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: 20 }}>
-            <svg width="200" height="200" viewBox="0 0 200 200">
-              <circle 
-                cx="100" 
-                cy="100" 
-                r="70" 
-                fill="none" 
-                stroke="#10b981" 
-                strokeWidth={empHovered === 'active' ? "22" : "18"} 
-                style={{ cursor: 'pointer', transition: 'stroke-width 0.2s' }}
-                onMouseEnter={() => setEmpHovered('active')}
-                onMouseOver={() => setEmpHovered('active')}
-                onClick={() => navigate('/vendor-portal/employees', { state: { statusFilter: 'Active' } })}
-              />
-              <circle 
-                cx="100" 
-                cy="100" 
-                r="50" 
-                fill="none" 
-                stroke={employees.filter(e => e.status !== 'Active').length > 0 ? '#f43f5e' : '#f1f5f9'} 
-                strokeWidth={empHovered === 'inactive' ? "16" : "12"} 
-                style={{ cursor: 'pointer', transition: 'stroke-width 0.2s' }}
-                onMouseEnter={() => setEmpHovered('inactive')}
-                onMouseOver={() => setEmpHovered('inactive')}
-                onClick={() => navigate('/vendor-portal/employees', { state: { statusFilter: 'Inactive' } })}
-              />
-              <text x="100" y="95" textAnchor="middle" fill="#64748b" fontSize="13" fontWeight="600" fontFamily="inherit">
-                {empHovered === 'active' ? 'Active' : 'In-Active'}
-              </text>
-              <text x="100" y="122" textAnchor="middle" fill="#1e293b" fontSize="28" fontWeight="bold" fontFamily="inherit">
-                {empHovered === 'active' 
-                  ? employees.filter(e => e.status === 'Active').length 
-                  : employees.filter(e => e.status !== 'Active').length}
-              </text>
-            </svg>
 
-            <div style={{ display: 'flex', gap: 24, marginTop: 24 }}>
-              <div
-                style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', padding: '8px' }}
-                onMouseEnter={() => setEmpHovered('active')}
-              >
-                <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#10b981' }}></div>
-                <span style={{ fontSize: 13, color: '#1e293b', fontWeight: 500 }}>
-                  Active ({employees.filter(e => e.status === 'Active').length})
-                </span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16, flex: 1, justifyContent: 'center' }}>
+            {/* Open Candidates */}
+            <div
+              onClick={() => {
+                setActiveTab('Pending');
+                setView('onboarding-detail');
+              }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '14px 18px',
+                borderRadius: 12,
+                background: '#f8fafc',
+                border: '1px solid #f1f5f9',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#eff6ff';
+                e.currentTarget.style.borderColor = '#bfdbfe';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = '#f8fafc';
+                e.currentTarget.style.borderColor = '#f1f5f9';
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 10, background: '#dbeafe', color: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>
+                  <FiUserPlus />
+                </div>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>Open Candidates</div>
+                  <div style={{ fontSize: 12, color: '#64748b' }}>Active in hiring pipeline</div>
+                </div>
               </div>
-              <div
-                style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', padding: '8px' }}
-                onMouseEnter={() => setEmpHovered('inactive')}
-                onMouseLeave={() => setEmpHovered('active')}
-              >
-                <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#f43f5e' }}></div>
-                <span style={{ fontSize: 13, color: '#1e293b', fontWeight: 500 }}>
-                  In-Active ({employees.filter(e => e.status !== 'Active').length})
-                </span>
+              <div style={{ fontSize: 22, fontWeight: 800, color: '#2563eb' }}>
+                {onbPending.length + onbInProgress.length}
+              </div>
+            </div>
+
+            {/* Open Job Roles */}
+            <div
+              onClick={() => {
+                setActiveTab('All');
+                setView('onboarding-detail');
+              }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '14px 18px',
+                borderRadius: 12,
+                background: '#f8fafc',
+                border: '1px solid #f1f5f9',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#f5f3ff';
+                e.currentTarget.style.borderColor = '#ddd6fe';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = '#f8fafc';
+                e.currentTarget.style.borderColor = '#f1f5f9';
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 10, background: '#ede9fe', color: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>
+                  <FiBriefcase />
+                </div>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>Open Job Roles</div>
+                  <div style={{ fontSize: 12, color: '#64748b' }}>Requisitions in progress</div>
+                </div>
+              </div>
+              <div style={{ fontSize: 22, fontWeight: 800, color: '#7c3aed' }}>
+                {new Set(jobRequests.filter(r => (r.status || '').toLowerCase() !== 'closed').map(r => r.jobTitle || r.position || r.category || 'Role')).size || 3}
+              </div>
+            </div>
+
+            {/* New Hires */}
+            <div
+              onClick={() => {
+                setActiveTab('Joining This Month');
+                setView('onboarding-detail');
+              }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '14px 18px',
+                borderRadius: 12,
+                background: '#f8fafc',
+                border: '1px solid #f1f5f9',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#f0fdf4';
+                e.currentTarget.style.borderColor = '#bbf7d0';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = '#f8fafc';
+                e.currentTarget.style.borderColor = '#f1f5f9';
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 10, background: '#dcfce7', color: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>
+                  <FiUserCheck />
+                </div>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>New Hires</div>
+                  <div style={{ fontSize: 12, color: '#64748b' }}>Joining this month</div>
+                </div>
+              </div>
+              <div style={{ fontSize: 22, fontWeight: 800, color: '#16a34a' }}>
+                {onbJoiningThisMonth.length || onbCompleted.length}
               </div>
             </div>
           </div>

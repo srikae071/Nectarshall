@@ -23,9 +23,20 @@ body {
   display: flex;
 }
 .logoimage {
-  width: 92px;
-  height: 44px;
-  margin-bottom: -16px;
+  width: 80px;
+  height: 38px;
+  margin-bottom: 0px;
+  object-fit: contain;
+}
+.operationslogoname {
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+}
+.operationslogoname p {
+  margin: 0;
+  padding: 0;
+  line-height: 1;
 }
 .nav-links {
   display: flex;
@@ -641,12 +652,12 @@ body.theme-green .MyTaskNotificationWrapper a {
   align-items: center !important;
   gap: 10px !important;
   cursor: pointer !important;
-  height: 38px !important;
+  height: 28px !important;
   color: #ffffff !important;
 }
 
 .hrmslogoimage {
-  width: 92px !important;
+  width: 80px !important;
   height: 38px !important;
   object-fit: contain !important;
   flex-shrink: 0 !important;
@@ -655,8 +666,8 @@ body.theme-green .MyTaskNotificationWrapper a {
 .navbarModuleLabel {
   font-size: 16px !important;
   font-weight: 800 !important;
-  height: 38px !important;
-  line-height: 38px !important;
+  height: 28px !important;
+  line-height: 28px !important;
   display: inline-flex !important;
   align-items: center !important;
   color: #ea4104 !important;
@@ -670,8 +681,8 @@ body.theme-green .MyTaskNotificationWrapper a {
 .navname p {
   margin: 0 !important;
   padding: 0 !important;
-  line-height: 38px !important;
-  height: 38px !important;
+  line-height: 28px !important;
+  height: 28px !important;
   display: inline-flex !important;
   align-items: center !important;
   font-size: 16px !important;
@@ -688,9 +699,7 @@ body.theme-green .hrmsnavbar {
 }
 
 [data-theme="green"] .navbarModuleLabel,
-body.theme-green .navbarModuleLabel,
-[data-theme="green"] .navname p,
-body.theme-green .navname p {
+body.theme-green .navbarModuleLabel {
   color: #047857 !important;
 }
 
@@ -752,9 +761,7 @@ body.theme-white .menuHeader:hover {
 }
 
 [data-theme="white"] .navbarModuleLabel,
-body.theme-white .navbarModuleLabel,
-[data-theme="white"] .navname p,
-body.theme-white .navname p {
+body.theme-white .navbarModuleLabel {
   color: #0284c7 !important;
 }
 

@@ -26,7 +26,7 @@
   margin-top: 10px;
 }
 .deliverable-field input {
-  height: 38px;
+  height: 28px;
   padding: 8px 10px;
   border: 1px solid #d6d6d6;
   border-radius: 6px;
@@ -42,7 +42,7 @@
   display: flex;
   gap: 25px;
   align-items: center;
-  height: 38px;
+  height: 28px;
 }
 
 .radio-group label {
@@ -100,7 +100,7 @@
 .add-contract-btn,
 .delete-contract-btn {
   min-width: 180px;
-  height: 38px;
+  height: 28px;
   padding: 0 16px;
   border: 1px solid #cfd4dc;
   border-radius: 6px;
@@ -158,7 +158,7 @@
 .service-container .deliverable-field input,
 .service-container .deliverable-field select {
   width: 100%;
-  height: 38px;
+  height: 28px;
   padding: 8px 10px;
   border: 1px solid #cfcfcf;
   border-radius: 4px;

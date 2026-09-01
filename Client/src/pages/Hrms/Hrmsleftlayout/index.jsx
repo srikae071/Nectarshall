@@ -257,7 +257,6 @@ const DashboardNavTabs = () => {
       style={{
         display: "flex",
         alignItems: "center",
-        justifyContent: "flex-start",
         padding: "0 40px",
         height: "56px",
         background: "#ffffff",
@@ -267,10 +266,8 @@ const DashboardNavTabs = () => {
         boxSizing: "border-box",
       }}
     >
-
-
-      {/* Nav Tabs with Icons */}
-      <div style={{ display: "flex", gap: "36px", alignItems: "center" }}>
+      {/* Nav Tabs with Icons - evenly distributed */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
         {navItems.map((item) => {
           const active = isActive(item.path);
           const Icon = item.icon;

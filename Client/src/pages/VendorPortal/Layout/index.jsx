@@ -72,9 +72,9 @@ const VendorPortalLayout = ({ children }) => {
 
       {/* Main Content */}
       <div className="vendor-main-content">
-        <div className="vendor-top-header" style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', padding: '0 40px', height: '56px', width: '100%', boxSizing: 'border-box', background: '#ffffff', borderBottom: '1px solid #e2e8f0' }}>
+        <div className="vendor-top-header" style={{ display: 'flex', alignItems: 'center', padding: '0 40px', height: '56px', width: '100%', boxSizing: 'border-box', background: '#ffffff', borderBottom: '1px solid #e2e8f0' }}>
 
-          <div style={{ display: 'flex', gap: '36px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
             <div 
               onClick={() => navigate('/regular-form')} 
               style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '14.5px', fontWeight: isActive('/regular-form') ? 600 : 500, color: isActive('/regular-form') ? '#2563eb' : '#64748b', borderBottom: isActive('/regular-form') ? '2.5px solid #2563eb' : '2.5px solid transparent', padding: '16px 4px 14px 4px' }}
@@ -90,18 +90,18 @@ const VendorPortalLayout = ({ children }) => {
               <span>Case Management</span>
             </div>
             <div 
-              onClick={() => navigate('/vendor-portal/leave')} 
-              style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '14.5px', fontWeight: isActive('/vendor-portal/leave') ? 600 : 500, color: isActive('/vendor-portal/leave') ? '#2563eb' : '#64748b', borderBottom: isActive('/vendor-portal/leave') ? '2.5px solid #2563eb' : '2.5px solid transparent', padding: '16px 4px 14px 4px' }}
-            >
-              <FiCalendar size={16} />
-              <span>Leave Management</span>
-            </div>
-            <div 
               onClick={() => navigate('/vendor-portal/employees')} 
               style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '14.5px', fontWeight: isActive('/vendor-portal/employees') ? 600 : 500, color: isActive('/vendor-portal/employees') ? '#2563eb' : '#64748b', borderBottom: isActive('/vendor-portal/employees') ? '2.5px solid #2563eb' : '2.5px solid transparent', padding: '16px 4px 14px 4px' }}
             >
               <FiUsers size={16} />
               <span>Employee Management</span>
+            </div>
+            <div 
+              onClick={() => navigate('/vendor-portal/leave')} 
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '14.5px', fontWeight: isActive('/vendor-portal/leave') ? 600 : 500, color: isActive('/vendor-portal/leave') ? '#2563eb' : '#64748b', borderBottom: isActive('/vendor-portal/leave') ? '2.5px solid #2563eb' : '2.5px solid transparent', padding: '16px 4px 14px 4px' }}
+            >
+              <FiCalendar size={16} />
+              <span>Leave Management</span>
             </div>
             <div 
               onClick={() => navigate('/vendor-portal/training')} 

@@ -543,7 +543,20 @@ const VendorCaseManagement = () => {
                 const colors = ['#ea4104', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
                 const barColor = colors[idx % colors.length];
                 return (
-                  <div key={cat.label} style={{ display: 'flex', alignItems: 'center' }}>
+                  <div 
+                    key={cat.label} 
+                    onClick={() => navigate(`/vendor-portal/cases/list/category:${encodeURIComponent(cat.label)}`)}
+                    style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      cursor: 'pointer', 
+                      padding: '6px 8px', 
+                      borderRadius: 8, 
+                      transition: 'all 0.15s ease' 
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.transform = 'translateX(2px)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.transform = 'translateX(0)'; }}
+                  >
                     <div style={{ width: 110, fontSize: 13, color: '#0f172a', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{cat.label}</div>
                     <div style={{ flex: 1, height: 10, background: '#f1f5f9', borderRadius: 5, margin: '0 16px', overflow: 'hidden' }}>
                       <div style={{ width: cat.w, height: '100%', background: barColor, borderRadius: 5 }}></div>
@@ -566,171 +579,35 @@ const VendorCaseManagement = () => {
               { label: 'Low', count: priorityCounts.Low, color: '#16a34a', bg: '#f0fdf4' },
               { label: 'No Priority', count: priorityCounts['No Priority'], color: '#64748b', bg: '#f1f5f9' },
             ].map(p => (
-              <div key={p.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderRadius: 8, background: p.bg }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: p.color }}></div>
+              <div 
+                key={p.label} 
+                onClick={() => navigate(`/vendor-portal/cases/list/priority:${encodeURIComponent(p.label)}`)}
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justify: 'space-between', 
+                  padding: '12px 16px', 
+                  borderRadius: 8, 
+                  background: p.bg, 
+                  cursor: 'pointer', 
+                  transition: 'all 0.15s ease' 
+                }}
+                onMouseEnter={e => { e.currentTarget.style.opacity = '0.85'; e.currentTarget.style.transform = 'translateX(2px)'; }}
+                onMouseLeave={e => { e.currentTarget.style.opacity = '1'; e.currentTarget.style.transform = 'translateX(0)'; }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1 }}>
+                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: p.color, flexShrink: 0 }}></div>
                   <span style={{ fontSize: 14, fontWeight: 600, color: '#0f172a' }}>{p.label}</span>
                 </div>
-                <span style={{ fontSize: 14, fontWeight: 700, color: p.color }}>{p.count} case{p.count !== 1 ? 's' : ''}</span>
+                <span style={{ fontSize: 14, fontWeight: 700, color: p.color, marginLeft: '16px', flexShrink: 0 }}>
+                  {p.count} case{p.count !== 1 ? 's' : ''}
+                </span>
               </div>
             ))}
           </div>
         </div>
+
       </div>
-
-      {/* Cases List */}
-      <div style={{ background: '#fff', border: '1px solid #f1f5f9', borderRadius: 12, padding: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.02)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-          <div>
-            <h2 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a', margin: 0 }}>All HR Cases</h2>
-            <p style={{ fontSize: 12, color: '#64748b', margin: '4px 0 0 0' }}>Showing High priority and Open cases</p>
-          </div>
-          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-            {/* Settings Icon Only Dropdown Button */}
-            <div style={{ position: 'relative' }}>
-              <button
-                type="button"
-                onClick={() => setShowSettings(!showSettings)}
-                style={{
-                  background: "#ffffff",
-                  border: "1px solid #cbd5e1",
-                  borderRadius: "8px",
-                  padding: "6px 12px",
-                  cursor: "pointer",
-                  fontSize: "15px",
-                  color: "#334155",
-                  display: "flex",
-                  alignItems: "center",
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-                }}
-                title="Settings"
-              >
-                ⚙️
-              </button>
-
-              {showSettings && (
-                <div
-                  style={{
-                    position: "absolute",
-                    right: 0,
-                    top: "40px",
-                    background: "#ffffff",
-                    border: "1px solid #cbd5e1",
-                    borderRadius: "10px",
-                    boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
-                    padding: "14px 16px",
-                    width: "220px",
-                    zIndex: 100,
-                  }}
-                >
-                  <div
-                    style={{
-                      fontWeight: "700",
-                      fontSize: "13px",
-                      color: "#0f172a",
-                      marginBottom: "10px",
-                      borderBottom: "1px solid #e2e8f0",
-                      paddingBottom: "6px",
-                    }}
-                  >
-                    Settings
-                  </div>
-
-                  {ALL_CASE_COLUMNS.map(col => (
-                    <label
-                      key={col.key}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "8px",
-                        fontSize: "13px",
-                        cursor: "pointer",
-                        margin: "6px 0",
-                        color: "#334155",
-                      }}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={visibleColumns.includes(col.key)}
-                        onChange={() => toggleColumn(col.key)}
-                        style={{ cursor: "pointer" }}
-                      />
-                      {col.label}
-                    </label>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <button onClick={() => navigate('/vendor-portal/cases/list/all')} style={{ padding: '8px 16px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 6, fontSize: 13, fontWeight: 600, color: '#475569', cursor: 'pointer' }}>View Detailed List</button>
-          </div>
-        </div>
-        
-        {loading ? (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>Loading cases from HR Request database...</div>
-        ) : filtered.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px', color: '#64748b' }}>No High priority or Open cases found in database.</div>
-        ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', tableLayout: 'fixed', borderCollapse: 'collapse', textAlign: 'left' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                  {ALL_CASE_COLUMNS.map(col => (
-                    <th
-                      key={col.key}
-                      style={{
-                        width: col.width,
-                        padding: '12px 16px',
-                        fontSize: 12,
-                        fontWeight: 600,
-                        color: '#94a3b8',
-                        textTransform: 'uppercase',
-                        textAlign: col.key === 'action' ? 'right' : 'left',
-                        visibility: visibleColumns.includes(col.key) ? 'visible' : 'hidden',
-                      }}
-                    >
-                      {col.label}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map(c => (
-                  <tr key={c.id} style={{ borderBottom: '1px solid #f1f5f9', transition: 'background 0.2s', cursor: 'pointer' }} onClick={() => setSelected(c)} onMouseEnter={e => e.currentTarget.style.background = '#f8fafc'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                    <td style={{ width: '15%', padding: '16px', fontSize: 13, fontWeight: 700, color: '#ea4104', visibility: visibleColumns.includes('id') ? 'visible' : 'hidden' }}>
-                      {c.id}
-                    </td>
-                    <td style={{ width: '16%', padding: '16px', fontSize: 13, color: '#0f172a', fontWeight: 600, visibility: visibleColumns.includes('requester') ? 'visible' : 'hidden' }}>
-                      {c.requester}
-                    </td>
-                    <td style={{ width: '15%', padding: '16px', fontSize: 13, color: '#475569', visibility: visibleColumns.includes('category') ? 'visible' : 'hidden' }}>
-                      {c.category}
-                    </td>
-                    <td style={{ width: '12%', padding: '16px', visibility: visibleColumns.includes('priority') ? 'visible' : 'hidden' }}>
-                      <PriorityBadge priority={c.priority} />
-                    </td>
-                    <td style={{ width: '12%', padding: '16px', fontSize: 13, color: '#475569', visibility: visibleColumns.includes('impact') ? 'visible' : 'hidden' }}>
-                      {c.impact}
-                    </td>
-                    <td style={{ width: '14%', padding: '16px', visibility: visibleColumns.includes('status') ? 'visible' : 'hidden' }}>
-                      <StatusBadge status={c.status} />
-                    </td>
-                    <td style={{ width: '14%', padding: '16px', fontSize: 13, color: '#475569', visibility: visibleColumns.includes('lastUpdate') ? 'visible' : 'hidden' }}>
-                      {fmtDate(c.lastUpdate)}
-                    </td>
-                    <td style={{ width: '10%', padding: '16px', textAlign: 'right', visibility: visibleColumns.includes('action') ? 'visible' : 'hidden' }}>
-                      <button style={{ background: 'none', border: 'none', color: '#ea4104', display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 13, cursor: 'pointer', fontWeight: 600 }}>
-                        <FiChevronRight size={14} /> View
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
       {selected && <CaseDetailDrawer c={selected} onClose={() => setSelected(null)} />}
     </div>
   );

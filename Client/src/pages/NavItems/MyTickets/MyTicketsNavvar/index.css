@@ -16,14 +16,14 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  height: 38px;
+  height: 28px;
   cursor: pointer;
   color: #ffffff;
 }
 
 .hrmslogoimage {
-  width: 92px;
-  height: 38px;
+  width: 65px;
+  height: 28px;
   object-fit: contain;
   flex-shrink: 0;
 }

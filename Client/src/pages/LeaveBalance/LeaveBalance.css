@@ -85,7 +85,7 @@
 
 .lr-input {
   width: 100%;
-  height: 38px;
+  height: 28px;
   padding: 0 12px;
   border: 1px solid #cbd5e1;
   border-radius: 6px;
@@ -198,7 +198,7 @@ select.lr-input {
 
 .lr-btn-cancel {
   padding: 0 20px;
-  height: 38px;
+  height: 28px;
   background-color: #ffffff;
   border: 1px solid #cbd5e1;
   border-radius: 6px;
@@ -218,7 +218,7 @@ select.lr-input {
 
 .lr-btn-submit {
   padding: 0 24px;
-  height: 38px;
+  height: 28px;
   background-color: #e52b2f;
   border: 1px solid #e52b2f;
   border-radius: 6px;

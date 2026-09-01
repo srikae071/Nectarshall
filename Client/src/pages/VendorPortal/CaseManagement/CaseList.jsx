@@ -89,13 +89,121 @@ const CaseList = () => {
     }
   };
 
+
+  const getPriorityLabel = (c) => {
+    const p = (c.priority || "").trim();
+    if (p.toLowerCase() === "high") return "High";
+    if (p.toLowerCase() === "medium") return "Medium";
+    if (p.toLowerCase() === "low") return "Low";
+    return "No Priority";
+  };
+
+  const isPriorityRoute =
+    filterType.toLowerCase().startsWith("priority") ||
+    ["high", "medium", "low", "no priority"].includes(filterType.toLowerCase());
+
+  const getInitialPriorityTab = () => {
+    const clean = filterType.replace(/^priority:/i, "").trim();
+    if (clean.toLowerCase() === "high") return "High";
+    if (clean.toLowerCase() === "medium") return "Medium";
+    if (clean.toLowerCase() === "low") return "Low";
+    if (clean.toLowerCase() === "no priority") return "No Priority";
+    return "High";
+  };
+
+  const [activePriorityTab, setActivePriorityTab] = useState(getInitialPriorityTab());
+
+  useEffect(() => {
+    if (isPriorityRoute) {
+      setActivePriorityTab(getInitialPriorityTab());
+    }
+  }, [filterType]);
+
+  const priorityCounts = React.useMemo(() => {
+    return {
+      High: cases.filter((c) => getPriorityLabel(c) === "High").length,
+      Medium: cases.filter((c) => getPriorityLabel(c) === "Medium").length,
+      Low: cases.filter((c) => getPriorityLabel(c) === "Low").length,
+      "No Priority": cases.filter((c) => getPriorityLabel(c) === "No Priority").length,
+    };
+  }, [cases]);
+
+  const priorityTabs = [
+    { label: "High", count: priorityCounts.High },
+    { label: "Medium", count: priorityCounts.Medium },
+    { label: "Low", count: priorityCounts.Low },
+    { label: "No Priority", count: priorityCounts["No Priority"] },
+  ];
+
+  const isCategoryRoute = filterType.toLowerCase().startsWith("category:");
+
+  const getInitialCategoryTab = () => {
+    return filterType.replace(/^category:/i, "").trim() || "All";
+  };
+
+  const [activeCategoryTab, setActiveCategoryTab] = useState(getInitialCategoryTab());
+
+  useEffect(() => {
+    if (isCategoryRoute) {
+      setActiveCategoryTab(getInitialCategoryTab());
+    }
+  }, [filterType]);
+
+  const categoryTabs = React.useMemo(() => {
+    const catMap = {};
+    cases.forEach((c) => {
+      const cat = c.category || "General";
+      catMap[cat] = (catMap[cat] || 0) + 1;
+    });
+    const tabs = Object.entries(catMap).map(([label, count]) => ({ label, count }));
+    return [{ label: "All", count: cases.length }, ...tabs];
+  }, [cases]);
+
+  const isStatusRoute = filterType.toLowerCase().startsWith("status:");
+
+  const getInitialStatusTab = () => {
+    return filterType.replace(/^status:/i, "").trim() || "Open";
+  };
+
+  const [activeStatusTab, setActiveStatusTab] = useState(getInitialStatusTab());
+
+  useEffect(() => {
+    if (isStatusRoute) {
+      setActiveStatusTab(getInitialStatusTab());
+    }
+  }, [filterType]);
+
+  const STATUS_TABS = ["Open", "Vendor Action Pending", "Work In Progress", "Resolved", "Closed"];
+
+  const statusCounts = React.useMemo(() => {
+    const map = {};
+    STATUS_TABS.forEach(s => { map[s] = cases.filter(c => (c.status || "Open") === s).length; });
+    return map;
+  }, [cases]);
+
   const displayCases = cases.filter((c) => {
+    if (isPriorityRoute) {
+      return getPriorityLabel(c) === activePriorityTab;
+    }
+    if (isCategoryRoute) {
+      if (activeCategoryTab === "All") return true;
+      return (c.category || "General").toLowerCase() === activeCategoryTab.toLowerCase();
+    }
+    if (isStatusRoute) {
+      return (c.status || "Open") === activeStatusTab;
+    }
     if (filterType.toLowerCase() === "all") return true;
     if (filterType.toLowerCase() === "in progress") {
-      return c.status.toLowerCase().includes("progress") || c.status.toLowerCase().includes("pending");
+      return (
+        c.status.toLowerCase().includes("progress") ||
+        c.status.toLowerCase().includes("pending")
+      );
     }
     if (filterType.toLowerCase() === "resolved") {
-      return c.status.toLowerCase() === "resolved" || c.status.toLowerCase() === "closed";
+      return (
+        c.status.toLowerCase() === "resolved" ||
+        c.status.toLowerCase() === "closed"
+      );
     }
     return c.status.toLowerCase() === filterType.toLowerCase();
   });
@@ -111,11 +219,15 @@ const CaseList = () => {
   });
 
   const getTitle = () => {
+    if (isPriorityRoute) return `Cases by Priority — ${activePriorityTab}`;
+    if (isCategoryRoute) return `Cases by Category — ${activeCategoryTab}`;
+    if (isStatusRoute) return `Cases by Status — ${activeStatusTab}`;
     if (filterType.toLowerCase() === "all") return "All HR Cases";
     if (filterType.toLowerCase() === "in progress") return "In Progress / Pending Cases";
     if (filterType.toLowerCase() === "resolved") return "Resolved / Closed Cases";
     return `${filterType} Cases`;
   };
+
 
   return (
     <div
@@ -263,6 +375,155 @@ const CaseList = () => {
           </div>
         </div>
       </div>
+
+      {/* Priority Filter Tabs */}
+      {isPriorityRoute && (
+        <div
+          className="vendor-detail-tabs"
+          style={{
+            display: "flex",
+            gap: 12,
+            marginBottom: 24,
+            flexWrap: "wrap",
+          }}
+        >
+          {priorityTabs.map((tab) => (
+            <div
+              key={tab.label}
+              className={`vendor-detail-tab ${
+                activePriorityTab === tab.label ? "active" : ""
+              }`}
+              onClick={() => setActivePriorityTab(tab.label)}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                padding: "8px 16px",
+                borderRadius: 8,
+                fontSize: 13,
+                fontWeight: 600,
+                cursor: "pointer",
+                background:
+                  activePriorityTab === tab.label ? "#0f172a" : "#f8fafc",
+                color: activePriorityTab === tab.label ? "#ffffff" : "#475569",
+                border: "1px solid #e2e8f0",
+                transition: "all 0.15s ease",
+              }}
+            >
+              <span>{tab.label}</span>
+              <span
+                style={{
+                  background:
+                    activePriorityTab === tab.label ? "#334155" : "#e2e8f0",
+                  color:
+                    activePriorityTab === tab.label ? "#ffffff" : "#475569",
+                  padding: "2px 8px",
+                  borderRadius: 12,
+                  fontSize: 11,
+                  fontWeight: 700,
+                }}
+              >
+                {tab.count}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Category Filter Tabs */}
+      {isCategoryRoute && (
+        <div
+          className="vendor-detail-tabs"
+          style={{
+            display: "flex",
+            gap: 12,
+            marginBottom: 24,
+            flexWrap: "wrap",
+          }}
+        >
+          {categoryTabs.map((tab) => (
+            <div
+              key={tab.label}
+              className={`vendor-detail-tab ${
+                activeCategoryTab.toLowerCase() === tab.label.toLowerCase() ? "active" : ""
+              }`}
+              onClick={() => setActiveCategoryTab(tab.label)}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                padding: "8px 16px",
+                borderRadius: 8,
+                fontSize: 13,
+                fontWeight: 600,
+                cursor: "pointer",
+                background:
+                  activeCategoryTab.toLowerCase() === tab.label.toLowerCase()
+                    ? "#0f172a"
+                    : "#f8fafc",
+                color:
+                  activeCategoryTab.toLowerCase() === tab.label.toLowerCase()
+                    ? "#ffffff"
+                    : "#475569",
+                border: "1px solid #e2e8f0",
+                transition: "all 0.15s ease",
+              }}
+            >
+              <span>{tab.label}</span>
+              <span
+                style={{
+                  background:
+                    activeCategoryTab.toLowerCase() === tab.label.toLowerCase()
+                      ? "#334155"
+                      : "#e2e8f0",
+                  color:
+                    activeCategoryTab.toLowerCase() === tab.label.toLowerCase()
+                      ? "#ffffff"
+                      : "#475569",
+                  padding: "2px 8px",
+                  borderRadius: 12,
+                  fontSize: 11,
+                  fontWeight: 700,
+                }}
+              >
+                {tab.count}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Status Filter Tabs */}
+      {isStatusRoute && (
+        <div
+          className="vendor-detail-tabs"
+          style={{ display: "flex", gap: 12, marginBottom: 24, flexWrap: "wrap" }}
+        >
+          {STATUS_TABS.map((tab) => (
+            <div
+              key={tab}
+              onClick={() => setActiveStatusTab(tab)}
+              style={{
+                display: "inline-flex", alignItems: "center", gap: 8,
+                padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600,
+                cursor: "pointer",
+                background: activeStatusTab === tab ? "#0f172a" : "#f8fafc",
+                color: activeStatusTab === tab ? "#ffffff" : "#475569",
+                border: "1px solid #e2e8f0", transition: "all 0.15s ease",
+              }}
+            >
+              <span>{tab}</span>
+              <span style={{
+                background: activeStatusTab === tab ? "#334155" : "#e2e8f0",
+                color: activeStatusTab === tab ? "#ffffff" : "#475569",
+                padding: "2px 8px", borderRadius: 12, fontSize: 11, fontWeight: 700,
+              }}>
+                {statusCounts[tab] || 0}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Table */}
       <div

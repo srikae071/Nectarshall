@@ -1,57 +1,104 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiSearch, FiX } from 'react-icons/fi';
+import { FiSearch, FiX, FiChevronDown } from 'react-icons/fi';
 import { fetchApiData } from '../../../utils/apiClient';
 import '../Dashboard/index.css';
 import '../PurchaseOrders/index.css';
 
 export const today = () => new Date().toISOString().split('T')[0];
-export const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
-
-const ALL_LEAVE_COLUMNS = [
+export const fmtDate = (d) => d ? new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';const ALL_LEAVE_COLUMNS = [
   { key: 'leaveNumber', label: 'Leave ID', width: '12%' },
   { key: 'employeeName', label: 'Employee Name', width: '18%' },
-  { key: 'leaveType', label: 'Leave type', width: '14%' },
-  { key: 'startDate', label: 'Start date', width: '13%' },
-  { key: 'endDate', label: 'End date', width: '13%' },
-  { key: 'totalLeaves', label: 'Total leave count', width: '12%' },
+  { key: 'dept', label: 'Department', width: '15%' },
+  { key: 'leaveType', label: 'Leave type', width: '13%' },
+  { key: 'startDate', label: 'Start date', width: '12%' },
+  { key: 'endDate', label: 'End date', width: '12%' },
+  { key: 'totalLeaves', label: 'Total leave count', width: '10%' },
   { key: 'status', label: 'Status', width: '10%' },
-  { key: 'description', label: 'Reason', width: '18%' },
+  { key: 'description', label: 'Reason', width: '14%' },
 ];
 
 const VendorLeaveManagement = () => {
   const navigate = useNavigate();
   const [leaves, setLeaves] = useState([]);
+  const [departmentsList, setDepartmentsList] = useState([]);
+  const [selectedDept, setSelectedDept] = useState('All');
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [showSettings, setShowSettings] = useState(false);
   const [visibleColumns, setVisibleColumns] = useState(ALL_LEAVE_COLUMNS.map(c => c.key));
   const [hoveredType, setHoveredType] = useState(null);
   const [selectedType, setSelectedType] = useState(null);
+  const [timeFilter, setTimeFilter] = useState('thisMonth');
 
   useEffect(() => {
-    loadLeaves();
+    loadData();
   }, []);
 
-  const loadLeaves = async () => {
+  const loadData = async () => {
     try {
       setLoading(true);
-      const res = await fetchApiData("/api/leaves");
-      const mapped = (res.data || []).map((l, idx) => ({
-        id: l.leaveNumber || `LV-${String(idx + 1).padStart(3, '0')}`,
-        employeeName: l.employeeName || l.requester || "Unnamed Employee",
-        leaveType: l.leaveType || "Casual Leave",
-        startDate: l.startDate || today(),
-        endDate: l.endDate || today(),
-        totalLeaves: Number(l.totalLeaves) || 1,
-        status: l.status || "Pending",
-        description: l.description || l.comment || "N/A",
-        dept: l.department || "General",
-        initials: (l.employeeName || l.requester || "EP").split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+      const [resLeaves, resEmps] = await Promise.allSettled([
+        fetchApiData("/api/leaves"),
+        fetchApiData("/api/employees")
+      ]);
+
+      const rawLeaves = resLeaves.status === 'fulfilled' ? (resLeaves.value.data || []) : [];
+      const rawEmps = resEmps.status === 'fulfilled' ? (resEmps.value.data || []) : [];
+
+      // List of employees with names, emails, and departments
+      const empList = rawEmps.map((e, idx) => ({
+        fullName: (e.displayName || e.employeeName || `${e.firstName || ""} ${e.lastName || ""}`).trim().toLowerCase(),
+        firstName: (e.firstName || (e.displayName || e.employeeName || "").split(" ")[0] || "").trim().toLowerCase(),
+        email: (e.email || e.workEmail || "").trim().toLowerCase(),
+        dept: e.department || e.dept || "General"
       }));
-      setLeaves(mapped);
+
+      const deptsSet = new Set();
+      empList.forEach(e => { if (e.dept) deptsSet.add(e.dept); });
+
+      const mappedLeaves = rawLeaves.map((l, idx) => {
+        const empName = (l.employeeName || l.requester || "Unnamed Employee").trim();
+        const empNameLower = empName.toLowerCase();
+        const empEmailLower = (l.email || l.workEmail || "").trim().toLowerCase();
+
+        // Enhanced flexible employee matching
+        const matchedEmp = empList.find(e => 
+          (empEmailLower && e.email === empEmailLower) ||
+          e.fullName === empNameLower ||
+          (e.firstName && e.firstName === empNameLower) ||
+          (empNameLower && e.fullName.includes(empNameLower)) ||
+          (empNameLower && empNameLower.includes(e.firstName))
+        );
+
+        const matchedDept = 
+          l.department || 
+          l.dept || 
+          (matchedEmp ? matchedEmp.dept : null) || 
+          "General";
+
+        if (matchedDept) {
+          deptsSet.add(matchedDept);
+        }
+
+        return {
+          id: l.leaveNumber || `LV-${String(idx + 1).padStart(3, '0')}`,
+          employeeName: empName,
+          leaveType: l.leaveType || "Casual Leave",
+          startDate: l.startDate || today(),
+          endDate: l.endDate || today(),
+          totalLeaves: Number(l.totalLeaves) || 1,
+          status: l.status || "Pending",
+          description: l.description || l.comment || "N/A",
+          dept: matchedDept,
+          initials: empName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+        };
+      });
+
+      setLeaves(mappedLeaves);
+      setDepartmentsList(Array.from(deptsSet).filter(Boolean));
     } catch (err) {
-      console.error("Error loading leaves in VendorLeaveManagement:", err);
+      console.error("Error loading data in VendorLeaveManagement:", err);
     } finally {
       setLoading(false);
     }
@@ -98,36 +145,68 @@ const VendorLeaveManagement = () => {
     return Object.values(takerMap).sort((a, b) => b.days - a.days).slice(0, 5);
   }, [leaves]);
 
-  // Leaves by Department
-  const deptLeaves = useMemo(() => {
-    const deptMap = {};
-    leaves.forEach(l => {
-      const dept = l.dept || "General";
-      if (!deptMap[dept]) deptMap[dept] = { dept, days: 0, count: 0 };
-      deptMap[dept].days += l.totalLeaves;
-      deptMap[dept].count += 1;
-    });
-    const maxDays = Math.max(1, ...Object.values(deptMap).map(d => d.days));
-    return Object.values(deptMap).map(d => ({
-      ...d,
-      pct: Math.min(100, Math.round((d.days / maxDays) * 100))
-    }));
-  }, [leaves]);
+  // Leaves filtered by selected department
+  const departmentFilteredLeaves = useMemo(() => {
+    if (selectedDept === "All") return leaves;
+    return leaves.filter(l => (l.dept || "General") === selectedDept);
+  }, [leaves, selectedDept]);
 
-  // Leave Utilization
+  // Leave Utilization (Filtered by selected department for Row 2)
   const utilizationData = useMemo(() => {
     const typeMap = {};
-    leaves.forEach(l => {
+    departmentFilteredLeaves.forEach(l => {
       const type = l.leaveType || "Casual Leave";
       typeMap[type] = (typeMap[type] || 0) + l.totalLeaves;
     });
-    const totalDays = leaves.reduce((sum, l) => sum + l.totalLeaves, 0) || 1;
+    const totalDays = departmentFilteredLeaves.reduce((sum, l) => sum + l.totalLeaves, 0) || 1;
     return Object.entries(typeMap).map(([type, days]) => ({
       type,
       days,
       pct: Math.min(100, Math.round((days / totalDays) * 100))
     }));
-  }, [leaves]);
+  }, [departmentFilteredLeaves]);
+
+  // Filter leaves by time range for Leave Types Overview (Row 3)
+  const timeFilteredLeaves = useMemo(() => {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth();
+
+    return leaves.filter(l => {
+      if (timeFilter === 'all') return true;
+      if (!l.startDate) return true;
+      const d = new Date(l.startDate);
+      if (isNaN(d.getTime())) return true;
+
+      if (timeFilter === 'thisMonth') {
+        return d.getFullYear() === currentYear && d.getMonth() === currentMonth;
+      }
+      if (timeFilter === 'lastMonth') {
+        const lastMonthDate = new Date(currentYear, currentMonth - 1, 1);
+        return d.getFullYear() === lastMonthDate.getFullYear() && d.getMonth() === lastMonthDate.getMonth();
+      }
+      if (timeFilter === 'thisYear') {
+        return d.getFullYear() === currentYear;
+      }
+      return true;
+    });
+  }, [leaves, timeFilter]);
+
+  // Overall Leave Utilization (For Row 3 "Leave Types Overview" - filtered by timeFilter)
+  const overallUtilizationData = useMemo(() => {
+    const typeMap = {};
+    timeFilteredLeaves.forEach(l => {
+      const type = l.leaveType || "Casual Leave";
+      typeMap[type] = (typeMap[type] || 0) + l.totalLeaves;
+    });
+    const totalDays = timeFilteredLeaves.reduce((sum, l) => sum + l.totalLeaves, 0) || 1;
+    return Object.entries(typeMap).map(([type, days]) => ({
+      type,
+      days,
+      pct: Math.min(100, Math.round((days / totalDays) * 100))
+    }));
+  }, [timeFilteredLeaves]);
+
 
   const filteredLeaves = leaves.filter(l => {
     const q = search.toLowerCase();
@@ -135,7 +214,10 @@ const VendorLeaveManagement = () => {
   });
 
   if (selectedType) {
-    const typeLeaves = leaves.filter(l => l.leaveType === selectedType);
+    const typeLeaves = leaves.filter(l => 
+      l.leaveType === selectedType && (selectedDept === 'All' || l.dept === selectedDept)
+    );
+
     return (
       <div className="vendor-dashboard-wrapper" style={{ padding: '32px', maxWidth: '1400px', margin: '0 auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 32 }}>
@@ -149,7 +231,7 @@ const VendorLeaveManagement = () => {
           </button>
           <div>
             <h1 style={{ fontSize: 24, fontWeight: 700, margin: '0 0 4px 0', color: '#0f172a' }}>{selectedType}</h1>
-            <p style={{ fontSize: 14, color: '#64748b', margin: 0 }}>Showing all {selectedType.toLowerCase()} records</p>
+            <p style={{ fontSize: 14, color: '#64748b', margin: 0 }}>Showing all {selectedType.toLowerCase()} records {selectedDept !== 'All' ? `for ${selectedDept} Department` : ''}</p>
           </div>
         </div>
 
@@ -181,17 +263,22 @@ const VendorLeaveManagement = () => {
                 <tbody>
                   {typeLeaves.map(l => (
                     <tr key={l.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                      <td style={{ width: '13%', padding: 16, fontSize: 13, fontWeight: 700, color: '#ea4104' }}>{l.id}</td>
-                      <td style={{ width: '20%', padding: 16, fontSize: 13, fontWeight: 600, color: '#0f172a' }}>{l.employeeName}</td>
-                      <td style={{ width: '14%', padding: 16, fontSize: 13, color: '#475569' }}>{fmtDate(l.startDate)}</td>
-                      <td style={{ width: '14%', padding: 16, fontSize: 13, color: '#475569' }}>{fmtDate(l.endDate)}</td>
-                      <td style={{ width: '13%', padding: 16, fontSize: 13, fontWeight: 700, color: '#0f172a' }}>{`${l.totalLeaves}d`}</td>
-                      <td style={{ width: '11%', padding: 16 }}>
+                      <td style={{ width: '12%', padding: 16, fontSize: 13, fontWeight: 700, color: '#ea4104' }}>{l.id}</td>
+                      <td style={{ width: '18%', padding: 16, fontSize: 13, fontWeight: 600, color: '#0f172a' }}>{l.employeeName}</td>
+                      <td style={{ width: '15%', padding: 16 }}>
+                        <span style={{ padding: '4px 10px', borderRadius: 6, background: '#eff6ff', color: '#2563eb', fontSize: 12, fontWeight: 600 }}>
+                          {l.dept}
+                        </span>
+                      </td>
+                      <td style={{ width: '12%', padding: 16, fontSize: 13, color: '#475569' }}>{fmtDate(l.startDate)}</td>
+                      <td style={{ width: '12%', padding: 16, fontSize: 13, color: '#475569' }}>{fmtDate(l.endDate)}</td>
+                      <td style={{ width: '10%', padding: 16, fontSize: 13, fontWeight: 700, color: '#0f172a' }}>{`${l.totalLeaves}d`}</td>
+                      <td style={{ width: '10%', padding: 16 }}>
                         <span style={{ padding: '4px 10px', borderRadius: 6, fontSize: 12, fontWeight: 600, background: l.status.toLowerCase() === 'approved' ? '#f0fdf4' : '#fff7ed', color: l.status.toLowerCase() === 'approved' ? '#16a34a' : '#ea580c' }}>
                           {l.status}
                         </span>
                       </td>
-                      <td style={{ width: '15%', padding: 16, fontSize: 13, color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={l.description}>{l.description}</td>
+                      <td style={{ width: '14%', padding: 16, fontSize: 13, color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={l.description}>{l.description}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -282,7 +369,6 @@ const VendorLeaveManagement = () => {
         <div className="vendor-section-card" style={{ marginBottom: 0, padding: 24, borderRadius: 12, border: '1px solid #e2e8f0', height: 380, overflowY: 'auto' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
             <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', margin: 0 }}>Top Leave Takers</h2>
-            <span style={{ fontSize: 13, color: '#64748b' }}>Database Total</span>
           </div>
           {topLeaveTakers.length === 0 ? (
             <div style={{ color: '#64748b', fontSize: 13, textAlign: 'center', paddingTop: 60 }}>Nobody is there.</div>
@@ -303,45 +389,80 @@ const VendorLeaveManagement = () => {
         </div>
       </div>
 
-      {/* Row 2: Department & Utilization */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 32 }}>
-        {/* Leaves by Department */}
+      {/* Row 2: Leave Utilization with Department Filter Dropdown */}
+      <div style={{ marginBottom: 32 }}>
         <div className="vendor-section-card" style={{ marginBottom: 0, padding: 24, borderRadius: 12, border: '1px solid #e2e8f0' }}>
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', margin: 0 }}>Leaves by Department</h2>
-          <p style={{ fontSize: 13, color: '#64748b', marginTop: 4, marginBottom: 24 }}>Database Distribution</p>
-          {deptLeaves.length === 0 ? (
-            <div style={{ color: '#64748b', fontSize: 13 }}>No department data available.</div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-              {deptLeaves.map(d => (
-                <div key={d.dept} style={{ display: 'flex', alignItems: 'center' }}>
-                  <div style={{ width: 120, fontSize: 13, color: '#475569', fontWeight: 600 }}>{d.dept}</div>
-                  <div style={{ flex: 1, height: 24, background: '#f1f5f9', borderRadius: 6, margin: '0 16px', overflow: 'hidden' }}>
-                    <div style={{ width: `${d.pct}%`, height: '100%', background: '#ea4104', borderRadius: 6, display: 'flex', alignItems: 'center', paddingLeft: 8, color: 'white', fontSize: 12, fontWeight: 700 }}>
-                      {d.days}d ({d.count})
-                    </div>
-                  </div>
-                </div>
-              ))}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+            <div>
+              <h2 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a', margin: 0 }}>Leave Utilization</h2>
+              <p style={{ fontSize: 13, color: '#64748b', marginTop: 4, margin: 0 }}>By Leave Type</p>
             </div>
-          )}
-        </div>
 
-        {/* Leave Utilization */}
-        <div className="vendor-section-card" style={{ marginBottom: 0, padding: 24, borderRadius: 12, border: '1px solid #e2e8f0' }}>
-          <h2 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', margin: 0 }}>Leave Utilization</h2>
-          <p style={{ fontSize: 13, color: '#64748b', marginTop: 4, marginBottom: 24 }}>By Leave Type — Database Total</p>
+            {/* Department Filter Dropdown */}
+            <div style={{ position: 'relative' }}>
+              <select
+                value={selectedDept}
+                onChange={e => setSelectedDept(e.target.value)}
+                style={{
+                  appearance: 'none',
+                  padding: '9px 36px 9px 16px',
+                  borderRadius: 8,
+                  border: '1px solid #cbd5e1',
+                  background: '#ffffff',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: '#0f172a',
+                  cursor: 'pointer',
+                  outline: 'none',
+                  boxShadow: '0 1px 2px rgba(0,0,0,0.04)'
+                }}
+              >
+                <option value="All">All Departments</option>
+                {departmentsList.map(d => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
+              <FiChevronDown style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#64748b' }} size={16} />
+            </div>
+          </div>
+
           {utilizationData.length === 0 ? (
-            <div style={{ color: '#64748b', fontSize: 13 }}>No leave utilization data recorded.</div>
+            <div style={{ color: '#64748b', fontSize: 13, padding: '20px 0', textAlign: 'center' }}>
+              No leave utilization data recorded {selectedDept !== 'All' ? `for ${selectedDept} Department` : ''}.
+            </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {utilizationData.map(u => (
-                <div key={u.type} style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                  <div style={{ width: 120, fontSize: 13, fontWeight: 600, color: '#0f172a' }}>{u.type}</div>
-                  <div style={{ flex: 1, height: 10, background: '#f1f5f9', borderRadius: 5, overflow: 'hidden' }}>
-                    <div style={{ width: `${u.pct}%`, height: '100%', background: '#10b981', borderRadius: 5 }}></div>
+                <div 
+                  key={u.type} 
+                  onClick={() => setSelectedType(u.type)}
+                  style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 16, 
+                    padding: '12px 16px', 
+                    borderRadius: 10, 
+                    background: '#f8fafc', 
+                    border: '1px solid #f1f5f9', 
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease'
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = '#f1f5f9';
+                    e.currentTarget.style.borderColor = '#cbd5e1';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = '#f8fafc';
+                    e.currentTarget.style.borderColor = '#f1f5f9';
+                  }}
+                >
+                  <div style={{ width: 140, fontSize: 14, fontWeight: 600, color: '#0f172a' }}>{u.type}</div>
+                  <div style={{ flex: 1, height: 12, background: '#e2e8f0', borderRadius: 6, overflow: 'hidden' }}>
+                    <div style={{ width: `${u.pct}%`, height: '100%', background: '#10b981', borderRadius: 6, transition: 'width 0.3s ease' }}></div>
                   </div>
-                  <div style={{ width: 60, textAlign: 'right', fontSize: 13, fontWeight: 700, color: '#10b981' }}>{u.pct}%</div>
+                  <div style={{ width: 110, textAlign: 'right', fontSize: 13, fontWeight: 700, color: '#0f172a' }}>
+                    {u.days} days ({u.pct}%)
+                  </div>
                 </div>
               ))}
             </div>
@@ -362,21 +483,42 @@ const VendorLeaveManagement = () => {
               <p style={{ fontSize: 14, color: '#64748b', margin: 0 }}>Track and analyze leave distribution across all leave types</p>
             </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px', border: '1px solid #e2e8f0', borderRadius: 8, fontSize: 14, fontWeight: 600, color: '#334155', cursor: 'pointer' }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-            This Month
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 4 }}><polyline points="6 9 12 15 18 9"></polyline></svg>
+          {/* Time Filter Dropdown */}
+          <div style={{ position: 'relative' }}>
+            <select
+              value={timeFilter}
+              onChange={e => setTimeFilter(e.target.value)}
+              style={{
+                appearance: 'none',
+                padding: '9px 38px 9px 16px',
+                borderRadius: 8,
+                border: '1px solid #cbd5e1',
+                background: '#ffffff',
+                fontSize: 13,
+                fontWeight: 600,
+                color: '#0f172a',
+                cursor: 'pointer',
+                outline: 'none',
+                boxShadow: '0 1px 2px rgba(0,0,0,0.04)'
+              }}
+            >
+              <option value="thisMonth">This Month</option>
+              <option value="lastMonth">Last Month</option>
+              <option value="thisYear">This Year</option>
+              <option value="all">All Time</option>
+            </select>
+            <FiChevronDown style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#64748b' }} size={16} />
           </div>
         </div>
         
         {(() => {
           if (loading) return <div style={{ textAlign: 'center', padding: 40, color: '#64748b' }}>Loading data...</div>;
-          if (utilizationData.length === 0) return <div style={{ textAlign: 'center', padding: 40, color: '#64748b' }}>No data available.</div>;
+          if (overallUtilizationData.length === 0) return <div style={{ textAlign: 'center', padding: 40, color: '#64748b' }}>No data available for selected time period.</div>;
           
           const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#14b8a6', '#f43f5e'];
           const BG_COLORS = ['#eff6ff', '#ecfdf5', '#fffbeb', '#f5f3ff', '#fdf2f8', '#f0fdfa', '#fff1f2'];
           
-          const totalDays = leaves.reduce((sum, l) => sum + l.totalLeaves, 0) || 1;
+          const totalDays = timeFilteredLeaves.reduce((sum, l) => sum + l.totalLeaves, 0) || 1;
 
           const r = 110;
           const cx = 140;
@@ -386,8 +528,8 @@ const VendorLeaveManagement = () => {
           
           let currentOffset = circ * 0.25; // start at top
           
-          const activeData = hoveredType ? utilizationData.find(u => u.type === hoveredType) : null;
-          const activeIndex = activeData ? utilizationData.findIndex(u => u.type === hoveredType) : 0;
+          const activeData = hoveredType ? overallUtilizationData.find(u => u.type === hoveredType) : null;
+          const activeIndex = activeData ? overallUtilizationData.findIndex(u => u.type === hoveredType) : 0;
           
           const innerTitle = activeData ? activeData.type : "Total Leave Taken";
           const innerDays = activeData ? activeData.days : totalDays;
@@ -405,7 +547,7 @@ const VendorLeaveManagement = () => {
                 <svg width="280" height="280" viewBox="0 0 280 280" style={{ position: 'absolute', top: 0, left: 0, transform: 'rotate(-90deg)' }}>
                   <circle cx={cx} cy={cy} r={r} fill="none" stroke="#f8fafc" strokeWidth="28" />
                   
-                  {utilizationData.map((u, i) => {
+                  {overallUtilizationData.map((u, i) => {
                     const pct = u.days / totalDays;
                     const dashLength = circ * pct;
                     const strokeColor = COLORS[i % COLORS.length];
@@ -452,7 +594,7 @@ const VendorLeaveManagement = () => {
               
               {/* Right Side: Cards */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {utilizationData.map((u, i) => (
+                {overallUtilizationData.map((u, i) => (
                   <div
                     key={u.type}
                     onClick={() => setSelectedType(u.type)}
@@ -464,6 +606,7 @@ const VendorLeaveManagement = () => {
                     onMouseEnter={() => setHoveredType(u.type)}
                     onMouseLeave={() => setHoveredType(null)}
                   >
+
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
                       <div style={{ display: 'flex', gap: 16 }}>
                         <div style={{ width: 56, height: 56, borderRadius: 16, background: BG_COLORS[i % BG_COLORS.length], color: COLORS[i % COLORS.length], display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

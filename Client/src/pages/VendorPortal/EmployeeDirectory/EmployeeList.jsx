@@ -11,7 +11,6 @@ const EmployeeList = () => {
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState(null);
   const [deptFilter, setDeptFilter] = useState('All');
-  const [statusFilter, setStatusFilter] = useState('All');
   const [locationFilter, setLocationFilter] = useState('All');
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,6 +20,11 @@ const EmployeeList = () => {
   const [visibleColumns, setVisibleColumns] = useState(ALL_EMP_COLUMNS.map(c => c.key));
 
   const filterType = decodeURIComponent(routeParam || 'total');
+
+  const [statusFilter, setStatusFilter] = useState(
+    filterType.toLowerCase() === 'active' ? 'Active' : 'All'
+  );
+
 
   useEffect(() => {
     fetchEmployees();
@@ -75,9 +79,8 @@ const EmployeeList = () => {
 
   const getFilteredList = () => {
     const t = filterType.toLowerCase();
-    if (t === 'active' || t === 'total') return employees;
+    if (t === 'active') return employees.filter(e => e.status === 'Active');
     if (t === 'new') return [];
-    if (t === 'departments') return employees;
     return employees;
   };
 
@@ -94,17 +97,18 @@ const EmployeeList = () => {
   const clearFilters = () => {
     setSearch('');
     setDeptFilter('All');
-    setStatusFilter('All');
+    setStatusFilter(filterType.toLowerCase() === 'active' ? 'Active' : 'All');
     setLocationFilter('All');
   };
 
   const getTitle = () => {
     const t = filterType.toLowerCase();
-    if (t === 'active') return 'Active Employees';
+    if (t === 'active') return 'Active Employees List';
     if (t === 'new') return 'New Hire Employees';
     if (t === 'departments') return 'Employees by Department';
-    return 'Total Employees';
+    return 'Total Employees List';
   };
+
 
   // ── NEW HIRE dedicated view ──────────────────────────────────────────
   // ── NEW HIRE dedicated view ──────────────────────────────────────────

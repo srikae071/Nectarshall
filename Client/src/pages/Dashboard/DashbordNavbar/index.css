@@ -17,8 +17,8 @@
   display: flex;
 }
 .oplogoimage {
-  width: 92px;
-  height: 38px;
+  width: 65px;
+  height: 28px;
   object-fit: contain;
   flex-shrink: 0;
   margin-bottom: 0;

@@ -405,7 +405,7 @@
 
 .metric-icon-box {
   width: 44px;
-  height: 44px;
+  height: 32px;
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -1227,7 +1227,7 @@
 
 .ts-kpi-icon {
   width: 44px;
-  height: 44px;
+  height: 32px;
   border-radius: 12px;
   display: flex;
   align-items: center;
