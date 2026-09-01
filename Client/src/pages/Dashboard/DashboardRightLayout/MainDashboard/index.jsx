@@ -190,6 +190,8 @@ function MainDashboard() {
   const [realBackendEmployees, setRealBackendEmployees] = useState([]);
   const [realApprovedLeaves, setRealApprovedLeaves] = useState([]);
   const [selectedDeptFilter, setSelectedDeptFilter] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [onboardingDetailType, setOnboardingDetailType] = useState("");
 
   useEffect(() => {
     fetchApiData("/api/employees")
@@ -813,10 +815,11 @@ function MainDashboard() {
   };
 
   const onboardingDetailCandidates = useMemo(() => {
-    if (onboardingDetailType === "total") return onboardingCustomerCandidates;
-    if (onboardingDetailType === "missing") return onboardingCustomerCandidates.filter((candidate) => candidate.documents !== "Complete");
-    if (onboardingDetailType === "ageing") return onboardingCustomerCandidates.filter((candidate) => candidate.days > 7 && candidate.status !== "Ready for Roster");
-    return onboardingCustomerCandidates.filter((candidate) => candidate.status === onboardingDetailType);
+    const detailType = onboardingDetailType || "total";
+    if (detailType === "total") return onboardingCustomerCandidates;
+    if (detailType === "missing") return onboardingCustomerCandidates.filter((candidate) => candidate.documents !== "Complete");
+    if (detailType === "ageing") return onboardingCustomerCandidates.filter((candidate) => candidate.days > 7 && candidate.status !== "Ready for Roster");
+    return onboardingCustomerCandidates.filter((candidate) => candidate.status === detailType);
   }, [onboardingCustomerCandidates, onboardingDetailType]);
 
   const rosterEmployees = useMemo(() => {

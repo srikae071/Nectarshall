@@ -6,11 +6,74 @@ import { fetchApiData, sendApiData } from "../../../../utils/apiClient";
 import { FiShield, FiFileText, FiDollarSign, FiBriefcase } from "react-icons/fi";
 import "./index.css";
 
+const FIELD_LABELS = {
+  displayName: "Display Name",
+  firstName: "First Name",
+  lastName: "Last Name",
+  userPrincipalName: "User Principal Name",
+  userType: "User Type",
+  authorizationInfo: "Authorization Info",
+  accountStatus: "Account Status",
+  usageLocation: "User Location",
+  jobTitle: "Job Title",
+  companyName: "Company Name",
+  department: "Department / Role",
+  subRole: "Sub Role",
+  employeeId: "Employee ID",
+  employeeType: "Employee Type",
+  employeeHireDate: "Hire Date",
+  officeLocation: "Office Location",
+  manager: "Manager",
+  sponsors: "Sponsors",
+  shiftStartTime: "Shift Start Time",
+  shiftEndTime: "Shift End Time",
+  streetAddress: "Street Address",
+  city: "City",
+  stateOrProvince: "State / Province",
+  zipOrPostalCode: "ZIP / Postal Code",
+  countryOrRegion: "Country / Region",
+  businessPhone: "Business Phone",
+  mobilePhone: "Mobile Phone",
+  email: "Email",
+  otherEmails: "Other Emails",
+  faxNumber: "Fax Number",
+  mailNickname: "Mail Nickname",
+  securityLicence: "Security Licence",
+  securityLicenceExpiry: "Security Licence Expiry",
+  drivingLicence: "Driving Licence",
+  drivingLicenceExpiry: "Driving Licence Expiry",
+  firstAid: "First Aid Certificate",
+  firstAidExpiry: "First Aid Expiry",
+  cpr: "CPR Certificate",
+  cprExpiry: "CPR Expiry",
+  workingWithChildren: "Working With Children Check",
+  wwccExpiry: "WWCC Expiry",
+  trafficManagement: "Traffic Management",
+  trafficManagementExpiry: "Traffic Management Expiry",
+  whiteCard: "White Card",
+  yellowCard: "Yellow Card",
+  bankName: "Bank Name",
+  bankAccountName: "Account Name",
+  bsb: "BSB",
+  accountNumber: "Account Number",
+  tfn: "Tax File Number (TFN)",
+  superNumber: "Super Number",
+  superFund: "Super Fund",
+  superMemberNum: "Super Member Number",
+  longServiceLeaveId: "Long Service Leave ID",
+  financialRemarks: "Financial Remarks",
+  ageGroup: "Age Group",
+  consentProvidedForMinor: "Consent Provided for Minor",
+  shortDescription: "Short Description",
+  description: "Description",
+};
+
 function MainEmployeesSaves() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [jobSecTab, setJobSecTab] = useState("JOB_INFO"); // 'JOB_INFO' | 'QUALIFICATIONS' | 'OFFER_LETTER' | 'FINANCIAL'
+  const [jobSecTab, setJobSecTab] = useState("JOB_INFO"); // 'JOB_INFO' | 'QUALIFICATIONS' | 'OFFER_LETTER' | 'FINANCIAL' | 'ACTIVITY_LOG'
+  const [originalData, setOriginalData] = useState(null);
 
   const [formData, setFormData] = useState({
     // Identity
@@ -95,6 +158,9 @@ function MainEmployeesSaves() {
     accountStatus: "Active", // 'Active' | 'Inactive' | 'Pending'
     accountEnabled: true,
     usageLocation: "",
+
+    // Activity Logs
+    activityLogs: [],
   });
 
   useEffect(() => {
@@ -116,7 +182,7 @@ function MainEmployeesSaves() {
           else statusVal = "Active";
         }
 
-        setFormData({
+        const loadedState = {
           displayName: emp.displayName || emp.employeeName || "",
           firstName: emp.firstName || "",
           lastName: emp.lastName || "",
@@ -190,7 +256,12 @@ function MainEmployeesSaves() {
           accountActive: statusVal === "Active",
           accountEnabled: statusVal === "Active",
           usageLocation: emp.usageLocation || "",
-        });
+
+          activityLogs: Array.isArray(emp.activityLogs) ? emp.activityLogs : [],
+        };
+
+        setFormData(loadedState);
+        setOriginalData(loadedState);
       }
     } catch (err) {
       console.error("Error fetching employee details:", err);
@@ -216,8 +287,39 @@ function MainEmployeesSaves() {
 
     try {
       const isAct = formData.accountStatus === "Active";
+      
+      // Calculate field diffs against originalData
+      const now = new Date();
+      const timestampStr = now.toLocaleString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+
+      const newLogEntries = [];
+      if (originalData) {
+        Object.keys(FIELD_LABELS).forEach((key) => {
+          const oldVal = String(originalData[key] || "").trim();
+          const newVal = String(formData[key] || "").trim();
+          if (oldVal !== newVal) {
+            const fieldName = FIELD_LABELS[key];
+            const displayOld = oldVal || "(empty)";
+            const displayNew = newVal || "(empty)";
+            newLogEntries.push(
+              `[${timestampStr}] ${fieldName} changed from '${displayOld}' to '${displayNew}'`
+            );
+          }
+        });
+      }
+
+      const updatedLogs = [...(formData.activityLogs || []), ...newLogEntries];
+
       const payload = {
         ...formData,
+        activityLogs: updatedLogs,
         accountActive: isAct,
         accountEnabled: isAct,
         accountStatus: formData.accountStatus,
@@ -228,6 +330,9 @@ function MainEmployeesSaves() {
       };
 
       await sendApiData("PUT", `/api/employees/${id}`, payload);
+
+      setFormData((prev) => ({ ...prev, activityLogs: updatedLogs }));
+      setOriginalData({ ...formData, activityLogs: updatedLogs });
 
       alert("Employee Details Updated Successfully!");
       navigate("/hrms/all-employees");
@@ -333,6 +438,49 @@ function MainEmployeesSaves() {
           />
         </div>
 
+        <div className="form-row">
+          <label className="form-label">Account Status *</label>
+          <select
+            className="form-input wideInput"
+            name="accountStatus"
+            value={formData.accountStatus}
+            onChange={(e) => {
+              const statusVal = e.target.value;
+              const isAct = statusVal === "Active";
+              setFormData((prev) => ({
+                ...prev,
+                accountStatus: statusVal,
+                accountActive: isAct,
+                accountEnabled: isAct,
+              }));
+            }}
+            style={{
+              fontWeight: "700",
+              color:
+                formData.accountStatus === "Active"
+                  ? "#15803d"
+                  : formData.accountStatus === "Pending"
+                  ? "#b45309"
+                  : "#dc2626",
+            }}
+          >
+            <option value="Active">🟢 Active (Account Activated)</option>
+            <option value="Pending">🟠 Pending (Awaiting HR Activation)</option>
+            <option value="Inactive">🔴 Inactive (Disabled)</option>
+          </select>
+        </div>
+
+        <div className="form-row">
+          <label className="form-label">User Location (Usage Location)</label>
+          <input
+            className="form-input wideInput"
+            name="usageLocation"
+            value={formData.usageLocation}
+            onChange={handleChange}
+            placeholder="e.g. AU"
+          />
+        </div>
+
         {/* SECTION 2: JOB INFORMATION WITH SUB-TAB RIBBON */}
         <div className="section-header-row jobSubTabHeaderRow">
           <div className="jobSubTabRibbon">
@@ -341,7 +489,6 @@ function MainEmployeesSaves() {
               className={`jobSubTabBtn ${jobSecTab === "JOB_INFO" ? "active" : ""}`}
               onClick={() => setJobSecTab("JOB_INFO")}
             >
-              <FiBriefcase size={15} />
               <span>Job Information</span>
             </button>
 
@@ -350,7 +497,6 @@ function MainEmployeesSaves() {
               className={`jobSubTabBtn ${jobSecTab === "QUALIFICATIONS" ? "active" : ""}`}
               onClick={() => setJobSecTab("QUALIFICATIONS")}
             >
-              <FiShield size={15} />
               <span>Qualification Licenses</span>
             </button>
 
@@ -359,7 +505,6 @@ function MainEmployeesSaves() {
               className={`jobSubTabBtn ${jobSecTab === "OFFER_LETTER" ? "active" : ""}`}
               onClick={() => setJobSecTab("OFFER_LETTER")}
             >
-              <FiFileText size={15} />
               <span>Offer Letter</span>
             </button>
 
@@ -368,8 +513,15 @@ function MainEmployeesSaves() {
               className={`jobSubTabBtn ${jobSecTab === "FINANCIAL" ? "active" : ""}`}
               onClick={() => setJobSecTab("FINANCIAL")}
             >
-              <FiDollarSign size={15} />
               <span>Financial & Tax Information</span>
+            </button>
+
+            <button
+              type="button"
+              className={`jobSubTabBtn ${jobSecTab === "ACTIVITY_LOG" ? "active" : ""}`}
+              onClick={() => setJobSecTab("ACTIVITY_LOG")}
+            >
+              <span>Activity Log</span>
             </button>
           </div>
         </div>
@@ -818,9 +970,55 @@ function MainEmployeesSaves() {
           </div>
         )}
 
-        {/* SECTION 3: CONTACT INFORMATION (ALL 11 ORIGINAL FIELDS PRESERVED) */}
-        <div className="section-header-row" style={{ marginTop: "25px", padding: "12px 0 8px 0" }}>
-          <h3 className="section-title" style={{ padding: "12px 0 8px 0" }}>Contact Information</h3>
+        {/* --- SUB-TAB 5: ACTIVITY LOG --- */}
+        {jobSecTab === "ACTIVITY_LOG" && (
+          <div
+            className="activityLogContainerBox"
+            style={{
+              gridColumn: "1 / -1",
+              padding: "20px",
+              background: "#f8fafc",
+              border: "1px solid #cbd5e1",
+              borderRadius: "8px",
+              marginTop: "10px",
+            }}
+          >
+            <h4
+              style={{
+                margin: "0 0 14px 0",
+                color: "#008075",
+                fontSize: "16px",
+                fontWeight: "700",
+              }}
+            >
+              Activity History Log ({formData.activityLogs?.length || 0} Entries)
+            </h4>
+            <ul
+              style={{
+                margin: 0,
+                paddingLeft: "24px",
+                color: "#334155",
+                fontSize: "14px",
+                lineHeight: "1.9",
+                listStyleType: "disc",
+              }}
+            >
+              {formData.activityLogs && formData.activityLogs.length > 0 ? (
+                formData.activityLogs.map((log, index) => (
+                  <li key={index} style={{ marginBottom: "8px" }}>
+                    {log}
+                  </li>
+                ))
+              ) : (
+                <li style={{ color: "#64748b" }}>No activity logs recorded yet.</li>
+              )}
+            </ul>
+          </div>
+        )}
+
+        {/* SECTION 3: CONTACT INFORMATION */}
+        <div className="section-header-row" style={{ marginTop: "30px" }}>
+          <h3 className="section-title">Contact Information</h3>
         </div>
 
         <div className="form-row">
@@ -946,7 +1144,7 @@ function MainEmployeesSaves() {
         </div>
 
         {/* SECTION 4: PARENTAL CONTROLS */}
-        <div className="section-header-row" style={{ marginTop: "25px" }}>
+        <div className="section-header-row" style={{ marginTop: "55px", marginBottom: "16px" }}>
           <h3 className="section-title">Parental Controls</h3>
         </div>
 
@@ -976,54 +1174,6 @@ function MainEmployeesSaves() {
             <option value="Yes">Yes</option>
             <option value="N/A">N/A</option>
           </select>
-        </div>
-
-        {/* SECTION 5: SETTINGS & ACCOUNT STATUS */}
-        <div className="section-header-row" style={{ marginTop: "25px" }}>
-          <h3 className="section-title">Settings</h3>
-        </div>
-
-        <div className="form-row">
-          <label className="form-label">Account Status *</label>
-          <select
-            className="form-input wideInput"
-            name="accountStatus"
-            value={formData.accountStatus}
-            onChange={(e) => {
-              const statusVal = e.target.value;
-              const isAct = statusVal === "Active";
-              setFormData((prev) => ({
-                ...prev,
-                accountStatus: statusVal,
-                accountActive: isAct,
-                accountEnabled: isAct,
-              }));
-            }}
-            style={{
-              fontWeight: "700",
-              color:
-                formData.accountStatus === "Active"
-                  ? "#15803d"
-                  : formData.accountStatus === "Pending"
-                  ? "#b45309"
-                  : "#dc2626",
-            }}
-          >
-            <option value="Active">🟢 Active (Account Activated)</option>
-            <option value="Pending">🟠 Pending (Awaiting HR Activation)</option>
-            <option value="Inactive">🔴 Inactive (Disabled)</option>
-          </select>
-        </div>
-
-        <div className="form-row">
-          <label className="form-label">Usage Location</label>
-          <input
-            className="form-input wideInput"
-            name="usageLocation"
-            value={formData.usageLocation}
-            onChange={handleChange}
-            placeholder="e.g. AU"
-          />
         </div>
       </RegularForm>
     </Hrmsleftlayout>

@@ -95,6 +95,7 @@ function AddEmployee() {
     accountStatus: "Active", // 'Active' | 'Inactive' | 'Pending'
     accountEnabled: true,
     usageLocation: "",
+    activityLogs: [],
   });
 
   const handleChange = (e) => {
@@ -114,10 +115,22 @@ function AddEmployee() {
     }
 
     try {
+      const now = new Date();
+      const timestampStr = now.toLocaleString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+      const initialLog = `[${timestampStr}] Employee profile '${formData.displayName}' created with status '${formData.accountStatus}'`;
+
       const isAdmin = formData.department === "Admin" || formData.subRole === "Admin";
       const isAct = formData.accountStatus === "Active";
       const payload = {
         ...formData,
+        activityLogs: [initialLog],
         accountActive: isAct,
         accountEnabled: isAct,
         status: formData.accountStatus,
@@ -233,6 +246,49 @@ function AddEmployee() {
           />
         </div>
 
+        <div className="form-row">
+          <label className="form-label">Account Status *</label>
+          <select
+            className="form-input wideInput"
+            name="accountStatus"
+            value={formData.accountStatus}
+            onChange={(e) => {
+              const statusVal = e.target.value;
+              const isAct = statusVal === "Active";
+              setFormData((prev) => ({
+                ...prev,
+                accountStatus: statusVal,
+                accountActive: isAct,
+                accountEnabled: isAct,
+              }));
+            }}
+            style={{
+              fontWeight: "700",
+              color:
+                formData.accountStatus === "Active"
+                  ? "#15803d"
+                  : formData.accountStatus === "Pending"
+                  ? "#b45309"
+                  : "#dc2626",
+            }}
+          >
+            <option value="Active">🟢 Active (Account Activated)</option>
+            <option value="Pending">🟠 Pending (Awaiting HR Activation)</option>
+            <option value="Inactive">🔴 Inactive (Disabled)</option>
+          </select>
+        </div>
+
+        <div className="form-row">
+          <label className="form-label">User Location (Usage Location)</label>
+          <input
+            className="form-input wideInput"
+            name="usageLocation"
+            value={formData.usageLocation}
+            onChange={handleChange}
+            placeholder="e.g. AU"
+          />
+        </div>
+
         {/* SECTION 2: JOB INFORMATION WITH SUB-TAB RIBBON */}
         <div className="section-header-row jobSubTabHeaderRow">
           <div className="jobSubTabRibbon">
@@ -241,7 +297,6 @@ function AddEmployee() {
               className={`jobSubTabBtn ${jobSecTab === "JOB_INFO" ? "active" : ""}`}
               onClick={() => setJobSecTab("JOB_INFO")}
             >
-              <FiBriefcase size={15} />
               <span>Job Information</span>
             </button>
 
@@ -250,7 +305,6 @@ function AddEmployee() {
               className={`jobSubTabBtn ${jobSecTab === "QUALIFICATIONS" ? "active" : ""}`}
               onClick={() => setJobSecTab("QUALIFICATIONS")}
             >
-              <FiShield size={15} />
               <span>Qualification Licenses</span>
             </button>
 
@@ -259,7 +313,6 @@ function AddEmployee() {
               className={`jobSubTabBtn ${jobSecTab === "OFFER_LETTER" ? "active" : ""}`}
               onClick={() => setJobSecTab("OFFER_LETTER")}
             >
-              <FiFileText size={15} />
               <span>Offer Letter</span>
             </button>
 
@@ -268,8 +321,15 @@ function AddEmployee() {
               className={`jobSubTabBtn ${jobSecTab === "FINANCIAL" ? "active" : ""}`}
               onClick={() => setJobSecTab("FINANCIAL")}
             >
-              <FiDollarSign size={15} />
               <span>Financial & Tax Information</span>
+            </button>
+
+            <button
+              type="button"
+              className={`jobSubTabBtn ${jobSecTab === "ACTIVITY_LOG" ? "active" : ""}`}
+              onClick={() => setJobSecTab("ACTIVITY_LOG")}
+            >
+              <span>Activity Log</span>
             </button>
           </div>
         </div>
@@ -759,9 +819,55 @@ function AddEmployee() {
           </div>
         )}
 
-        {/* SECTION 3: CONTACT INFORMATION (ALL 11 ORIGINAL FIELDS PRESERVED) */}
-        <div className="section-header-row" style={{ marginTop: "25px", padding: "12px 0 8px 0" }}>
-          <h3 className="section-title" style={{ padding: "12px 0 8px 0" }}>Contact Information</h3>
+        {/* --- SUB-TAB 5: ACTIVITY LOG --- */}
+        {jobSecTab === "ACTIVITY_LOG" && (
+          <div
+            className="activityLogContainerBox"
+            style={{
+              gridColumn: "1 / -1",
+              padding: "20px",
+              background: "#f8fafc",
+              border: "1px solid #cbd5e1",
+              borderRadius: "8px",
+              marginTop: "10px",
+            }}
+          >
+            <h4
+              style={{
+                margin: "0 0 14px 0",
+                color: "#008075",
+                fontSize: "16px",
+                fontWeight: "700",
+              }}
+            >
+              Activity History Log ({formData.activityLogs?.length || 0} Entries)
+            </h4>
+            <ul
+              style={{
+                margin: 0,
+                paddingLeft: "24px",
+                color: "#334155",
+                fontSize: "14px",
+                lineHeight: "1.9",
+                listStyleType: "disc",
+              }}
+            >
+              {formData.activityLogs && formData.activityLogs.length > 0 ? (
+                formData.activityLogs.map((log, index) => (
+                  <li key={index} style={{ marginBottom: "8px" }}>
+                    {log}
+                  </li>
+                ))
+              ) : (
+                <li style={{ color: "#64748b" }}>No activity logs recorded yet.</li>
+              )}
+            </ul>
+          </div>
+        )}
+
+        {/* SECTION 3: CONTACT INFORMATION */}
+        <div className="section-header-row" style={{ marginTop: "30px" }}>
+          <h3 className="section-title">Contact Information</h3>
         </div>
 
         <div className="form-row">
@@ -887,7 +993,7 @@ function AddEmployee() {
         </div>
 
         {/* SECTION 4: PARENTAL CONTROLS */}
-        <div className="section-header-row" style={{ marginTop: "25px" }}>
+        <div className="section-header-row" style={{ marginTop: "55px", marginBottom: "16px" }}>
           <h3 className="section-title">Parental Controls</h3>
         </div>
 
@@ -917,54 +1023,6 @@ function AddEmployee() {
             <option value="Yes">Yes</option>
             <option value="N/A">N/A</option>
           </select>
-        </div>
-
-        {/* SECTION 5: SETTINGS & ACCOUNT STATUS */}
-        <div className="section-header-row" style={{ marginTop: "25px" }}>
-          <h3 className="section-title">Settings</h3>
-        </div>
-
-        <div className="form-row">
-          <label className="form-label">Account Status *</label>
-          <select
-            className="form-input wideInput"
-            name="accountStatus"
-            value={formData.accountStatus}
-            onChange={(e) => {
-              const statusVal = e.target.value;
-              const isAct = statusVal === "Active";
-              setFormData((prev) => ({
-                ...prev,
-                accountStatus: statusVal,
-                accountActive: isAct,
-                accountEnabled: isAct,
-              }));
-            }}
-            style={{
-              fontWeight: "700",
-              color:
-                formData.accountStatus === "Active"
-                  ? "#15803d"
-                  : formData.accountStatus === "Pending"
-                  ? "#b45309"
-                  : "#dc2626",
-            }}
-          >
-            <option value="Active">🟢 Active (Account Activated)</option>
-            <option value="Pending">🟠 Pending (Awaiting HR Activation)</option>
-            <option value="Inactive">🔴 Inactive (Disabled)</option>
-          </select>
-        </div>
-
-        <div className="form-row">
-          <label className="form-label">Usage Location</label>
-          <input
-            className="form-input wideInput"
-            name="usageLocation"
-            value={formData.usageLocation}
-            onChange={handleChange}
-            placeholder="e.g. AU"
-          />
         </div>
       </RegularForm>
     </Hrmsleftlayout>

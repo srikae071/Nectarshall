@@ -88,6 +88,9 @@ const EmployeeSchema = new mongoose.Schema(
     accountEnabled: { type: Boolean, default: false },
     usageLocation: { type: String, default: "" },
 
+    // 9. Activity Logs
+    activityLogs: { type: [String], default: [] },
+
     // Backward compatibility helper
     employeeName: { type: String, default: "" },
     place: { type: String, default: "" },
