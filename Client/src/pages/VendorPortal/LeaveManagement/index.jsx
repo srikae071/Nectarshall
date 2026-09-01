@@ -29,7 +29,7 @@ const VendorLeaveManagement = () => {
   const [visibleColumns, setVisibleColumns] = useState(ALL_LEAVE_COLUMNS.map(c => c.key));
   const [hoveredType, setHoveredType] = useState(null);
   const [selectedType, setSelectedType] = useState(null);
-  const [timeFilter, setTimeFilter] = useState('thisMonth');
+  const [timeFilter, setTimeFilter] = useState('all');
 
   useEffect(() => {
     loadData();

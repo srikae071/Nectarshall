@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchApiData } from '../../../utils/apiClient';
 import './index.css';
@@ -475,6 +475,8 @@ const VendorPortalDashboard = () => {
     navigate(`/vendor-portal/cases/list/status:${arc.label}`);
   };
 
+
+
   // ---- Leave Trends Chart (kept from original) ----
   const LeaveTrendsChart = () => {
     const W = 520; const H = 240;
@@ -731,137 +733,6 @@ const VendorPortalDashboard = () => {
           centerLabel="Total Cases"
           onSegmentClick={casesByStatusSegments.length > 0 ? handleCaseStatusClick : null}
         />
-        {/* Hiring Overview Card */}
-        <div className="vendor-section-card" style={{ marginBottom: 0, display: 'flex', flexDirection: 'column', padding: 24 }}>
-          <div className="vendor-section-header" style={{ marginBottom: 20 }}>
-            <div>
-              <h2 className="vendor-section-title" style={{ fontSize: 18, color: '#0f172a' }}>Hiring Overview</h2>
-              <p style={{ fontSize: 13, color: '#64748b', marginTop: 4 }}>Open roles, active candidates & new hires</p>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16, flex: 1, justifyContent: 'center' }}>
-            {/* Open Candidates */}
-            <div
-              onClick={() => {
-                setActiveTab('Pending');
-                setView('onboarding-detail');
-              }}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '14px 18px',
-                borderRadius: 12,
-                background: '#f8fafc',
-                border: '1px solid #f1f5f9',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#eff6ff';
-                e.currentTarget.style.borderColor = '#bfdbfe';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = '#f8fafc';
-                e.currentTarget.style.borderColor = '#f1f5f9';
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                <div style={{ width: 40, height: 40, borderRadius: 10, background: '#dbeafe', color: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>
-                  <FiUserPlus />
-                </div>
-                <div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>Open Candidates</div>
-                  <div style={{ fontSize: 12, color: '#64748b' }}>Active in hiring pipeline</div>
-                </div>
-              </div>
-              <div style={{ fontSize: 22, fontWeight: 800, color: '#2563eb' }}>
-                {onbPending.length + onbInProgress.length}
-              </div>
-            </div>
-
-            {/* Open Job Roles */}
-            <div
-              onClick={() => {
-                setActiveTab('All');
-                setView('onboarding-detail');
-              }}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '14px 18px',
-                borderRadius: 12,
-                background: '#f8fafc',
-                border: '1px solid #f1f5f9',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#f5f3ff';
-                e.currentTarget.style.borderColor = '#ddd6fe';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = '#f8fafc';
-                e.currentTarget.style.borderColor = '#f1f5f9';
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                <div style={{ width: 40, height: 40, borderRadius: 10, background: '#ede9fe', color: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>
-                  <FiBriefcase />
-                </div>
-                <div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>Open Job Roles</div>
-                  <div style={{ fontSize: 12, color: '#64748b' }}>Requisitions in progress</div>
-                </div>
-              </div>
-              <div style={{ fontSize: 22, fontWeight: 800, color: '#7c3aed' }}>
-                {new Set(jobRequests.filter(r => (r.status || '').toLowerCase() !== 'closed').map(r => r.jobTitle || r.position || r.category || 'Role')).size || 3}
-              </div>
-            </div>
-
-            {/* New Hires */}
-            <div
-              onClick={() => {
-                setActiveTab('Joining This Month');
-                setView('onboarding-detail');
-              }}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '14px 18px',
-                borderRadius: 12,
-                background: '#f8fafc',
-                border: '1px solid #f1f5f9',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#f0fdf4';
-                e.currentTarget.style.borderColor = '#bbf7d0';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = '#f8fafc';
-                e.currentTarget.style.borderColor = '#f1f5f9';
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                <div style={{ width: 40, height: 40, borderRadius: 10, background: '#dcfce7', color: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>
-                  <FiUserCheck />
-                </div>
-                <div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>New Hires</div>
-                  <div style={{ fontSize: 12, color: '#64748b' }}>Joining this month</div>
-                </div>
-              </div>
-              <div style={{ fontSize: 22, fontWeight: 800, color: '#16a34a' }}>
-                {onbJoiningThisMonth.length || onbCompleted.length}
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
