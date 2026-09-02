@@ -20,10 +20,10 @@ const menuData = [
     title: "Case Management",
     items: [
       { label: "All", path: "/hrms/hrsavescases" },
+      { label: "Assign to Me", path: "/hrms/assigned-cases" },
       { label: "Create New", path: "/hrms/createnew" },
       { label: "Open", path: "/hrms/open" },
       { label: "Resolved", path: "/hrms/resolved-cases" },
-      { label: "Assign to Me", path: "/hrms/assigned-cases" },
     ],
   },
   {
@@ -42,24 +42,20 @@ const menuData = [
             path: "/onboarding/resonancerequirement/createnew",
           },
           {
-            label: "Resolve",
-            path: "/onboardingresolved",
-          },
-          {
-            label: "Employe Request",
-            path: "/onboarding/employerequest",
-          },
-          {
-            label: "Pre-Joining Compilence",
-            path: "/onboarding/prejoining",
-          },
-          {
             label: "Interview",
             path: "/onboarding/Interview",
           },
           {
             label: "Offer Letter",
             path: "/onboarding/Offerletter",
+          },
+          {
+            label: "Pre-Joining Compliance",
+            path: "/onboarding/prejoining",
+          },
+          {
+            label: "Resolve",
+            path: "/onboardingresolved",
           },
         ],
       },
@@ -71,6 +67,10 @@ const menuData = [
             path: "/offboarding-employes-all",
           },
           {
+            label: "Closed",
+            path: "/offboarding-closed",
+          },
+          {
             label: "Create New",
             path: "/offboarding/createnew",
           },
@@ -79,20 +79,16 @@ const menuData = [
             path: "/offboarding-open",
           },
           {
+            label: "Pending",
+            path: "/offboarding-pending",
+          },
+          {
             label: "Resolved",
             path: "/offboarding-resolved",
           },
           {
-            label: "Closed",
-            path: "/offboarding-closed",
-          },
-          {
             label: "Work In Progress",
             path: "/offboarding-wip",
-          },
-          {
-            label: "Pending",
-            path: "/offboarding-pending",
           },
         ],
       },
@@ -102,9 +98,9 @@ const menuData = [
     title: "Leave Management",
     items: [
       { label: "All", path: "/leave-management-all" },
-      { label: "Leave Request", path: "/leave-request" },
       { label: "Leave Balance", path: "/leave-balance" },
       { label: "Leave Calendar", path: "/leave-calendar" },
+      { label: "Leave Request", path: "/leave-request" },
       { label: "Leave Status", path: "/leave-status" },
     ],
   },

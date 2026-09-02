@@ -420,6 +420,7 @@ function App() {
       />
       <Route path="/offerlettersaves/:id" element={<OfferLetterSaves />} />
       <Route path="/exit/" element={<Exit />} />
+      <Route path="/offboarding/createnew" element={<ProtectedRoute><Exit /></ProtectedRoute>} />
       <Route
         path="/offboarding/employerequest"
         element={<OffBoardingEmployesAll />}

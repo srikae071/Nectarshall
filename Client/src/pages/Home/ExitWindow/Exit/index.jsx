@@ -100,7 +100,7 @@ function Exit() {
         ...formData,
         requester: currentUserName,
         requesterName: currentUserName,
-        requesterFor: "Sumit",
+        requesterFor: currentUserName,
         category: "Offboarding",
         status: "Open",
         requestType: "Resignation",

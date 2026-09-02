@@ -8,9 +8,9 @@ const menuData = [
   {
     title: "Leave Management",
     items: [
-      { label: "Leave Request", path: "/Home-leave-request" },
       { label: "Leave Balance", path: "/Home-leave-balance" },
       { label: "Leave Calendar", path: "/Home-leave-calendar" },
+      { label: "Leave Request", path: "/Home-leave-request" },
       { label: "Leave Status", path: "/Home-leave-status" },
     ],
   },
