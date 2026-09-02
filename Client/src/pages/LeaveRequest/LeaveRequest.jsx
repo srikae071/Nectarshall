@@ -11,6 +11,7 @@ import {
 import Hrmsleftlayout from "../Hrms/Hrmsleftlayout";
 import "./LeaveRequest.css";
 import { useAuth } from "../../context/AuthContext";
+import RequestedForSelect from "../../components/RequestedForSelect";
 
 function LeaveRequest() {
   const { user } = useAuth();
@@ -281,8 +282,8 @@ function LeaveRequest() {
               <div className="lr-field">
                 <label className="lr-label">Requester</label>
                 <input
-                  type="text"
                   className="lr-input"
+                  name="requester"
                   placeholder="Enter requester"
                   value={currentUserName || requester}
                   readOnly
@@ -291,145 +292,10 @@ function LeaveRequest() {
                 />
               </div>
 
-              <div className="lr-field">
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
-                  <label className="lr-label" style={{ margin: 0 }}>Requested For</label>
-                  <button
-                    type="button"
-                    onClick={() => setShowSearchBox(!showSearchBox)}
-                    style={{
-                      background: "none",
-                      border: "none",
-                      cursor: "pointer",
-                      color: "#0284c7",
-                      fontSize: "12.5px",
-                      fontWeight: "700",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "4px",
-                      padding: "2px 6px",
-                      borderRadius: "4px",
-                    }}
-                    title="Click magnifying glass to search employee"
-                  >
-                    <FiSearch size={14} />
-                    <span>Search</span>
-                  </button>
-                </div>
-
-                <div style={{ position: "relative" }}>
-                  <select
-                    className="lr-input"
-                    value={requesterFor}
-                    onChange={(e) => setRequesterFor(e.target.value)}
-                    style={{ background: "#ffffff", cursor: "pointer", fontWeight: "600" }}
-                  >
-                    <option value="">Select Employee</option>
-                    {employeeOptions.map((empName, idx) => (
-                      <option key={idx} value={empName}>
-                        {empName}
-                      </option>
-                    ))}
-                  </select>
-
-                  {/* QUICK SEARCH MAGNIFYING GLASS POPUP */}
-                  {showSearchBox && (
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: "42px",
-                        left: 0,
-                        right: 0,
-                        zIndex: 100,
-                        background: "#ffffff",
-                        border: "1.5px solid #0284c7",
-                        borderRadius: "8px",
-                        boxShadow: "0 10px 25px rgba(2, 132, 199, 0.2)",
-                        padding: "10px",
-                      }}
-                    >
-                      <div style={{ position: "relative", marginBottom: "8px" }}>
-                        <FiSearch
-                          size={14}
-                          style={{
-                            position: "absolute",
-                            left: "10px",
-                            top: "50%",
-                            transform: "translateY(-50%)",
-                            color: "#0284c7",
-                          }}
-                        />
-                        <input
-                          type="text"
-                          autoFocus
-                          placeholder="Search employee by name (e.g. Rahul, A...)"
-                          value={searchEmployeeQuery}
-                          onChange={(e) => setSearchEmployeeQuery(e.target.value)}
-                          style={{
-                            width: "100%",
-                            padding: "6px 28px 6px 30px",
-                            borderRadius: "6px",
-                            border: "1px solid #cbd5e1",
-                            fontSize: "13px",
-                            outline: "none",
-                            boxSizing: "border-box",
-                          }}
-                        />
-                        {searchEmployeeQuery && (
-                          <button
-                            type="button"
-                            onClick={() => setSearchEmployeeQuery("")}
-                            style={{
-                              position: "absolute",
-                              right: "8px",
-                              top: "50%",
-                              transform: "translateY(-50%)",
-                              background: "none",
-                              border: "none",
-                              cursor: "pointer",
-                              color: "#94a3b8",
-                              fontSize: "12px",
-                            }}
-                          >
-                            ✕
-                          </button>
-                        )}
-                      </div>
-
-                      <div style={{ maxHeight: "150px", overflowY: "auto" }}>
-                        {filteredSearchEmployees.length > 0 ? (
-                          filteredSearchEmployees.map((name, idx) => (
-                            <div
-                              key={idx}
-                              onClick={() => {
-                                setRequesterFor(name);
-                                setShowSearchBox(false);
-                                setSearchEmployeeQuery("");
-                              }}
-                              style={{
-                                padding: "6px 10px",
-                                borderRadius: "4px",
-                                cursor: "pointer",
-                                fontSize: "13px",
-                                fontWeight: requesterFor === name ? "700" : "500",
-                                background: requesterFor === name ? "#e0f2fe" : "#ffffff",
-                                color: requesterFor === name ? "#0369a1" : "#1e293b",
-                                marginBottom: "2px",
-                              }}
-                            >
-                              👤 {name}
-                            </div>
-                          ))
-                        ) : (
-                          <div style={{ padding: "8px", fontSize: "12.5px", color: "#64748b", textAlign: "center" }}>
-                            No employee matching "{searchEmployeeQuery}"
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
+              <RequestedForSelect
+                value={requesterFor}
+                onChange={(e) => setRequesterFor(e.target.value)}
+              />
             </div>
           </div>
 

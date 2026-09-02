@@ -5,6 +5,7 @@ import { sendApiData } from "../../../../utils/apiClient";
 import { useEffect } from "react";
 import { useAuth } from "../../../../context/AuthContext";
 import BusinessEngagementNavBar from "../../CncRightSide/BusinessEngagementNav";
+import RequestedForSelect from "../../../../components/RequestedForSelect";
 
 import "../../../../styles/SharedFormStyle.css";
 
@@ -17,7 +18,7 @@ function BusinessEngagement() {
     clientId: "",
 
     requester: currentUserName,
-    requesterFor: "Sumit",
+    requesterFor: "",
 
     type: "",
     companyName: "",
@@ -180,17 +181,10 @@ function BusinessEngagement() {
               />
             </div>
 
-            <div className="lr-field">
-              <label className="lr-label">Requested For</label>
-              <input
-                className="lr-input"
-                name="requesterFor"
-                value="Sumit"
-                readOnly
-                disabled
-                style={{ background: "#f1f5f9", cursor: "not-allowed" }}
-              />
-            </div>
+            <RequestedForSelect
+              value={formData.requesterFor}
+              onChange={handleChange}
+            />
           </div>
 
           {/* ROW 2 */}

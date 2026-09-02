@@ -6,6 +6,7 @@ import AshrNavBar from "../AshrNavBar";
 import "../../../styles/SharedFormStyle.css";
 import { fetchApiData, sendApiData } from "../../../utils/apiClient";
 import { useAuth } from "../../../context/AuthContext";
+import RequestedForSelect from "../../../components/RequestedForSelect";
 
 function AskForHrMainPage() {
   const { user } = useAuth();
@@ -13,7 +14,7 @@ function AskForHrMainPage() {
 
   const [formData, setFormData] = useState({
     requester: currentUserName,
-    requesterFor: "Sumit",
+    requesterFor: "",
     category: "",
     subCategory: "",
     urgency: "",
@@ -112,17 +113,10 @@ function AskForHrMainPage() {
               />
             </div>
 
-            <div className="lr-field">
-              <label className="lr-label">Requested For</label>
-              <input
-                className="lr-input"
-                name="requesterFor"
-                value="Sumit"
-                readOnly
-                disabled
-                style={{ background: "#f1f5f9", cursor: "not-allowed" }}
-              />
-            </div>
+            <RequestedForSelect
+              value={formData.requesterFor}
+              onChange={handleChange}
+            />
           </div>
 
           {/* ROW 2 */}
