@@ -908,26 +908,26 @@ exports.getSignedHandbookPdf = async (req, res) => {
 
     if (isSigned) {
       lastPage.drawText(`[X] Electronically Signed: ${printName}`, {
-        x: 120,
-        y: 220,
-        size: 11,
+        x: 105,
+        y: 181.5,
+        size: 10.5,
         font: helveticaBold,
         color: rgb(0.08, 0.4, 0.75),
       });
     }
 
     lastPage.drawText(printName, {
-      x: 120,
-      y: 195,
-      size: 11,
+      x: 105,
+      y: 158.5,
+      size: 10.5,
       font: helvetica,
       color: rgb(0.1, 0.1, 0.1),
     });
 
     lastPage.drawText(dateAck, {
-      x: 120,
-      y: 170,
-      size: 11,
+      x: 105,
+      y: 135.5,
+      size: 10.5,
       font: helvetica,
       color: rgb(0.1, 0.1, 0.1),
     });

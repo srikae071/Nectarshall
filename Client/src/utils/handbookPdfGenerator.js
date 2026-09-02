@@ -29,30 +29,30 @@ export async function generateAndOpenSignedHandbookPdf({
 
     if (isSigned) {
       // Draw signature acknowledgement on Page 34
-      // Line: (please sign) at approx y: 220
+      // Line 1: (please sign) at exact baseline 178.7 -> resting at y = 181.5
       lastPage.drawText("[X] Electronically Signed: " + finalPrintName, {
-        x: 120,
-        y: 220,
-        size: 11,
+        x: 105,
+        y: 181.5,
+        size: 10.5,
         font: helveticaBold,
         color: rgb(0.08, 0.4, 0.75),
       });
     }
 
-    // Line: (please print name) at approx y: 195
+    // Line 2: (please print name) at exact baseline 155.6 -> resting at y = 158.5
     lastPage.drawText(finalPrintName, {
-      x: 120,
-      y: 195,
-      size: 11,
+      x: 105,
+      y: 158.5,
+      size: 10.5,
       font: helvetica,
       color: rgb(0.1, 0.1, 0.1),
     });
 
-    // Line: (date of acknowledgement) at approx y: 170
+    // Line 3: (date of acknowledgement) at exact baseline 132.6 -> resting at y = 135.5
     lastPage.drawText(finalDate, {
-      x: 120,
-      y: 170,
-      size: 11,
+      x: 105,
+      y: 135.5,
+      size: 10.5,
       font: helvetica,
       color: rgb(0.1, 0.1, 0.1),
     });
