@@ -968,31 +968,31 @@ function OnBoardingResonanceRequirementsCreateNew() {
                 <button
                   type="button"
                   className={
-                    formData.interview === "PASS" ? "ToggleActive" : "ToggleBtn"
+                    formData.interview === "SELECT" || formData.interview === "PASS" ? "ToggleActive" : "ToggleBtn"
                   }
                   onClick={() =>
                     setFormData({
                       ...formData,
-                      interview: "PASS",
+                      interview: "SELECT",
                     })
                   }
                 >
-                  PASS
+                  Select
                 </button>
 
                 <button
                   type="button"
                   className={
-                    formData.interview === "FAIL" ? "ToggleFail" : "ToggleBtn"
+                    formData.interview === "REJECT" || formData.interview === "FAIL" ? "ToggleFail" : "ToggleBtn"
                   }
                   onClick={() =>
                     setFormData({
                       ...formData,
-                      interview: "FAIL",
+                      interview: "REJECT",
                     })
                   }
                 >
-                  FAIL
+                  Reject
                 </button>
               </div>
             </div>

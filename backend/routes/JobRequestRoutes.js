@@ -15,11 +15,14 @@ const {
   getInterviewStats,
   createITTask,
   deleteJobRequest,
+  getSignedHandbookPdf,
 } = require("../controllers/jobRequestController");
 
 router.post("/", createJobRequest);
 
 router.get("/", getAllJobRequests);
+router.get("/case/:caseId/signed-handbook", getSignedHandbookPdf);
+router.get("/:id/signed-handbook", getSignedHandbookPdf);
 router.get("/case/:caseId", getJobRequestByCaseId);
 router.get("/:id", getJobRequestById);
 router.put("/case/:caseId/candidate/:candId", submitCandidateFormById);

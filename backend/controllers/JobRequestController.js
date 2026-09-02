@@ -1,6 +1,9 @@
 const JobRequest = require("../models/JobRequest");
 const Employee = require("../models/Employee");
 const nodemailer = require("nodemailer");
+const { PDFDocument, rgb, StandardFonts } = require("pdf-lib");
+const fs = require("fs");
+const path = require("path");
 
 const syncResolvedCandidateToEmployee = async (candData, requestData) => {
   try {
@@ -351,6 +354,71 @@ exports.updateJobRequest = async (req, res) => {
 
     // Update all fields sent from frontend
     Object.assign(request, req.body);
+
+    if (req.body.offerStatus) {
+      request.offerLetterResult = req.body.offerStatus;
+    }
+    if (req.body.bankAccount) {
+      request.accountNumber = req.body.bankAccount;
+      request.bankAccountName = req.body.bankAccount;
+    }
+    if (req.body.taxFileNumber) {
+      request.tfn = req.body.taxFileNumber;
+    }
+    if (req.body.superFundName) {
+      request.superFund = req.body.superFundName;
+    }
+    if (req.body.superMemberNumber) {
+      request.superMemberNum = req.body.superMemberNumber;
+    }
+
+    if (Array.isArray(request.candidates) && request.candidates.length > 0) {
+      request.candidates.forEach((cand) => {
+        if (req.body.offerStatus) cand.offerLetterResult = req.body.offerStatus;
+        if (req.body.bankName) cand.bankName = req.body.bankName;
+        if (req.body.bankAccount) {
+          cand.bankAccountName = req.body.bankAccount;
+          cand.accountNumber = req.body.bankAccount;
+          cand.bankAccount = req.body.bankAccount;
+        }
+        if (req.body.bsb) cand.bsb = req.body.bsb;
+        if (req.body.taxFileNumber) {
+          cand.tfn = req.body.taxFileNumber;
+          cand.taxFileNumber = req.body.taxFileNumber;
+        }
+        if (req.body.superFundName) {
+          cand.superFund = req.body.superFundName;
+          cand.superFundName = req.body.superFundName;
+        }
+        if (req.body.superMemberNumber) {
+          cand.superMemberNum = req.body.superMemberNumber;
+          cand.superMemberNumber = req.body.superMemberNumber;
+        }
+        if (req.body.longServiceLeaveId) cand.longServiceLeaveId = req.body.longServiceLeaveId;
+        if (req.body.handbookSigned !== undefined) {
+          cand.handbookSigned = Boolean(req.body.handbookSigned);
+          cand.handbookCompleted = Boolean(req.body.handbookSigned);
+        }
+        if (req.body.handbookPrintName) cand.handbookPrintName = req.body.handbookPrintName;
+        if (req.body.handbookDate) cand.handbookDate = req.body.handbookDate;
+        if (req.body.handbookUrl) cand.handbookUrl = req.body.handbookUrl;
+      });
+    }
+
+    if (req.body.handbookSigned !== undefined) {
+      request.handbookSigned = Boolean(req.body.handbookSigned);
+      request.handbookCompleted = Boolean(req.body.handbookSigned);
+    }
+    if (req.body.handbookPrintName) {
+      request.handbookPrintName = req.body.handbookPrintName;
+    }
+    if (req.body.handbookDate) {
+      request.handbookDate = req.body.handbookDate;
+    }
+    if (req.body.handbookUrl) {
+      request.handbookUrl = req.body.handbookUrl;
+    }
+
     request.markModified("candidates");
     request.markModified("timeline");
 
@@ -446,9 +514,30 @@ exports.updateJobRequestByCaseId = async (req, res) => {
           cand.superMemberNumber = req.body.superMemberNumber;
         }
         if (req.body.longServiceLeaveId) cand.longServiceLeaveId = req.body.longServiceLeaveId;
+        if (req.body.handbookSigned !== undefined) {
+          cand.handbookSigned = Boolean(req.body.handbookSigned);
+          cand.handbookCompleted = Boolean(req.body.handbookSigned);
+        }
+        if (req.body.handbookPrintName) cand.handbookPrintName = req.body.handbookPrintName;
+        if (req.body.handbookDate) cand.handbookDate = req.body.handbookDate;
+        if (req.body.handbookUrl) cand.handbookUrl = req.body.handbookUrl;
         cand.submitted = true;
       });
       request.markModified("candidates");
+    }
+
+    if (req.body.handbookSigned !== undefined) {
+      request.handbookSigned = Boolean(req.body.handbookSigned);
+      request.handbookCompleted = Boolean(req.body.handbookSigned);
+    }
+    if (req.body.handbookPrintName) {
+      request.handbookPrintName = req.body.handbookPrintName;
+    }
+    if (req.body.handbookDate) {
+      request.handbookDate = req.body.handbookDate;
+    }
+    if (req.body.handbookUrl) {
+      request.handbookUrl = req.body.handbookUrl;
     }
 
     await checkAndUpdateOffboardingStatus(request);
@@ -775,5 +864,81 @@ exports.deleteJobRequest = async (req, res) => {
     res.status(500).json({
       message: err.message,
     });
+  }
+};
+
+exports.getSignedHandbookPdf = async (req, res) => {
+  try {
+    const { caseId } = req.params;
+    let request = await JobRequest.findOne({ caseId });
+    if (!request) {
+      request = await JobRequest.findById(caseId).catch(() => null);
+    }
+
+    const possiblePaths = [
+      path.join(__dirname, "../../Client/public/pdfs/employee-handbook.pdf.pdf"),
+      path.join(__dirname, "../../Client/dist/pdfs/employee-handbook.pdf.pdf"),
+      path.join(process.cwd(), "Client/public/pdfs/employee-handbook.pdf.pdf"),
+      path.join(process.cwd(), "../Client/public/pdfs/employee-handbook.pdf.pdf"),
+      path.join(process.cwd(), "public/pdfs/employee-handbook.pdf.pdf"),
+    ];
+
+    let pdfBuffer = null;
+    for (const p of possiblePaths) {
+      if (fs.existsSync(p)) {
+        pdfBuffer = fs.readFileSync(p);
+        break;
+      }
+    }
+
+    if (!pdfBuffer) {
+      return res.status(404).json({ message: "Base employee handbook template PDF not found" });
+    }
+
+    const pdfDoc = await PDFDocument.load(pdfBuffer);
+    const pages = pdfDoc.getPages();
+    const lastPage = pages[pages.length - 1]; // Page 34
+    const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+    const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+    const cand = (Array.isArray(request?.candidates) && request.candidates[0]) || {};
+    const printName = request?.handbookPrintName || cand?.handbookPrintName || (request?.firstName ? `${request.firstName} ${request.lastName || ''}`.trim() : (request?.requesterName || "Candidate"));
+    const dateAck = request?.handbookDate || cand?.handbookDate || new Date().toISOString().split("T")[0];
+    const isSigned = request?.handbookSigned || cand?.handbookSigned || true;
+
+    if (isSigned) {
+      lastPage.drawText(`[X] Electronically Signed: ${printName}`, {
+        x: 120,
+        y: 220,
+        size: 11,
+        font: helveticaBold,
+        color: rgb(0.08, 0.4, 0.75),
+      });
+    }
+
+    lastPage.drawText(printName, {
+      x: 120,
+      y: 195,
+      size: 11,
+      font: helvetica,
+      color: rgb(0.1, 0.1, 0.1),
+    });
+
+    lastPage.drawText(dateAck, {
+      x: 120,
+      y: 170,
+      size: 11,
+      font: helvetica,
+      color: rgb(0.1, 0.1, 0.1),
+    });
+
+    const modifiedPdfBytes = await pdfDoc.save();
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `inline; filename="Signed_Employee_Handbook_${caseId || 'preview'}.pdf"`);
+    res.send(Buffer.from(modifiedPdfBytes));
+  } catch (err) {
+    console.error("Error generating signed handbook PDF:", err);
+    res.status(500).json({ message: "Error generating signed handbook PDF", error: err.message });
   }
 };

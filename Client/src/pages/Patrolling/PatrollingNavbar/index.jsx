@@ -1,9 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import logo from "../../../images/logo.png";
+import { useAuth } from "../../../context/AuthContext";
 import "./index.css";
 
 function PatrollingNavbar() {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   return (
     <div className="opnavbar">
@@ -14,7 +16,9 @@ function PatrollingNavbar() {
         </div>
       </div>
 
-      <div className="profile">👤</div>
+      <div className="profile" style={{ fontWeight: "800", fontSize: "14px", cursor: "default" }}>
+        👤 {user?.displayName || user?.username || "User"}
+      </div>
     </div>
   );
 }

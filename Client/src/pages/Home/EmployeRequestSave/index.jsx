@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchApiData, sendApiData } from "../../../utils/apiClient";
+import { generateAndOpenSignedHandbookPdf } from "../../../utils/handbookPdfGenerator";
 import Hrmsleftlayout from "../../Hrms/Hrmsleftlayout";
 import axios from "axios";
 import "../../../styles/SharedFormStyle.css";
@@ -208,26 +209,6 @@ function EmployeRequestSave() {
     });
   };
 
-  const handleCandDecision = (field, val) => {
-    setFormData((prev) => {
-      const list =
-        Array.isArray(prev.candidates) && prev.candidates.length > 0
-          ? [...prev.candidates]
-          : [{ candidateId: "CND-001" }];
-
-      list[activeCandTabIdx] = {
-        ...list[activeCandTabIdx],
-        [field]: val,
-      };
-
-      return {
-        ...prev,
-        candidates: list,
-        [field]: val,
-      };
-    });
-  };
-
   const fetchData = async () => {
     try {
       const response = await fetchApiData(`/api/jobrequests/${id}`);
@@ -307,11 +288,11 @@ function EmployeRequestSave() {
 
   const handleFinalSave = async () => {
     let nextStatus = formData.status || "Open";
-    if (formData.interview === "PASS") {
-      nextStatus = "OfferLetter";
+    if (formData.interview === "SELECT" || formData.interview === "PASS") {
+      nextStatus = "Offer Letter";
     }
 
-    if (formData.interview === "FAIL") {
+    if (formData.interview === "REJECT" || formData.interview === "FAIL") {
       nextStatus = "Closed";
     }
     try {
@@ -333,7 +314,27 @@ function EmployeRequestSave() {
 
   const candidateList =
     Array.isArray(formData.candidates) && formData.candidates.length > 0
-      ? formData.candidates
+      ? formData.candidates.map(c => ({
+          ...c,
+          bankName: c.bankName || formData.bankName || "",
+          bankAccount: c.bankAccount || c.accountNumber || formData.bankAccount || formData.accountNumber || "",
+          bankAccountName: c.bankAccountName || c.bankAccount || formData.bankAccountName || formData.bankAccount || "",
+          accountNumber: c.accountNumber || c.bankAccount || formData.accountNumber || formData.bankAccount || "",
+          bsb: c.bsb || formData.bsb || "",
+          taxFileNumber: c.taxFileNumber || c.tfn || formData.taxFileNumber || formData.tfn || "",
+          tfn: c.tfn || c.taxFileNumber || formData.tfn || formData.taxFileNumber || "",
+          superFundName: c.superFundName || c.superFund || formData.superFundName || formData.superFund || "",
+          superFund: c.superFund || c.superFundName || formData.superFund || formData.superFundName || "",
+          superMemberNumber: c.superMemberNumber || c.superMemberNum || formData.superMemberNumber || formData.superMemberNum || "",
+          superMemberNum: c.superMemberNum || c.superMemberNumber || formData.superMemberNum || formData.superMemberNumber || "",
+          longServiceLeaveId: c.longServiceLeaveId || formData.longServiceLeaveId || "",
+          offerStatus: c.offerStatus || c.offerLetterResult || formData.offerStatus || formData.offerLetterResult || "",
+          offerLetterResult: c.offerLetterResult || c.offerStatus || formData.offerLetterResult || formData.offerStatus || "",
+          handbookSigned: c.handbookSigned !== undefined ? c.handbookSigned : (formData.handbookSigned || false),
+          handbookPrintName: c.handbookPrintName || formData.handbookPrintName || "",
+          handbookDate: c.handbookDate || formData.handbookDate || "",
+          handbookUrl: c.handbookUrl || formData.handbookUrl || "/pdfs/employee-handbook.pdf.pdf",
+        }))
       : [
           {
             candidateId: "CND-001",
@@ -352,39 +353,81 @@ function EmployeRequestSave() {
             trafficManagementCandidateForm: formData.trafficManagementCandidateForm,
             whiteCardCandidateForm: formData.whiteCardCandidateForm,
             yellowCardCandidateForm: formData.yellowCardCandidateForm,
-            bankName: formData.bankName,
-            bankAccount: formData.bankAccount,
-            bsb: formData.bsb,
-            taxFileNumber: formData.taxFileNumber,
-            superFundName: formData.superFundName,
-            superMemberNumber: formData.superMemberNumber,
+            bankName: formData.bankName || "",
+            bankAccount: formData.bankAccount || formData.accountNumber || "",
+            bankAccountName: formData.bankAccountName || formData.bankAccount || "",
+            accountNumber: formData.accountNumber || formData.bankAccount || "",
+            bsb: formData.bsb || "",
+            taxFileNumber: formData.taxFileNumber || formData.tfn || "",
+            tfn: formData.tfn || formData.taxFileNumber || "",
+            superFundName: formData.superFundName || formData.superFund || "",
+            superFund: formData.superFund || formData.superFundName || "",
+            superMemberNumber: formData.superMemberNumber || formData.superMemberNum || "",
+            superMemberNum: formData.superMemberNum || formData.superMemberNumber || "",
+            longServiceLeaveId: formData.longServiceLeaveId || "",
+            offerStatus: formData.offerStatus || formData.offerLetterResult || "",
+            offerLetterResult: formData.offerLetterResult || formData.offerStatus || "",
+            handbookSigned: formData.handbookSigned || false,
+            handbookPrintName: formData.handbookPrintName || "",
+            handbookDate: formData.handbookDate || "",
+            handbookUrl: formData.handbookUrl || "/pdfs/employee-handbook.pdf.pdf",
           },
         ];
 
   const checkIsSubmitted = (cand) => {
-    if (!cand || typeof cand !== "object") return false;
-
+    if (!cand) return false;
     if (cand.submitted === true) return true;
-
-    const hasCandidateFormResponses = Boolean(
-      cand.securityLicenceCandidateForm ||
+    return !!(
       cand.modernSlaveryCandidateForm ||
       cand.legalBarrierCandidateForm ||
       cand.medicalLimitationsCandidateForm ||
-      cand.workRightsCandidateForm ||
-      cand.drivingLicenceCandidateForm ||
-      cand.firstAidCandidateForm ||
-      cand.cprCandidateForm ||
-      cand.workingWithChildrenCandidateForm ||
-      cand.trafficManagementCandidateForm ||
-      cand.whiteCardCandidateForm ||
-      cand.yellowCardCandidateForm ||
-      cand.bankName ||
-      cand.bankAccount ||
-      cand.taxFileNumber
+      cand.workRightsCandidateForm
     );
+  };
 
-    return hasCandidateFormResponses;
+  const handleCandDecision = (field, value) => {
+    let extraUpdates = {};
+    if (field === "bankAccount") {
+      extraUpdates.bankAccountName = value;
+      extraUpdates.accountNumber = value;
+    } else if (field === "accountNumber" || field === "bankAccountName") {
+      extraUpdates.bankAccount = value;
+      extraUpdates.bankAccountName = value;
+      extraUpdates.accountNumber = value;
+    } else if (field === "taxFileNumber" || field === "tfn") {
+      extraUpdates.tfn = value;
+      extraUpdates.taxFileNumber = value;
+    } else if (field === "superFundName" || field === "superFund") {
+      extraUpdates.superFund = value;
+      extraUpdates.superFundName = value;
+    } else if (field === "superMemberNumber" || field === "superMemberNum") {
+      extraUpdates.superMemberNum = value;
+      extraUpdates.superMemberNumber = value;
+    } else if (field === "offerStatus" || field === "offerLetterResult") {
+      extraUpdates.offerStatus = value;
+      extraUpdates.offerLetterResult = value;
+    } else if (field === "handbookSigned" || field === "handbookPrintName" || field === "handbookDate" || field === "handbookUrl") {
+      extraUpdates[field] = value;
+    }
+
+    if (Array.isArray(formData.candidates) && formData.candidates.length > 0) {
+      const updatedList = [...formData.candidates];
+      const target = { ...updatedList[activeCandTabIdx], ...extraUpdates, [field]: value };
+      updatedList[activeCandTabIdx] = target;
+
+      setFormData((prev) => ({
+        ...prev,
+        ...extraUpdates,
+        candidates: updatedList,
+        [field]: value,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        ...extraUpdates,
+        [field]: value,
+      }));
+    }
   };
 
   const currentCand = candidateList[activeCandTabIdx] || candidateList[0];
@@ -412,8 +455,15 @@ function EmployeRequestSave() {
         nextSt = "Open";
       }
     } else if (normStatus === "interview") {
-      if (formData.interview === "PASS") {
+      const interviewVal = formData.interview || currentCand.interview;
+      if (interviewVal === "SELECT" || interviewVal === "PASS") {
         nextSt = "Offer Letter";
+      } else if (interviewVal === "REJECT" || interviewVal === "FAIL") {
+        nextSt = "Closed";
+        alert("Candidate has been rejected in interview.");
+      } else {
+        alert("Please select Interview outcome (Select or Reject).");
+        return;
       }
     } else if (normStatus === "offerletter") {
       const res = currentCand.offerLetterResult || formData.offerLetterResult;
@@ -779,10 +829,6 @@ function EmployeRequestSave() {
               )}
               <button type="button" className="lr-btn-cancel" onClick={() => setFormData({})}>
                 Cancel
-              </button>
-
-              <button type="button" className="lr-btn-submit btn-primary-dark" onClick={handleSubmit}>
-                Submit
               </button>
             </div>
           )}
@@ -1534,7 +1580,7 @@ function EmployeRequestSave() {
             </div>
 
 
-            {showReferenceSection && (
+            {showReferencesSection && (
               <div className="lr-card" style={{ marginTop: "24px" }}>
                 <div className="section-header">REFERENCES & INTERVIEW</div>
                 <h3 className="lr-section-title">4. References</h3>
@@ -1546,31 +1592,31 @@ function EmployeRequestSave() {
                     <button
                       type="button"
                       className={
-                        formData.interview === "PASS"
+                        formData.interview === "SELECT" || formData.interview === "PASS"
                           ? "ToggleActive"
                           : "ToggleBtn"
                       }
                       onClick={() =>
                         setFormData({
                           ...formData,
-                          interview: "PASS",
+                          interview: "SELECT",
                         })
                       }
                     >
-                      Accept
+                      Select
                     </button>
 
                     <button
                       type="button"
                       className={
-                        formData.interview === "FAIL"
+                        formData.interview === "REJECT" || formData.interview === "FAIL"
                           ? "ToggleFail"
                           : "ToggleBtn"
                       }
                       onClick={() =>
                         setFormData({
                           ...formData,
-                          interview: "FAIL",
+                          interview: "REJECT",
                         })
                       }
                     >
@@ -1640,6 +1686,121 @@ function EmployeRequestSave() {
                   </div>
                 </div>
 
+                {/* EMPLOYEE HANDBOOK (34 PAGES) ACKNOWLEDGEMENT CARD */}
+                <div style={{ marginTop: "20px", paddingTop: "18px", borderTop: "1px solid #e2e8f0" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", flexWrap: "wrap", gap: "10px" }}>
+                    <div>
+                      <h4 style={{ margin: 0, fontSize: "14px", fontWeight: "800", color: "#0f172a" }}>Employee Handbook (34 Pages)</h4>
+                      <p style={{ margin: "2px 0 0 0", fontSize: "12.5px", color: "#64748b" }}>Excell Security Employee Handbook V1.0 acknowledgement & electronic signature.</p>
+                    </div>
+
+                    <span
+                      style={{
+                        fontSize: "13px",
+                        fontWeight: "800",
+                        padding: "6px 16px",
+                        borderRadius: "14px",
+                        background:
+                          currentCand.handbookSigned || formData.handbookSigned
+                            ? "#dcfce7"
+                            : "#fef3c7",
+                        color:
+                          currentCand.handbookSigned || formData.handbookSigned
+                            ? "#15803d"
+                            : "#b45309",
+                      }}
+                    >
+                      {currentCand.handbookSigned || formData.handbookSigned ? "ACCEPTED / SIGNED" : "PENDING ACKNOWLEDGEMENT"}
+                    </span>
+                  </div>
+
+                  <div className="lr-grid-2" style={{ marginTop: "12px" }}>
+                    <div className="lr-field">
+                      <label className="lr-label">Handbook Print Name</label>
+                      <input
+                        className="lr-input"
+                        type="text"
+                        placeholder="Candidate Name"
+                        value={currentCand.handbookPrintName || formData.handbookPrintName || ""}
+                        onChange={(e) => handleCandDecision("handbookPrintName", e.target.value)}
+                      />
+                    </div>
+                    <div className="lr-field">
+                      <label className="lr-label">Date of Acknowledgement</label>
+                      <input
+                        className="lr-input"
+                        type="date"
+                        value={
+                          currentCand.handbookDate
+                            ? currentCand.handbookDate.split("T")[0]
+                            : (formData.handbookDate ? formData.handbookDate.split("T")[0] : "")
+                        }
+                        onChange={(e) => handleCandDecision("handbookDate", e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div style={{ marginTop: "12px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px" }}>
+                    <div style={{ fontSize: "13px", fontWeight: "700", color: (currentCand.handbookSigned || formData.handbookSigned) ? "#15803d" : "#64748b" }}>
+                      {(currentCand.handbookSigned || formData.handbookSigned) ? "✓ Electronically Signed & Verified by Candidate" : "⏳ Pending Candidate Signature"}
+                    </div>
+
+                    <div style={{ display: "flex", gap: "8px" }}>
+                      <button
+                        type="button"
+                        onClick={() => generateAndOpenSignedHandbookPdf({
+                          candidateName: `${currentCand.firstName || ''} ${currentCand.lastName || ''}`.trim() || currentCand.name || formData.requesterName || "Candidate",
+                          printName: currentCand.handbookPrintName || formData.handbookPrintName || `${currentCand.firstName || ''} ${currentCand.lastName || ''}`.trim() || currentCand.name || formData.requesterName,
+                          dateOfAcknowledgement: currentCand.handbookDate || formData.handbookDate || new Date().toISOString().split("T")[0],
+                          isSigned: Boolean(currentCand.handbookSigned || formData.handbookSigned),
+                          action: "open"
+                        })}
+                        style={{
+                          background: "#0284c7",
+                          color: "#ffffff",
+                          border: "none",
+                          borderRadius: "6px",
+                          padding: "6px 14px",
+                          fontWeight: "700",
+                          fontSize: "12.5px",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px"
+                        }}
+                      >
+                        📄 View Signed Handbook PDF (34 Pages)
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => generateAndOpenSignedHandbookPdf({
+                          candidateName: `${currentCand.firstName || ''} ${currentCand.lastName || ''}`.trim() || currentCand.name || formData.requesterName || "Candidate",
+                          printName: currentCand.handbookPrintName || formData.handbookPrintName || `${currentCand.firstName || ''} ${currentCand.lastName || ''}`.trim() || currentCand.name || formData.requesterName,
+                          dateOfAcknowledgement: currentCand.handbookDate || formData.handbookDate || new Date().toISOString().split("T")[0],
+                          isSigned: Boolean(currentCand.handbookSigned || formData.handbookSigned),
+                          action: "download"
+                        })}
+                        style={{
+                          background: "#059669",
+                          color: "#ffffff",
+                          border: "none",
+                          borderRadius: "6px",
+                          padding: "6px 14px",
+                          fontWeight: "700",
+                          fontSize: "12.5px",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "6px"
+                        }}
+                      >
+                        ⬇ Download Signed PDF
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
                 {!formData.form2EmailSent && (
                   <div style={{ marginTop: "16px", paddingTop: "14px", borderTop: "1px dashed #cbd5e1", display: "flex", justifyContent: "flex-end" }}>
                     <button
@@ -1686,7 +1847,7 @@ function EmployeRequestSave() {
                       className="lr-input"
                       type="text"
                       placeholder="Account Holder Name"
-                      value={currentCand.bankAccountName || formData.bankAccountName || ""}
+                      value={currentCand.bankAccountName || currentCand.bankAccount || formData.bankAccountName || formData.bankAccount || ""}
                       onChange={(e) => handleCandDecision("bankAccountName", e.target.value)}
                     />
                   </div>
@@ -1709,7 +1870,7 @@ function EmployeRequestSave() {
                       className="lr-input"
                       type="text"
                       placeholder="Account Number"
-                      value={currentCand.accountNumber || formData.accountNumber || ""}
+                      value={currentCand.accountNumber || currentCand.bankAccount || formData.accountNumber || formData.bankAccount || ""}
                       onChange={(e) => handleCandDecision("accountNumber", e.target.value)}
                     />
                   </div>
@@ -1722,8 +1883,8 @@ function EmployeRequestSave() {
                       className="lr-input"
                       type="text"
                       placeholder="9-digit TFN"
-                      value={currentCand.tfn || formData.tfn || ""}
-                      onChange={(e) => handleCandDecision("tfn", e.target.value)}
+                      value={currentCand.taxFileNumber || currentCand.tfn || formData.taxFileNumber || formData.tfn || ""}
+                      onChange={(e) => handleCandDecision("taxFileNumber", e.target.value)}
                     />
                   </div>
                   <div className="lr-field">
@@ -1732,8 +1893,8 @@ function EmployeRequestSave() {
                       className="lr-input"
                       type="text"
                       placeholder="Super Fund Name"
-                      value={currentCand.superFund || formData.superFund || ""}
-                      onChange={(e) => handleCandDecision("superFund", e.target.value)}
+                      value={currentCand.superFundName || currentCand.superFund || formData.superFundName || formData.superFund || ""}
+                      onChange={(e) => handleCandDecision("superFundName", e.target.value)}
                     />
                   </div>
                 </div>
@@ -1745,8 +1906,8 @@ function EmployeRequestSave() {
                       className="lr-input"
                       type="text"
                       placeholder="Member Number"
-                      value={currentCand.superMemberNum || formData.superMemberNum || ""}
-                      onChange={(e) => handleCandDecision("superMemberNum", e.target.value)}
+                      value={currentCand.superMemberNumber || currentCand.superMemberNum || formData.superMemberNumber || formData.superMemberNum || ""}
+                      onChange={(e) => handleCandDecision("superMemberNumber", e.target.value)}
                     />
                   </div>
                   <div className="lr-field">

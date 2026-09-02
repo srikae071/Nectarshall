@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-
-import axios from "axios";
+import { fetchApiData, sendApiData } from "../../../../../utils/apiClient";
+import { generateAndOpenSignedHandbookPdf } from "../../../../../utils/handbookPdfGenerator";
 import CandiateFormNav from "../CandidateForm/CandiateFormNav";
 import "./index.css";
 function Candidateform2() {
@@ -18,6 +18,11 @@ function Candidateform2() {
     superMemberNumber: "",
 
     longServiceLeaveId: "",
+
+    handbookSigned: false,
+    handbookPrintName: "",
+    handbookDate: new Date().toISOString().split("T")[0],
+    handbookUrl: "/pdfs/employee-handbook.pdf.pdf",
 
     confidentialityAgreement: "",
     contract: "",
@@ -37,50 +42,57 @@ function Candidateform2() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/case/${id}`,
-      );
-
-      setFormData(response.data);
+      const response = await fetchApiData(`/api/jobrequests/case/${id}`);
+      if (response && response.data) {
+        const d = response.data;
+        setFormData({
+          ...d,
+          handbookPrintName: d.handbookPrintName || `${d.firstName || ''} ${d.lastName || ''}`.trim() || d.requesterName || "",
+          handbookDate: d.handbookDate ? d.handbookDate.split("T")[0] : new Date().toISOString().split("T")[0],
+          handbookSigned: d.handbookSigned !== undefined ? d.handbookSigned : false,
+        });
+      }
     } catch (error) {
       console.log(error);
     }
   };
-  // const handleSubmit = async () => {
-  //   try {
-  //     await axios.put(
-  //       `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/case/${id}`,
-  //       {
-  //         ...formData,
-  //         status: "PreJoiningCompliance",
-  //       },
-  //     );
 
-  //     alert("Candidate Form 2 Submitted Successfully");
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
   const handleSubmit = async () => {
     try {
       console.log("CASE ID:", id);
 
-      const response = await axios.put(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/case/${id}`,
-        {
-          ...formData,
-          candidateCompleted: true,
-          status: "PreJoiningCompliance",
-        },
-      );
+      const payload = {
+        ...formData,
+        offerStatus: formData.offerStatus || "ACCEPT",
+        offerLetterResult: formData.offerStatus || "ACCEPT",
+        bankName: formData.bankName,
+        bankAccount: formData.bankAccount,
+        bankAccountName: formData.bankAccount,
+        accountNumber: formData.bankAccount,
+        bsb: formData.bsb,
+        taxFileNumber: formData.taxFileNumber,
+        tfn: formData.taxFileNumber,
+        superFundName: formData.superFundName,
+        superFund: formData.superFundName,
+        superMemberNumber: formData.superMemberNumber,
+        superMemberNum: formData.superMemberNumber,
+        longServiceLeaveId: formData.longServiceLeaveId,
+        handbookSigned: Boolean(formData.handbookSigned),
+        handbookPrintName: formData.handbookPrintName || `${formData.firstName || ''} ${formData.lastName || ''}`.trim() || formData.requesterName || "",
+        handbookDate: formData.handbookDate || new Date().toISOString().split("T")[0],
+        handbookEmployment: formData.handbookSigned ? "Pass" : "",
+        handbookUrl: "/pdfs/employee-handbook.pdf.pdf",
+        candidateCompleted: true,
+        status: "PreJoiningCompliance",
+      };
+
+      await sendApiData(`/api/jobrequests/case/${id}`, payload, "put");
       setSubmitted(true);
-
-      console.log("UPDATE RESPONSE:", response.data);
-
       alert("Candidate Form 2 Submitted Successfully");
     } catch (error) {
       console.log("ERROR:", error.response?.data);
       console.log(error);
+      alert("Error submitting Candidate Form 2");
     }
   };
   if (submitted) {
@@ -362,93 +374,84 @@ function Candidateform2() {
             </div>
           </div>
 
-          <div className="OfferRow">
-            <div className="OfferField">
-              <label>Handbook WHS *</label>
+        </div>
 
-              {/* <div className="ToggleGroup">
-              <button
-                type="button"
-                className={
-                  formData.handbookWhs === "Pass" ? "ToggleActive" : "ToggleBtn"
-                }
-                onClick={() =>
-                  setFormData({
-                    ...formData,
-                    handbookWhs: "Pass",
-                  })
-                }
-              >
-                Pass
-              </button>
-
-              <button
-                type="button"
-                className={
-                  formData.handbookWhs === "Fail" ? "ToggleFail" : "ToggleBtn"
-                }
-                onClick={() =>
-                  setFormData({
-                    ...formData,
-                    handbookWhs: "Fail",
-                  })
-                }
-              >
-                Fail
-              </button>
-            </div> */}
+        {/* EMPLOYEE HANDBOOK ACKNOWLEDGEMENT SECTION (34 Pages) */}
+        <div className="SectionBlock" style={{ background: "#f8fafc", border: "1px solid #cbd5e1", borderRadius: "10px", padding: "20px 24px", marginTop: "24px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", flexWrap: "wrap", gap: "10px" }}>
+            <div>
+              <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "800", color: "#0f172a" }}>Employee Handbook (34 Pages)</h3>
+              <p style={{ margin: "4px 0 0 0", fontSize: "13px", color: "#64748b" }}>Please review the Excell Security Employee Handbook V1.0 and complete the acknowledgement below.</p>
             </div>
-
-            <div className="OfferField">
-              <label>Document *</label>
-              <input type="file" />
-            </div>
+            <button
+              type="button"
+              onClick={() => generateAndOpenSignedHandbookPdf({
+                candidateName: `${formData.firstName || ''} ${formData.lastName || ''}`.trim() || formData.requesterName || "Candidate",
+                printName: formData.handbookPrintName || `${formData.firstName || ''} ${formData.lastName || ''}`.trim() || formData.requesterName,
+                dateOfAcknowledgement: formData.handbookDate || new Date().toISOString().split("T")[0],
+                isSigned: formData.handbookSigned || false,
+                action: "open"
+              })}
+              style={{
+                background: "#0284c7",
+                color: "#ffffff",
+                border: "none",
+                borderRadius: "6px",
+                padding: "8px 16px",
+                fontWeight: "700",
+                fontSize: "13px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "6px"
+              }}
+            >
+              📄 Read / Preview Handbook (34 Pages PDF)
+            </button>
           </div>
 
-          <div className="OfferRow">
-            <div className="OfferField">
-              <label>Handbook Employment *</label>
+          <div style={{ background: "#ffffff", border: "1px solid #cbd5e1", borderRadius: "8px", padding: "16px 20px", marginTop: "14px" }}>
+            <h4 style={{ margin: "0 0 10px 0", fontSize: "13px", fontWeight: "800", color: "#1e293b", textTransform: "uppercase", letterSpacing: "0.5px" }}>
+              ACKNOWLEDGEMENT (Page 34 of Handbook)
+            </h4>
+            <p style={{ fontStyle: "italic", fontSize: "13.5px", color: "#334155", margin: "0 0 16px 0", lineHeight: "1.5" }}>
+              "I acknowledge that I received a copy of this Excell Security Employee Handbook V1.0 and that I have read and understood it."
+            </p>
 
-              {/* <div className="ToggleGroup">
-              <button
-                type="button"
-                className={
-                  formData.handbookEmployment === "Pass"
-                    ? "ToggleActive"
-                    : "ToggleBtn"
-                }
-                onClick={() =>
-                  setFormData({
-                    ...formData,
-                    handbookEmployment: "Pass",
-                  })
-                }
-              >
-                Pass
-              </button>
-
-              <button
-                type="button"
-                className={
-                  formData.handbookEmployment === "Fail"
-                    ? "ToggleFail"
-                    : "ToggleBtn"
-                }
-                onClick={() =>
-                  setFormData({
-                    ...formData,
-                    handbookEmployment: "Fail",
-                  })
-                }
-              >
-                Fail
-              </button>
-            </div> */}
+            <div style={{ marginBottom: "16px", background: "#f1f5f9", padding: "12px 16px", borderRadius: "6px" }}>
+              <label style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer", fontSize: "14px", fontWeight: "700", color: "#0f172a" }}>
+                <input
+                  type="checkbox"
+                  name="handbookSigned"
+                  checked={Boolean(formData.handbookSigned)}
+                  onChange={(e) => setFormData({ ...formData, handbookSigned: e.target.checked })}
+                  style={{ width: "18px", height: "18px", cursor: "pointer" }}
+                />
+                <span>Please Sign: I confirm and electronically sign my acknowledgement of the Employee Handbook.</span>
+              </label>
             </div>
 
-            <div className="OfferField">
-              <label>Document *</label>
-              <input type="file" />
+            <div className="OfferRow" style={{ marginTop: "10px" }}>
+              <div className="OfferField">
+                <label>Print Name *</label>
+                <input
+                  type="text"
+                  name="handbookPrintName"
+                  value={formData.handbookPrintName !== undefined ? formData.handbookPrintName : (`${formData.firstName || ''} ${formData.lastName || ''}`.trim() || formData.requesterName || "")}
+                  onChange={handleChange}
+                  placeholder="Print your full name"
+                />
+              </div>
+
+              <div className="OfferField">
+                <label>Date of Acknowledgement *</label>
+                <input
+                  type="date"
+                  name="handbookDate"
+                  value={formData.handbookDate ? formData.handbookDate.split("T")[0] : new Date().toISOString().split("T")[0]}
+                  onChange={handleChange}
+                />
+              </div>
             </div>
           </div>
         </div>

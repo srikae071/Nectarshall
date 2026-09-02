@@ -1,11 +1,13 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import logo from "../../../images/logo.png";
 import ThemeSelector from "../../../components/ThemeSelector";
+import { useAuth } from "../../../context/AuthContext";
 import "./index.css";
 
 function DashbordNavbar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
 
   const isCnc = location.pathname.toLowerCase().includes("/cnc");
   const headerTitle = isCnc ? "CNC" : "OPERATIONS";
@@ -19,9 +21,11 @@ function DashbordNavbar() {
         </div>
       </div>
 
-      <div style={{ display: "flex", alignItems: "center" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
         <ThemeSelector />
-        <div className="profile">👤</div>
+        <div className="profile" style={{ fontWeight: "800", fontSize: "14px", cursor: "default" }}>
+          👤 {user?.displayName || user?.username || "User"}
+        </div>
       </div>
     </div>
   );
