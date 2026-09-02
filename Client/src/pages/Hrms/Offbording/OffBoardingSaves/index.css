@@ -3,24 +3,65 @@
 =========================== */
 
 .OBSContainer {
-  padding: 20px;
-  background: #e9e5e5;
+  padding: 20px 20px 40px 20px;
+  background-color: #f8fafc;
   min-height: 100vh;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+[data-theme="green"] .OBSContainer,
+body.theme-green .OBSContainer,
+.theme-green .OBSContainer {
+  background-color: #e2f2eb !important;
+  background: #e2f2eb !important;
+}
+
+[data-theme="white"] .OBSContainer,
+body.theme-white .OBSContainer,
+.theme-white .OBSContainer {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
 }
 
 .OBSCard {
-  background: #e9e5e5;
-  border: 1px solid #d7d7d7;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 20px;
 }
 
+[data-theme="green"] .OBSCard,
+body.theme-green .OBSCard,
+.theme-green .OBSCard {
+  background-color: #e2f2eb !important;
+  background: #e2f2eb !important;
+  border: 1px solid #c7e6d9 !important;
+  box-shadow: none !important;
+}
+
+[data-theme="white"] .OBSCard,
+body.theme-white .OBSCard,
+.theme-white .OBSCard {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
 .OBSHeading {
   font-size: 18px;
-  font-weight: 600;
-  color: #222;
+  font-weight: 700;
+  color: #1e293b;
   margin-bottom: 18px;
+}
+
+[data-theme="green"] .OBSHeading,
+body.theme-green .OBSHeading,
+.theme-green .OBSHeading {
+  color: #064e3b !important;
 }
 
 .OBSRow {
@@ -39,23 +80,51 @@
   font-size: 13px;
   font-weight: 600;
   margin-bottom: 6px;
-  color: #444;
+  color: #334155;
+}
+
+[data-theme="green"] .OBSField label,
+body.theme-green .OBSField label,
+.theme-green .OBSField label {
+  color: #064e3b !important;
 }
 
 .OBSField input,
 .OBSField select {
-  height: 28px;
-  border: 1px solid #bdbdbd;
+  height: 40px;
+  border: 1px solid #cbd5e1;
   border-radius: 6px;
   padding: 0 12px;
-  font-size: 13px;
+  font-size: 14px;
   outline: none;
-  background: #fff;
+  background: #ffffff;
+  color: #0f172a;
+  box-sizing: border-box;
+  width: 100%;
 }
 
-.OBSField input:focus,
-.OBSField select:focus {
-  border-color: #2563eb;
+[data-theme="green"] .OBSField input,
+[data-theme="green"] .OBSField select,
+body.theme-green .OBSField input,
+body.theme-green .OBSField select,
+.theme-green .OBSField input,
+.theme-green .OBSField select {
+  background-color: #f0f7f4 !important;
+  background: #f0f7f4 !important;
+  border: 1px solid #000000 !important;
+  color: #000000 !important;
+}
+
+[data-theme="white"] .OBSField input,
+[data-theme="white"] .OBSField select,
+body.theme-white .OBSField input,
+body.theme-white .OBSField select,
+.theme-white .OBSField input,
+.theme-white .OBSField select {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  color: #0f172a !important;
 }
 
 .OBSDescription {
@@ -67,6 +136,13 @@
   margin-bottom: 8px;
   font-size: 13px;
   font-weight: 600;
+  color: #334155;
+}
+
+[data-theme="green"] .OBSDescription label,
+body.theme-green .OBSDescription label,
+.theme-green .OBSDescription label {
+  color: #064e3b !important;
 }
 
 .OBSDescription textarea {
@@ -74,15 +150,30 @@
   min-height: 110px;
   resize: vertical;
   padding: 12px;
-  border: 1px solid #bdbdbd;
+  border: 1px solid #cbd5e1;
   border-radius: 6px;
   box-sizing: border-box;
-  font-size: 13px;
+  font-size: 14px;
+  background: #ffffff;
+  color: #0f172a;
 }
 
-.OBSDescription textarea:focus {
-  border-color: #2563eb;
-  outline: none;
+[data-theme="green"] .OBSDescription textarea,
+body.theme-green .OBSDescription textarea,
+.theme-green .OBSDescription textarea {
+  background-color: #f0f7f4 !important;
+  background: #f0f7f4 !important;
+  border: 1px solid #000000 !important;
+  color: #000000 !important;
+}
+
+[data-theme="white"] .OBSDescription textarea,
+body.theme-white .OBSDescription textarea,
+.theme-white .OBSDescription textarea {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  color: #0f172a !important;
 }
 
 .OBSFooter {
@@ -92,50 +183,83 @@
 }
 
 .OBSButton {
-  padding: 8px 20px;
+  padding: 10px 24px;
   border: none;
-  background: #f62926;
-  color: white;
+  background: #2563eb;
+  color: #ffffff;
   border-radius: 6px;
   cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: 0.2s;
 }
 
 .OBSButton:hover {
-  background: #f62926;
+  background: #1d4ed8;
+}
+
+[data-theme="green"] .OBSButton,
+body.theme-green .OBSButton,
+.theme-green .OBSButton {
+  background-color: #00a86b !important;
+  background: #00a86b !important;
+  color: #ffffff !important;
 }
 
 /* ===========================
-   TASKS
+   OFFBOARDING TASKS
 =========================== */
 
 .OBSTaskContainer {
   margin-top: 25px;
 }
 
+[data-theme="green"] .OBSTaskContainer,
+body.theme-green .OBSTaskContainer,
+.theme-green .OBSTaskContainer {
+  background-color: #e2f2eb !important;
+  background: #e2f2eb !important;
+}
+
 .OBSTaskHeading {
   font-size: 18px;
-  font-weight: 600;
-  color: #1f2937;
+  font-weight: 700;
+  color: #1e293b;
   margin-bottom: 16px;
 }
 
-/* Main Row */
+[data-theme="green"] .OBSTaskHeading,
+body.theme-green .OBSTaskHeading,
+.theme-green .OBSTaskHeading {
+  color: #064e3b !important;
+}
 
 .OBSTaskCard {
-  background: #fff;
-  border: 1px solid #d9d9d9;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
   padding: 18px 22px;
   cursor: pointer;
   transition: 0.25s;
+  margin-bottom: 16px;
 }
 
-.OBSTaskCard:hover {
-  border-color: #2563eb;
-  background: #f8fbff;
+[data-theme="green"] .OBSTaskCard,
+body.theme-green .OBSTaskCard,
+.theme-green .OBSTaskCard {
+  background-color: #e2f2eb !important;
+  background: #e2f2eb !important;
+  border: 1px solid #c7e6d9 !important;
+  box-shadow: none !important;
 }
 
-/* Horizontal Layout */
+[data-theme="white"] .OBSTaskCard,
+body.theme-white .OBSTaskCard,
+.theme-white .OBSTaskCard {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+}
 
 .OBSTaskGrid {
   display: flex;
@@ -144,25 +268,27 @@
   gap: 35px;
 }
 
-/* Task Name */
-
 .OBSTaskInfo {
   width: 260px;
 }
 
 .OBSTaskTitle {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
-  color: #111827;
+  color: #0f172a;
+}
+
+[data-theme="green"] .OBSTaskTitle,
+body.theme-green .OBSTaskTitle,
+.theme-green .OBSTaskTitle {
+  color: #064e3b !important;
 }
 
 .OBSTaskSubTitle {
   margin-top: 4px;
-  font-size: 14px;
-  color: #6b7280;
+  font-size: 13px;
+  color: #64748b;
 }
-
-/* Common Columns */
 
 .OBSTaskItem {
   display: flex;
@@ -173,35 +299,31 @@
 .OBSTaskItem label {
   font-size: 12px;
   font-weight: 600;
-  color: #6b7280;
-  margin-bottom: 6px;
+  color: #64748b;
+  margin-bottom: 4px;
 }
 
 .OBSTaskValue {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
-  color: #1f2937;
+  color: #1e293b;
 }
-
-/* Status Badge */
 
 .OBSStatus {
   width: fit-content;
-  padding: 5px 8px;
-  border-radius: 18px;
-  background: #f62926;
-  color: #fff;
-  font-size: 13px;
-  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 12px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
 }
-
-/* Responsive */
 
 @media (max-width: 1000px) {
   .OBSTaskGrid {
     flex-direction: column;
     align-items: flex-start;
-    gap: 18px;
+    gap: 14px;
   }
 
   .OBSTaskInfo {
@@ -210,5 +332,10 @@
 
   .OBSTaskItem {
     width: 100%;
+  }
+
+  .OBSRow {
+    flex-direction: column;
+    gap: 14px;
   }
 }

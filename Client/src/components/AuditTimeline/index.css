@@ -1,0 +1,50 @@
+.AuditTimelineCard {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  border: 1px solid #e2e8f0;
+}
+
+[data-theme="green"] .AuditTimelineCard,
+body.theme-green .AuditTimelineCard,
+.theme-green .AuditTimelineCard {
+  background-color: #e2f2eb !important;
+  background: #e2f2eb !important;
+  border: 1px solid #c7e6d9 !important;
+  box-shadow: none !important;
+}
+
+.AuditTimelineItem {
+  border-radius: 8px;
+  padding: 14px 18px;
+  border: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+}
+
+[data-theme="green"] .AuditTimelineItem,
+body.theme-green .AuditTimelineItem,
+.theme-green .AuditTimelineItem {
+  background-color: #f0f7f4 !important;
+  background: #f0f7f4 !important;
+  border-color: #d1e7dd !important;
+}
+
+.AuditTimelineDetails {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #334155;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+}
+
+[data-theme="green"] .AuditTimelineDetails,
+body.theme-green .AuditTimelineDetails,
+.theme-green .AuditTimelineDetails {
+  background-color: #e2f2eb !important;
+  background: #e2f2eb !important;
+  border-color: #c7e6d9 !important;
+}

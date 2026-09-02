@@ -1,19 +1,26 @@
 import ItLeftSide from "../../ItLeftSide";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { fetchApiData } from "../../../../../utils/apiClient";
 import "./index.css";
 
-const data = [
-  { id: 102, name: "Sumit Jain", dept: "IT", category: "Tax", status: "Open" },
-  {
-    id: 103,
-    name: "Saumya Singh",
-    dept: "Operations",
-    category: "Compensation",
-    status: "Resolved",
-  },
-];
-
 function ItAssignedToMe() {
+  const [data, setData] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchRequests();
+  }, []);
+
+  const fetchRequests = async () => {
+    try {
+      const response = await fetchApiData("/api/itrequests");
+      setData(response?.data || []);
+    } catch (error) {
+      console.error("Error fetching assigned IT requests:", error);
+    }
+  };
+
   return (
     <ItLeftSide>
       <div className="Openhome">
@@ -39,11 +46,11 @@ function ItAssignedToMe() {
                     style={{ cursor: "pointer" }}
                     onClick={() => navigate(`/hrms/itsaves/${item._id}`)}
                   >
-                    <td>{item.incidentNumber}</td>
-                    <td>{item.requester}</td>
-                    <td>{item.department}</td>
-                    <td>{item.category}</td>
-                    <td>{item.status}</td>
+                    <td>{item.incidentNumber || item._id}</td>
+                    <td>{item.requester || "Employee"}</td>
+                    <td>{item.department || "IT"}</td>
+                    <td>{item.category || "General"}</td>
+                    <td>{item.status || "Open"}</td>
                   </tr>
                 ))
               ) : (

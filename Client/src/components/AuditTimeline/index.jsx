@@ -1,4 +1,5 @@
 import React from "react";
+import "./index.css";
 
 function AuditTimeline({ data, module }) {
   if (!data) return null;
@@ -150,8 +151,8 @@ function AuditTimeline({ data, module }) {
 
   return (
     <div
+      className="AuditTimelineCard"
       style={{
-        background: "#ffffff",
         borderRadius: "12px",
         padding: "24px",
         marginTop: "24px",
@@ -204,8 +205,8 @@ function AuditTimeline({ data, module }) {
             </div>
 
             <div
+              className="AuditTimelineItem"
               style={{
-                background: "#f8fafc",
                 borderRadius: "8px",
                 padding: "14px 18px",
                 border: "1px solid #e2e8f0",
@@ -238,7 +239,17 @@ function AuditTimeline({ data, module }) {
               </div>
 
               {item.details && (
-                <div style={{ marginTop: "8px", fontSize: "12px", color: "#334155", background: "#ffffff", padding: "8px 12px", borderRadius: "6px", border: "1px solid #cbd5e1" }}>
+                <div
+                  className="AuditTimelineDetails"
+                  style={{
+                    marginTop: "8px",
+                    fontSize: "12px",
+                    color: "#334155",
+                    padding: "8px 12px",
+                    borderRadius: "6px",
+                    border: "1px solid #cbd5e1",
+                  }}
+                >
                   ℹ️ {item.details}
                 </div>
               )}

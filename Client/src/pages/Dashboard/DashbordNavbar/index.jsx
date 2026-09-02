@@ -3,7 +3,7 @@ import logo from "../../../images/logo.png";
 import ThemeSelector from "../../../components/ThemeSelector";
 import "./index.css";
 
-function HrmsNavbar() {
+function DashbordNavbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -12,9 +12,11 @@ function HrmsNavbar() {
 
   return (
     <div className="opnavbar">
-      <div className="oplogo" onClick={() => navigate("/")}>
-        <img src={logo} alt="logo" style={{ width: "80px", height: "38px", objectFit: "contain" }} />
-        <span style={{ color: "#ea580c", fontWeight: "700", fontStyle: "normal", fontSize: "16px", marginLeft: "10px", lineHeight: "1", whiteSpace: "nowrap" }}>{headerTitle}</span>
+      <div className="oplogo" onClick={() => navigate("/")} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "12px" }}>
+        <img src={logo} alt="logo" className="logoimage" style={{ width: "92px", height: "44px", objectFit: "contain", margin: 0 }} />
+        <div style={{ display: "flex", alignItems: "center", paddingTop: "6px" }}>
+          <p style={{ color: "#d32f2f", fontStyle: "italic", fontWeight: "800", fontSize: "20px", margin: 0, padding: 0, lineHeight: "1" }}>{headerTitle}</p>
+        </div>
       </div>
 
       <div style={{ display: "flex", alignItems: "center" }}>
@@ -25,4 +27,4 @@ function HrmsNavbar() {
   );
 }
 
-export default HrmsNavbar;
+export default DashbordNavbar;

@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import axios from "axios";
+import { useParams, useNavigate } from "react-router-dom";
+import { fetchApiData, sendApiData } from "../../../../../../utils/apiClient";
 import ItLeftSide from "../../../ItLeftSide";
+import AuditTimeline from "../../../../../../components/AuditTimeline";
 import "./index.css";
 
 function RequestOnboardingSaves() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     onboardingTaskId: "",
@@ -25,14 +27,11 @@ function RequestOnboardingSaves() {
 
   useEffect(() => {
     fetchRequest();
-  }, []);
+  }, [id]);
 
   const fetchRequest = async () => {
     try {
-      const response = await axios.get(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
-      );
-      console.log(response.data);
+      const response = await fetchApiData(`/api/jobrequests/${id}`);
       setFormData({
         ...response.data,
         onboardingStatus: response.data.onboardingStatus || "Open",
@@ -42,21 +41,21 @@ function RequestOnboardingSaves() {
             ? true
             : response.data.onboardingCompleted === "false"
               ? false
-              : null,
+              : response.data.onboardingCompleted ?? null,
 
         azureAccountCreated:
           response.data.azureAccountCreated === "true"
             ? true
             : response.data.azureAccountCreated === "false"
               ? false
-              : null,
+              : response.data.azureAccountCreated ?? null,
 
         laptopIssued:
           response.data.laptopIssued === "true"
             ? true
             : response.data.laptopIssued === "false"
               ? false
-              : null,
+              : response.data.laptopIssued ?? null,
       });
     } catch (err) {
       console.log(err);
@@ -86,11 +85,7 @@ function RequestOnboardingSaves() {
       if (updatedData.onboardingCompleted === true) {
         updatedData.onboardingStatus = "Resolved";
       }
-      await axios.put(
-        `https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests/${id}`,
-        updatedData,
-      );
-
+      await sendApiData(`/api/jobrequests/${id}`, updatedData, "put");
       alert("Saved Successfully");
     } catch (err) {
       console.log(err);
@@ -100,7 +95,8 @@ function RequestOnboardingSaves() {
   return (
     <ItLeftSide>
       <div className="ROSContainer">
-        <h2 className="ROSTitle">Request Onboarding Saves</h2>
+        <div className="ROSCard">
+          <h2 className="ROSTitle">Request Onboarding Saves</h2>
 
         <div className="ROSRow">
           <div className="ROSField">
@@ -259,11 +255,17 @@ function RequestOnboardingSaves() {
             Submit
           </button>
 
-          <button className="ROSButtonCancel">Cancel</button>
+          <button className="ROSButtonCancel" onClick={() => navigate(-1)}>
+            Cancel
+          </button>
         </div>
       </div>
-    </ItLeftSide>
-  );
+
+      {/* AUDIT TIMELINE LOG & TIMESTAMPS */}
+      <AuditTimeline data={formData} module="IT" />
+    </div>
+  </ItLeftSide>
+);
 }
 
 export default RequestOnboardingSaves;

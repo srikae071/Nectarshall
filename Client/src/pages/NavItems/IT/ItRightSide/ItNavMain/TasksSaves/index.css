@@ -1,7 +1,16 @@
 .ITSContainer {
-  padding: 20px;
-  background: #e9e5e5;
+  padding: 20px 20px 40px 20px;
+  background-color: #f8fafc;
   min-height: 100vh;
+  flex: 1;
+  box-sizing: border-box;
+}
+
+[data-theme="green"] .ITSContainer,
+body.theme-green .ITSContainer,
+.theme-green .ITSContainer {
+  background-color: #e2f2eb !important;
+  background: #e2f2eb !important;
 }
 
 .ITSCard {

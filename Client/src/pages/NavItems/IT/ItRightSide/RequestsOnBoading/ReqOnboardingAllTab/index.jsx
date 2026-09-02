@@ -1,7 +1,7 @@
 import ItLeftSide from "../../../ItLeftSide";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { fetchApiData } from "../../../../../../utils/apiClient";
 import "./index.css";
 
 function ReqOnboardingAllTab() {
@@ -13,17 +13,17 @@ function ReqOnboardingAllTab() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/jobrequests",
+      const response = await fetchApiData("/api/jobrequests");
+      const allItems = response.data || [];
+      const filtered = allItems.filter(
+        (item) =>
+          item.category === "Onboarding" ||
+          item.category === "onboarding" ||
+          item.category === "Resonance Requirement" ||
+          item.onboardingTaskId ||
+          item.taskType === "IT Onboarding"
       );
-
-      setData(
-        response.data.filter(
-          (item) =>
-            // item.category === "Resonance Requirement" &&
-            item.status === "Resolved",
-        ),
-      );
+      setData(filtered.length > 0 ? filtered : allItems);
     } catch (error) {
       console.error(error);
     }
@@ -38,7 +38,7 @@ function ReqOnboardingAllTab() {
     <ItLeftSide>
       <div className="Openhome">
         <div>
-          <h3 className="openheading">Resolved </h3>
+          <h3 className="openheading">All Onboarding Requests</h3>
 
           <table className="opentable">
             <thead className="opentablerow">

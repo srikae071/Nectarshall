@@ -60,7 +60,19 @@ function Navbar() {
       return "ACCOUNTS";
     }
 
-    // 3. HRMS Module Routes
+    // 3. IT Module Routes (Priority check for IT requests)
+    if (
+      p.startsWith("/it") ||
+      p.includes("/it") ||
+      p.includes("/tasksaves") ||
+      p.includes("/requests-offboarding") ||
+      p.includes("/requests-onboarding") ||
+      p.includes("/requests-roles")
+    ) {
+      return "IT";
+    }
+
+    // 4. HRMS Module Routes
     if (
       p.includes("/hrms") ||
       p.includes("/regular-form") ||
@@ -74,11 +86,6 @@ function Navbar() {
       p.includes("/employee-request-save")
     ) {
       return "HRMS";
-    }
-
-    // 4. IT Module Routes
-    if (p.includes("/it")) {
-      return "IT";
     }
 
     // 5. OPERATIONS Module Routes
@@ -125,11 +132,30 @@ function Navbar() {
       <div
         className="logo"
         onClick={() => navigate("/")}
-        style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "10px" }}
+        style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "12px" }}
       >
-        <img src={logo} alt="logo" className="logoimage" style={{ width: "80px", height: "38px", objectFit: "contain" }} />
+        <img
+          src={logo}
+          alt="logo"
+          className="logoimage"
+          style={{ width: "92px", height: "44px", objectFit: "contain", margin: 0 }}
+        />
         {moduleLabel && (
-          <span style={{ color: "#ea580c", fontWeight: "700", fontStyle: "normal", fontSize: "16px", marginLeft: "10px", lineHeight: "1", whiteSpace: "nowrap" }}>{moduleLabel}</span>
+          <div style={{ display: "flex", alignItems: "center", paddingTop: "6px" }}>
+            <p
+              style={{
+                color: "#d32f2f",
+                fontStyle: "italic",
+                fontWeight: "800",
+                fontSize: "20px",
+                margin: 0,
+                padding: 0,
+                lineHeight: "1",
+              }}
+            >
+              {moduleLabel}
+            </p>
+          </div>
         )}
       </div>
 
@@ -161,7 +187,7 @@ function Navbar() {
             className="profile"
             onClick={() => setShowProfileMenu(!showProfileMenu)}
             title="User Account Options"
-            style={{ cursor: "pointer", userSelect: "none" }}
+            style={{ cursor: "pointer", userSelect: "none", fontWeight: "800", fontSize: "14px" }}
           >
             👤 {user?.displayName || user?.username || "User"}
           </div>

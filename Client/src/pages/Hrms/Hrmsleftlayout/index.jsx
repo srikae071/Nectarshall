@@ -17,12 +17,6 @@ const menuData = [
     directPath: "/regular-form",
   },
   {
-    title: "Assignment Group",
-    items: [
-      { label: "All Groups", path: "/hrms/assignment-group" },
-    ],
-  },
-  {
     title: "Case Management",
     items: [
       { label: "All", path: "/hrms/hrsavescases" },

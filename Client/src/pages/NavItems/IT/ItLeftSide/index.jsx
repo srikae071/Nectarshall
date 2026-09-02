@@ -55,7 +55,7 @@ const MenuItem = ({ item, level = 0, expandedMenus, setExpandedMenus }) => {
       </div>
 
       {hasChildren && isExpanded && (
-        <div>
+        <div className="submenu nestedSubmenu">
           {item.children.map((child, index) => (
             <MenuItem
               key={index}

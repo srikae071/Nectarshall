@@ -1,57 +1,101 @@
 .Openhome {
-  /* padding: 15px; */
-  background: #e9e5e5;
+  background-color: #f8fafc;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: 20px 20px 40px 20px;
+  box-sizing: border-box;
 }
+
+[data-theme="green"] .Openhome,
+body.theme-green .Openhome,
+.theme-green .Openhome {
+  background-color: #e2f2eb !important;
+  background: #e2f2eb !important;
+}
+
+[data-theme="white"] .Openhome,
+body.theme-white .Openhome,
+.theme-white .Openhome {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+}
+
 .OpentableCard {
-  background: #e9e5e5;
+  background: #ffffff;
   border-radius: 8px;
-  padding: 15px;
-  border: 1px solid #3e3c3c;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
   flex: 1;
-  color: #000;
-  padding: 10px;
+  color: #0f172a;
 }
-.opentablerow {
-  border: solid 1px #3e3c3c;
-  color: #000;
+
+[data-theme="green"] .OpentableCard,
+body.theme-green .OpentableCard,
+.theme-green .OpentableCard {
+  background-color: #e2f2eb !important;
+  background: #e2f2eb !important;
+  border: 1px solid #c7e6d9 !important;
+}
+
+[data-theme="white"] .OpentableCard,
+body.theme-white .OpentableCard,
+.theme-white .OpentableCard {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
 }
 
 .openheading {
-  margin-bottom: 12px;
-  font-size: 16px;
+  margin-bottom: 16px;
+  font-size: 18px;
+  font-weight: 700;
   color: #1f2937;
-  margin-left: 4px;
 }
+
+[data-theme="green"] .openheading,
+body.theme-green .openheading,
+.theme-green .openheading {
+  color: #064e3b !important;
+}
+
 .opentable {
   width: 100%;
   border-collapse: collapse;
   table-layout: auto;
+  background: #ffffff;
+}
+
+[data-theme="green"] .opentable,
+body.theme-green .opentable,
+.theme-green .opentable {
+  background-color: #ffffff !important;
 }
 
 .opentable th,
 .opentable td {
   padding: 10px 14px;
-  border: 1px solid #dcdcdc;
+  border: 1px solid #e2e8f0;
   text-align: left;
   white-space: nowrap;
 }
 
-.opentable th:nth-child(3),
-.opentable td:nth-child(3),
-.opentable th:nth-child(4),
-.opentable td:nth-child(4) {
-  width: 160px;
+[data-theme="green"] .opentable th {
+  background-color: #eef7f2 !important;
+  color: #064e3b !important;
+  border: 1px solid #d8eee4 !important;
+  font-weight: 700;
 }
 
-.opentable th:nth-child(5),
-.opentable td:nth-child(5) {
-  width: 220px;
+[data-theme="green"] .opentable td {
+  border: 1px solid #d8eee4 !important;
+  color: #000000 !important;
 }
 
 .opentable tr:hover {
-  background: #f5f9ff;
+  background: #f1f5f9;
+}
+
+[data-theme="green"] .opentable tr:hover {
+  background: #f0fdf4 !important;
 }

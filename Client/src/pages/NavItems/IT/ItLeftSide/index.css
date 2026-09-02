@@ -50,13 +50,13 @@
 .layoutContainer {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .mainLayout {
   display: flex;
   flex: 1;
-  overflow: hidden;
+  min-height: calc(100vh - 60px);
 }
 
 .rightContent {
@@ -64,7 +64,8 @@
   display: flex;
   flex-direction: column;
   overflow: auto;
-  background-color: #ffffff;
+  background-color: #f8fafc;
+  min-height: 100%;
 }
 
 .hrmssubmenuItem.active {
@@ -82,8 +83,28 @@
   background: #adb9d3;
 }
 
-/* ================= GREEN THEME OVERRIDES ================= */
+/* ================= THEME OVERRIDES ================= */
+[data-theme="green"] .hrmssidebar,
+body.theme-green .hrmssidebar,
+.theme-green .hrmssidebar,
+[data-theme="green"] .hrmssidebar *,
+body.theme-green .hrmssidebar *,
+.theme-green .hrmssidebar *,
+[data-theme="green"] .menuBlock,
+[data-theme="green"] .submenu,
+[data-theme="green"] .nestedSubmenu,
+[data-theme="green"] .hrmssubmenuItem,
 [data-theme="green"] .rightContent,
-body.theme-green .rightContent {
+body.theme-green .rightContent,
+.theme-green .rightContent {
+  background-color: #e2f2eb !important;
+  background: #e2f2eb !important;
+  color: #064e3b !important;
+}
+
+[data-theme="white"] .rightContent,
+body.theme-white .rightContent,
+.theme-white .rightContent {
   background-color: #ffffff !important;
+  background: #ffffff !important;
 }
