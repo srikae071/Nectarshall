@@ -28,7 +28,7 @@ function HomeLeaveRequest() {
   const [description, setDescription] = useState(draftItem?.description || "");
   const [leaveType, setLeaveType] = useState(draftItem?.leaveType || "");
   const [requester, setRequester] = useState(draftItem?.requester || currentUserName);
-  const [requesterFor, setRequesterFor] = useState(draftItem?.requesterFor || "Sumit");
+  const [requesterFor, setRequesterFor] = useState(draftItem?.requesterFor || "");
   const [employeeOptions, setEmployeeOptions] = useState(["Sumit", "Srikar"]);
   const [showSearchBox, setShowSearchBox] = useState(false);
   const [searchEmployeeQuery, setSearchEmployeeQuery] = useState("");
@@ -74,9 +74,6 @@ function HomeLeaveRequest() {
 
         if (uniqueEmpNames.length > 0) {
           setEmployeeOptions(uniqueEmpNames);
-          if (!draftItem?.requesterFor) {
-            setRequesterFor(uniqueEmpNames[0]);
-          }
         }
       } catch (err) {
         console.error("Error fetching employee options for leave request:", err);
@@ -326,6 +323,7 @@ function HomeLeaveRequest() {
                     onChange={(e) => setRequesterFor(e.target.value)}
                     style={{ background: "#ffffff", cursor: "pointer", fontWeight: "600" }}
                   >
+                    <option value="">Select Employee</option>
                     {employeeOptions.map((empName, idx) => (
                       <option key={idx} value={empName}>
                         {empName}

@@ -26,7 +26,7 @@ function LeaveRequest() {
   const [shortDescription, setShortDescription] = useState(draftItem?.shortDescription || "");
   const [description, setDescription] = useState(draftItem?.description || "");
   const [requester, setRequester] = useState(draftItem?.requester || currentUserName);
-  const [requesterFor, setRequesterFor] = useState(draftItem?.requesterFor || "Sumit");
+  const [requesterFor, setRequesterFor] = useState(draftItem?.requesterFor || "");
   const [employeeOptions, setEmployeeOptions] = useState(["Sumit", "Srikar"]);
   const [showSearchBox, setShowSearchBox] = useState(false);
   const [searchEmployeeQuery, setSearchEmployeeQuery] = useState("");
@@ -75,9 +75,6 @@ function LeaveRequest() {
 
         if (uniqueEmpNames.length > 0) {
           setEmployeeOptions(uniqueEmpNames);
-          if (!draftItem?.requesterFor) {
-            setRequesterFor(uniqueEmpNames[0]);
-          }
         }
       })
       .catch((err) => {
@@ -327,6 +324,7 @@ function LeaveRequest() {
                     onChange={(e) => setRequesterFor(e.target.value)}
                     style={{ background: "#ffffff", cursor: "pointer", fontWeight: "600" }}
                   >
+                    <option value="">Select Employee</option>
                     {employeeOptions.map((empName, idx) => (
                       <option key={idx} value={empName}>
                         {empName}

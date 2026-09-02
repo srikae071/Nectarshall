@@ -266,7 +266,9 @@ function Home() {
               onClick={() => navigate("/my-tasks")}
             >
               <a>MY TASK</a>
-              <span className="MyTaskNotificationBadge">{pendingCount}</span>
+              {isAdmin && (
+                <span className="MyTaskNotificationBadge">{pendingCount}</span>
+              )}
             </div>
           )}
 
