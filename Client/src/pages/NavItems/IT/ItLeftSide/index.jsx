@@ -99,15 +99,15 @@ function ItLeftSide({ children }) {
           title: "Onboarding Request",
           items: [
             { label: "All", path: "/requests-onboarding-all" },
-            { label: "Create New", path: "/onboarding/create-new" },
-            { label: "Open", path: "/onboarding/open" },
+            { label: "Create New", path: "/Resonancereq" },
+            { label: "Open", path: "/requests-onboarding-open" },
             { label: "Resolved", path: "/requests-onboarding-resolved" },
-            { label: "Closed", path: "/onboarding/closed" },
+            { label: "Closed", path: "/requests-onboarding-closed" },
             {
               label: "Work In Progress",
-              path: "/onboarding/work-in-progress",
+              path: "/requests-onboarding-wip",
             },
-            { label: "Pending", path: "/onboarding/pending" },
+            { label: "Pending", path: "/requests-onboarding-pending" },
           ],
         },
 
@@ -115,7 +115,7 @@ function ItLeftSide({ children }) {
           title: "Offboarding Request",
           items: [
             { label: "All", path: "/requests-offboarding-all" },
-            { label: "Create New", path: "/it/create-new" },
+            { label: "Create New", path: "/exit/" },
             { label: "Open", path: "/requests-offboarding-open" },
             { label: "Resolved", path: "/requests-offboarding-resolved" },
             { label: "Closed", path: "/requests-offboarding-closed" },

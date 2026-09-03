@@ -1,0 +1,163 @@
+/* CASE TABLE CONTAINER */
+.CaseTableContainer {
+  padding: 15px 20px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-top: 10px;
+}
+
+/* TOP TOOLBAR */
+.CaseTableToolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.CaseTableTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333333;
+  margin: 0;
+}
+
+.CaseTableControls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* SEARCH BAR */
+.CaseSearchWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.CaseSearchIcon {
+  position: absolute;
+  left: 10px;
+  color: #666666;
+  font-size: 14px;
+}
+
+.CaseSearchInput {
+  padding: 6px 12px 6px 32px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  font-size: 13px;
+  width: 240px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.CaseSearchInput:focus {
+  border-color: #007bff;
+}
+
+/* SETTINGS BUTTON & DROPDOWN */
+.CaseSettingsWrapper {
+  position: relative;
+}
+
+.CaseSettingsBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #f8f9fa;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  color: #333333;
+  transition: background 0.2s;
+}
+
+.CaseSettingsBtn:hover {
+  background: #e2e6ea;
+}
+
+.CaseSettingsDropdown {
+  position: absolute;
+  right: 0;
+  top: 38px;
+  background: #ffffff;
+  border: 1px solid #dddddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 12px;
+  z-index: 100;
+  min-width: 220px;
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.CaseSettingsTitle {
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 10px;
+  color: #333333;
+  border-bottom: 1px solid #eeeeee;
+  padding-bottom: 6px;
+}
+
+.CaseSettingsOption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #444444;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.CaseSettingsOption input {
+  cursor: pointer;
+}
+
+/* TABLE STYLING */
+.CaseTableWrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.CaseTableMain {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.CaseTableMain th {
+  background: #f1f3f5;
+  color: #333333;
+  font-weight: 600;
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 2px solid #dee2e6;
+  white-space: nowrap;
+}
+
+.CaseTableMain td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e9ecef;
+  color: #495057;
+  white-space: nowrap;
+}
+
+.CaseTableRow {
+  transition: background 0.15s;
+}
+
+.CaseTableRow:hover {
+  background: #f8f9fa;
+}
+
+.NoCasesCell {
+  text-align: center;
+  color: #888888;
+  padding: 20px !important;
+}

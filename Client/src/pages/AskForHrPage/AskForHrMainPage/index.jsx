@@ -66,8 +66,23 @@ function AskForHrMainPage() {
     });
   };
 
-  const handleSave = () => {
-    alert("HR Request Saved as Draft Successfully.");
+  const handleSave = async () => {
+    if (!formData.shortDescription || !formData.shortDescription.trim()) {
+      alert("Please enter a Short Description.");
+      return;
+    }
+    try {
+      await sendApiData("/api/hrrequests/create", {
+        ...formData,
+        status: "Draft",
+        requestType: "HR",
+      });
+      alert("HR Request Saved as Draft Successfully.");
+      navigate("/hrms/hrsavescases");
+    } catch (error) {
+      console.error(error);
+      alert("Error Saving Request as Draft");
+    }
   };
 
   const handleSubmit = async () => {

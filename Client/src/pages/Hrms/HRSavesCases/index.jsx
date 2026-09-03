@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import HrmsLeftLayout from "../Hrmsleftlayout";
-import "./index.css";
-// const data = [...];
-
 import { fetchApiData } from "../../../utils/apiClient";
 import { checkHasHrAccess } from "../../../context/AuthContext";
+import CaseTable from "../../../components/CaseTable";
+import "./index.css";
 
 function HRSavesCases() {
   const [data, setData] = useState([]);
@@ -16,13 +14,26 @@ function HRSavesCases() {
     fetchRequests();
   }, []);
 
+  const sortNewestFirst = (arr) => {
+    return [...arr].sort((a, b) => {
+      if (a.createdAt && b.createdAt) {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      }
+      const numA = parseInt((a.incidentNumber || a.caseId || "").replace(/\D/g, ""), 10) || 0;
+      const numB = parseInt((b.incidentNumber || b.caseId || "").replace(/\D/g, ""), 10) || 0;
+      if (numA !== numB) return numB - numA;
+      return String(b._id || "").localeCompare(String(a._id || ""));
+    });
+  };
+
   const fetchRequests = async () => {
     try {
       const response = await fetchApiData("/api/hrrequests");
       const allData = response.data || [];
-      const list = allData.filter(
+      const unfiltered = allData.filter(
         (item) => !item.assignmentGroup || item.assignmentGroup.trim() === "" || item.assignmentGroup.toUpperCase() === "HR"
       );
+      const list = sortNewestFirst(unfiltered);
 
       let authUser = null;
       try {
@@ -43,7 +54,7 @@ function HRSavesCases() {
           list.filter((item) => {
             const r1 = (item.requester || "").toLowerCase();
             const r2 = (item.requesterFor || "").toLowerCase();
-            const r3 = (item.assignedTo || "").toLowerCase();
+            const r3 = (item.requesterName || "").toLowerCase();
             return r1.includes(u) || u.includes(r1 && r1.length > 2 ? r1 : "___never___") || r2.includes(u) || r3.includes(u);
           })
         );
@@ -57,49 +68,12 @@ function HRSavesCases() {
 
   return (
     <HrmsLeftLayout>
-      <div className="Openhome">
-        <div>
-          <h3 className="openheading">HR Cases</h3>
-
-          <table className="opentable">
-            <thead>
-              <tr>
-                <th>Incident ID</th>
-                <th>Requester</th>
-                <th>Requested For</th>
-                <th>Category</th>
-                <th>Sub Category</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {data.length > 0 ? (
-                data.map((item) => (
-                  <tr
-                    key={item._id}
-                    style={{ cursor: "pointer" }}
-                    onClick={() => navigate(`/hrms/HRsaves/${item._id}`)}
-                  >
-                    <td>{item.incidentNumber || "N/A"}</td>
-                    <td>{item.requester || "N/A"}</td>
-                    <td>{item.requesterFor || "N/A"}</td>
-                    <td>{item.category || "N/A"}</td>
-                    <td>{item.subCategory || "N/A"}</td>
-                    <td>{item.status || "Open"}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="6" style={{ textAlign: "center" }}>
-                    No Records Found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <CaseTable
+        title="HR Cases (All)"
+        data={data}
+        onRowClick={(item) => navigate(`/hrms/HRsaves/${item._id}`)}
+        emptyMessage="No HR Cases Found"
+      />
     </HrmsLeftLayout>
   );
 }

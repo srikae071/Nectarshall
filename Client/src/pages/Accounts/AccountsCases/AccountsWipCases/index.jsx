@@ -5,12 +5,12 @@ import { fetchApiData } from "../../../../utils/apiClient";
 import CaseTable from "../../../../components/CaseTable";
 import "../../../Hrms/HRSavesCases/index.css";
 
-function AccountsResolvedCases() {
+function AccountsWipCases() {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchResolvedCases();
+    fetchWipCases();
   }, []);
 
   const sortNewestFirst = (arr) => {
@@ -25,14 +25,14 @@ function AccountsResolvedCases() {
     });
   };
 
-  const fetchResolvedCases = async () => {
+  const fetchWipCases = async () => {
     try {
       const response = await fetchApiData("/api/hrrequests");
       const list = (response.data || []).filter((item) => {
         const grp = (item.assignmentGroup || "").toUpperCase();
         const isAccountsGrp = grp.includes("ACC") || grp.includes("FINANCE");
-        const isResolved = ["resolved", "closed"].includes((item.status || "").toLowerCase());
-        return isAccountsGrp && isResolved;
+        const isWip = (item.status || "").toLowerCase().includes("progress");
+        return isAccountsGrp && isWip;
       });
 
       setData(sortNewestFirst(list));
@@ -44,13 +44,13 @@ function AccountsResolvedCases() {
   return (
     <AccountsLayout>
       <CaseTable
-        title="Accounts Cases (Resolved / Closed)"
+        title="Accounts Cases (Work In Progress)"
         data={data}
         onRowClick={(item) => navigate(`/accounts/cases/${item._id}`)}
-        emptyMessage="No Resolved Accounts Cases Found"
+        emptyMessage="No Work In Progress Accounts Cases Found"
       />
     </AccountsLayout>
   );
 }
 
-export default AccountsResolvedCases;
+export default AccountsWipCases;

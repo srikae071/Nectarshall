@@ -148,6 +148,11 @@ import AccountsAllCases from "./pages/Accounts/AccountsCases/AccountsAllCases";
 import AccountsAssignedCases from "./pages/Accounts/AccountsCases/AccountsAssignedCases";
 import AccountsOpenCases from "./pages/Accounts/AccountsCases/AccountsOpenCases";
 import AccountsResolvedCases from "./pages/Accounts/AccountsCases/AccountsResolvedCases";
+import AccountsClosedCases from "./pages/Accounts/AccountsCases/AccountsClosedCases";
+import AccountsPendingCases from "./pages/Accounts/AccountsCases/AccountsPendingCases";
+import AccountsWipCases from "./pages/Accounts/AccountsCases/AccountsWipCases";
+import AccountsCreateNewCase from "./pages/Accounts/AccountsCases/AccountsCreateNewCase";
+import AccountsCaseDetail from "./pages/Accounts/AccountsCases/AccountsCaseDetail";
 
 function App() {
   useEffect(() => {
@@ -337,11 +342,13 @@ function App() {
           </ProtectedRoute>
         }
       />
-      <Route path="/hrms/assignment-group" element={<HrmsAssignmentGroup />} />
-      {/* <Route path="/hrms/itsaves" element={<ITSaves />} /> */}
       <Route path="/hrms/itsaves/:id" element={<ITSaves />} />
+      <Route path="/hrms/itsaves" element={<ItNavMain />} />
+      <Route path="/hrms/ITsaves" element={<ItNavMain />} />
       <Route path="/hrms/hrsaves/:id" element={<HRSaves />} />
       <Route path="/hrms/hrsavescases" element={<HRSavesCases />} />
+      <Route path="/hrms/HRsaves" element={<HRSavesCases />} />
+      <Route path="/hrms/hrsaves" element={<HRSavesCases />} />
       <Route path="/my-tickets" element={<MyTickets />} />
       <Route path="/my-mails" element={<MyMails />} />
       <Route path="/hrms/all-employees" element={<AllEmployees />} />
@@ -460,6 +467,8 @@ function App() {
         element={<OffBoardingEmployesAll />}
       />
       <Route path="/offboarding-saves/:id" element={<OffBoardingSaves />} />
+      <Route path="/requests-offboarding-saves/:id" element={<OffBoardingSaves />} />
+      <Route path="/requests-onboarding-saves/:id" element={<RequestOnboardingSaves />} />
       <Route path="/tasksaves/:id" element={<TaskSaves />} />
       <Route path="/hrreq-all" element={<HrReqAll />} />
       <Route path="/client-complience" element={<OnBoardingCompTab />} />
@@ -471,10 +480,25 @@ function App() {
         path="/requests-onboarding-all"
         element={<ReqOnboardingAllTab />}
       />
-
+      <Route
+        path="/requests-onboarding-open"
+        element={<ReqOnboardingAllTab />}
+      />
       <Route
         path="/requests-onboarding-resolved"
-        element={<ReqOnboardingResolvedTab />}
+        element={<ReqOnboardingAllTab />}
+      />
+      <Route
+        path="/requests-onboarding-closed"
+        element={<ReqOnboardingAllTab />}
+      />
+      <Route
+        path="/requests-onboarding-wip"
+        element={<ReqOnboardingAllTab />}
+      />
+      <Route
+        path="/requests-onboarding-pending"
+        element={<ReqOnboardingAllTab />}
       />
       <Route path="/regular-form" element={<Hrmsleftlayout><VendorPortalDashboard /></Hrmsleftlayout>} />
       <Route path="/vendor-portal/purchase-orders" element={<Hrmsleftlayout><VendorPortalPurchaseOrders /></Hrmsleftlayout>} />
@@ -554,6 +578,46 @@ function App() {
         element={
           <ProtectedRoute>
             <AccountsResolvedCases />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/accounts/cases/closed"
+        element={
+          <ProtectedRoute>
+            <AccountsClosedCases />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/accounts/cases/pending"
+        element={
+          <ProtectedRoute>
+            <AccountsPendingCases />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/accounts/cases/wip"
+        element={
+          <ProtectedRoute>
+            <AccountsWipCases />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/accounts/cases/createnew"
+        element={
+          <ProtectedRoute>
+            <AccountsCreateNewCase />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/accounts/cases/:id"
+        element={
+          <ProtectedRoute>
+            <AccountsCaseDetail />
           </ProtectedRoute>
         }
       />

@@ -76,8 +76,23 @@ function MainAFI() {
     });
   };
 
-  const handleSave = () => {
-    alert("IT Request Saved as Draft Successfully.");
+  const handleSave = async () => {
+    if (!formData.shortDescription || !formData.shortDescription.trim()) {
+      alert("Please enter a Short Description.");
+      return;
+    }
+    try {
+      await sendApiData("/api/itrequests/create", {
+        ...formData,
+        status: "Draft",
+        requestType: "IT",
+      });
+      alert("IT Request Saved as Draft Successfully.");
+      navigate("/it");
+    } catch (error) {
+      console.error(error);
+      alert("Error Saving Request as Draft");
+    }
   };
 
   const handleSubmit = async () => {

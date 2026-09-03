@@ -56,21 +56,31 @@ function ITSaves() {
     const fetchRequest = async () => {
       try {
         const response = await fetchApiData(`/api/itrequests/${id}`);
+        const d = response.data || {};
+        const dateVal = d.createdAt || d.createdOn || d.timestamp;
+        let createdOnStr = "N/A";
+        if (dateVal) {
+          try {
+            const dt = new Date(dateVal);
+            if (!isNaN(dt.getTime())) createdOnStr = dt.toLocaleString();
+          } catch (e) {}
+        }
 
         setFormData({
-          caseId: response.data.incidentNumber || "",
-          requester: response.data.requester || response.data.requesterName,
+          caseId: d.incidentNumber || "",
+          requester: d.requester || d.requesterName,
+          createdOn: createdOnStr,
 
-          requesterName: response.data.requesterName || "",
-          requesterFor: response.data.requesterFor || "",
-          category: response.data.category || "",
-          urgency: response.data.urgency || "",
-          shortDescription: response.data.shortDescription || "",
-          description: response.data.description || "",
-          status: response.data.status || "Open",
-          subStatus: response.data.subStatus || "",
-          assignmentGroup: response.data.assignmentGroup || "",
-          workNotes: response.data.workNotes || "",
+          requesterName: d.requesterName || "",
+          requesterFor: d.requesterFor || "",
+          category: d.category || "",
+          urgency: d.urgency || "",
+          shortDescription: d.shortDescription || "",
+          description: d.description || "",
+          status: d.status || "Open",
+          subStatus: d.subStatus || "",
+          assignmentGroup: d.assignmentGroup || "",
+          workNotes: d.workNotes || "",
         });
       } catch (error) {
         console.log(error);
@@ -148,53 +158,71 @@ function ITSaves() {
 
           <div className="CreateField">
             <label>Requester Name</label>
-            <input name="requester" value={formData.requester} readOnly />
+            <input name="requester" value={formData.requester} onChange={handleChange} />
           </div>
 
           <div className="CreateField">
-            <label>Department</label>
-            <select name="department">
-              <option>IT</option>
-            </select>
+            <label>Requested For</label>
+            <input
+              name="requesterFor"
+              value={formData.requesterFor || ""}
+              onChange={handleChange}
+              placeholder="Leave empty if for self"
+            />
           </div>
         </div>
 
         {/* ROW 2 */}
         <div className="CreateRow">
           <div className="CreateField">
-            <label>Status</label>
+            <label>Department</label>
+            <select name="department" value="IT" readOnly>
+              <option value="IT">IT</option>
+            </select>
+          </div>
 
+          <div className="CreateField">
+            <label>Status</label>
             <select
               name="status"
               value={formData.status}
               onChange={handleChange}
             >
               <option value="">Select Status</option>
+              <option value="Assigned to Me">Assigned to Me</option>
+              <option value="Closed">Closed</option>
               <option value="Open">Open</option>
-              <option value="Work In Progress">Work In Progress</option>
               <option value="Pending">Pending</option>
               <option value="Resolved">Resolved</option>
-              <option value="Closed">Closed</option>
-            </select>
-          </div>
-
-          <div className="CreateField">
-            <label>Sub Status</label>
-            <select name="subStatus">
-              <option value="">Select Sub Status</option>
+              <option value="Work In Progress">Work In Progress</option>
             </select>
           </div>
 
           <div className="CreateField">
             <label>Category</label>
-            <select name="category" value={formData.category} readOnly>
-              <option>{formData.category}</option>
+            <select name="category" value={formData.category} onChange={handleChange}>
+              <option value="">Select</option>
+              <option value="Hardware">Hardware</option>
+              <option value="Software">Software</option>
+              <option value="Network">Network</option>
+              <option value="Access">Access</option>
             </select>
           </div>
         </div>
 
         {/* ROW 3 */}
         <div className="CreateRow">
+          <div className="CreateField">
+            <label>Sub Category</label>
+            <select name="subCategory" value={formData.subCategory || ""} onChange={handleChange}>
+              <option value="">Select</option>
+              <option value="Laptop/PC">Laptop/PC</option>
+              <option value="Email/Account">Email/Account</option>
+              <option value="VPN/Wifi">VPN/Wifi</option>
+              <option value="Software Install">Software Install</option>
+            </select>
+          </div>
+
           <div className="CreateField">
             <label>Assignment Group</label>
             <select
@@ -230,10 +258,12 @@ function ITSaves() {
               })}
             </select>
           </div>
+        </div>
 
+        {/* ROW 4 */}
+        <div className="CreateRow">
           <div className="CreateField">
             <label>Impact</label>
-
             <select name="impact" value={formData.impact || ""} onChange={handleChange}>
               <option value="">Select</option>
               <option value="High">High</option>
@@ -241,13 +271,9 @@ function ITSaves() {
               <option value="Low">Low</option>
             </select>
           </div>
-        </div>
 
-        {/* ROW 4 */}
-        <div className="CreateRow">
           <div className="CreateField">
             <label>Urgency</label>
-
             <select name="urgency" value={formData.urgency || ""} onChange={handleChange}>
               <option value="">Select</option>
               <option value="High">High</option>
@@ -259,6 +285,14 @@ function ITSaves() {
           <div className="CreateField">
             <label>Priority</label>
             <input name="priority" value={formData.priority || ""} onChange={handleChange} />
+          </div>
+        </div>
+
+        {/* ROW 5 / BELOW */}
+        <div className="CreateRow">
+          <div className="CreateField">
+            <label>Created On</label>
+            <input name="createdOn" value={formData.createdOn || "N/A"} readOnly />
           </div>
         </div>
 

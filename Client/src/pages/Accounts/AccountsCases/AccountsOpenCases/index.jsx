@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AccountsLayout from "../../AccountsLayout";
 import { fetchApiData } from "../../../../utils/apiClient";
+import CaseTable from "../../../../components/CaseTable";
 import "../../../Hrms/HRSavesCases/index.css";
 
 function AccountsOpenCases() {
@@ -12,17 +13,29 @@ function AccountsOpenCases() {
     fetchOpenCases();
   }, []);
 
+  const sortNewestFirst = (arr) => {
+    return [...arr].sort((a, b) => {
+      if (a.createdAt && b.createdAt) {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      }
+      const numA = parseInt((a.incidentNumber || a.caseId || "").replace(/\D/g, ""), 10) || 0;
+      const numB = parseInt((b.incidentNumber || b.caseId || "").replace(/\D/g, ""), 10) || 0;
+      if (numA !== numB) return numB - numA;
+      return String(b._id || "").localeCompare(String(a._id || ""));
+    });
+  };
+
   const fetchOpenCases = async () => {
     try {
       const response = await fetchApiData("/api/hrrequests");
       const list = (response.data || []).filter((item) => {
         const grp = (item.assignmentGroup || "").toUpperCase();
-        const isAccountsGrp = grp.includes("ACC") || grp.includes("FINANCE");
+        const isAcc = grp.includes("ACC") || grp.includes("FINANCE");
         const isOpen = (item.status || "Open").toLowerCase() === "open";
-        return isAccountsGrp && isOpen;
+        return isAcc && isOpen;
       });
 
-      setData(list);
+      setData(sortNewestFirst(list));
     } catch (error) {
       console.error(error);
     }
@@ -30,49 +43,12 @@ function AccountsOpenCases() {
 
   return (
     <AccountsLayout>
-      <div className="Openhome">
-        <div>
-          <h3 className="openheading">Accounts Cases (Open)</h3>
-
-          <table className="opentable">
-            <thead>
-              <tr>
-                <th>Incident ID</th>
-                <th>Requester</th>
-                <th>Requested For</th>
-                <th>Category</th>
-                <th>Sub Category</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {data.length > 0 ? (
-                data.map((item) => (
-                  <tr
-                    key={item._id}
-                    style={{ cursor: "pointer" }}
-                    onClick={() => navigate(`/hrms/HRsaves/${item._id}`)}
-                  >
-                    <td>{item.incidentNumber || "N/A"}</td>
-                    <td>{item.requester || "N/A"}</td>
-                    <td>{item.requesterFor || "N/A"}</td>
-                    <td>{item.category || "N/A"}</td>
-                    <td>{item.subCategory || "N/A"}</td>
-                    <td>{item.status || "Open"}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="6" style={{ textAlign: "center" }}>
-                    No Open Accounts Cases Found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <CaseTable
+        title="Accounts Cases (Open)"
+        data={data}
+        onRowClick={(item) => navigate(`/accounts/cases/${item._id}`)}
+        emptyMessage="No Open Accounts Cases Found"
+      />
     </AccountsLayout>
   );
 }

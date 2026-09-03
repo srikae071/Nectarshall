@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import ItLeftSide from "../../../ItLeftSide";
 import { fetchApiData } from "../../../../../../utils/apiClient";
+import CaseTable from "../../../../../../components/CaseTable";
 import "./index.css";
 
 function RequestsOffboardingAll({ filterStatus }) {
@@ -26,6 +27,18 @@ function RequestsOffboardingAll({ filterStatus }) {
     fetchRequests();
   }, [location.pathname]);
 
+  const sortNewestFirst = (arr) => {
+    return [...arr].sort((a, b) => {
+      if (a.createdAt && b.createdAt) {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      }
+      const numA = parseInt((a.incidentNumber || a.caseId || a.taskId || "").replace(/\D/g, ""), 10) || 0;
+      const numB = parseInt((b.incidentNumber || b.caseId || a.taskId || "").replace(/\D/g, ""), 10) || 0;
+      if (numA !== numB) return numB - numA;
+      return String(b._id || "").localeCompare(String(a._id || ""));
+    });
+  };
+
   const fetchRequests = async () => {
     try {
       const response = await fetchApiData("/api/jobrequests");
@@ -47,7 +60,7 @@ function RequestsOffboardingAll({ filterStatus }) {
         });
       }
 
-      setData(filtered);
+      setData(sortNewestFirst(filtered));
     } catch (error) {
       console.log(error);
     }
@@ -59,49 +72,12 @@ function RequestsOffboardingAll({ filterStatus }) {
 
   return (
     <ItLeftSide>
-      <div className="Openhome">
-        <div>
-          <h3 className="openheading">{headingText}</h3>
-
-          <table className="opentable">
-            <thead>
-              <tr className="opentablerow">
-                <th>Task ID</th>
-                <th>Requester</th>
-                <th>Resignation Date</th>
-                <th>Last Working Day</th>
-                <th>Resignation Reason</th>
-                <th>IT Status</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {data.length > 0 ? (
-                data.map((item, idx) => (
-                  <tr
-                    key={item._id || idx}
-                    style={{ cursor: "pointer" }}
-                    onClick={() => navigate(`/tasksaves/${item._id}`)}
-                  >
-                    <td>{item.taskId || `TSK-${String(idx + 1).padStart(3, "0")}`}</td>
-                    <td>{item.requesterName || item.requester || "N/A"}</td>
-                    <td>{item.resignationDate ? new Date(item.resignationDate).toLocaleDateString() : "N/A"}</td>
-                    <td>{item.lastWorkingDay ? new Date(item.lastWorkingDay).toLocaleDateString() : "N/A"}</td>
-                    <td>{item.resignationReason || item.description || "N/A"}</td>
-                    <td>{item.itStatus || item.itClearanceStatus || item.ItTAskStatus || item.taskStatus || "Open"}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="6" style={{ textAlign: "center" }}>
-                    No Offboarding Records Found {activeFilterStatus ? `for status: ${activeFilterStatus}` : ""}
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <CaseTable
+        title={headingText}
+        data={data}
+        onRowClick={(item) => navigate(`/requests-offboarding-saves/${item._id}`)}
+        emptyMessage="No Offboarding Requests Found"
+      />
     </ItLeftSide>
   );
 }

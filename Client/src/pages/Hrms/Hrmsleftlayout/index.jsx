@@ -21,9 +21,12 @@ const menuData = [
     items: [
       { label: "All", path: "/hrms/hrsavescases" },
       { label: "Assign to Me", path: "/hrms/assigned-cases" },
+      { label: "Closed", path: "/hrms/resolved-cases" },
       { label: "Create New", path: "/hrms/createnew" },
       { label: "Open", path: "/hrms/open" },
+      { label: "Pending", path: "/hrms/open" },
       { label: "Resolved", path: "/hrms/resolved-cases" },
+      { label: "Work In Progress", path: "/hrms/open" },
     ],
   },
   {

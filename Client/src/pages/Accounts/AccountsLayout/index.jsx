@@ -49,9 +49,12 @@ function AccountsLayout({ children }) {
       children: [
         { label: "All", path: "/accounts/cases/all" },
         { label: "Assign to Me", path: "/accounts/cases/assigned" },
-        { label: "Create New", path: "/onboarding/resonancerequirement/createnew" },
+        { label: "Closed", path: "/accounts/cases/closed" },
+        { label: "Create New", path: "/accounts/cases/createnew" },
         { label: "Open", path: "/accounts/cases/open" },
+        { label: "Pending", path: "/accounts/cases/pending" },
         { label: "Resolved", path: "/accounts/cases/resolved" },
+        { label: "Work In Progress", path: "/accounts/cases/wip" },
       ],
     },
     {

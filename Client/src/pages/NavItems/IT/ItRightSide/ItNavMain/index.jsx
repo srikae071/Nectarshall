@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import ItLeftSide from "../../ItLeftSide";
-import "./index.css";
-// const data = [...];
-
 import { fetchApiData } from "../../../../../utils/apiClient";
+import CaseTable from "../../../../../components/CaseTable";
+import "./index.css";
 
 function ItNavMain() {
   const [data, setData] = useState([]);
@@ -15,10 +13,22 @@ function ItNavMain() {
     fetchRequests();
   }, []);
 
+  const sortNewestFirst = (arr) => {
+    return [...arr].sort((a, b) => {
+      if (a.createdAt && b.createdAt) {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      }
+      const numA = parseInt((a.incidentNumber || a.caseId || "").replace(/\D/g, ""), 10) || 0;
+      const numB = parseInt((b.incidentNumber || b.caseId || "").replace(/\D/g, ""), 10) || 0;
+      if (numA !== numB) return numB - numA;
+      return String(b._id || "").localeCompare(String(a._id || ""));
+    });
+  };
+
   const fetchRequests = async () => {
     try {
       const response = await fetchApiData("/api/itrequests");
-      setData(response.data);
+      setData(sortNewestFirst(response.data || []));
     } catch (error) {
       console.log(error);
     }
@@ -26,47 +36,12 @@ function ItNavMain() {
 
   return (
     <ItLeftSide>
-      <div className="Openhome">
-        <div>
-          <h3 className="openheading">IT Tasks</h3>
-
-          <table className="opentable">
-            <thead>
-              <tr>
-                <th>Incident ID</th>
-                <th>Requester</th>
-                <th>Department</th>
-                <th>Category</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {data.length > 0 ? (
-                data.map((item) => (
-                  <tr
-                    key={item._id}
-                    style={{ cursor: "pointer" }}
-                    onClick={() => navigate(`/hrms/itsaves/${item._id}`)}
-                  >
-                    <td>{item.incidentNumber}</td>
-                    <td>{item.requester}</td>
-                    <td>{item.department}</td>
-                    <td>{item.category}</td>
-                    <td>{item.status}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="5" style={{ textAlign: "center" }}>
-                    No Records Found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <CaseTable
+        title="IT Tasks (All)"
+        data={data}
+        onRowClick={(item) => navigate(`/hrms/itsaves/${item._id}`)}
+        emptyMessage="No IT Tasks Found"
+      />
     </ItLeftSide>
   );
 }

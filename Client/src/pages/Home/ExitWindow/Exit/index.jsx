@@ -86,8 +86,31 @@ function Exit() {
     }));
   };
 
-  const handleSave = () => {
-    alert("Offboarding Request Saved as Draft Successfully.");
+  const handleSave = async () => {
+    if (!formData.shortDescription || !formData.shortDescription.trim()) {
+      alert("Please enter a Short Description.");
+      return;
+    }
+    try {
+      const payload = {
+        ...formData,
+        requester: currentUserName,
+        requesterName: currentUserName,
+        requesterFor: currentUserName,
+        category: "Offboarding",
+        status: "Draft",
+        itStatus: "Draft",
+        hrStatus: "Draft",
+        requestType: "Resignation",
+      };
+
+      await sendApiData("/api/jobrequests", payload);
+      alert("Offboarding Request Saved as Draft Successfully.");
+      navigate("/offboarding-employes-all");
+    } catch (error) {
+      console.error(error);
+      alert("Error Saving Request as Draft");
+    }
   };
 
   const handleSubmit = async () => {

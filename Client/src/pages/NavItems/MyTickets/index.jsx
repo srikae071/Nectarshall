@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { fetchApiData } from "../../../utils/apiClient";
 import MyTicketsNavBar from "./MyTicketsNavvar/index.jsx";
+import CaseTable from "../../../components/CaseTable";
 import "./index.css";
 
 function MyTickets() {
@@ -11,6 +11,18 @@ function MyTickets() {
     fetchTickets();
   }, []);
 
+  const sortNewestFirst = (arr) => {
+    return [...arr].sort((a, b) => {
+      if (a.createdAt && b.createdAt) {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      }
+      const numA = parseInt((a.incidentNumber || a.caseId || "").replace(/\D/g, ""), 10) || 0;
+      const numB = parseInt((b.incidentNumber || b.caseId || "").replace(/\D/g, ""), 10) || 0;
+      if (numA !== numB) return numB - numA;
+      return String(b._id || "").localeCompare(String(a._id || ""));
+    });
+  };
+
   const fetchTickets = async () => {
     try {
       const [itResponse, hrResponse] = await Promise.all([
@@ -18,12 +30,12 @@ function MyTickets() {
         fetchApiData("/api/hrrequests"),
       ]);
 
-      const itTickets = itResponse.data.map((item) => ({
+      const itTickets = (itResponse.data || []).map((item) => ({
         ...item,
         requestType: "IT",
       }));
 
-      const hrTickets = hrResponse.data.map((item) => ({
+      const hrTickets = (hrResponse.data || []).map((item) => ({
         ...item,
         requestType: "HR",
       }));
@@ -45,15 +57,15 @@ function MyTickets() {
       const isAdmin = role === "ADMIN" || username.toLowerCase().includes("sumit");
 
       if (isAdmin) {
-        setTickets(allTickets);
+        setTickets(sortNewestFirst(allTickets));
       } else if (username) {
         const u = username.toLowerCase();
         const filtered = allTickets.filter((item) => {
-          const r1 = (item.requester || "").toLowerCase();
+          const r1 = (item.requester || item.requesterName || "").toLowerCase();
           const r2 = (item.requesterFor || "").toLowerCase();
-          return r1.includes(u) || u.includes(r1 && r1.length > 2 ? r1 : "___never___") || r2.includes(u);
+          return r1.includes(u) || u.includes(r1 && r1.length > 2 ? r1 : "___never___") || r2.includes(u) || u.includes(r2 && r2.length > 2 ? r2 : "___never___");
         });
-        setTickets(filtered);
+        setTickets(sortNewestFirst(filtered));
       } else {
         setTickets([]);
       }
@@ -65,57 +77,13 @@ function MyTickets() {
   return (
     <>
       <MyTicketsNavBar />
-      <div className="MyTicketsContainer">
-        <div className="MyTicketsHeader">
-          <h2>My Ticket</h2>
-        </div>
-        <table className="MyTicketsTable">
-          <thead>
-            <tr>
-              <th>Ticket ID</th>
-              <th>Type</th>
-              <th>Requester</th>
-              <th>Requested For</th>
-              <th>Category</th>
-              <th>Sub Category</th>
-              <th>Urgency</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {tickets.length > 0 ? (
-              tickets.map((item) => (
-                <tr key={item._id}>
-                  <td>{item.incidentNumber}</td>
-                  <td>
-                    <span
-                      className={
-                        item.requestType === "IT"
-                          ? "TicketBadgeIT"
-                          : "TicketBadgeHR"
-                      }
-                    >
-                      {item.requestType}
-                    </span>
-                  </td>
-                  <td>{item.requester}</td>
-                  <td>{item.requesterFor}</td>
-                  <td>{item.category}</td>
-                  <td>{item.subCategory}</td>
-                  <td>{item.urgency}</td>
-                  <td>{item.status || "Open"}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="8" className="NoRecords">
-                  No Tickets Found
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+      <div className="MyTicketsContainer" style={{ padding: "10px 20px" }}>
+        <CaseTable
+          title="My Tickets"
+          data={tickets}
+          onRowClick={null}
+          emptyMessage="No Tickets Found"
+        />
       </div>
     </>
   );

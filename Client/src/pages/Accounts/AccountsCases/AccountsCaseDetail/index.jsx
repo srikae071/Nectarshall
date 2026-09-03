@@ -1,77 +1,81 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import HrmsLeftLayout from "../Hrmsleftlayout";
-import { fetchApiData, sendApiData } from "../../../utils/apiClient";
-import "../SavedForms/HRSaves/index.css";
+import { useParams, useNavigate } from "react-router-dom";
+import AccountsLayout from "../../AccountsLayout";
+import { fetchApiData, sendApiData } from "../../../../utils/apiClient";
+import "../../../Hrms/SavedForms/HRSaves/index.css";
 
-function CreateCase() {
+function AccountsCaseDetail() {
+  const { id } = useParams();
   const navigate = useNavigate();
   const [employeeList, setEmployeeList] = useState([]);
-  const [currentUserName, setCurrentUserName] = useState("");
 
   const [formData, setFormData] = useState({
     caseId: "",
-    incidentNumber: "",
-    requester: "",
     requesterName: "",
-    department: "HR",
+    requester: "",
+    requesterFor: "",
     category: "",
     subCategory: "",
-    assignmentGroup: "HR",
-    assignTo: "",
-    impact: "",
     urgency: "",
+    impact: "",
     priority: "",
     shortDescription: "",
     description: "",
+    status: "",
+    subStatus: "",
+    assignmentGroup: "Accounts",
+    assignTo: "",
     workNotes: "",
-    status: "Open",
   });
 
   useEffect(() => {
-    let authUser = null;
-    try {
-      const saved = localStorage.getItem("authUser") || localStorage.getItem("user") || localStorage.getItem("username");
-      if (saved) authUser = JSON.parse(saved);
-    } catch (e) {
-      const raw = localStorage.getItem("authUser") || localStorage.getItem("user") || localStorage.getItem("username");
-      if (raw && typeof raw === "string") authUser = { username: raw };
-    }
-
-    const name = authUser?.displayName || authUser?.name || authUser?.username || "HR User";
-    setCurrentUserName(name);
-    setFormData((prev) => ({
-      ...prev,
-      requester: name,
-      requesterName: name,
-    }));
-
     fetchApiData("/api/employees")
       .then((res) => setEmployeeList(res.data || []))
       .catch((err) => console.error(err));
-
-    fetchApiData("/api/hrrequests")
-      .then((res) => {
-        const list = res.data || [];
-        const numbers = list
-          .map((item) => {
-            const str = item.incidentNumber || item.caseId || "";
-            const match = str.match(/\d+/);
-            return match ? parseInt(match[0], 10) : 0;
-          })
-          .filter((n) => !isNaN(n));
-
-        const maxNum = numbers.length > 0 ? Math.max(...numbers) : 0;
-        const nextNum = maxNum + 1;
-        const nextCaseId = `HR${String(nextNum).padStart(3, "0")}`;
-        setFormData((prev) => ({
-          ...prev,
-          caseId: nextCaseId,
-          incidentNumber: nextCaseId,
-        }));
-      })
-      .catch((err) => console.error(err));
   }, []);
+
+  useEffect(() => {
+    const fetchRequest = async () => {
+      try {
+        const response = await fetchApiData(`/api/hrrequests/${id}`);
+        const d = response.data || {};
+        const dateVal = d.createdAt || d.createdOn || d.timestamp;
+        let createdOnStr = "N/A";
+        if (dateVal) {
+          try {
+            const dt = new Date(dateVal);
+            if (!isNaN(dt.getTime())) createdOnStr = dt.toLocaleString();
+          } catch (e) {}
+        }
+
+        setFormData({
+          caseId: d.incidentNumber || "",
+          requester: d.requester || d.requesterName || "",
+          requesterName: d.requesterName || d.requester || "",
+          requesterFor: d.requesterFor || "",
+          createdOn: createdOnStr,
+          category: d.category || "",
+          subCategory: d.subCategory || "",
+          urgency: d.urgency || "Low",
+          impact: d.impact || "Low",
+          priority: d.priority || "3 - Moderate",
+          shortDescription: d.shortDescription || "",
+          description: d.description || "",
+          status: d.status || "Open",
+          subStatus: d.subStatus || "",
+          assignmentGroup: d.assignmentGroup || "Accounts",
+          assignTo: d.assignTo || d.assignedTo || "",
+          workNotes: d.workNotes || "",
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    if (id) {
+      fetchRequest();
+    }
+  }, [id]);
 
   const handleChange = (e) => {
     setFormData({
@@ -101,49 +105,39 @@ function CreateCase() {
     try {
       const payload = {
         ...formData,
-        status: "Draft",
-        assignedTo: formData.assignTo || "",
+        assignedTo: formData.assignTo || formData.assignedTo || "",
       };
-      await sendApiData("/api/hrrequests/create", payload, "post");
-      alert("HR Case Saved as Draft Successfully!");
-      navigate("/hrms/hrsavescases");
+      await sendApiData(`/api/hrrequests/${id}`, payload, "put");
+      alert("Accounts Case Updated Successfully");
     } catch (error) {
       console.error(error);
-      alert("Error Saving HR Case as Draft");
+      alert("Error Updating Case");
     }
   };
 
-  const handleSubmit = async (e) => {
-    if (e) e.preventDefault();
+  const handleSubmit = async () => {
     try {
       const payload = {
         ...formData,
-        assignedTo: formData.assignTo || "",
+        assignedTo: formData.assignTo || formData.assignedTo || "",
       };
-
-      await sendApiData("/api/hrrequests/create", payload, "post");
-      alert("HR Case Submitted Successfully!");
-
-      const grp = (formData.assignmentGroup || "").toUpperCase();
-      if (grp.includes("ACC") || grp.includes("FINANCE")) {
-        navigate("/accounts/cases/all");
-      } else {
-        navigate("/hrms/hrsavescases");
-      }
+      await sendApiData(`/api/hrrequests/${id}`, payload, "put");
+      alert("Accounts Case Submitted Successfully!");
+      navigate("/accounts/cases/all");
     } catch (error) {
       console.error(error);
-      alert("Error Submitting HR Case");
+      alert("Error Submitting Case");
     }
   };
 
   const handleCancel = () => {
-    navigate("/hrms/hrsavescases");
+    navigate("/accounts/cases/all");
   };
 
   return (
-    <HrmsLeftLayout>
+    <AccountsLayout>
       <div className="CreateContainer">
-        <h2 className="CreateTitle">HR CASE - CREATE NEW</h2>
+        <h2 className="CreateTitle">ACCOUNTS CASE DETAILS</h2>
 
         {/* ROW 1 */}
         <div className="CreateRow">
@@ -156,7 +150,7 @@ function CreateCase() {
             <label>Requester Name</label>
             <input
               name="requesterName"
-              value={formData.requesterName || currentUserName}
+              value={formData.requesterName || formData.requester || ""}
               onChange={handleChange}
             />
           </div>
@@ -176,8 +170,8 @@ function CreateCase() {
         <div className="CreateRow">
           <div className="CreateField">
             <label>Department</label>
-            <select name="department" value="HR" readOnly>
-              <option value="HR">HR</option>
+            <select name="department" value="Accounts" readOnly>
+              <option value="Accounts">Accounts</option>
             </select>
           </div>
 
@@ -197,9 +191,12 @@ function CreateCase() {
             <label>Category</label>
             <select name="category" value={formData.category} onChange={handleChange}>
               <option value="">Select</option>
-              <option value="Leave Request">Leave Request</option>
+              <option value="Accounts Query">Accounts Query</option>
               <option value="Payroll Query">Payroll Query</option>
-              <option value="Employee Relations">Employee Relations</option>
+              <option value="Billing Query">Billing Query</option>
+              <option value="Vendor Query">Vendor Query</option>
+              <option value="Expense Query">Expense Query</option>
+              <option value="Leave Request">Leave Request</option>
             </select>
           </div>
         </div>
@@ -210,37 +207,20 @@ function CreateCase() {
             <label>Sub Category</label>
             <select name="subCategory" value={formData.subCategory} onChange={handleChange}>
               <option value="">Select</option>
-              {formData.category === "Leave Request" && (
-                <>
-                  <option value="Sick Leave">Sick Leave</option>
-                  <option value="Casual Leave">Casual Leave</option>
-                  <option value="Earned Leave">Earned Leave</option>
-                </>
-              )}
-              {formData.category === "Payroll Query" && (
-                <>
-                  <option value="Salary Issue">Salary Issue</option>
-                  <option value="Tax Query">Tax Query</option>
-                  <option value="Bonus Query">Bonus Query</option>
-                </>
-              )}
-              {formData.category === "Employee Relations" && (
-                <>
-                  <option value="Conflict Resolution">Conflict Resolution</option>
-                  <option value="Grievance">Grievance</option>
-                  <option value="Feedback">Feedback</option>
-                </>
-              )}
+              <option value="Salary / PayRun">Salary / PayRun</option>
+              <option value="Invoice Clearance">Invoice Clearance</option>
+              <option value="Taxation & TDS">Taxation & TDS</option>
+              <option value="Reimbursement">Reimbursement</option>
+              <option value="General Query">General Query</option>
             </select>
           </div>
 
           <div className="CreateField">
             <label>Assignment Group</label>
             <select name="assignmentGroup" value={formData.assignmentGroup} onChange={handleChange}>
+              <option value="Accounts">Accounts</option>
               <option value="HR">HR</option>
               <option value="IT">IT</option>
-              <option value="CNC">CNC</option>
-              <option value="Accounts">Accounts</option>
               <option value="Operations">Operations</option>
             </select>
           </div>
@@ -253,7 +233,7 @@ function CreateCase() {
                 const name = emp.displayName || emp.employeeName || `${emp.firstName || ""} ${emp.lastName || ""}`.trim();
                 return (
                   <option key={i} value={name}>
-                    {name} [{emp.department || "Dept"}]
+                    {name} [{emp.department || "Accounts"}]
                   </option>
                 );
               })}
@@ -284,6 +264,14 @@ function CreateCase() {
           <div className="CreateField">
             <label>Priority</label>
             <input name="priority" value={formData.priority} onChange={handleChange} />
+          </div>
+        </div>
+
+        {/* ROW 5 / BELOW */}
+        <div className="CreateRow">
+          <div className="CreateField">
+            <label>Created On</label>
+            <input name="createdOn" value={formData.createdOn || "N/A"} readOnly />
           </div>
         </div>
 
@@ -332,8 +320,8 @@ function CreateCase() {
           </button>
         </div>
       </div>
-    </HrmsLeftLayout>
+    </AccountsLayout>
   );
 }
 
-export default CreateCase;
+export default AccountsCaseDetail;

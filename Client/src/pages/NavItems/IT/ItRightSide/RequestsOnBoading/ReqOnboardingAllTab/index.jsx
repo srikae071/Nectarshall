@@ -1,21 +1,49 @@
 import ItLeftSide from "../../../ItLeftSide";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { fetchApiData } from "../../../../../../utils/apiClient";
+import CaseTable from "../../../../../../components/CaseTable";
 import "./index.css";
 
-function ReqOnboardingAllTab() {
+function ReqOnboardingAllTab({ filterStatus }) {
   const [data, setData] = useState([]);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const getStatusFromPath = () => {
+    if (filterStatus) return filterStatus;
+    const p = location.pathname.toLowerCase();
+    if (p.includes("/requests-onboarding-open") || p.includes("/onboarding/open")) return "Open";
+    if (p.includes("/requests-onboarding-resolved") || p.includes("/onboarding/resolved")) return "Resolved";
+    if (p.includes("/requests-onboarding-closed") || p.includes("/onboarding/closed")) return "Closed";
+    if (p.includes("/requests-onboarding-wip") || p.includes("/onboarding/work-in-progress")) return "Work In Progress";
+    if (p.includes("/requests-onboarding-pending") || p.includes("/onboarding/pending")) return "Pending";
+    return null;
+  };
+
+  const activeFilterStatus = getStatusFromPath();
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [location.pathname]);
+
+  const sortNewestFirst = (arr) => {
+    return [...arr].sort((a, b) => {
+      if (a.createdAt && b.createdAt) {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      }
+      const numA = parseInt((a.incidentNumber || a.caseId || a.taskId || "").replace(/\D/g, ""), 10) || 0;
+      const numB = parseInt((b.incidentNumber || b.caseId || a.taskId || "").replace(/\D/g, ""), 10) || 0;
+      if (numA !== numB) return numB - numA;
+      return String(b._id || "").localeCompare(String(a._id || ""));
+    });
+  };
 
   const fetchData = async () => {
     try {
       const response = await fetchApiData("/api/jobrequests");
       const allItems = response.data || [];
-      const filtered = allItems.filter(
+      let filtered = allItems.filter(
         (item) =>
           item.category === "Onboarding" ||
           item.category === "onboarding" ||
@@ -23,68 +51,34 @@ function ReqOnboardingAllTab() {
           item.onboardingTaskId ||
           item.taskType === "IT Onboarding"
       );
-      setData(filtered.length > 0 ? filtered : allItems);
+      if (filtered.length === 0) filtered = allItems;
+
+      if (activeFilterStatus) {
+        const s = activeFilterStatus.toLowerCase().replace(/\s+/g, "");
+        filtered = filtered.filter((item) => {
+          const st = (item.onboardingStatus || item.status || "Open").toLowerCase().replace(/\s+/g, "");
+          return st === s || st.includes(s) || (s === "workinprogress" && (st === "wip" || st.includes("progress")));
+        });
+      }
+
+      setData(sortNewestFirst(filtered));
     } catch (error) {
       console.error(error);
     }
   };
 
-  const navigate = useNavigate();
+  const headingText = activeFilterStatus
+    ? `IT Onboarding Requests (${activeFilterStatus})`
+    : "IT Onboarding Requests (All)";
 
-  const handleRowClick = (item) => {
-    navigate(`/requests-onboarding-saves/${item._id}`);
-  };
   return (
     <ItLeftSide>
-      <div className="Openhome">
-        <div>
-          <h3 className="openheading">All Onboarding Requests</h3>
-
-          <table className="opentable">
-            <thead className="opentablerow">
-              <tr className="opentablerow">
-                <th className="opentablerow">Task ID</th>
-
-                <th className="opentablerow">Case ID</th>
-                <th className="opentablerow">Requester Name</th>
-                <th className="opentablerow">Department</th>
-                <th className="opentablerow">Category</th>
-                <th className="opentablerow">Status</th>
-              </tr>
-            </thead>
-            <tbody className="opentablerow">
-              {data.length === 0 ? (
-                <tr>
-                  <td colSpan="5" style={{ textAlign: "center" }}>
-                    No Records Found
-                  </td>
-                </tr>
-              ) : (
-                data.map((item) => (
-                  <tr
-                    className="opentablerow"
-                    key={item._id}
-                    a
-                    onClick={() => handleRowClick(item)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <td className="opentablerow">{item.onboardingTaskId}</td>
-                    <td className="opentablerow">{item.caseId}</td>
-                    <td className="opentablerow">{item.requesterName}</td>
-                    <td className="opentablerow">{item.department}</td>
-                    <td className="opentablerow">{item.category}</td>
-                    <td className="opentablerow">{item.onboardingStatus}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* <div className="footer">
-          © Copyright 2023 Enhance Services - All Rights Reserved.
-        </div> */}
-      </div>
+      <CaseTable
+        title={headingText}
+        data={data}
+        onRowClick={(item) => navigate(`/requests-onboarding-saves/${item._id}`)}
+        emptyMessage="No Onboarding Requests Found"
+      />
     </ItLeftSide>
   );
 }

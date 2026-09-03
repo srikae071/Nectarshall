@@ -44,8 +44,25 @@ function ResonanceMain() {
     });
   };
 
-  const handleSave = () => {
-    alert("Employee Request Saved as Draft Successfully.");
+  const handleSave = async () => {
+    if (!formData.shortDescription || !formData.shortDescription.trim()) {
+      alert("Please enter a Short Description.");
+      return;
+    }
+    try {
+      await sendApiData("/api/jobrequests", {
+        ...formData,
+        category: "Employee Request",
+        status: "Draft",
+        onboardingStatus: "Draft",
+        requestType: "Resonance",
+      });
+      alert("Employee Request Saved as Draft Successfully.");
+      navigate("/onboarding/employerequest");
+    } catch (error) {
+      console.error(error);
+      alert("Error Saving Request as Draft");
+    }
   };
 
   const handleSubmit = async () => {
