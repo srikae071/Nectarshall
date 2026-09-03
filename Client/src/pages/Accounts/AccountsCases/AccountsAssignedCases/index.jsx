@@ -1,29 +1,20 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import HrmsLeftLayout from "../Hrmsleftlayout";
-import "./index.css";
-// const data = [...];
+import AccountsLayout from "../../AccountsLayout";
+import { fetchApiData } from "../../../../utils/apiClient";
+import "../../../Hrms/HRSavesCases/index.css";
 
-import { fetchApiData } from "../../../utils/apiClient";
-import { checkHasHrAccess } from "../../../context/AuthContext";
-
-function HRSavesCases() {
+function AccountsAssignedCases() {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchRequests();
+    fetchAssignedCases();
   }, []);
 
-  const fetchRequests = async () => {
+  const fetchAssignedCases = async () => {
     try {
       const response = await fetchApiData("/api/hrrequests");
-      const allData = response.data || [];
-      const list = allData.filter(
-        (item) => !item.assignmentGroup || item.assignmentGroup.trim() === "" || item.assignmentGroup.toUpperCase() === "HR"
-      );
-
       let authUser = null;
       try {
         const saved = localStorage.getItem("authUser") || localStorage.getItem("user") || localStorage.getItem("username");
@@ -33,33 +24,28 @@ function HRSavesCases() {
         if (raw && typeof raw === "string") authUser = { username: raw };
       }
 
-      const isHrOrAdmin = checkHasHrAccess(authUser);
+      const username = (authUser?.username || authUser?.name || authUser?.displayName || "").toLowerCase().trim();
 
-      if (isHrOrAdmin) {
-        setData(list);
-      } else if (authUser) {
-        const u = (authUser?.username || authUser?.name || authUser?.displayName || "").toLowerCase().trim();
-        setData(
-          list.filter((item) => {
-            const r1 = (item.requester || "").toLowerCase();
-            const r2 = (item.requesterFor || "").toLowerCase();
-            const r3 = (item.assignedTo || "").toLowerCase();
-            return r1.includes(u) || u.includes(r1 && r1.length > 2 ? r1 : "___never___") || r2.includes(u) || r3.includes(u);
-          })
-        );
-      } else {
-        setData([]);
-      }
+      const list = (response.data || []).filter((item) => {
+        const grp = (item.assignmentGroup || "").toUpperCase();
+        const isAccountsGrp = grp.includes("ACC") || grp.includes("FINANCE");
+        if (!isAccountsGrp) return false;
+
+        const assigned = (item.assignedTo || item.assignTo || "").toLowerCase().trim();
+        return username && assigned && (assigned.includes(username) || username.includes(assigned));
+      });
+
+      setData(list);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
   return (
-    <HrmsLeftLayout>
+    <AccountsLayout>
       <div className="Openhome">
         <div>
-          <h3 className="openheading">HR Cases</h3>
+          <h3 className="openheading">Accounts Cases (Assigned to Me)</h3>
 
           <table className="opentable">
             <thead>
@@ -92,7 +78,7 @@ function HRSavesCases() {
               ) : (
                 <tr>
                   <td colSpan="6" style={{ textAlign: "center" }}>
-                    No Records Found
+                    No Assigned Accounts Cases Found
                   </td>
                 </tr>
               )}
@@ -100,8 +86,8 @@ function HRSavesCases() {
           </table>
         </div>
       </div>
-    </HrmsLeftLayout>
+    </AccountsLayout>
   );
 }
 
-export default HRSavesCases;
+export default AccountsAssignedCases;

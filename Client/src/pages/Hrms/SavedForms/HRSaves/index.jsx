@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { fetchApiData, sendApiData } from "../../../../utils/apiClient";
-// import axios from "axios";
 
 import HrmsLeftLayout from "../../Hrmsleftlayout";
 
@@ -10,6 +9,7 @@ import "./index.css";
 
 function HRSaves() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     caseId: "",
@@ -87,16 +87,45 @@ function HRSaves() {
       ...formData,
       [e.target.name]: e.target.value,
     });
-    console.log(formData);
   };
+
   const handleSave = async () => {
     try {
-      await sendApiData(`/api/hrrequests/${id}`, formData, "put");
-
+      const payload = {
+        ...formData,
+        assignedTo: formData.assignTo || formData.assignedTo || "",
+      };
+      await sendApiData(`/api/hrrequests/${id}`, payload, "put");
       alert("Case Updated Successfully");
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      alert("Error Updating Case");
     }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const payload = {
+        ...formData,
+        assignedTo: formData.assignTo || formData.assignedTo || "",
+      };
+      await sendApiData(`/api/hrrequests/${id}`, payload, "put");
+      alert("Case Submitted Successfully!");
+
+      const grp = (formData.assignmentGroup || "").toUpperCase();
+      if (grp.includes("ACC") || grp.includes("FINANCE")) {
+        navigate("/accounts/cases/all");
+      } else {
+        navigate("/hrms/hrsavescases");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Error Submitting Case");
+    }
+  };
+
+  const handleCancel = () => {
+    navigate(-1);
   };
   return (
     <HrmsLeftLayout>
@@ -238,11 +267,11 @@ function HRSaves() {
           <div className="CreateField">
             <label>Impact</label>
 
-            <select name="impact">
+            <select name="impact" value={formData.impact || ""} onChange={handleChange}>
               <option value="">Select</option>
-              <option>High</option>
-              <option>Medium</option>
-              <option>Low</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
             </select>
           </div>
         </div>
@@ -252,17 +281,17 @@ function HRSaves() {
           <div className="CreateField">
             <label>Urgency</label>
 
-            <select name="urgency">
+            <select name="urgency" value={formData.urgency || ""} onChange={handleChange}>
               <option value="">Select</option>
-              <option>High</option>
-              <option>Medium</option>
-              <option>Low</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
             </select>
           </div>
 
           <div className="CreateField">
             <label>Priority</label>
-            <input name="priority" />
+            <input name="priority" value={formData.priority || ""} onChange={handleChange} />
           </div>
         </div>
 
@@ -272,7 +301,7 @@ function HRSaves() {
           <textarea
             className="CreateTextarea CreateShortTextarea"
             name="shortDescription"
-            value={formData.shortDescription}
+            value={formData.shortDescription || ""}
             readOnly
           ></textarea>
         </div>
@@ -282,18 +311,22 @@ function HRSaves() {
           <textarea
             className="CreateTextarea CreateDescriptionTextarea"
             name="description"
-            value={formData.description}
+            value={formData.description || ""}
             readOnly
           ></textarea>
         </div>
 
         {/* BUTTONS */}
         <div className="CreateFooter">
-          <button className="CreateBtn" onClick={handleSave}>
+          <button className="CreateBtn" type="button" onClick={handleSave}>
             Save
           </button>
-          <button className="CreateBtn">Submit</button>
-          <button className="CreateBtn">Cancel</button>
+          <button className="CreateBtn" type="button" onClick={handleSubmit}>
+            Submit
+          </button>
+          <button className="CreateBtn" type="button" onClick={handleCancel}>
+            Cancel
+          </button>
         </div>
       </div>
     </HrmsLeftLayout>

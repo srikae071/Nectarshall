@@ -144,6 +144,10 @@ import AccountsOffboardingRequest from "./pages/Accounts/AccountsOffboardingRequ
 import AccountsTaskSaves from "./pages/Accounts/AccountsTaskSaves";
 import AccountsEmployeeRateCard from "./pages/Accounts/AccountsEmployeeRateCard";
 import AccountsCustomerRateCard from "./pages/Accounts/AccountsCustomerRateCard";
+import AccountsAllCases from "./pages/Accounts/AccountsCases/AccountsAllCases";
+import AccountsAssignedCases from "./pages/Accounts/AccountsCases/AccountsAssignedCases";
+import AccountsOpenCases from "./pages/Accounts/AccountsCases/AccountsOpenCases";
+import AccountsResolvedCases from "./pages/Accounts/AccountsCases/AccountsResolvedCases";
 
 function App() {
   useEffect(() => {
@@ -342,7 +346,13 @@ function App() {
       <Route path="/my-mails" element={<MyMails />} />
       <Route path="/hrms/all-employees" element={<AllEmployees />} />
       <Route path="/hrms/employee/:id" element={<MainEmployeesSaves />} />
+      <Route path="/it" element={<ItNavMain />} />
       <Route path="/it-all" element={<ItNavMain />} />
+      <Route path="/it-resolved" element={<ItResolved />} />
+      <Route path="/it-closed" element={<ItClosed />} />
+      <Route path="/it-open" element={<ItOpen />} />
+      <Route path="/it-pending" element={<ItPending />} />
+      <Route path="/it-wip" element={<ItWorkInProgress />} />
       <Route path="/requests-offboarding-all" element={<RequestsOffboardingAll />} />
       <Route path="/requests-offboarding-open" element={<RequestsOffboardingAll />} />
       <Route path="/requests-offboarding-resolved" element={<RequestsOffboardingAll />} />
@@ -507,6 +517,46 @@ function App() {
       <Route path="/roster-shifts" element={<RosterShiftsMain />} />
 
       {/* ACCOUNTS MODULE ROUTES */}
+      <Route
+        path="/accounts/cases"
+        element={
+          <ProtectedRoute>
+            <AccountsAllCases />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/accounts/cases/all"
+        element={
+          <ProtectedRoute>
+            <AccountsAllCases />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/accounts/cases/assigned"
+        element={
+          <ProtectedRoute>
+            <AccountsAssignedCases />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/accounts/cases/open"
+        element={
+          <ProtectedRoute>
+            <AccountsOpenCases />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/accounts/cases/resolved"
+        element={
+          <ProtectedRoute>
+            <AccountsResolvedCases />
+          </ProtectedRoute>
+        }
+      />
       <Route
         path="/accounts/payrun"
         element={

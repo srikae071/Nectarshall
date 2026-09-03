@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import "./index.css";
 
 import { fetchApiData } from "../../../utils/apiClient";
+import { checkHasHrAccess } from "../../../context/AuthContext";
 
 function Resolved() {
   const [data, setData] = useState([]);
@@ -16,9 +17,12 @@ function Resolved() {
   const fetchOpenCases = async () => {
     try {
       const response = await fetchApiData("/api/hrrequests");
+      const hrCases = (response.data || []).filter(
+        (item) => !item.assignmentGroup || item.assignmentGroup.trim() === "" || item.assignmentGroup.toUpperCase() === "HR"
+      );
 
-      const resolvedCases = response.data.filter(
-        (item) => item.status === "Resolved",
+      const resolvedCases = hrCases.filter((item) =>
+        ["resolved", "closed"].includes((item.status || "").toLowerCase())
       );
 
       let authUser = null;
@@ -29,14 +33,13 @@ function Resolved() {
         const raw = localStorage.getItem("authUser") || localStorage.getItem("user") || localStorage.getItem("username");
         if (raw && typeof raw === "string") authUser = { username: raw };
       }
-      const username = (authUser?.username || authUser?.name || authUser?.displayName || (typeof authUser === "string" ? authUser : "")).trim();
-      const role = (authUser?.role || "").toUpperCase();
-      const isAdmin = role === "ADMIN" || username.toLowerCase().includes("sumit");
 
-      if (isAdmin) {
+      const isHrOrAdmin = checkHasHrAccess(authUser);
+
+      if (isHrOrAdmin) {
         setData(resolvedCases);
-      } else if (username) {
-        const u = username.toLowerCase();
+      } else if (authUser) {
+        const u = (authUser?.username || authUser?.name || authUser?.displayName || "").toLowerCase().trim();
         setData(
           resolvedCases.filter((item) => {
             const r1 = (item.requester || "").toLowerCase();

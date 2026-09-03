@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./index.css";
 import { fetchApiData } from "../../../utils/apiClient";
+import { checkHasHrAccess } from "../../../context/AuthContext";
 
 function Open() {
   const [data, setData] = useState([]);
@@ -15,7 +16,10 @@ function Open() {
   const fetchOpenCases = async () => {
     try {
       const response = await fetchApiData("/api/hrrequests");
-      const openCases = response.data.filter((item) => item.status === "Open");
+      const hrCases = (response.data || []).filter(
+        (item) => !item.assignmentGroup || item.assignmentGroup.trim() === "" || item.assignmentGroup.toUpperCase() === "HR"
+      );
+      const openCases = hrCases.filter((item) => (item.status || "Open").toLowerCase() === "open");
 
       let authUser = null;
       try {
@@ -25,14 +29,13 @@ function Open() {
         const raw = localStorage.getItem("authUser") || localStorage.getItem("user") || localStorage.getItem("username");
         if (raw && typeof raw === "string") authUser = { username: raw };
       }
-      const username = (authUser?.username || authUser?.name || authUser?.displayName || (typeof authUser === "string" ? authUser : "")).trim();
-      const role = (authUser?.role || "").toUpperCase();
-      const isAdmin = role === "ADMIN" || username.toLowerCase().includes("sumit");
 
-      if (isAdmin) {
+      const isHrOrAdmin = checkHasHrAccess(authUser);
+
+      if (isHrOrAdmin) {
         setData(openCases);
-      } else if (username) {
-        const u = username.toLowerCase();
+      } else if (authUser) {
+        const u = (authUser?.username || authUser?.name || authUser?.displayName || "").toLowerCase().trim();
         setData(
           openCases.filter((item) => {
             const r1 = (item.requester || "").toLowerCase();

@@ -19,6 +19,71 @@ const ADMIN_PROFILE = {
   department: "Admin",
 };
 
+export const checkHasHrAccess = (u) => {
+  if (!u) return false;
+  const username = (u.username || u.displayName || u.name || "").toLowerCase();
+  const role = (u.role || "").toUpperCase();
+  const dept = (u.department || u.dept || "").toUpperCase();
+  const subRole = (u.subRole || "").toUpperCase();
+  const extra = u.extraRoles || u.ExtaRoles || [];
+
+  let extraList = [];
+  if (Array.isArray(extra)) extraList = extra.map((r) => String(r).toUpperCase());
+  else if (typeof extra === "string") extraList = extra.split(",").map((r) => r.trim().toUpperCase());
+
+  const activeProfile = (u.activeProfile || "").toUpperCase();
+
+  const isAdmin =
+    role === "ADMIN" ||
+    dept === "ADMIN" ||
+    subRole === "ADMIN" ||
+    username.includes("sumit") ||
+    extraList.includes("ADMIN");
+
+  if (isAdmin) return true;
+
+  return (
+    dept.includes("HR") ||
+    dept.includes("HUMAN") ||
+    subRole.includes("HR") ||
+    role.includes("HR") ||
+    activeProfile.includes("HR") ||
+    extraList.some((r) => r.includes("HR") || r.includes("HUMAN") || r.includes("ADMIN"))
+  );
+};
+
+export const checkHasItAccess = (u) => {
+  if (!u) return false;
+  const username = (u.username || u.displayName || u.name || "").toLowerCase();
+  const role = (u.role || "").toUpperCase();
+  const dept = (u.department || u.dept || "").toUpperCase();
+  const subRole = (u.subRole || "").toUpperCase();
+  const extra = u.extraRoles || u.ExtaRoles || [];
+
+  let extraList = [];
+  if (Array.isArray(extra)) extraList = extra.map((r) => String(r).toUpperCase());
+  else if (typeof extra === "string") extraList = extra.split(",").map((r) => r.trim().toUpperCase());
+
+  const activeProfile = (u.activeProfile || "").toUpperCase();
+
+  const isAdmin =
+    role === "ADMIN" ||
+    dept === "ADMIN" ||
+    subRole === "ADMIN" ||
+    username.includes("sumit") ||
+    extraList.includes("ADMIN");
+
+  if (isAdmin) return true;
+
+  return (
+    dept.includes("IT") ||
+    subRole.includes("IT") ||
+    role.includes("IT") ||
+    activeProfile.includes("IT") ||
+    extraList.some((r) => r.includes("IT") || r.includes("ADMIN"))
+  );
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     try {
@@ -207,6 +272,7 @@ export const AuthProvider = ({ children }) => {
     const depts = new Set();
     if (u.department) depts.add(u.department.toUpperCase());
     if (u.role) depts.add(u.role.toUpperCase());
+    if (u.subRole) depts.add(u.subRole.toUpperCase());
 
     const extra = u.extraRoles || u.ExtaRoles || [];
     if (Array.isArray(extra)) {
@@ -216,6 +282,8 @@ export const AuthProvider = ({ children }) => {
     }
     return Array.from(depts);
   };
+
+  const handleCheckHasHrAccess = (u = user) => checkHasHrAccess(u);
 
   // Check top navbar tab accessibility
   const hasTabAccess = (tabName) => {
@@ -281,6 +349,7 @@ export const AuthProvider = ({ children }) => {
         hasModuleAccess,
         checkIsAdmin,
         checkIsItAdmin,
+        checkHasHrAccess: handleCheckHasHrAccess,
         isEndUser,
         getSubRole,
         hasHrOnboardingAccess,

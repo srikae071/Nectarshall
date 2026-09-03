@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { fetchApiData, sendApiData } from "../../../../utils/apiClient";
 
@@ -9,6 +9,7 @@ import "./index.css";
 
 function ITSaves() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     caseId: "",
@@ -85,20 +86,53 @@ function ITSaves() {
       ...formData,
       [e.target.name]: e.target.value,
     });
-    console.log(formData);
   };
+
   const handleSave = async () => {
     try {
-      await sendApiData(
-        `/api/itrequests/${id}`,
-        formData,
-        "put"
-      );
-
+      const payload = {
+        ...formData,
+        assignedTo: formData.assignTo || formData.assignedTo || "",
+      };
+      await sendApiData(`/api/itrequests/${id}`, payload, "put");
       alert("Case Updated Successfully");
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      alert("Error Updating Case");
     }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const payload = {
+        ...formData,
+        assignedTo: formData.assignTo || formData.assignedTo || "",
+      };
+      await sendApiData(`/api/itrequests/${id}`, payload, "put");
+      alert("IT Case Submitted Successfully!");
+
+      const statusLower = (formData.status || "Open").toLowerCase();
+      if (statusLower.includes("wip") || statusLower.includes("work in progress")) {
+        navigate("/it/work-in-progress");
+      } else if (statusLower.includes("resolved")) {
+        navigate("/it/resolved");
+      } else if (statusLower.includes("closed")) {
+        navigate("/it/closed");
+      } else if (statusLower.includes("pending")) {
+        navigate("/it/pending");
+      } else if (statusLower.includes("open")) {
+        navigate("/it/open");
+      } else {
+        navigate("/it/all");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Error Submitting IT Case");
+    }
+  };
+
+  const handleCancel = () => {
+    navigate(-1);
   };
   return (
     <ItLeftSide>
@@ -200,11 +234,11 @@ function ITSaves() {
           <div className="CreateField">
             <label>Impact</label>
 
-            <select name="impact">
+            <select name="impact" value={formData.impact || ""} onChange={handleChange}>
               <option value="">Select</option>
-              <option>High</option>
-              <option>Medium</option>
-              <option>Low</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
             </select>
           </div>
         </div>
@@ -214,17 +248,17 @@ function ITSaves() {
           <div className="CreateField">
             <label>Urgency</label>
 
-            <select name="urgency" value={formData.urgency} readOnly>
+            <select name="urgency" value={formData.urgency || ""} onChange={handleChange}>
               <option value="">Select</option>
-              <option>High</option>
-              <option>Medium</option>
-              <option>Low</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
             </select>
           </div>
 
           <div className="CreateField">
             <label>Priority</label>
-            <input name="priority" />
+            <input name="priority" value={formData.priority || ""} onChange={handleChange} />
           </div>
         </div>
 
@@ -234,20 +268,10 @@ function ITSaves() {
           <textarea
             className="CreateTextarea CreateShortTextarea"
             name="shortDescription"
-            value={formData.shortDescription}
-            readOnly
+            value={formData.shortDescription || ""}
+            onChange={handleChange}
           ></textarea>
         </div>
-
-        {/* <div className="CreateTextareaGroup">
-          <label>Description</label>
-          <textarea
-            className="CreateTextarea CreateDescriptionTextarea"
-            name="description"
-            value={formData.description}
-            readOnly
-          ></textarea>
-        </div> */}
 
         <div className="CreateTextareaGroup">
           <label>Description</label>
@@ -255,8 +279,8 @@ function ITSaves() {
           <textarea
             className="CreateTextarea CreateDescriptionTextarea"
             name="description"
-            value={formData.description}
-            readOnly
+            value={formData.description || ""}
+            onChange={handleChange}
           />
         </div>
 
@@ -266,7 +290,7 @@ function ITSaves() {
           <textarea
             className="CreateTextarea CreateWorkNotesTextarea"
             name="workNotes"
-            value={formData.workNotes}
+            value={formData.workNotes || ""}
             onChange={handleChange}
             placeholder="Enter work notes..."
           />
@@ -274,11 +298,15 @@ function ITSaves() {
 
         {/* BUTTONS */}
         <div className="CreateFooter">
-          <button className="CreateBtn" onClick={handleSave}>
+          <button className="CreateBtn" type="button" onClick={handleSave}>
             Save
           </button>
-          <button className="CreateBtn">Submit</button>
-          <button className="CreateBtn">Cancel</button>
+          <button className="CreateBtn" type="button" onClick={handleSubmit}>
+            Submit
+          </button>
+          <button className="CreateBtn" type="button" onClick={handleCancel}>
+            Cancel
+          </button>
         </div>
       </div>
     </ItLeftSide>

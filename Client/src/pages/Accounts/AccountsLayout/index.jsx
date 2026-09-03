@@ -19,6 +19,7 @@ function AccountsLayout({ children }) {
 
   // Expanded category dropdown states (default open based on active route)
   const [expandedCategories, setExpandedCategories] = useState({
+    caseManagement: location.pathname.startsWith("/accounts/cases"),
     employee:
       location.pathname === "/accounts/payrun" ||
       location.pathname === "/accounts/employee-rate-card" ||
@@ -41,6 +42,18 @@ function AccountsLayout({ children }) {
   };
 
   const navCategories = [
+    {
+      key: "caseManagement",
+      label: "Case Management",
+      icon: "",
+      children: [
+        { label: "All", path: "/accounts/cases/all" },
+        { label: "Assign to Me", path: "/accounts/cases/assigned" },
+        { label: "Create New", path: "/onboarding/resonancerequirement/createnew" },
+        { label: "Open", path: "/accounts/cases/open" },
+        { label: "Resolved", path: "/accounts/cases/resolved" },
+      ],
+    },
     {
       key: "employee",
       label: "Employee",
