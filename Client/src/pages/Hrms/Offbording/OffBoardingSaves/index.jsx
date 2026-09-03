@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import HrmsLeftLayout from "../../Hrmsleftlayout";
+import ItLeftSide from "../../../NavItems/IT/ItLeftSide";
 import { fetchApiData, sendApiData } from "../../../../utils/apiClient";
 import AuditTimeline from "../../../../components/AuditTimeline";
 import axios from "axios";
@@ -9,6 +10,10 @@ import "./index.css";
 function OffBoardingSaves() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isItView = location.pathname.includes("/requests-offboarding");
+  const LayoutComponent = isItView ? ItLeftSide : HrmsLeftLayout;
 
   const [formData, setFormData] = useState({
     caseId: "",
@@ -129,7 +134,7 @@ function OffBoardingSaves() {
   const isTask3Visible = isItResolved && isFinanceResolved;
 
   return (
-    <HrmsLeftLayout>
+    <LayoutComponent>
       <div className="OBSContainer">
         <div className="OBSCard">
           <h3 className="OBSHeading">Offboarding Employee Details</h3>
@@ -380,7 +385,7 @@ function OffBoardingSaves() {
         {/* AUDIT TIMELINE LOG & TIMESTAMPS */}
         <AuditTimeline data={formData} module="HRMS" />
       </div>
-    </HrmsLeftLayout>
+    </LayoutComponent>
   );
 }
 

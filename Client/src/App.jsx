@@ -467,7 +467,7 @@ function App() {
         element={<OffBoardingEmployesAll />}
       />
       <Route path="/offboarding-saves/:id" element={<OffBoardingSaves />} />
-      <Route path="/requests-offboarding-saves/:id" element={<OffBoardingSaves />} />
+      <Route path="/requests-offboarding-saves/:id" element={<TaskSaves />} />
       <Route path="/requests-onboarding-saves/:id" element={<RequestOnboardingSaves />} />
       <Route path="/tasksaves/:id" element={<TaskSaves />} />
       <Route path="/hrreq-all" element={<HrReqAll />} />
