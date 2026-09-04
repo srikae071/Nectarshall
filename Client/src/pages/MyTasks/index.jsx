@@ -22,6 +22,25 @@ function ApprovalTable() {
     return { username, isAdmin };
   };
 
+  const sortNewestFirst = (arr) => {
+    return [...arr].sort((a, b) => {
+      if (a.createdAt && b.createdAt) {
+        const timeA = new Date(a.createdAt).getTime();
+        const timeB = new Date(b.createdAt).getTime();
+        if (!isNaN(timeA) && !isNaN(timeB) && timeA !== timeB) {
+          return timeB - timeA;
+        }
+      }
+      const idA = a.leaveId || a.incidentNumber || a.caseId || a.taskId || a._id || "";
+      const idB = b.leaveId || b.incidentNumber || b.caseId || b.taskId || b._id || "";
+      const numA = parseInt(String(idA).replace(/\D/g, ""), 10) || 0;
+      const numB = parseInt(String(idB).replace(/\D/g, ""), 10) || 0;
+      if (numA !== numB) return numB - numA;
+
+      return String(b._id || "").localeCompare(String(a._id || ""));
+    });
+  };
+
   const fetchOffboarding = async () => {
     try {
       const response = await fetchApiData("/api/jobrequests");
@@ -29,24 +48,24 @@ function ApprovalTable() {
         (item) => item.category === "Offboarding" || item.category === "offboarding" || item.category === "Exit"
       );
       const { username, isAdmin } = getAuthDetails();
+      let resList = [];
       if (isAdmin) {
-        setOffboardingData(list);
+        resList = list;
       } else if (username) {
         const u = username.toLowerCase();
-        setOffboardingData(
-          list.filter((item) => {
-            const r1 = (item.requester || item.requesterName || item.employeeName || "").toLowerCase();
-            const r2 = (item.requesterFor || "").toLowerCase();
-            return (
-              r1.includes(u) ||
-              u.includes(r1 && r1.length > 2 ? r1 : "___never___") ||
-              r2.includes(u)
-            );
-          })
-        );
+        resList = list.filter((item) => {
+          const r1 = (item.requester || item.requesterName || item.employeeName || "").toLowerCase();
+          const r2 = (item.requesterFor || "").toLowerCase();
+          return (
+            r1.includes(u) ||
+            u.includes(r1 && r1.length > 2 ? r1 : "___never___") ||
+            r2.includes(u)
+          );
+        });
       } else {
-        setOffboardingData([]);
+        resList = [];
       }
+      setOffboardingData(sortNewestFirst(resList));
     } catch (error) {
       console.log(error);
     }
@@ -57,24 +76,24 @@ function ApprovalTable() {
       const response = await fetchApiData("/api/leaves");
       const list = response.data || [];
       const { username, isAdmin } = getAuthDetails();
+      let resList = [];
       if (isAdmin) {
-        setData(list.filter((item) => item.status === "Pending"));
+        resList = list.filter((item) => item.status === "Pending");
       } else if (username) {
         const u = username.toLowerCase();
-        setData(
-          list.filter((item) => {
-            const r1 = (item.requester || item.employeeName || "").toLowerCase();
-            const r2 = (item.requesterFor || "").toLowerCase();
-            return (
-              r1.includes(u) ||
-              u.includes(r1 && r1.length > 2 ? r1 : "___never___") ||
-              r2.includes(u)
-            );
-          })
-        );
+        resList = list.filter((item) => {
+          const r1 = (item.requester || item.employeeName || "").toLowerCase();
+          const r2 = (item.requesterFor || "").toLowerCase();
+          return (
+            r1.includes(u) ||
+            u.includes(r1 && r1.length > 2 ? r1 : "___never___") ||
+            r2.includes(u)
+          );
+        });
       } else {
-        setData([]);
+        resList = [];
       }
+      setData(sortNewestFirst(resList));
     } catch (error) {
       console.log(error);
     }
