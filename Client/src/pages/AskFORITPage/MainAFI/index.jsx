@@ -84,6 +84,8 @@ function MainAFI() {
     try {
       await sendApiData("/api/itrequests/create", {
         ...formData,
+        department: "IT",
+        assignmentGroup: "IT",
         status: "Draft",
         requestType: "IT",
       });
@@ -103,6 +105,8 @@ function MainAFI() {
     try {
       await sendApiData("/api/itrequests/create", {
         ...formData,
+        department: "IT",
+        assignmentGroup: "IT",
         status: "Open",
         requestType: "IT",
       });

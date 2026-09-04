@@ -11,7 +11,10 @@ const ItHrRequestSchema = new mongoose.Schema(
     shortDescription: String,
     description: String,
     requesterName: String,
-    department: String,
+    department: {
+      type: String,
+      default: "IT",
+    },
 
     status: {
       type: String,

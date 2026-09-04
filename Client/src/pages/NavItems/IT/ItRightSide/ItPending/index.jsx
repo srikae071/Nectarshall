@@ -1,7 +1,8 @@
 import ItLeftSide from "../../ItLeftSide";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { fetchApiData } from "../../../../../utils/apiClient";
+import CaseTable from "../../../../../components/CaseTable";
 import "./index.css";
 
 function ItPending() {
@@ -12,17 +13,25 @@ function ItPending() {
     fetchPendingCases();
   }, []);
 
+  const sortNewestFirst = (arr) => {
+    return [...arr].sort((a, b) => {
+      if (a.createdAt && b.createdAt) {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      }
+      const numA = parseInt((a.incidentNumber || a.caseId || "").replace(/\D/g, ""), 10) || 0;
+      const numB = parseInt((b.incidentNumber || b.caseId || "").replace(/\D/g, ""), 10) || 0;
+      if (numA !== numB) return numB - numA;
+      return String(b._id || "").localeCompare(String(a._id || ""));
+    });
+  };
+
   const fetchPendingCases = async () => {
     try {
-      const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests",
+      const response = await fetchApiData("/api/itrequests");
+      const pendingCases = (response.data || []).filter(
+        (item) => (item.status || "").toLowerCase() === "pending"
       );
-
-      const pendingCases = response.data.filter(
-        (item) => item.status === "Pending",
-      );
-
-      setData(pendingCases);
+      setData(sortNewestFirst(pendingCases));
     } catch (error) {
       console.log(error);
     }
@@ -30,47 +39,12 @@ function ItPending() {
 
   return (
     <ItLeftSide>
-      <div className="Openhome">
-        <div>
-          <h3 className="openheading">Pending Cases</h3>
-
-          <table className="opentable">
-            <thead className="opentablerow">
-              <tr className="opentablerow">
-                <th className="opentablerow">Incident ID</th>
-                <th className="opentablerow">Requester</th>
-                <th className="opentablerow">Department</th>
-                <th className="opentablerow">Category</th>
-                <th className="opentablerow">Status</th>
-              </tr>
-            </thead>
-
-            <tbody className="opentablerow">
-              {data.length > 0 ? (
-                data.map((item) => (
-                  <tr
-                    key={item._id}
-                    style={{ cursor: "pointer" }}
-                    onClick={() => navigate(`/hrms/itsaves/${item._id}`)}
-                  >
-                    <td>{item.incidentNumber}</td>
-                    <td>{item.requester}</td>
-                    <td>{item.department}</td>
-                    <td>{item.category}</td>
-                    <td>{item.status}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="5" style={{ textAlign: "center" }}>
-                    No Records Found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <CaseTable
+        title="IT Pending Cases"
+        data={data}
+        onRowClick={(item) => navigate(`/hrms/itsaves/${item._id}`)}
+        emptyMessage="No Pending IT Cases Found"
+      />
     </ItLeftSide>
   );
 }

@@ -152,7 +152,7 @@ function ITSaves() {
         {/* ROW 1 */}
         <div className="CreateRow">
           <div className="CreateField">
-            <label>Case ID</label>
+            <label>Incident ID</label>
             <input name="caseId" value={formData.caseId} readOnly />
           </div>
 

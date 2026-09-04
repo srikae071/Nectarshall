@@ -14,17 +14,19 @@ function ITCreateCase() {
   const [formData, setFormData] = useState({
     caseId: "",
     requesterName: currentUserName,
-    department: "",
+    requesterFor: "",
+    department: "IT",
     status: "",
     subStatus: "",
     category: "",
-    assignmentGroup: "",
+    assignmentGroup: "IT",
     assignTo: "",
     impact: "",
     urgency: "",
     priority: "",
     shortDescription: "",
     description: "",
+    workNotes: "",
   });
   const [employeeList, setEmployeeList] = useState([]);
 
@@ -144,7 +146,7 @@ function ITCreateCase() {
         {/* ROW 1 */}
         <div className="CreateRow">
           <div className="CreateField">
-            <label>Case ID</label>
+            <label>Incident ID</label>
             <input
               name="caseId"
               value={formData.caseId}
@@ -164,19 +166,29 @@ function ITCreateCase() {
           </div>
 
           <div className="CreateField">
-            <label>Department</label>
-            <select
-              name="department"
-              value={formData.department}
+            <label>Requested For</label>
+            <input
+              name="requesterFor"
+              value={formData.requesterFor || ""}
               onChange={handleChange}
-            >
-              <option>IT</option>
-            </select>
+              placeholder="Leave empty if for self"
+            />
           </div>
         </div>
 
         {/* ROW 2 */}
         <div className="CreateRow">
+          <div className="CreateField">
+            <label>Department</label>
+            <select
+              name="department"
+              value="IT"
+              readOnly
+            >
+              <option value="IT">IT</option>
+            </select>
+          </div>
+
           <div className="CreateField">
             <label>Status</label>
 
@@ -323,6 +335,17 @@ function ITCreateCase() {
             name="description"
             value={formData.description}
             onChange={handleChange}
+          ></textarea>
+        </div>
+
+        <div className="CreateTextareaGroup">
+          <label>Work Notes</label>
+          <textarea
+            className="CreateTextarea CreateWorkNotesTextarea"
+            name="workNotes"
+            value={formData.workNotes || ""}
+            onChange={handleChange}
+            placeholder="Enter work notes..."
           ></textarea>
         </div>
 

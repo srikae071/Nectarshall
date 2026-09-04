@@ -4,13 +4,13 @@ import "./index.css";
 
 const ALL_COLUMNS = [
   { key: "incidentNumber", label: "Incident ID", default: true },
-  { key: "requestType", label: "Type", default: true },
+  { key: "department", label: "Department", default: true },
   { key: "requester", label: "Requester", default: true },
   { key: "requesterFor", label: "Requested For", default: true },
-  { key: "department", label: "Department", default: false },
   { key: "category", label: "Category", default: true },
   { key: "subCategory", label: "Sub Category", default: true },
   { key: "status", label: "Status", default: true },
+  { key: "requestType", label: "Type", default: false },
   { key: "assignmentGroup", label: "Assignment Group", default: false },
   { key: "assignTo", label: "Assign To", default: false },
   { key: "impact", label: "Impact", default: false },
@@ -49,7 +49,7 @@ function CaseTable({
 
   const toggleColumn = (key) => {
     setSelectedColumns((prev) =>
-      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
+      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, k]
     );
   };
 
@@ -70,7 +70,15 @@ function CaseTable({
     if (key === "requester") return item.requester || item.requesterName || "N/A";
     if (key === "requesterFor") return item.requesterFor || "N/A";
     if (key === "assignTo") return item.assignTo || item.assignedTo || "N/A";
-    if (key === "department") return item.department || "HR";
+    if (key === "department") {
+      const deptVal = (item.department || item.requestType || "IT").toUpperCase();
+      const isHR = deptVal === "HR";
+      return (
+        <span className={isHR ? "TicketBadgeHR" : "TicketBadgeIT"}>
+          {item.department || item.requestType || "IT"}
+        </span>
+      );
+    }
     if (key === "requestType") {
       const typeStr = item.requestType || (item.assignmentGroup === "IT" ? "IT" : "HR");
       return (

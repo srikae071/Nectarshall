@@ -1,7 +1,8 @@
 import ItLeftSide from "../../ItLeftSide";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { fetchApiData } from "../../../../../utils/apiClient";
+import CaseTable from "../../../../../components/CaseTable";
 import "./index.css";
 
 function ItWorkInProgress() {
@@ -12,17 +13,28 @@ function ItWorkInProgress() {
     fetchWorkInProgressCases();
   }, []);
 
+  const sortNewestFirst = (arr) => {
+    return [...arr].sort((a, b) => {
+      if (a.createdAt && b.createdAt) {
+        return new Date(b.createdAt) - new Date(a.createdAt);
+      }
+      const numA = parseInt((a.incidentNumber || a.caseId || "").replace(/\D/g, ""), 10) || 0;
+      const numB = parseInt((b.incidentNumber || b.caseId || "").replace(/\D/g, ""), 10) || 0;
+      if (numA !== numB) return numB - numA;
+      return String(b._id || "").localeCompare(String(a._id || ""));
+    });
+  };
+
   const fetchWorkInProgressCases = async () => {
     try {
-      const response = await axios.get(
-        "https://nectarshall-api-fhcpggc7gxcnbbhq.southindia-01.azurewebsites.net/api/itrequests",
+      const response = await fetchApiData("/api/itrequests");
+      const workInProgressCases = (response.data || []).filter(
+        (item) => {
+          const st = (item.status || "").toLowerCase();
+          return st === "work in progress" || st === "wip" || st.includes("progress");
+        }
       );
-
-      const workInProgressCases = response.data.filter(
-        (item) => item.status === "Work In Progress",
-      );
-
-      setData(workInProgressCases);
+      setData(sortNewestFirst(workInProgressCases));
     } catch (error) {
       console.log(error);
     }
@@ -30,47 +42,12 @@ function ItWorkInProgress() {
 
   return (
     <ItLeftSide>
-      <div className="Openhome">
-        <div>
-          <h3 className="openheading">Work In Progress Cases</h3>
-
-          <table className="opentable">
-            <thead className="opentablerow">
-              <tr className="opentablerow">
-                <th className="opentablerow">Incident ID</th>
-                <th className="opentablerow">Requester</th>
-                <th className="opentablerow">Department</th>
-                <th className="opentablerow">Category</th>
-                <th className="opentablerow">Status</th>
-              </tr>
-            </thead>
-
-            <tbody className="opentablerow">
-              {data.length > 0 ? (
-                data.map((item) => (
-                  <tr
-                    key={item._id}
-                    style={{ cursor: "pointer" }}
-                    onClick={() => navigate(`/hrms/itsaves/${item._id}`)}
-                  >
-                    <td>{item.incidentNumber}</td>
-                    <td>{item.requester}</td>
-                    <td>{item.department}</td>
-                    <td>{item.category}</td>
-                    <td>{item.status}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="5" style={{ textAlign: "center" }}>
-                    No Records Found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <CaseTable
+        title="IT Work In Progress Cases"
+        data={data}
+        onRowClick={(item) => navigate(`/hrms/itsaves/${item._id}`)}
+        emptyMessage="No Work In Progress IT Cases Found"
+      />
     </ItLeftSide>
   );
 }
