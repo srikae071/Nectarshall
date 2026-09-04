@@ -101,6 +101,7 @@ function CreateCase() {
     try {
       const payload = {
         ...formData,
+        department: formData.department || "HR",
         status: "Draft",
         assignedTo: formData.assignTo || "",
       };
@@ -118,6 +119,7 @@ function CreateCase() {
     try {
       const payload = {
         ...formData,
+        department: formData.department || "HR",
         assignedTo: formData.assignTo || "",
       };
 

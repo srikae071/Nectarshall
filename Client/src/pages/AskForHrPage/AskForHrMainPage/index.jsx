@@ -74,6 +74,8 @@ function AskForHrMainPage() {
     try {
       await sendApiData("/api/hrrequests/create", {
         ...formData,
+        department: "HR",
+        assignmentGroup: "HR",
         status: "Draft",
         requestType: "HR",
       });
@@ -93,6 +95,8 @@ function AskForHrMainPage() {
     try {
       await sendApiData("/api/hrrequests/create", {
         ...formData,
+        department: "HR",
+        assignmentGroup: "HR",
         status: "Open",
         requestType: "HR",
       });

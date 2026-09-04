@@ -71,11 +71,19 @@ function CaseTable({
     if (key === "requesterFor") return item.requesterFor || "N/A";
     if (key === "assignTo") return item.assignTo || item.assignedTo || "N/A";
     if (key === "department") {
-      const deptVal = (item.department || item.requestType || "IT").toUpperCase();
-      const isHR = deptVal === "HR";
+      let deptVal = item.department || item.requestType;
+      if (!deptVal) {
+        const inc = (item.incidentNumber || item.caseId || "").toUpperCase();
+        if (inc.startsWith("HR") || item.assignmentGroup === "HR") {
+          deptVal = "HR";
+        } else {
+          deptVal = "IT";
+        }
+      }
+      const isHR = String(deptVal).toUpperCase() === "HR";
       return (
         <span className={isHR ? "TicketBadgeHR" : "TicketBadgeIT"}>
-          {item.department || item.requestType || "IT"}
+          {deptVal}
         </span>
       );
     }
